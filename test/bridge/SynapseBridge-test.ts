@@ -63,7 +63,7 @@ describe("SynapseBridge", function() {
                         expected = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
                         break;
                     case ChainId.BOBA:
-                        expected = "0x037527278B4ac8A4327e7015B788001c2954Cf82";
+                        expected = "0xd203De32170130082896b4111eDF825a4774c18E";
                         break;
                     default:
                         expected = "0x0000000000000000000000000000000000000000";
@@ -205,7 +205,7 @@ describe("SynapseBridge", function() {
                         tokenTo:     Tokens.USDT,
                         amountFrom:  Tokens.USDC.valueToWei("35", ChainId.BSC),
                     },
-                    notZero:   true,
+                    notZero:   false,
                     wantError: false,
                 },
                 {
