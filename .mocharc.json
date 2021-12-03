@@ -1,0 +1,16 @@
+{
+  "require": [
+    "ts-node/register",
+    "mocha-steps"
+  ],
+  "node-option": ["experimental-specifier-resolution=node", "loader=ts-node/esm"],
+  "extensions":  ["ts"],
+  "recursive": true,
+  "spec": [
+    "./test/setup.ts",
+    "./test/**/*-test.ts"
+  ],
+  "watch-files": [
+    "src"
+  ]
+}

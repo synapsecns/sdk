@@ -1,0 +1,14 @@
+.idea/
+
+node_modules/
+example/
+test/
+scripts/
+src/
+
+.gitignore
+.mocharc.json
+.nvmrc
+.yarnclean
+
+yarn-error.log

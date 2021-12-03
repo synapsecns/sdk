@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "ignorePaths": [
+    "**/example/**",
+    "**/test/**",
+    "**/scripts/**",
+    "**/node_modules/**"
+  ],
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0,
+  "enabledManagers": ["npm"],
+  "lockFileMaintenance": { "enabled": true }
+}
