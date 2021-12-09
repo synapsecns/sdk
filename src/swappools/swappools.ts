@@ -111,6 +111,26 @@ export namespace SwapPools {
         poolTokens: [Tokens.DAI, Tokens.USDC, Tokens.USDT]
     });
 
+    export const OPTIMISM_ETH_SWAP_TOKEN = new SwapToken({
+        addresses: {
+            [ChainId.OPTIMISM]: '0x4619a06ddd3b8f0f951354ec5e75c09cd1cd1aef',
+        },
+        decimals:      18,
+        symbol:        "nETH-LP",
+        name:          "Synapse Eth LP Token Optimism",
+        poolName:      "Optimism ETH Pool",
+        poolId:        0,
+        poolType:      "ETH",
+        swapAddresses: {
+            [ChainId.OPTIMISM]: "0xE27BFf97CE92C3e1Ff7AA9f86781FDd6D48F5eE9",
+        },
+        swapEthAddresses: {
+            [ChainId.OPTIMISM]: "0x8c7d5f8A8e154e1B59C92D8FB71314A43F32ef7B",
+        },
+        poolTokens:   [Tokens.NETH, Tokens.WETH],                                // add eth token whether eth or weth here
+        nativeTokens: [Tokens.NETH, Tokens.ETH],
+    });
+
     export const BSC_POOL_SWAP_TOKEN = new SwapToken({
         addresses: {
             [ChainId.BSC]:     '0xa4b7Bc06EC817785170C2DbC1dD3ff86CDcdcc4C',
@@ -263,7 +283,15 @@ export namespace SwapPools {
         nativeTokens: [Tokens.NETH, Tokens.ETH],
     });
 
-    export const bridgeSwappableTokensByType = {
+    export interface SwapGroupTokenMap {
+        [grp: string]: Token[]
+    }
+
+    export interface BridgeTokensBySwapGroupMap {
+        [c: number]: SwapGroupTokenMap
+    }
+
+    export const bridgeSwappableTokensByType: BridgeTokensBySwapGroupMap = {
         [ChainId.ETH]: {
             [SwapType.USD]:  [...ETH_POOL_SWAP_TOKEN.poolTokens, Tokens.NUSD],
             [SwapType.ETH]:  [Tokens.ETH],
@@ -272,16 +300,22 @@ export namespace SwapPools {
             [SwapType.DOG]:  [Tokens.DOG],
             [SwapType.FRAX]: [Tokens.FRAX],
         },
+        [ChainId.OPTIMISM]: {
+            [SwapType.ETH]: [...OPTIMISM_ETH_SWAP_TOKEN.poolTokens],
+            [SwapType.SYN]: [Tokens.SYN],
+        },
         [ChainId.BSC]: {
             [SwapType.USD]:   [...BSC_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.SYN]:   [Tokens.SYN],
             [SwapType.HIGH]:  [Tokens.HIGH],
             [SwapType.DOG]:   [Tokens.DOG],
             [SwapType.JUMP]:  [Tokens.JUMP],
+            [SwapType.NFD]:   [Tokens.NFD],
         },
         [ChainId.POLYGON]: {
             [SwapType.USD]: [...POLYGON_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.SYN]: [Tokens.SYN],
+            [SwapType.NFD]: [Tokens.NFD],
         },
         [ChainId.FANTOM]: {
             [SwapType.USD]:  [...FANTOM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
@@ -305,6 +339,7 @@ export namespace SwapPools {
         [ChainId.AVALANCHE]: {
             [SwapType.USD]: [...AVALANCHE_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.SYN]: [Tokens.SYN],
+            [SwapType.NFD]: [Tokens.NFD],
         },
         [ChainId.HARMONY]: {
             [SwapType.USD]: [...HARMONY_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
@@ -318,7 +353,8 @@ export namespace SwapPools {
         dogPoolTokens  = {[SwapType.DOG]:  { poolTokens: [Tokens.DOG]  }},
         jumpPoolTokens = {[SwapType.JUMP]: { poolTokens: [Tokens.JUMP] }},
         ethPoolTokens  = {[SwapType.ETH]:  { poolTokens: [Tokens.ETH]  }},
-        fraxPoolTokens = {[SwapType.FRAX]: { poolTokens: [Tokens.FRAX] }};
+        fraxPoolTokens = {[SwapType.FRAX]: { poolTokens: [Tokens.FRAX] }},
+        nfdPoolTokens  = {[SwapType.NFD]:  { poolTokens: [Tokens.NFD]  }};
 
     export const bridgeSwappableTypePoolsByChain = {
         [ChainId.ETH]: {
@@ -329,16 +365,22 @@ export namespace SwapPools {
             ...dogPoolTokens,
             ...fraxPoolTokens,
         },
+        [ChainId.OPTIMISM]: {
+            [SwapType.ETH]: OPTIMISM_ETH_SWAP_TOKEN,
+            ...synPoolTokens,
+        },
         [ChainId.BSC]: {
             [SwapType.USD]: BSC_POOL_SWAP_TOKEN,
             ...synPoolTokens,
             ...highPoolTokens,
             ...dogPoolTokens,
             ...jumpPoolTokens,
+            ...nfdPoolTokens,
         },
         [ChainId.POLYGON]: {
             [SwapType.USD]: POLYGON_POOL_SWAP_TOKEN,
             ...synPoolTokens,
+            ...nfdPoolTokens,
         },
         [ChainId.FANTOM]: {
             [SwapType.USD]: FANTOM_POOL_SWAP_TOKEN,
@@ -362,6 +404,7 @@ export namespace SwapPools {
         [ChainId.AVALANCHE]: {
             [SwapType.USD]: AVALANCHE_POOL_SWAP_TOKEN,
             ...synPoolTokens,
+            ...nfdPoolTokens,
         },
         [ChainId.HARMONY]: {
             [SwapType.USD]: HARMONY_POOL_SWAP_TOKEN,
@@ -381,3 +424,4 @@ export namespace SwapPools {
         return swappableTokens
     }
 }
+

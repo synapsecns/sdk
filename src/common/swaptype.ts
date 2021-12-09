@@ -7,5 +7,6 @@ export namespace SwapType {
         HIGH: string = "HIGHSTREET",
         DOG:  string = "DOG",
         JUMP: string = "JUMP",
-        FRAX: string = "FRAX";
+        FRAX: string = "FRAX",
+        NFD:  string = "NFD";
 }

@@ -20,7 +20,8 @@ export const
     PROVIDER_BSC       = {chainId: ChainId.BSC,       provider: newProviderForNetwork(ChainId.BSC)       },
     PROVIDER_FANTOM    = {chainId: ChainId.FANTOM,    provider: newProviderForNetwork(ChainId.FANTOM)    },
     PROVIDER_BOBA      = {chainId: ChainId.BOBA,      provider: newProviderForNetwork(ChainId.BOBA)      },
-    PROVIDER_MOONRIVER = {chainId: ChainId.MOONRIVER, provider: newProviderForNetwork(ChainId.MOONRIVER) };
+    PROVIDER_MOONRIVER = {chainId: ChainId.MOONRIVER, provider: newProviderForNetwork(ChainId.MOONRIVER) },
+    PROVIDER_OPTIMISM  = {chainId: ChainId.OPTIMISM,  provider: newProviderForNetwork(ChainId.OPTIMISM)  };
 
 export interface TestCase<T> {
     chainId:       number,

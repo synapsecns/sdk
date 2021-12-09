@@ -12,8 +12,8 @@ describe("Basic tests", function(this: Mocha.Suite) {
             supportedChains   = ChainId.supportedChainIds(),
             supportedNetworks = Networks.supportedNetworks();
 
-        it("supportedChainIds should return 9 chains", () => expect(supportedChains).to.have.a.lengthOf(9))
+        it("supportedChainIds should return 9 chains", () => expect(supportedChains).to.have.a.lengthOf(10))
 
-        it("supportedNetworks should return 9 networks", () => expect(supportedNetworks).to.have.a.lengthOf(9))
+        it("supportedNetworks should return 9 networks", () => expect(supportedNetworks).to.have.a.lengthOf(10))
     })
 })

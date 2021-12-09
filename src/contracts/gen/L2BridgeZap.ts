@@ -37,6 +37,7 @@ export interface L2BridgeZapInterface extends ethers.utils.Interface {
     "swapAndRedeemAndRemove(address,uint256,address,uint8,uint8,uint256,uint256,uint256,uint8,uint256,uint256)": FunctionFragment;
     "swapAndRedeemAndSwap(address,uint256,address,uint8,uint8,uint256,uint256,uint256,uint8,uint8,uint256,uint256)": FunctionFragment;
     "swapETHAndRedeem(address,uint256,address,uint8,uint8,uint256,uint256,uint256)": FunctionFragment;
+    "swapETHAndRedeemAndSwap(address,uint256,address,uint8,uint8,uint256,uint256,uint256,uint8,uint8,uint256,uint256)": FunctionFragment;
     "swapMap(address)": FunctionFragment;
     "swapTokensMap(address,uint256)": FunctionFragment;
   };
@@ -141,6 +142,23 @@ export interface L2BridgeZapInterface extends ethers.utils.Interface {
       BigNumberish
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "swapETHAndRedeemAndSwap",
+    values: [
+      string,
+      BigNumberish,
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish
+    ]
+  ): string;
   encodeFunctionData(functionFragment: "swapMap", values: [string]): string;
   encodeFunctionData(
     functionFragment: "swapTokensMap",
@@ -179,6 +197,10 @@ export interface L2BridgeZapInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "swapETHAndRedeem",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "swapETHAndRedeemAndSwap",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "swapMap", data: BytesLike): Result;
@@ -362,6 +384,22 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    swapETHAndRedeemAndSwap(
+      to: string,
+      chainId: BigNumberish,
+      token: string,
+      tokenIndexFrom: BigNumberish,
+      tokenIndexTo: BigNumberish,
+      dx: BigNumberish,
+      minDy: BigNumberish,
+      deadline: BigNumberish,
+      swapTokenIndexFrom: BigNumberish,
+      swapTokenIndexTo: BigNumberish,
+      swapMinDy: BigNumberish,
+      swapDeadline: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     swapMap(arg0: string, overrides?: CallOverrides): Promise<[string]>;
 
     swapTokensMap(
@@ -516,6 +554,22 @@ export interface L2BridgeZap extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  swapETHAndRedeemAndSwap(
+    to: string,
+    chainId: BigNumberish,
+    token: string,
+    tokenIndexFrom: BigNumberish,
+    tokenIndexTo: BigNumberish,
+    dx: BigNumberish,
+    minDy: BigNumberish,
+    deadline: BigNumberish,
+    swapTokenIndexFrom: BigNumberish,
+    swapTokenIndexTo: BigNumberish,
+    swapMinDy: BigNumberish,
+    swapDeadline: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   swapMap(arg0: string, overrides?: CallOverrides): Promise<string>;
 
   swapTokensMap(
@@ -667,6 +721,22 @@ export interface L2BridgeZap extends BaseContract {
       dx: BigNumberish,
       minDy: BigNumberish,
       deadline: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    swapETHAndRedeemAndSwap(
+      to: string,
+      chainId: BigNumberish,
+      token: string,
+      tokenIndexFrom: BigNumberish,
+      tokenIndexTo: BigNumberish,
+      dx: BigNumberish,
+      minDy: BigNumberish,
+      deadline: BigNumberish,
+      swapTokenIndexFrom: BigNumberish,
+      swapTokenIndexTo: BigNumberish,
+      swapMinDy: BigNumberish,
+      swapDeadline: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -827,6 +897,22 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    swapETHAndRedeemAndSwap(
+      to: string,
+      chainId: BigNumberish,
+      token: string,
+      tokenIndexFrom: BigNumberish,
+      tokenIndexTo: BigNumberish,
+      dx: BigNumberish,
+      minDy: BigNumberish,
+      deadline: BigNumberish,
+      swapTokenIndexFrom: BigNumberish,
+      swapTokenIndexTo: BigNumberish,
+      swapMinDy: BigNumberish,
+      swapDeadline: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     swapMap(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     swapTokensMap(
@@ -979,6 +1065,22 @@ export interface L2BridgeZap extends BaseContract {
       dx: BigNumberish,
       minDy: BigNumberish,
       deadline: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    swapETHAndRedeemAndSwap(
+      to: string,
+      chainId: BigNumberish,
+      token: string,
+      tokenIndexFrom: BigNumberish,
+      tokenIndexTo: BigNumberish,
+      dx: BigNumberish,
+      minDy: BigNumberish,
+      deadline: BigNumberish,
+      swapTokenIndexFrom: BigNumberish,
+      swapTokenIndexTo: BigNumberish,
+      swapMinDy: BigNumberish,
+      swapDeadline: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

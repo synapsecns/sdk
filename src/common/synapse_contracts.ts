@@ -33,6 +33,11 @@ export namespace SynapseContracts {
         isEthMainnet: true,
     });
 
+    export const Optimism = new SynapseContract({
+        bridge:     "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
+        bridge_zap: "0x9CD619c50562a38edBdC3451ade7B58CaA71Ab32",
+    })
+
     export const BSC = new SynapseContract({
         bridge:     "0xd123f70AE324d34A9E76b67a27bf77593bA8749f",
         bridge_zap: "0x749F37Df06A99D6A8E065dd065f8cF947ca23697",

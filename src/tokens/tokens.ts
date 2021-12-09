@@ -122,8 +122,9 @@ export namespace Tokens {
         decimals:     18,
         addresses: {
             [ChainId.ETH]:      '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-            [ChainId.BOBA]:     '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
-            [ChainId.ARBITRUM]: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1'
+            [ChainId.OPTIMISM]: '0x121ab82b49B2BC4c7901CA46B8277962b4350204',
+            [ChainId.BOBA]:     '0xd203De32170130082896b4111eDF825a4774c18E',
+            [ChainId.ARBITRUM]: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
         },
         swapType: SwapType.ETH
     });
@@ -134,6 +135,7 @@ export namespace Tokens {
         decimals:    18,
         addresses: {
             [ChainId.ETH]:       '0x0f2d719407fdbeff09d87557abb7232601fd9f29',
+            [ChainId.OPTIMISM]:  '0x5A5fFf6F753d7C11A56A52FE47a177a87e431655',
             [ChainId.BSC]:       '0xa4080f1778e69467e905b8d6f72f6e441f9e9484',
             [ChainId.POLYGON]:   '0xf8f9efc0db77d8881500bb06ff5d6abc3070e695',
             [ChainId.FANTOM]:    '0xE55e19Fb4F2D85af758950957714292DAC1e25B2', // yes this is same as avax swap addr, no its not error
@@ -174,6 +176,7 @@ export namespace Tokens {
         symbol:      'nETH',
         decimals:    18,
         addresses: {
+            [ChainId.OPTIMISM]: '0x809DC529f07651bD43A172e8dB6f4a7a0d771036',
             [ChainId.BOBA]:     '0x96419929d7949D6A801A6909c145C8EEf6A40431',
             [ChainId.ARBITRUM]: '0x3ea9B0ab55F34Fb188824Ee288CeaEfC63cf908e'
         },
@@ -186,6 +189,7 @@ export namespace Tokens {
         decimals:    18,
         addresses: {
             [ChainId.ETH]:      '',
+            [ChainId.OPTIMISM]: '',
             [ChainId.BOBA]:     '',
             [ChainId.ARBITRUM]: ''
         },
@@ -247,7 +251,19 @@ export namespace Tokens {
         swapType: SwapType.DOG
     });
 
-    export const mintBurnTokens: Token[] = [NUSD, SYN, NETH, HIGH, DOG, JUMP, FRAX];
+    export const NFD = new Token({
+        name:         "Feisty Doge",
+        symbol:       "NFD",
+        decimals:     18,
+        addresses: {
+            [ChainId.BSC]:       "0x0fe9778c005a5a6115cbe12b0568a2d50b765a51",   // redeem
+            [ChainId.AVALANCHE]: "0xf1293574ee43950e7a8c9f1005ff097a9a713959",   // redeem
+            [ChainId.POLYGON]:   "0x0a5926027d407222f8fe20f24cb16e103f617046",   // deposit
+        },
+        swapType: SwapType.NFD,
+    });
+
+    export const mintBurnTokens: Token[] = [NUSD, SYN, NETH, HIGH, DOG, JUMP, FRAX, NFD];
 
     export function isMintBurnToken(token: Token): boolean {
         return mintBurnTokens.map((t) => t.symbol).includes(token.symbol)
