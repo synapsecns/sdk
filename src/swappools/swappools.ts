@@ -423,5 +423,42 @@ export namespace SwapPools {
 
         return swappableTokens
     }
+
+    export const swapGroupsForNetwork = (chainId: number): string[] => Object.keys(bridgeSwappableTokensByType[chainId])
 }
 
+export interface NetworkSwappableTokensMap {
+    [c: number]: Token[]
+}
+
+function filterGrps(chainAGrps: string[], chainBGrpsMap: SwapPools.SwapGroupTokenMap): Token[] {
+    let tokens: Token[] = [];
+
+    Object.keys(chainBGrpsMap).forEach((grp: string) => {
+        if (chainAGrps.includes(grp)) {
+            tokens = [...tokens, ...chainBGrpsMap[grp]];
+        }
+    })
+
+    return tokens
+}
+
+export function swappableTokens(chainIdA: number, chainIdB?: number): NetworkSwappableTokensMap {
+    let res: NetworkSwappableTokensMap = {};
+
+    const swapGrpsA: string[] = SwapPools.swapGroupsForNetwork(chainIdA);
+
+    if (typeof chainIdB !== 'undefined') {
+        res[chainIdB] = filterGrps(swapGrpsA, SwapPools.bridgeSwappableTokensByType[chainIdB]);
+    } else {
+        ChainId.supportedChainIds().forEach((chainId: number) => {
+            if (chainId === chainIdA) {
+                return
+            }
+
+            res[chainId] = filterGrps(swapGrpsA, SwapPools.bridgeSwappableTokensByType[chainId]);
+        })
+    }
+
+    return res
+}

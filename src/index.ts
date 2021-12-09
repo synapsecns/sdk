@@ -30,7 +30,8 @@ export {Token} from "./token";
 
 export {Tokens} from "./tokens";
 
-export {SwapPools} from "./swappools";
+export {SwapPools, swappableTokens} from "./swappools";
+export type {NetworkSwappableTokensMap} from "./swappools";
 
 export type {
     SynapseBridgeContract,
