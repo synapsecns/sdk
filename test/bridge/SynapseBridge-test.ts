@@ -21,13 +21,14 @@ import {
     PROVIDER_FANTOM,
     PROVIDER_BOBA,
     PROVIDER_MOONRIVER,
+    PROVIDER_OPTIMISM,
     makeWalletSignerWithProvider,
 } from "../helpers";
 
 // Completely clean privkey with low balances.
 const bridgeTestPrivkey: string = "67544261a018b8a4e55261b3a30a018ebf83f508a5c87898b03eef57ea0a30d5";
 
-const testChains = [PROVIDER_ETHEREUM, PROVIDER_BSC, PROVIDER_FANTOM, PROVIDER_BOBA, PROVIDER_MOONRIVER];
+const testChains = [PROVIDER_ETHEREUM, PROVIDER_OPTIMISM, PROVIDER_BSC, PROVIDER_FANTOM, PROVIDER_BOBA, PROVIDER_MOONRIVER];
 
 function doneWithError(e: any, done: Done) {
     done(e instanceof Error ? e : new Error(e));
@@ -63,7 +64,10 @@ describe("SynapseBridge", function() {
                         expected = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
                         break;
                     case ChainId.BOBA:
-                        expected = "0x037527278B4ac8A4327e7015B788001c2954Cf82";
+                        expected = "0xd203De32170130082896b4111eDF825a4774c18E";
+                        break;
+                    case ChainId.OPTIMISM:
+                        expected = "0x121ab82b49B2BC4c7901CA46B8277962b4350204";
                         break;
                     default:
                         expected = "0x0000000000000000000000000000000000000000";
@@ -110,6 +114,10 @@ describe("SynapseBridge", function() {
                 makeTestCase(ChainId.ETH,       Tokens.NUSD, ChainId.MOONRIVER, Tokens.FRAX, false),
                 makeTestCase(ChainId.MOONRIVER, Tokens.FRAX, ChainId.ETH,       Tokens.FRAX, true),
                 makeTestCase(ChainId.ETH,       Tokens.FRAX, ChainId.MOONRIVER, Tokens.FRAX, true),
+                makeTestCase(ChainId.ETH,       Tokens.ETH,  ChainId.OPTIMISM,  Tokens.NETH, true),
+                makeTestCase(ChainId.ETH,       Tokens.ETH,  ChainId.OPTIMISM,  Tokens.ETH,  true),
+                makeTestCase(ChainId.OPTIMISM,  Tokens.ETH,  ChainId.ETH,       Tokens.ETH,  true),
+                makeTestCase(ChainId.OPTIMISM,  Tokens.ETH,  ChainId.ETH,       Tokens.NETH, true),
             ];
 
             testCases.forEach(({ args, expected }) => {
@@ -248,6 +256,28 @@ describe("SynapseBridge", function() {
                         tokenFrom:   Tokens.SYN,
                         tokenTo:     Tokens.SYN,
                         amountFrom:  Tokens.SYN.valueToWei("250", ChainId.ETH),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.OPTIMISM,
+                        chainIdTo:   ChainId.ETH,
+                        tokenFrom:   Tokens.NETH,
+                        tokenTo:     Tokens.NETH,
+                        amountFrom:  Tokens.NETH.valueToWei("250", ChainId.OPTIMISM),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.ETH,
+                        chainIdTo:   ChainId.OPTIMISM,
+                        tokenFrom:   Tokens.ETH,
+                        tokenTo:     Tokens.NETH,
+                        amountFrom:  Tokens.NETH.valueToWei("2500", ChainId.ETH),
                     },
                     notZero:   true,
                     wantError: false,

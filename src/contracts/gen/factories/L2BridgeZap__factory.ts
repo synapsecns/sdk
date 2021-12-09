@@ -468,6 +468,74 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "chainId",
+        type: "uint256",
+      },
+      {
+        internalType: "contract IERC20",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "uint8",
+        name: "tokenIndexFrom",
+        type: "uint8",
+      },
+      {
+        internalType: "uint8",
+        name: "tokenIndexTo",
+        type: "uint8",
+      },
+      {
+        internalType: "uint256",
+        name: "dx",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "minDy",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "deadline",
+        type: "uint256",
+      },
+      {
+        internalType: "uint8",
+        name: "swapTokenIndexFrom",
+        type: "uint8",
+      },
+      {
+        internalType: "uint8",
+        name: "swapTokenIndexTo",
+        type: "uint8",
+      },
+      {
+        internalType: "uint256",
+        name: "swapMinDy",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "swapDeadline",
+        type: "uint256",
+      },
+    ],
+    name: "swapETHAndRedeemAndSwap",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "",
         type: "address",
       },

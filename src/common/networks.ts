@@ -5,7 +5,12 @@ import {Token} from "../token";
 
 import {BigNumberish} from "@ethersproject/bignumber";
 
-const ETH_TOKEN_CHAINS = [ChainId.ETH, ChainId.BOBA, ChainId.ARBITRUM];
+const ETH_TOKEN_CHAINS = [
+    ChainId.ETH,
+    ChainId.OPTIMISM,
+    ChainId.BOBA,
+    ChainId.ARBITRUM,
+];
 
 export namespace Networks {
     export class Network {
@@ -55,30 +60,32 @@ export namespace Networks {
     }
 
     export const ETH = new Network({
-        name:        "Ethereum Mainnet",
-        names:      ["eth", "mainnet"],
-        chainId:      ChainId.ETH,
+        name:          "Ethereum Mainnet",
+        chainId:       ChainId.ETH,
         chainCurrency: "ETH"
     });
 
+    export const OPTIMISM = new Network({
+        name:          "Optimism",
+        chainId:       ChainId.OPTIMISM,
+        chainCurrency: "ETH"
+    })
+
     export const BSC = new Network({
-        name:        "Binance Smart Chain",
-        names:      ["smart chain", "bsc"],
-        chainId:      ChainId.BSC,
+        name:          "Binance Smart Chain",
+        chainId:       ChainId.BSC,
         chainCurrency: "BNB",
     });
 
     export const POLYGON = new Network({
-        name:        "Polygon",
-        names:      ["poly", "matic"],
-        chainId:      ChainId.POLYGON,
+        name:          "Polygon",
+        chainId:       ChainId.POLYGON,
         chainCurrency: "MATIC",
     });
 
     export const FANTOM = new Network({
-        name:        "Fantom",
-        names:      ["ftm"],
-        chainId:      ChainId.FANTOM,
+        name:          "Fantom",
+        chainId:       ChainId.FANTOM,
         chainCurrency: "FTM",
     });
 
@@ -95,27 +102,26 @@ export namespace Networks {
     });
 
     export const ARBITRUM = new Network({
-        name:        "Arbitrum",
-        names:       ["arbi", "arb"],
-        chainId:      ChainId.ARBITRUM,
+        name:          "Arbitrum",
+        chainId:       ChainId.ARBITRUM,
         chainCurrency: "ETH",
     });
 
     export const AVALANCHE = new Network({
-        name:        "Avalanche C-Chain",
-        names:       ["avalanche", "avax"],
-        chainId:      ChainId.AVALANCHE,
+        name:          "Avalanche C-Chain",
+        chainId:       ChainId.AVALANCHE,
         chainCurrency: "AVAX",
     });
 
     export const HARMONY = new Network({
-        name:        "Harmony",
-        chainId:      ChainId.HARMONY,
+        name:          "Harmony",
+        chainId:       ChainId.HARMONY,
         chainCurrency: "ONE",
     });
 
     const CHAINID_NETWORK_MAP: {[c:number]:Network} = {
         [ChainId.ETH]:        ETH,
+        [ChainId.OPTIMISM]:   OPTIMISM,
         [ChainId.BSC]:        BSC,
         [ChainId.POLYGON]:    POLYGON,
         [ChainId.FANTOM]:     FANTOM,

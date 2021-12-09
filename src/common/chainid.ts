@@ -2,6 +2,7 @@ import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
 export namespace ChainId {
     export const ETH:       number = 1;
+    export const OPTIMISM:  number = 10;
     export const BSC:       number = 56;
     export const POLYGON:   number = 137;
     export const FANTOM:    number = 250;
@@ -20,9 +21,10 @@ export namespace ChainId {
     }
 
     export const supportedChainIds = (): number[] => [
-        ETH,      BSC,       POLYGON,
-        FANTOM,   BOBA,      MOONRIVER,
-        ARBITRUM, AVALANCHE, HARMONY
+        ETH,       OPTIMISM,  BSC,
+        POLYGON,   FANTOM,    BOBA,
+        MOONRIVER, ARBITRUM,  AVALANCHE,
+        HARMONY,
     ]
 }
 
