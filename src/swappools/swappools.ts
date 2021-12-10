@@ -24,8 +24,9 @@ export namespace SwapPools {
 
         readonly swapEthAddresses: {[chainid: number]: string};
         readonly swapAddresses: {[chainid: number]: string} = {};
-        readonly poolTokens:   Token[];
-        readonly nativeTokens: Token[];
+        readonly poolTokens:    Token[];
+        readonly nativeTokens:  Token[];
+        readonly depositTokens: Token[];
 
         constructor(args: {
             name:      string,
@@ -37,8 +38,9 @@ export namespace SwapPools {
             poolType:  string,
             swapAddresses: {[chainid: number]: string},
             swapEthAddresses?: {[chainid: number]: string},
-            poolTokens:    Token[],
-            nativeTokens?: Token[],
+            poolTokens:     Token[],
+            nativeTokens?:  Token[],
+            depositTokens?: Token[],
         }) {
             this.baseToken = new Token({
                 name:      args.name,
@@ -59,6 +61,10 @@ export namespace SwapPools {
             }
             if (args.nativeTokens) {
                 this.nativeTokens = args.nativeTokens;
+            }
+
+            if (args.depositTokens) {
+                this.depositTokens = args.depositTokens;
             }
         }
 
@@ -91,6 +97,10 @@ export namespace SwapPools {
         }
 
         get poolTokensForBridgeSwaps(): Token[] {
+            if (this.depositTokens?.length > 0) {
+                return moveFirstToLast(this.depositTokens)
+            }
+
             return moveFirstToLast(this.poolTokens);
         }
     }
@@ -177,6 +187,27 @@ export namespace SwapPools {
             [ChainId.AVALANCHE]: '0xED2a7edd7413021d440b09D654f3b87712abAB66',
         },
         poolTokens: [Tokens.NUSD, Tokens.DAI, Tokens.USDC, Tokens.USDT]
+    });
+
+    export const AVALANCHE_ETH_SWAP_TOKEN = new SwapToken({
+        addresses: {
+            [ChainId.AVALANCHE]: '0xD70A52248e546A3B260849386410C7170c7BD1E9',
+        },
+        decimals:      18,
+        symbol:        'nETH-LP',                         // make sure this gets update to match conytract
+        name:          'Synapse Eth LP Token Avalanche',
+        poolName:      'Avalanche ETH Pool',
+        poolId:        2,
+        poolType:      'ETH',
+        swapAddresses: {
+            [ChainId.AVALANCHE]: '0x77a7e60555bC18B4Be44C181b2575eee46212d44',
+        },
+        swapEthAddresses: {
+            [ChainId.AVALANCHE]: '0xdd60483Ace9B215a7c019A44Be2F22Aa9982652E',
+        },
+        poolTokens:    [Tokens.NETH, Tokens.AVWETH],
+        nativeTokens:  [Tokens.NETH, Tokens.WETH_E],
+        depositTokens: [Tokens.NETH, Tokens.WETH_E],
     });
 
     export const ARBITRUM_POOL_SWAP_TOKEN = new SwapToken({
@@ -271,7 +302,7 @@ export namespace SwapPools {
         symbol:        'nETH-LP',                         // make sure this gets update to match conytract
         name:          'Synapse Eth LP Token Boba',
         poolName:      'Boba ETH Pool',
-        poolId:        0,
+        poolId:        2,
         poolType:      'ETH',
         swapAddresses: {
             [ChainId.BOBA]: '0xaB1EB0B9a0124D89445a547366C9eD61a5180E43',
@@ -340,6 +371,7 @@ export namespace SwapPools {
             [SwapType.USD]: [...AVALANCHE_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.SYN]: [Tokens.SYN],
             [SwapType.NFD]: [Tokens.NFD],
+            [SwapType.ETH]: [...AVALANCHE_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps],
         },
         [ChainId.HARMONY]: {
             [SwapType.USD]: [...HARMONY_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
@@ -403,6 +435,7 @@ export namespace SwapPools {
         },
         [ChainId.AVALANCHE]: {
             [SwapType.USD]: AVALANCHE_POOL_SWAP_TOKEN,
+            [SwapType.ETH]: AVALANCHE_ETH_SWAP_TOKEN,
             ...synPoolTokens,
             ...nfdPoolTokens,
         },
@@ -431,6 +464,10 @@ export interface NetworkSwappableTokensMap {
     [c: number]: Token[]
 }
 
+export interface AllNetworksSwappableTokensMap {
+    [c: number]: NetworkSwappableTokensMap
+}
+
 function filterGrps(chainAGrps: string[], chainBGrpsMap: SwapPools.SwapGroupTokenMap): Token[] {
     let tokens: Token[] = [];
 
@@ -443,6 +480,20 @@ function filterGrps(chainAGrps: string[], chainBGrpsMap: SwapPools.SwapGroupToke
     return tokens
 }
 
+function swapGroupsLoop(chainIdA: number, swapGrps: string[]): NetworkSwappableTokensMap {
+    let res: NetworkSwappableTokensMap = {}
+
+    ChainId.supportedChainIds().forEach((chainId: number) => {
+        if (chainIdA === chainId) {
+            return
+        }
+
+        res[chainId] = filterGrps(swapGrps, SwapPools.bridgeSwappableTokensByType[chainId]);
+    })
+
+    return res
+}
+
 export function swappableTokens(chainIdA: number, chainIdB?: number): NetworkSwappableTokensMap {
     let res: NetworkSwappableTokensMap = {};
 
@@ -451,14 +502,20 @@ export function swappableTokens(chainIdA: number, chainIdB?: number): NetworkSwa
     if (typeof chainIdB !== 'undefined') {
         res[chainIdB] = filterGrps(swapGrpsA, SwapPools.bridgeSwappableTokensByType[chainIdB]);
     } else {
-        ChainId.supportedChainIds().forEach((chainId: number) => {
-            if (chainId === chainIdA) {
-                return
-            }
-
-            res[chainId] = filterGrps(swapGrpsA, SwapPools.bridgeSwappableTokensByType[chainId]);
-        })
+        res = swapGroupsLoop(chainIdA, swapGrpsA);
     }
+
+    return res
+}
+
+export function swappableTokensAllNetworks(): AllNetworksSwappableTokensMap {
+    let res: AllNetworksSwappableTokensMap = {};
+
+    ChainId.supportedChainIds().forEach((chainIdA: number) => {
+        const swapGrpsA: string[] = SwapPools.swapGroupsForNetwork(chainIdA);
+
+        res[chainIdA] = swapGroupsLoop(chainIdA, swapGrpsA);
+    })
 
     return res
 }

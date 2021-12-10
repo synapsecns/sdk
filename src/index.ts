@@ -8,7 +8,7 @@ import {SynapseEntities} from "./entities";
 
 export const {
     synapseBridge,
-    nerveBridgeZap,
+    l1BridgeZap,
     l2BridgeZap,
 } = SynapseEntities;
 
@@ -30,13 +30,13 @@ export {Token} from "./token";
 
 export {Tokens} from "./tokens";
 
-export {SwapPools, swappableTokens} from "./swappools";
+export {SwapPools, swappableTokens, swappableTokensAllNetworks} from "./swappools";
 export type {NetworkSwappableTokensMap} from "./swappools";
 
 export type {
     SynapseBridgeContract,
     GenericZapBridgeContract,
-    NerveBridgeZapContract,
+    L1BridgeZapContract,
     L2BridgeZapContract,
     SynapseERC20Contract,
     BridgeConfigContract

@@ -129,6 +129,26 @@ export namespace Tokens {
         swapType: SwapType.ETH
     });
 
+    export const WETH_E: Token = new Token({
+        name:     "Wrapped Ether",
+        symbol:   "WETH.e",
+        decimals: 18,
+        addresses: {
+            [ChainId.AVALANCHE]: "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
+        },
+        swapType: SwapType.ETH,
+    })
+
+    export const AVWETH: Token = new Token({
+        name:     "AAVE Wrapped Ether",
+        symbol:   "AVWETH",
+        decimals: 18,
+        addresses: {
+            [ChainId.AVALANCHE]: "0x53f7c5869a859f0aec3d334ee8b4cf01e3492f21",
+        },
+        swapType: SwapType.ETH,
+    })
+
     export const SYN: Token = new Token({
         name:        'Synapse',
         symbol:      'SYN',
@@ -176,9 +196,10 @@ export namespace Tokens {
         symbol:      'nETH',
         decimals:    18,
         addresses: {
-            [ChainId.OPTIMISM]: '0x809DC529f07651bD43A172e8dB6f4a7a0d771036',
-            [ChainId.BOBA]:     '0x96419929d7949D6A801A6909c145C8EEf6A40431',
-            [ChainId.ARBITRUM]: '0x3ea9B0ab55F34Fb188824Ee288CeaEfC63cf908e'
+            [ChainId.OPTIMISM]:  '0x809DC529f07651bD43A172e8dB6f4a7a0d771036',
+            [ChainId.BOBA]:      '0x96419929d7949D6A801A6909c145C8EEf6A40431',
+            [ChainId.ARBITRUM]:  '0x3ea9B0ab55F34Fb188824Ee288CeaEfC63cf908e',
+            [ChainId.AVALANCHE]: '0x19E1ae0eE35c0404f835521146206595d37981ae',
         },
         swapType: SwapType.ETH
     });
