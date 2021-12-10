@@ -10,6 +10,7 @@ const ETH_TOKEN_CHAINS = [
     ChainId.OPTIMISM,
     ChainId.BOBA,
     ChainId.ARBITRUM,
+    ChainId.AVALANCHE,
 ];
 
 export namespace Networks {
