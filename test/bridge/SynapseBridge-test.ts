@@ -92,7 +92,7 @@ describe("SynapseBridge", function() {
                 makeTestCase(ChainId.ETH,       Tokens.DAI,  ChainId.BSC,       Tokens.USDC, true),
                 makeTestCase(ChainId.ETH,       Tokens.ETH,  ChainId.BSC,       Tokens.USDC, false),
                 makeTestCase(ChainId.ARBITRUM,  Tokens.WETH, ChainId.ETH,       Tokens.ETH,  true),
-                makeTestCase(ChainId.ARBITRUM,  Tokens.WETH, ChainId.AVALANCHE, Tokens.ETH,  false),
+                makeTestCase(ChainId.ARBITRUM,  Tokens.WETH, ChainId.AVALANCHE, Tokens.ETH,  true),
                 makeTestCase(ChainId.AVALANCHE, Tokens.SYN,  ChainId.BSC,       Tokens.SYN,  true),
                 makeTestCase(ChainId.POLYGON,   Tokens.MIM,  ChainId.BSC,       Tokens.USDT, false),
                 makeTestCase(ChainId.FANTOM,    Tokens.MIM,  ChainId.BSC,       Tokens.USDT, true),
