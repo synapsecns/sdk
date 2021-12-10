@@ -319,13 +319,13 @@ describe("SynapseBridge", function() {
         })
     })
 
-    describe("bridge tokens tests", async function(this: Mocha.Suite) {
+    describe.skip("bridge tokens tests", async function(this: Mocha.Suite) {
         const
             tokenFrom      = Tokens.ETH,
-            tokenTo        = Tokens.WETH_E,
-            chainIdFrom    = ChainId.OPTIMISM,
-            chainIdTo      = ChainId.AVALANCHE,
-            amountFrom     = parseEther("0.02"),
+            tokenTo        = Tokens.ETH,
+            chainIdFrom    = ChainId.ETH,
+            chainIdTo      = ChainId.OPTIMISM,
+            amountFrom     = parseEther("0.022"),
             bridgeArgs     = {tokenFrom, tokenTo, chainIdFrom, chainIdTo, amountFrom},
             wallet         = makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey),
             addressTo      = await wallet.getAddress(),
