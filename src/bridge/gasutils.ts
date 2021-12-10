@@ -12,6 +12,7 @@ export namespace GasUtils {
 
     const ETH_GAS_PARAMS: GasParams = {
         maxPriorityFee: parseUnits("1.5", "gwei"),
+        bridgeGasLimit: BigNumber.from(100000)
     };
 
     const BOBA_GAS_PARAMS: GasParams = {
