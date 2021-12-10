@@ -951,9 +951,12 @@ export namespace Bridge {
 
                 if (tokB.isEqual(Tokens.WETH_E)) {
                     compareTok = Tokens.AVWETH;
-                } else if (tokB.isEqual(Tokens.ETH)) {
-                    compareTok = Tokens.WETH;
-                }
+                } // We can remove this because `maybeEth2Weth` converts 
+                  // `Tokens.ETH` to `Tokens.WETH` so code never sanely reaches
+                  // here, thus dead code!  
+                  // else if (tokB.isEqual(Tokens.ETH)) {
+                  //    compareTok = Tokens.WETH;
+                  //}
 
                 return tokA.isEqual(compareTok)
             }
