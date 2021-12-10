@@ -16,6 +16,7 @@
   "scripts": {
     "setup": "yarn && yarn run typegen",
     "test": "mocha",
+    "coverage": "c8 mocha",
     "prebuild": "rm -rf ./dist",
     "build": "tsc",
     "prebuild:esbuild": "rm -rf ./dist",
@@ -43,6 +44,7 @@
     "@types/expect": "^24.3.0",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.11.4",
+    "c8": "^7.10.0",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "esbuild": "^0.13.13",
