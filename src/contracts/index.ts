@@ -1,17 +1,17 @@
 import type {
     SynapseBridge as SynapseBridgeContract,
-    NerveBridgeZap as NerveBridgeZapContract,
+    L1BridgeZap as L1BridgeZapContract,
     L2BridgeZap as L2BridgeZapContract,
     SynapseERC20 as SynapseERC20Contract,
     BridgeConfig as BridgeConfigContract,
     ERC20 as ERC20Contract
 } from "./gen";
 
-type GenericZapBridgeContract = NerveBridgeZapContract | L2BridgeZapContract;
+type GenericZapBridgeContract = L1BridgeZapContract | L2BridgeZapContract;
 
 export type {
     SynapseBridgeContract,
-    NerveBridgeZapContract,
+    L1BridgeZapContract,
     L2BridgeZapContract,
     SynapseERC20Contract,
     BridgeConfigContract,
@@ -21,7 +21,7 @@ export type {
 
 export {
     SynapseBridge__factory as SynapseBridgeFactory,
-    NerveBridgeZap__factory as NerveBridgeZapFactory,
+    L1BridgeZap__factory as L1BridgeZapFactory,
     L2BridgeZap__factory as L2BridgeZapFactory,
     SynapseERC20__factory as SynapseERC20Factory,
     BridgeConfig__factory as BridgeConfigFactory,

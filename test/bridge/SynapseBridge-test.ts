@@ -24,6 +24,7 @@ import {
     PROVIDER_OPTIMISM,
     makeWalletSignerWithProvider,
 } from "../helpers";
+import {parseEther} from "@ethersproject/units";
 
 // Completely clean privkey with low balances.
 const bridgeTestPrivkey: string = "67544261a018b8a4e55261b3a30a018ebf83f508a5c87898b03eef57ea0a30d5";
@@ -211,7 +212,7 @@ describe("SynapseBridge", function() {
                         chainIdTo:   ChainId.BOBA,
                         tokenFrom:   Tokens.USDC,
                         tokenTo:     Tokens.USDT,
-                        amountFrom:  Tokens.USDC.valueToWei("35", ChainId.BSC),
+                        amountFrom:  Tokens.USDC.valueToWei("500", ChainId.BSC),
                     },
                     notZero:   true,
                     wantError: false,
@@ -318,22 +319,16 @@ describe("SynapseBridge", function() {
         })
     })
 
-    describe.skip("bridge tokens tests", function(this: Mocha.Suite) {
-        let addressTo: string;
-
-        before(async function() {
-            addressTo = await wallet.getAddress();
-            // console.log(addressTo);
-        })
-
+    describe.skip("bridge tokens tests", async function(this: Mocha.Suite) {
         const
-            tokenFrom      = Tokens.USDT,
-            tokenTo        = Tokens.USDT,
-            chainIdFrom    = ChainId.AVALANCHE,
-            chainIdTo      = ChainId.BOBA,
-            amountFrom     = tokenFrom.valueToWei(50, chainIdFrom),
+            tokenFrom      = Tokens.ETH,
+            tokenTo        = Tokens.ETH,
+            chainIdFrom    = ChainId.ETH,
+            chainIdTo      = ChainId.OPTIMISM,
+            amountFrom     = parseEther("0.022"),
             bridgeArgs     = {tokenFrom, tokenTo, chainIdFrom, chainIdTo, amountFrom},
             wallet         = makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey),
+            addressTo      = await wallet.getAddress(),
             bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
 
         let
@@ -369,6 +364,10 @@ describe("SynapseBridge", function() {
 
 
             step("approval transaction should be populated successfully", async function(this: Mocha.Context, done: Done) {
+                if (tokenFrom.isEqual(Tokens.ETH)) {
+                    done();
+                    return
+                }
                 this.timeout(5*1000);
 
                 try {
@@ -380,6 +379,10 @@ describe("SynapseBridge", function() {
             })
 
             step("approval transaction should be sent successfully", async function(this: Mocha.Context, done: Done) {
+                if (tokenFrom.isEqual(Tokens.ETH)) {
+                    done();
+                    return
+                }
                 this.timeout(180*1000);
 
                 let txn: TransactionResponse;

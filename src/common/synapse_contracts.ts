@@ -22,14 +22,14 @@ export namespace SynapseContracts {
             this.bridge     = { address: bridge, abi: ABIs.SynapseBridge };
             this.bridge_zap = {
                 address: bridge_zap,
-                abi: isEthMainnet ? ABIs.NerveBridgeZap : ABIs.L2BridgeZap,
+                abi: isEthMainnet ? ABIs.L1BridgeZap : ABIs.L2BridgeZap,
             };
         }
     }
 
     export const Ethereum = new SynapseContract({
         bridge:       "0x2796317b0fF8538F253012862c06787Adfb8cEb6",
-        bridge_zap:   "0xa2569370A9D4841c9a62Fc51269110F2eB7E0171",
+        bridge_zap:   "0x6571d6be3d8460CF5F7d6711Cd9961860029D85F",
         isEthMainnet: true,
     });
 
@@ -55,7 +55,7 @@ export namespace SynapseContracts {
 
     export const Boba = new SynapseContract({
         bridge:     "0x432036208d2717394d2614d6697c46DF3Ed69540",
-        bridge_zap: "0xFE986b20d34df3Aa9fA2e4d18b8EBe5AC6c753b0",
+        bridge_zap: "0x64B4097bCCD27D49BC2A081984C39C3EeC427a2d",
     });
 
     export const Moonriver = new SynapseContract(({
@@ -65,12 +65,12 @@ export namespace SynapseContracts {
 
     export const Arbitrum = new SynapseContract({
         bridge:     "0x6F4e8eBa4D337f874Ab57478AcC2Cb5BACdc19c9",
-        bridge_zap: "0x375E9252625bDB10B457909157548E1d047089f9",
+        bridge_zap: "0x26532682E1830cDACcCbb7e385Cff6de14dD08D8",
     });
 
     export const Avalanche = new SynapseContract({
         bridge:     "0xC05e61d0E7a63D27546389B7aD62FdFf5A91aACE",
-        bridge_zap: "0x997108791D5e7c0ce2a9A4AAC89427C68E345173",
+        bridge_zap: "0x407Bc506E6F262A0A1F2ea0cC4d66e3bEe29D577",
     });
 
     export const Harmony = new SynapseContract({

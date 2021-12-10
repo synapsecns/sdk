@@ -1,8 +1,8 @@
 import {
     SynapseBridgeContract,
     SynapseBridgeFactory,
-    NerveBridgeZapContract,
-    NerveBridgeZapFactory,
+    L1BridgeZapContract,
+    L1BridgeZapFactory,
     L2BridgeZapContract,
     L2BridgeZapFactory,
 } from "../contracts";
@@ -19,7 +19,7 @@ export const newSynapseBridgeInstance = (params: {
 export const newNerveBridgeZapInstance = (params: {
     address: string,
     signerOrProvider?: SignerOrProvider
-}): NerveBridgeZapContract => NerveBridgeZapFactory.connect(params.address, params.signerOrProvider);
+}): L1BridgeZapContract => L1BridgeZapFactory.connect(params.address, params.signerOrProvider);
 
 
 export const newL2BridgeZapInstance = (params: {
