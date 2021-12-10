@@ -3,7 +3,12 @@ import {before, Done} from "mocha";
 
 import {
     ChainId,
-    Networks, NetworkSwappableTokensMap, swappableTokens, Token, Tokens,
+    Networks,
+    NetworkSwappableTokensMap,
+    swappableTokens,
+    swappableTokensAllNetworks,
+    Token,
+    Tokens,
 } from "../../src";
 
 describe("Basic tests", function(this: Mocha.Suite) {
@@ -22,7 +27,8 @@ describe("Basic tests", function(this: Mocha.Suite) {
             chainA = ChainId.ETH,
             chainB = ChainId.BSC,
             resA = swappableTokens(chainA, chainB),
-            resB = swappableTokens(chainA);
+            resB = swappableTokens(chainA),
+            resC = swappableTokensAllNetworks();
 
         const symbolsForChain = (m: NetworkSwappableTokensMap, c: number): string[] => m[c].map((t: Token) => t.symbol)
 
@@ -41,6 +47,11 @@ describe("Basic tests", function(this: Mocha.Suite) {
                 expect(symbolsForChain(resB, ChainId.ARBITRUM)).to.include(Tokens.NETH.symbol);
                 expect(symbolsForChain(resB, ChainId.BOBA)).to.include(Tokens.NETH.symbol);
             })
+        })
+
+        describe("Check result of swappableTokensAllNetworks", function(this: Mocha.Suite) {
+            before(() => console.log(resC))
+            it("should have 10 map entries", () => expect(Object.keys(resC)).to.have.a.lengthOf(10))
         })
     })
 })

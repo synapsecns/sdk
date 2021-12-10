@@ -355,7 +355,7 @@ describe("SynapseBridge", function() {
                 .catch((e) => doneWithError(e, done))
         });
 
-        describe("test using transaction builders", function(this: Mocha.Suite) {
+        describe.skip("test using transaction builders", function(this: Mocha.Suite) {
             let
                 approvalTxn:     PopulatedTransaction,
                 bridgeTxn:       PopulatedTransaction,

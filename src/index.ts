@@ -30,7 +30,7 @@ export {Token} from "./token";
 
 export {Tokens} from "./tokens";
 
-export {SwapPools, swappableTokens} from "./swappools";
+export {SwapPools, swappableTokens, swappableTokensAllNetworks} from "./swappools";
 export type {NetworkSwappableTokensMap} from "./swappools";
 
 export type {

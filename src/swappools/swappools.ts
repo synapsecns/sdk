@@ -464,6 +464,10 @@ export interface NetworkSwappableTokensMap {
     [c: number]: Token[]
 }
 
+export interface AllNetworksSwappableTokensMap {
+    [c: number]: NetworkSwappableTokensMap
+}
+
 function filterGrps(chainAGrps: string[], chainBGrpsMap: SwapPools.SwapGroupTokenMap): Token[] {
     let tokens: Token[] = [];
 
@@ -476,6 +480,20 @@ function filterGrps(chainAGrps: string[], chainBGrpsMap: SwapPools.SwapGroupToke
     return tokens
 }
 
+function swapGroupsLoop(chainIdA: number, swapGrps: string[]): NetworkSwappableTokensMap {
+    let res: NetworkSwappableTokensMap = {}
+
+    ChainId.supportedChainIds().forEach((chainId: number) => {
+        if (chainIdA === chainId) {
+            return
+        }
+
+        res[chainId] = filterGrps(swapGrps, SwapPools.bridgeSwappableTokensByType[chainId]);
+    })
+
+    return res
+}
+
 export function swappableTokens(chainIdA: number, chainIdB?: number): NetworkSwappableTokensMap {
     let res: NetworkSwappableTokensMap = {};
 
@@ -484,14 +502,20 @@ export function swappableTokens(chainIdA: number, chainIdB?: number): NetworkSwa
     if (typeof chainIdB !== 'undefined') {
         res[chainIdB] = filterGrps(swapGrpsA, SwapPools.bridgeSwappableTokensByType[chainIdB]);
     } else {
-        ChainId.supportedChainIds().forEach((chainId: number) => {
-            if (chainId === chainIdA) {
-                return
-            }
-
-            res[chainId] = filterGrps(swapGrpsA, SwapPools.bridgeSwappableTokensByType[chainId]);
-        })
+        res = swapGroupsLoop(chainIdA, swapGrpsA);
     }
+
+    return res
+}
+
+export function swappableTokensAllNetworks(): AllNetworksSwappableTokensMap {
+    let res: AllNetworksSwappableTokensMap = {};
+
+    ChainId.supportedChainIds().forEach((chainIdA: number) => {
+        const swapGrpsA: string[] = SwapPools.swapGroupsForNetwork(chainIdA);
+
+        res[chainIdA] = swapGroupsLoop(chainIdA, swapGrpsA);
+    })
 
     return res
 }
