@@ -37,5 +37,5 @@ process_abi () {
 process_abi "contracts/bridge/SynapseBridge.sol" "SynapseBridge"
 process_abi "contracts/bridge/SynapseERC20.sol" "SynapseERC20"
 process_abi "contracts/bridge/wrappers/L2BridgeZap.sol" "L2BridgeZap"
-process_abi "contracts/bridge/wrappers/NerveBridgeZap.sol" "NerveBridgeZap"
+process_abi "contracts/bridge/wrappers/L1BridgeZap.sol" "L1BridgeZap"
 process_abi "contracts/bridge/BridgeConfig.sol" "BridgeConfig"

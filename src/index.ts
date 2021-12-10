@@ -8,7 +8,7 @@ import {SynapseEntities} from "./entities";
 
 export const {
     synapseBridge,
-    nerveBridgeZap,
+    l1BridgeZap,
     l2BridgeZap,
 } = SynapseEntities;
 
@@ -36,7 +36,7 @@ export type {NetworkSwappableTokensMap} from "./swappools";
 export type {
     SynapseBridgeContract,
     GenericZapBridgeContract,
-    NerveBridgeZapContract,
+    L1BridgeZapContract,
     L2BridgeZapContract,
     SynapseERC20Contract,
     BridgeConfigContract

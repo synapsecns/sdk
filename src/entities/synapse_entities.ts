@@ -3,8 +3,8 @@ import {contractAddressFor} from "../common/utils";
 import {
     SynapseBridgeContract,
     SynapseBridgeFactory,
-    NerveBridgeZapContract,
-    NerveBridgeZapFactory,
+    L1BridgeZapContract,
+    L1BridgeZapFactory,
     L2BridgeZapContract,
     L2BridgeZapFactory,
     BridgeConfigContract,
@@ -29,12 +29,12 @@ export namespace SynapseEntities {
         return SynapseBridgeFactory.connect(address, params.signerOrProvider);
     }
 
-    export function nerveBridgeZap(params: {
+    export function l1BridgeZap(params: {
         chainId: number,
         signerOrProvider?: SignerOrProvider
-    }): NerveBridgeZapContract {
+    }): L1BridgeZapContract {
         const address: string = contractAddressFor(params.chainId, "bridge_zap");
-        return NerveBridgeZapFactory.connect(address, params.signerOrProvider);
+        return L1BridgeZapFactory.connect(address, params.signerOrProvider);
     }
 
     export function l2BridgeZap(params: {

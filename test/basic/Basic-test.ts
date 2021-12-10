@@ -36,7 +36,7 @@ describe("Basic tests", function(this: Mocha.Suite) {
         })
 
         describe("Check result of one input", function(this: Mocha.Suite) {
-            it("should have more than one map entry", () => expect(Object.keys(resA)).length.to.be.gte(1));
+            it("should have more than one map entry", () => expect(Object.keys(resB)).length.to.be.gte(1));
             it("should have nETH on BOBA and Arbitrum", () => {
                 expect(symbolsForChain(resB, ChainId.ARBITRUM)).to.include(Tokens.NETH.symbol);
                 expect(symbolsForChain(resB, ChainId.BOBA)).to.include(Tokens.NETH.symbol);

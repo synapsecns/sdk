@@ -3,14 +3,14 @@
 /* eslint-disable */
 export type { BridgeConfig } from "./BridgeConfig";
 export type { ERC20 } from "./ERC20";
+export type { L1BridgeZap } from "./L1BridgeZap";
 export type { L2BridgeZap } from "./L2BridgeZap";
-export type { NerveBridgeZap } from "./NerveBridgeZap";
 export type { SynapseBridge } from "./SynapseBridge";
 export type { SynapseERC20 } from "./SynapseERC20";
 
 export { BridgeConfig__factory } from "./factories/BridgeConfig__factory";
 export { ERC20__factory } from "./factories/ERC20__factory";
+export { L1BridgeZap__factory } from "./factories/L1BridgeZap__factory";
 export { L2BridgeZap__factory } from "./factories/L2BridgeZap__factory";
-export { NerveBridgeZap__factory } from "./factories/NerveBridgeZap__factory";
 export { SynapseBridge__factory } from "./factories/SynapseBridge__factory";
 export { SynapseERC20__factory } from "./factories/SynapseERC20__factory";

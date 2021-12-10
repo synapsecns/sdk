@@ -1,4 +1,3 @@
-import {parseUnits} from "@ethersproject/units";
 import {Signer} from "@ethersproject/abstract-signer";
 import {Provider} from "@ethersproject/providers";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
@@ -14,12 +13,9 @@ import {
 
 import {ChainId} from "../common";
 
+import {GasUtils} from "./gasutils";
 
-export const
-    ETH_MAX_PRIORITY_FEE   = parseUnits("1.5", "gwei"),
-    BOBA_GAS_PRICE         = parseUnits("10", "gwei"),
-    BOBA_APPROVE_GAS_LIMIT = BigNumber.from(60000),
-    MAX_APPROVAL_AMOUNT    = BigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+export const MAX_APPROVAL_AMOUNT = BigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
 
 export namespace ERC20 {
@@ -59,14 +55,18 @@ export namespace ERC20 {
 
             return this.instance.populateTransaction.approve(spender, amount)
                 .then((txn) => {
-                    switch (this.chainId) {
-                        case ChainId.ETH:
-                            txn.maxPriorityFeePerGas = ETH_MAX_PRIORITY_FEE;
-                            break;
-                        case ChainId.BOBA:
-                            txn.gasLimit = BOBA_APPROVE_GAS_LIMIT;
-                            txn.gasPrice = BOBA_GAS_PRICE;
-                            break;
+                    let {maxPriorityFee, gasPrice, approveGasLimit} = GasUtils.makeGasParams(this.chainId);
+
+                    if (maxPriorityFee) {
+                        txn.maxPriorityFeePerGas = maxPriorityFee;
+                    }
+
+                    if (gasPrice) {
+                        txn.gasPrice = gasPrice;
+                    }
+
+                    if (approveGasLimit) {
+                        txn.gasLimit = approveGasLimit;
                     }
 
                     return txn
