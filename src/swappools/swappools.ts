@@ -347,6 +347,7 @@ export namespace SwapPools {
             [SwapType.USD]: [...POLYGON_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.SYN]: [Tokens.SYN],
             [SwapType.NFD]: [Tokens.NFD],
+            [SwapType.DOG]:   [Tokens.DOG],
         },
         [ChainId.FANTOM]: {
             [SwapType.USD]:  [...FANTOM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
@@ -413,6 +414,7 @@ export namespace SwapPools {
             [SwapType.USD]: POLYGON_POOL_SWAP_TOKEN,
             ...synPoolTokens,
             ...nfdPoolTokens,
+            ...dogPoolTokens,
         },
         [ChainId.FANTOM]: {
             [SwapType.USD]: FANTOM_POOL_SWAP_TOKEN,
