@@ -49,7 +49,7 @@ export namespace Networks {
 
         /**
          * Returns true if the passed token is available on this network.
-         * @param {Token|string} token Either an instance of Token, or the address of a token contract.
+         * @param {Token|string} token Either an instance of {@link Token}, or the address of a token contract.
          */
         supportsToken(token: Token): boolean {
             if ((token.symbol === "ETH") && ETH_TOKEN_CHAINS.includes(this.chainId)) {
@@ -137,8 +137,8 @@ export namespace Networks {
 
     /**
      * Returns true if the passed network supports the passed token.
-     * @param {Network | BigNumberish} network Either a Network instance, or the Chain ID of a supported network.
-     * @param {Token | string} token Either a Token instance, or the address of a token contract.
+     * @param {Network | BigNumberish} network Either a {@link Network} instance, or the Chain ID of a supported network.
+     * @param {Token | string} token Either a {@link Token} instance, or the address of a token contract.
      */
     export function networkSupportsToken(network: Network | BigNumberish, token: Token): boolean {
         network = network instanceof Network ? network : fromChainId(network);

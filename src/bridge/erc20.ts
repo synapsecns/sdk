@@ -11,8 +11,6 @@ import {
     rejectPromise,
 } from "../common/utils";
 
-import {ChainId} from "../common";
-
 import {GasUtils} from "./gasutils";
 
 export const MAX_APPROVAL_AMOUNT = BigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");

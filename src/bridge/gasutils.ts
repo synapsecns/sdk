@@ -26,7 +26,6 @@ export namespace GasUtils {
     };
 
     const AVALANCHE_GAS_PARAMS: GasParams = {
-        // maxPriorityFee:  parseUnits("25", "gwei"),
         gasPrice:        parseUnits("150", "gwei"),
         bridgeGasLimit:  BigNumber.from(800000),
         approveGasLimit: BigNumber.from(75000),

@@ -53,8 +53,8 @@ export namespace Bridge {
     }
 
     /**
-     * @param {Token} tokenFrom Token user will send to the bridge on the source chain
-     * @param {Token} tokenTo Token user will receive from the bridge on the destination chain
+     * @param {Token} tokenFrom {@link Token} user will send to the bridge on the source chain
+     * @param {Token} tokenTo {@link Token} user will receive from the bridge on the destination chain
      * @param {number} chainIdTo Chain ID of the destination chain
      * @param {BigNumber} amountFrom not necessarily used by this interface, and overriden in BridgeParamsWithAmounts.
      */
@@ -145,8 +145,8 @@ export namespace Bridge {
         /**
          * Returns whether a swap/bridge from this Bridge's chain to another chain between two tokens
          * is supported.
-         * @param {Token} args.tokenFrom Token user will send to the bridge
-         * @param {Token} args.tokenTo Token user will receive from the bridge on the destination chain
+         * @param {Token} args.tokenFrom {@link Token} user will send to the bridge
+         * @param {Token} args.tokenTo {@link Token} user will receive from the bridge on the destination chain
          * @param {number} args.chainIdTo Chain ID of the destination chain
          * @return boolean value denoting whether the input params constitute a valid swap/bridge, along with a
          * string value denoting the reason for an unsupported swap, if applicable.
@@ -225,18 +225,6 @@ export namespace Bridge {
 
             args = {...args, tokenFrom, tokenTo};
 
-            // {
-            //     let
-            //         tokenFromAddr = args.tokenFrom.address(this.chainId),
-            //         hasAddr = this.network.tokenAddresses.includes(tokenFromAddr);
-            //
-            //     if (!hasAddr) {
-            //         return rejectPromise(
-            //             new Error(`unable to get contract address for token ${args.tokenFrom.symbol} for chain id ${this.chainId}`)
-            //         );
-            //     }
-            // }
-
             let newTxn: Promise<PopulatedTransaction> = this.chainId === ChainId.ETH
                 ? this.buildETHMainnetBridgeTxn(args, tokenArgs)
                 : this.buildL2BridgeTxn(args, tokenArgs);
@@ -266,7 +254,7 @@ export namespace Bridge {
          * Starts the Bridge process between this Bridge (the source chain) and the bridge contract on the destination chain.
          * Note that this function **does** send a signed transaction.
          * @param {BridgeTransactionParams} args Parameters for the bridge transaction.
-         * @param {Signer} signer Some instance which implements the Ethersjs Signer interface.
+         * @param {Signer} signer Some instance which implements the Ethersjs {@link Signer} interface.
          * @return {Promise<ContractTransaction>}
          */
         async executeBridgeTokenTransaction(args: BridgeTransactionParams, signer: Signer): Promise<ContractTransaction> {
@@ -308,7 +296,7 @@ export namespace Bridge {
          * framework so they can ultimately send the transaction.
          * Should ALWAYS be called before performing any bridge transactions to ensure they don't fail.
          * @param {Object} args
-         * @param {Token|string} args.token Token instance or valid on-chain address of the token the user will be sending
+         * @param {Token|string} args.token {@link Token} instance or valid on-chain address of the token the user will be sending
          * to the bridge on the source chain.
          * @param {BigNumberish} args.amount Optional, a specific amount of args.token to approve. By default, this function
          * builds an Approve call using an "infinite" approval amount.
@@ -331,7 +319,7 @@ export namespace Bridge {
          * framework so they can ultimately send the transaction.
          * Should ALWAYS be called before performing any bridge transactions to ensure they don't fail.
          * @param {Object} args
-         * @param {Token|string} args.token Token instance or valid on-chain address of the token the user will be sending
+         * @param {Token|string} args.token {@link Token} instance or valid on-chain address of the token the user will be sending
          * to the bridge on the source chain.
          * @param {BigNumberish} args.amount Optional, a specific amount of args.token to approve. By default, this function
          * @param {Signer} signer Valid ethers Signer instance for building a fully and properly populated
