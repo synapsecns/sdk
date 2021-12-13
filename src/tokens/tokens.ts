@@ -285,7 +285,26 @@ export namespace Tokens {
         swapType: SwapType.NFD,
     });
 
-    export const mintBurnTokens: Token[] = [NUSD, SYN, NETH, HIGH, DOG, JUMP, FRAX, NFD];
+    export const GOHM = new Token({
+        name:     "Olympus DAO",
+        symbol:   "gOHM",
+        decimals: 18,
+        addresses: {
+            [ChainId.ETH]:       '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f',
+            [ChainId.POLYGON]:   '0xd8cA34fd379d9ca3C6Ee3b3905678320F5b45195',
+            [ChainId.FANTOM]:    '0x91fa20244Fb509e8289CA630E5db3E9166233FDc',
+            [ChainId.ARBITRUM]:  '0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1',
+            [ChainId.AVALANCHE]: '0x321E7092a180BB43555132ec53AaA65a5bF84251',
+            [ChainId.MOONRIVER]: '0x3bF21Ce864e58731B6f28D68d5928BcBEb0Ad172',
+        },
+        swapType: SwapType.OHM,
+    })
+
+    export const mintBurnTokens: Token[] = [
+        NUSD, SYN, NETH,
+        HIGH, DOG, JUMP,
+        FRAX, NFD, GOHM,
+    ];
 
     export function isMintBurnToken(token: Token): boolean {
         return mintBurnTokens.map((t) => t.symbol).includes(token.symbol)
