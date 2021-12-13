@@ -4,7 +4,7 @@ Typescript SDK for the Synapse Protocol.
 
 ## Usage instructions
 
-See the [Docs](https://github.com/synapsecns/sdk-docs).
+See the [Docs](https://github.com/synapsecns/sdk/wiki).
 
 ## Development instructions
 
