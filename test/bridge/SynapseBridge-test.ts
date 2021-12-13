@@ -92,7 +92,7 @@ describe("SynapseBridge", function() {
                 makeTestCase(ChainId.ETH,       Tokens.DAI,  ChainId.BSC,       Tokens.USDC, true),
                 makeTestCase(ChainId.ETH,       Tokens.ETH,  ChainId.BSC,       Tokens.USDC, false),
                 makeTestCase(ChainId.ARBITRUM,  Tokens.WETH, ChainId.ETH,       Tokens.ETH,  true),
-                makeTestCase(ChainId.ARBITRUM,  Tokens.WETH, ChainId.AVALANCHE, Tokens.ETH,  false),
+                makeTestCase(ChainId.ARBITRUM,  Tokens.WETH, ChainId.AVALANCHE, Tokens.ETH,  true),
                 makeTestCase(ChainId.AVALANCHE, Tokens.SYN,  ChainId.BSC,       Tokens.SYN,  true),
                 makeTestCase(ChainId.POLYGON,   Tokens.MIM,  ChainId.BSC,       Tokens.USDT, false),
                 makeTestCase(ChainId.FANTOM,    Tokens.MIM,  ChainId.BSC,       Tokens.USDT, true),
@@ -282,10 +282,155 @@ describe("SynapseBridge", function() {
                     },
                     notZero:   true,
                     wantError: false,
-                }
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.ETH,
+                        chainIdTo:   ChainId.AVALANCHE,
+                        tokenFrom:   Tokens.ETH,
+                        tokenTo:     Tokens.NETH,
+                        amountFrom:  Tokens.ETH.valueToWei("4200", ChainId.ETH),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.AVALANCHE,
+                        chainIdTo:   ChainId.ETH,
+                        tokenFrom:   Tokens.WETH_E,
+                        tokenTo:     Tokens.USDC,
+                        amountFrom:  Tokens.WETH_E.valueToWei("2500", ChainId.AVALANCHE),
+                    },
+                    notZero:   false,
+                    wantError: true,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.AVALANCHE,
+                        chainIdTo:   ChainId.ETH,
+                        tokenFrom:   Tokens.WETH_E,
+                        tokenTo:     Tokens.ETH,
+                        amountFrom:  Tokens.WETH_E.valueToWei("2500", ChainId.AVALANCHE),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.AVALANCHE,
+                        chainIdTo:   ChainId.ARBITRUM,
+                        tokenFrom:   Tokens.WETH_E,
+                        tokenTo:     Tokens.ETH,
+                        amountFrom:  Tokens.WETH_E.valueToWei("420", ChainId.AVALANCHE),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.ETH,
+                        chainIdTo:   ChainId.AVALANCHE,
+                        tokenFrom:   Tokens.ETH,
+                        tokenTo:     Tokens.WETH_E,
+                        amountFrom:  Tokens.ETH.valueToWei("123", ChainId.ETH),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.ETH,
+                        chainIdTo:   ChainId.ETH,
+                        tokenFrom:   Tokens.ETH,
+                        tokenTo:     Tokens.WETH_E,
+                        amountFrom:  Tokens.ETH.valueToWei("101", ChainId.ETH),
+                    },
+                    notZero:   true,
+                    wantError: true,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.AVALANCHE,
+                        chainIdTo:   ChainId.ETH,
+                        tokenFrom:   Tokens.NUSD,
+                        tokenTo:     Tokens.DAI,
+                        amountFrom:  Tokens.NUSD.valueToWei("1337", ChainId.AVALANCHE),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.FANTOM,
+                        chainIdTo:   ChainId.ETH,
+                        tokenFrom:   Tokens.MIM,
+                        tokenTo:     Tokens.NUSD,
+                        amountFrom:  Tokens.NUSD.valueToWei("1337", ChainId.BOBA),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.AVALANCHE,
+                        chainIdTo:   ChainId.POLYGON,
+                        tokenFrom:   Tokens.NUSD,
+                        tokenTo:     Tokens.DAI,
+                        amountFrom:  Tokens.NUSD.valueToWei("1337", ChainId.AVALANCHE),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.POLYGON,
+                        chainIdTo:   ChainId.ETH,
+                        tokenFrom:   Tokens.DOG,
+                        tokenTo:     Tokens.DOG,
+                        amountFrom:  Tokens.DOG.valueToWei("609", ChainId.POLYGON),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.ARBITRUM,
+                        chainIdTo:   ChainId.OPTIMISM,
+                        tokenFrom:   Tokens.ETH,
+                        tokenTo:     Tokens.ETH,
+                        amountFrom:  Tokens.ETH.valueToWei("31337", ChainId.ARBITRUM),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.ARBITRUM,
+                        chainIdTo:   ChainId.OPTIMISM,
+                        tokenFrom:   Tokens.NETH,
+                        tokenTo:     Tokens.ETH,
+                        amountFrom:  Tokens.NETH.valueToWei("31337", ChainId.ARBITRUM),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.FANTOM,
+                        chainIdTo:   ChainId.BSC,
+                        tokenFrom:   Tokens.JUMP,
+                        tokenTo:     Tokens.JUMP,
+                        amountFrom:  Tokens.JUMP.valueToWei("31337", ChainId.FANTOM),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
             ];
 
             testCases.forEach(({ args, notZero, wantError }) => {
+                this.timeout(10*1000);
+
                 const {
                     tokenFrom: { symbol: tokenFromSymbol },
                     tokenTo: { symbol: tokenToSymbol},
@@ -299,21 +444,46 @@ describe("SynapseBridge", function() {
 
                 const
                     titleSuffix = notZero ? "a value greater than zero" : "a value === zero",
-                    testTitle = `getEstimatedBridgeOutput with params ${tokenFromSymbol} on ${netNameFrom} to ${tokenToSymbol} on ${netNameTo} should return ${titleSuffix}`
+                    testTitle = `getEstimatedBridgeOutput with params ${tokenFromSymbol} on ${netNameFrom} to ${tokenToSymbol} on ${netNameTo} should return ${titleSuffix}`,
+                    titleSuffix1 =  wantError ? "should fail" : "should pass",
+                    testTitle1 = `buildBridgeTokenTransaction with params ${tokenFromSymbol} on ${netNameFrom} to ${tokenToSymbol} on ${netNameTo} ${titleSuffix1}`
+
+                let amountTo: BigNumber;
 
                 it(testTitle, function(done: Done) {
                     let { chainIdFrom, ...testArgs } = args;
                     const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
 
-                    let prom: Promise<boolean> = bridgeInstance.estimateBridgeTokenOutput(testArgs).then((res): boolean =>
-                        notZero
-                            ? res.amountToReceive.gt(0)
-                            : res.amountToReceive.isZero()
+                    let prom: Promise<boolean> = bridgeInstance.estimateBridgeTokenOutput(testArgs).then((res): boolean => {
+                        amountTo = res.amountToReceive;
+
+                        return notZero
+                            ? amountTo.gt(0)
+                            : amountTo.isZero()
+                        }   
                     )
 
                     wantError
                         ? expect(prom).to.eventually.be.rejected.notify(done)
                         : expect(prom).to.eventually.be.true.notify(done)
+                })
+
+                it(testTitle1, function(done: Done) {
+                    this.timeout(10*1000);
+
+                    if (!wantError) {
+                        const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
+                        const wallet = makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey);
+                        const addressTo = wallet.address;
+                        
+                        Promise.resolve(
+                            bridgeInstance.buildBridgeTokenTransaction({
+                                ...args, amountTo, addressTo
+                            })
+                        ).catch((e) => doneWithError(e, done));
+                    }
+
+                    done();
                 })
             })
         })

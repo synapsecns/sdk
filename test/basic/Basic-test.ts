@@ -50,7 +50,6 @@ describe("Basic tests", function(this: Mocha.Suite) {
         })
 
         describe("Check result of swappableTokensAllNetworks", function(this: Mocha.Suite) {
-            before(() => console.log(resC))
             it("should have 10 map entries", () => expect(Object.keys(resC)).to.have.a.lengthOf(10))
         })
     })

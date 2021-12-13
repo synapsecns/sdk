@@ -256,7 +256,7 @@ export namespace Tokens {
         decimals: 18,
         addresses: {
             [ChainId.BSC]:    "0x130025ee738a66e691e6a7a62381cb33c6d9ae83",
-            [ChainId.FANTOM]: "0x78DE9326792ce1d6eCA0c978753c6953Cdeedd73"
+            [ChainId.FANTOM]: "0x78DE9326792ce1d6eCA0c978753c6953Cdeedd73",
         },
         swapType: SwapType.JUMP
     });
@@ -267,7 +267,8 @@ export namespace Tokens {
         decimals: 18,
         addresses: {
             [ChainId.ETH]: "0xBAac2B4491727D78D2b78815144570b9f2Fe8899",
-            [ChainId.BSC]: "0xaa88c603d142c371ea0eac8756123c5805edee03"
+            [ChainId.BSC]: "0xaa88c603d142c371ea0eac8756123c5805edee03",
+            [ChainId.POLYGON]: "0xeee3371b89fc43ea970e908536fcddd975135d8a",
         },
         swapType: SwapType.DOG
     });
