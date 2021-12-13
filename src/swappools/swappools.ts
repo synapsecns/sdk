@@ -508,8 +508,21 @@ function swapGroupsLoop(chainIdA: number, swapGrps: string[]): NetworkSwappableT
 
     return res
 }
-
+/**
+ * @deprecated Use {@link networkSwapTokensMap} instead.
+ */
 export function swappableTokens(chainIdA: number, chainIdB?: number): NetworkSwappableTokensMap {
+    return networkSwapTokensMap(chainIdA, chainIdB)
+}
+
+/**
+ * Returns a map of swappable tokens for two given networks; or, if a second chainid isn't passed,
+ * a map of all swappable tokens for the passed chainid between all supported networks.
+ * @param chainIdA
+ * @param chainIdB Optional second network; if passed, a map of swappable tokens between ONLY chainIdA and chainIdB is returned.
+ * @return NetworkSwappableTokensMap
+ */
+export function networkSwapTokensMap(chainIdA: number, chainIdB?: number): NetworkSwappableTokensMap {
     let res: NetworkSwappableTokensMap = {};
 
     const swapGrpsA: string[] = SwapPools.swapGroupsForNetwork(chainIdA);
@@ -523,7 +536,18 @@ export function swappableTokens(chainIdA: number, chainIdB?: number): NetworkSwa
     return res
 }
 
+/**
+ * @deprecated Use {@link allNetworksSwapTokensMap} instead.
+ */
 export function swappableTokensAllNetworks(): AllNetworksSwappableTokensMap {
+    return allNetworksSwapTokensMap()
+}
+
+/**
+ * Returns map of all swappable tokens between all supported networks.
+ * @return AllNetworksSwappableTokensMap
+ */
+export function allNetworksSwapTokensMap(): AllNetworksSwappableTokensMap {
     let res: AllNetworksSwappableTokensMap = {};
 
     ChainId.supportedChainIds().forEach((chainIdA: number) => {
