@@ -426,6 +426,28 @@ describe("SynapseBridge", function() {
                     notZero:   true,
                     wantError: false,
                 },
+                {
+                    args: {
+                        chainIdFrom: ChainId.AVALANCHE,
+                        chainIdTo:   ChainId.OPTIMISM,
+                        tokenFrom:   Tokens.GOHM,
+                        tokenTo:     Tokens.GOHM,
+                        amountFrom:  Tokens.GOHM.valueToWei("1", ChainId.AVALANCHE),
+                    },
+                    notZero:   false,
+                    wantError: true,   
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.ETH,
+                        chainIdTo:   ChainId.AVALANCHE,
+                        tokenFrom:   Tokens.GOHM,
+                        tokenTo:     Tokens.GOHM,
+                        amountFrom:  Tokens.GOHM.valueToWei("69", ChainId.ETH),
+                    },
+                    notZero:   true,
+                    wantError: false,   
+                },
             ];
 
             testCases.forEach(({ args, notZero, wantError }) => {
