@@ -1,11 +1,3 @@
-// BEFORE: :file:`src/bridge/slippages.ts`
-// % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
-//    72.3 |    54.54 |      50 |    72.3 | 35-37,44-45,52-64
-// AFTER: :file:`src/bridge/slippages.ts`
-// % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
-//     100 |    85.71 |     100 |     100 | 28,32,36                    
-
-
 import { BigNumber } from "ethers";
 import { expect } from "chai";
 
