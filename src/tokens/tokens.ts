@@ -15,6 +15,8 @@ export namespace Tokens {
         swapType:  SwapType.USD,
     });
 
+    // Stablecoins
+
     /**
      * The DAI stablecoin, available on Arbitrum, Avalanche, Binance Smart Chain, Ethereum, and Polygon.
      */
@@ -106,14 +108,36 @@ export namespace Tokens {
         swapType: SwapType.USD
     });
 
-    export const MIM: Token = new Token({
-        name:         'MIM',
-        symbol:       'MIM',
-        decimals:     18,
+    // ETH, ETH wrappers, and nETH :D
+
+    export const ETH: Token = new Token({
+        name:        'Ethereum',
+        symbol:      'ETH',
+        decimals:    18,
         addresses: {
-            [ChainId.FANTOM]: '0x82f0b8b456c1a451378467398982d4834b6829c1'
+            [ChainId.ETH]:      '',
+            [ChainId.OPTIMISM]: '',
+            [ChainId.BOBA]:     '',
+            [ChainId.ARBITRUM]: ''
         },
-        swapType: SwapType.USD
+        swapType: SwapType.ETH,
+        isETH:    true,
+    });
+
+    /**
+     * nETH is a token involved in the bridge.
+     */
+    export const NETH: Token = new Token({
+        name:        'Synapse nETH',
+        symbol:      'nETH',
+        decimals:    18,
+        addresses: {
+            [ChainId.OPTIMISM]:  '0x809DC529f07651bD43A172e8dB6f4a7a0d771036',
+            [ChainId.BOBA]:      '0x96419929d7949D6A801A6909c145C8EEf6A40431',
+            [ChainId.ARBITRUM]:  '0x3ea9B0ab55F34Fb188824Ee288CeaEfC63cf908e',
+            [ChainId.AVALANCHE]: '0x19E1ae0eE35c0404f835521146206595d37981ae',
+        },
+        swapType: SwapType.ETH
     });
 
     export const WETH: Token = new Token({
@@ -148,6 +172,8 @@ export namespace Tokens {
         },
         swapType: SwapType.ETH,
     })
+
+    // Synapse tokens
 
     export const SYN: Token = new Token({
         name:        'Synapse',
@@ -188,56 +214,32 @@ export namespace Tokens {
         swapType: SwapType.USD,
     });
 
-    /**
-     * nETH is a token involved in the bridge.
-     */
-    export const NETH: Token = new Token({
-        name:        'Synapse nETH',
-        symbol:      'nETH',
-        decimals:    18,
-        addresses: {
-            [ChainId.OPTIMISM]:  '0x809DC529f07651bD43A172e8dB6f4a7a0d771036',
-            [ChainId.BOBA]:      '0x96419929d7949D6A801A6909c145C8EEf6A40431',
-            [ChainId.ARBITRUM]:  '0x3ea9B0ab55F34Fb188824Ee288CeaEfC63cf908e',
-            [ChainId.AVALANCHE]: '0x19E1ae0eE35c0404f835521146206595d37981ae',
-        },
-        swapType: SwapType.ETH
-    });
+    // non-Synapse, non-stablecoin tokens
 
-    export const ETH: Token = new Token({
-        name:        'Ethereum',
-        symbol:      'ETH',
-        decimals:    18,
-        addresses: {
-            [ChainId.ETH]:      '',
-            [ChainId.OPTIMISM]: '',
-            [ChainId.BOBA]:     '',
-            [ChainId.ARBITRUM]: ''
-        },
-        swapType: SwapType.ETH,
-        isETH:    true,
-    });
-
-    export const FRAX: Token = new Token({
-        name:     'Frax',
-        symbol:   'FRAX',
+    export const GOHM = new Token({
+        name:     "Olympus DAO",
+        symbol:   "gOHM",
         decimals: 18,
         addresses: {
-            [ChainId.ETH]:       '0x853d955acef822db058eb8505911ed77f175b99e',
-            [ChainId.MOONRIVER]: '0x1a93b23281cc1cde4c4741353f3064709a16197d',
+            [ChainId.ETH]:       '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f',
+            [ChainId.POLYGON]:   '0xd8cA34fd379d9ca3C6Ee3b3905678320F5b45195',
+            [ChainId.FANTOM]:    '0x91fa20244Fb509e8289CA630E5db3E9166233FDc',
+            [ChainId.ARBITRUM]:  '0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1',
+            [ChainId.AVALANCHE]: '0x321E7092a180BB43555132ec53AaA65a5bF84251',
+            [ChainId.MOONRIVER]: '0x3bF21Ce864e58731B6f28D68d5928BcBEb0Ad172',
         },
-        swapType: SwapType.FRAX,
+        swapType: SwapType.OHM,
     });
 
-    export const SYN_FRAX: Token = new Token({
-        name:      'Synapse Frax',
-        symbol:    'synFRAX',
-        decimals:  18,
+    export const MIM: Token = new Token({
+        name:         'MIM',
+        symbol:       'MIM',
+        decimals:     18,
         addresses: {
-            [ChainId.MOONRIVER]: '0xE96AC70907ffF3Efee79f502C985A7A21Bce407d',
+            [ChainId.FANTOM]: '0x82f0b8b456c1a451378467398982d4834b6829c1'
         },
-        swapType: SwapType.FRAX,
-    })
+        swapType: SwapType.USD
+    });
 
     export const HIGH: Token = new Token({
         name:    "Highstreet",
@@ -285,19 +287,32 @@ export namespace Tokens {
         swapType: SwapType.NFD,
     });
 
-    export const GOHM = new Token({
-        name:     "Olympus DAO",
-        symbol:   "gOHM",
+    // FRAX/synFrax
+
+    export const FRAX: Token = new Token({
+        name:     'Frax',
+        symbol:   'FRAX',
         decimals: 18,
         addresses: {
-            [ChainId.ETH]:       '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f',
-            [ChainId.POLYGON]:   '0xd8cA34fd379d9ca3C6Ee3b3905678320F5b45195',
-            [ChainId.FANTOM]:    '0x91fa20244Fb509e8289CA630E5db3E9166233FDc',
-            [ChainId.ARBITRUM]:  '0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1',
-            [ChainId.AVALANCHE]: '0x321E7092a180BB43555132ec53AaA65a5bF84251',
-            [ChainId.MOONRIVER]: '0x3bF21Ce864e58731B6f28D68d5928BcBEb0Ad172',
+            [ChainId.ETH]:       '0x853d955acef822db058eb8505911ed77f175b99e',
+            [ChainId.MOONRIVER]: '0x1a93b23281cc1cde4c4741353f3064709a16197d',
         },
-        swapType: SwapType.OHM,
+        swapType: SwapType.FRAX,
+    });
+
+    export const SYN_FRAX: Token = new Token({
+        name:      'Synapse Frax',
+        symbol:    'synFRAX',
+        decimals:  18,
+        addresses: {
+            [ChainId.POLYGON]:   "0x48A34796653aFdAA1647986b33544C911578e767",
+            [ChainId.FANTOM]:    "0x1852F70512298d56e9c8FDd905e02581E04ddb2a",
+            [ChainId.MOONRIVER]: "0x273508478e099Fdf953349e6B3704E7c3dEE91a5",
+            [ChainId.ARBITRUM]:  "0x85662fd123280827e11C59973Ac9fcBE838dC3B4",
+            [ChainId.AVALANCHE]: "0xcc5672600B948dF4b665d9979357bEF3af56B300",
+            // [ChainId.HARMONY]:   "0x1852F70512298d56e9c8FDd905e02581E04ddb2a",   // Coming soon ;)
+        },
+        swapType: SwapType.FRAX,
     })
 
     export const mintBurnTokens: Token[] = [
