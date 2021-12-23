@@ -28,8 +28,6 @@ function NetworkSelector({selectedNetwork, setSelectedNetwork, direction}) {
         NETWORK_OPTS.find((n) => n.value.name === selectedNetwork.name)
     )
 
-    console.log(swappableTokensAllNetworks());
-
     function onSelect(opt) {
         setSelected(opt);
         setSelectedNetwork(opt.value);
