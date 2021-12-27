@@ -2,7 +2,18 @@ name: Tests
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - ready_for_review
+      - reopened
   push:
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - 'scripts/**'
+      - 'example/**'
 
 jobs:
   test:
