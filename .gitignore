@@ -4,6 +4,7 @@ node_modules/
 
 dist/
 .env
+.coveralls.yml
 
 yarn-error.log
 
