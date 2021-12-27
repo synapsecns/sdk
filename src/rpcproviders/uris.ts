@@ -39,7 +39,7 @@ const CHAIN_RPC_URIS: {[c: number]: string} = {
     [ChainId.MOONRIVER]: "https://rpc.moonriver.moonbeam.network",
     [ChainId.ARBITRUM]:  "https://arb1.arbitrum.io/rpc",
     [ChainId.AVALANCHE]: "https://api.avax.network/ext/bc/C/rpc",
-    [ChainId.HARMONY]:   "https://harmony-0-rpc.gateway.pokt.network/",
+    [ChainId.HARMONY]:   "https://api.harmony.one/",
 }
 
 export const rpcUriForChainId = (chainId: number): string => {
