@@ -330,6 +330,7 @@ export namespace SwapPools {
             [SwapType.HIGH]: [Tokens.HIGH],
             [SwapType.DOG]:  [Tokens.DOG],
             [SwapType.FRAX]: [Tokens.FRAX],
+            [SwapType.OHM]:  [Tokens.GOHM],
         },
         [ChainId.OPTIMISM]: {
             [SwapType.ETH]: [...OPTIMISM_ETH_SWAP_TOKEN.poolTokens],
@@ -348,11 +349,13 @@ export namespace SwapPools {
             [SwapType.SYN]: [Tokens.SYN],
             [SwapType.NFD]: [Tokens.NFD],
             [SwapType.DOG]:   [Tokens.DOG],
+            [SwapType.OHM]:  [Tokens.GOHM],
         },
         [ChainId.FANTOM]: {
             [SwapType.USD]:  [...FANTOM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.SYN]:  [Tokens.SYN],
             [SwapType.JUMP]: [Tokens.JUMP],
+            [SwapType.OHM]:  [Tokens.GOHM],
         },
         [ChainId.BOBA]: {
             [SwapType.USD]: [...BOBA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
@@ -362,17 +365,20 @@ export namespace SwapPools {
         [ChainId.MOONRIVER]: {
             [SwapType.FRAX]: [Tokens.FRAX],
             [SwapType.SYN]:  [Tokens.SYN],
+            [SwapType.OHM]:  [Tokens.GOHM],
         },
         [ChainId.ARBITRUM]: {
             [SwapType.USD]: [...ARBITRUM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.SYN]: [Tokens.SYN],
             [SwapType.ETH]: [...ARBITRUM_ETH_SWAP_TOKEN.poolTokens],
+            [SwapType.OHM]: [Tokens.GOHM],
         },
         [ChainId.AVALANCHE]: {
             [SwapType.USD]: [...AVALANCHE_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.SYN]: [Tokens.SYN],
             [SwapType.NFD]: [Tokens.NFD],
             [SwapType.ETH]: [...AVALANCHE_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps],
+            [SwapType.OHM]: [Tokens.GOHM],
         },
         [ChainId.HARMONY]: {
             [SwapType.USD]: [...HARMONY_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
@@ -387,7 +393,8 @@ export namespace SwapPools {
         jumpPoolTokens = {[SwapType.JUMP]: { poolTokens: [Tokens.JUMP] }},
         ethPoolTokens  = {[SwapType.ETH]:  { poolTokens: [Tokens.ETH]  }},
         fraxPoolTokens = {[SwapType.FRAX]: { poolTokens: [Tokens.FRAX] }},
-        nfdPoolTokens  = {[SwapType.NFD]:  { poolTokens: [Tokens.NFD]  }};
+        nfdPoolTokens  = {[SwapType.NFD]:  { poolTokens: [Tokens.NFD]  }},
+        ohmPoolTokens  = {[SwapType.OHM]:  { poolTokens: [Tokens.GOHM] }};
 
     export const bridgeSwappableTypePoolsByChain = {
         [ChainId.ETH]: {
@@ -397,6 +404,7 @@ export namespace SwapPools {
             ...highPoolTokens,
             ...dogPoolTokens,
             ...fraxPoolTokens,
+            ...ohmPoolTokens,
         },
         [ChainId.OPTIMISM]: {
             [SwapType.ETH]: OPTIMISM_ETH_SWAP_TOKEN,
@@ -415,11 +423,13 @@ export namespace SwapPools {
             ...synPoolTokens,
             ...nfdPoolTokens,
             ...dogPoolTokens,
+            ...ohmPoolTokens,
         },
         [ChainId.FANTOM]: {
             [SwapType.USD]: FANTOM_POOL_SWAP_TOKEN,
             ...synPoolTokens,
             ...jumpPoolTokens,
+            ...ohmPoolTokens,
         },
         [ChainId.BOBA]: {
             [SwapType.USD]: BOBA_POOL_SWAP_TOKEN,
@@ -429,17 +439,20 @@ export namespace SwapPools {
         [ChainId.MOONRIVER]: {
             ...synPoolTokens,
             ...fraxPoolTokens,
+            ...ohmPoolTokens,
         },
         [ChainId.ARBITRUM]: {
             [SwapType.USD]: ARBITRUM_POOL_SWAP_TOKEN,
             [SwapType.ETH]: ARBITRUM_ETH_SWAP_TOKEN,
             ...synPoolTokens,
+            ...ohmPoolTokens,
         },
         [ChainId.AVALANCHE]: {
             [SwapType.USD]: AVALANCHE_POOL_SWAP_TOKEN,
             [SwapType.ETH]: AVALANCHE_ETH_SWAP_TOKEN,
             ...synPoolTokens,
             ...nfdPoolTokens,
+            ...ohmPoolTokens,
         },
         [ChainId.HARMONY]: {
             [SwapType.USD]: HARMONY_POOL_SWAP_TOKEN,
@@ -495,8 +508,21 @@ function swapGroupsLoop(chainIdA: number, swapGrps: string[]): NetworkSwappableT
 
     return res
 }
-
+/**
+ * @deprecated Use {@link networkSwapTokensMap} instead.
+ */
 export function swappableTokens(chainIdA: number, chainIdB?: number): NetworkSwappableTokensMap {
+    return networkSwapTokensMap(chainIdA, chainIdB)
+}
+
+/**
+ * Returns a map of swappable tokens for two given networks; or, if a second chainid isn't passed,
+ * a map of all swappable tokens for the passed chainid between all supported networks.
+ * @param chainIdA
+ * @param chainIdB Optional second network; if passed, a map of swappable tokens between ONLY chainIdA and chainIdB is returned.
+ * @return NetworkSwappableTokensMap
+ */
+export function networkSwapTokensMap(chainIdA: number, chainIdB?: number): NetworkSwappableTokensMap {
     let res: NetworkSwappableTokensMap = {};
 
     const swapGrpsA: string[] = SwapPools.swapGroupsForNetwork(chainIdA);
@@ -510,7 +536,18 @@ export function swappableTokens(chainIdA: number, chainIdB?: number): NetworkSwa
     return res
 }
 
+/**
+ * @deprecated Use {@link allNetworksSwapTokensMap} instead.
+ */
 export function swappableTokensAllNetworks(): AllNetworksSwappableTokensMap {
+    return allNetworksSwapTokensMap()
+}
+
+/**
+ * Returns map of all swappable tokens between all supported networks.
+ * @return AllNetworksSwappableTokensMap
+ */
+export function allNetworksSwapTokensMap(): AllNetworksSwappableTokensMap {
     let res: AllNetworksSwappableTokensMap = {};
 
     ChainId.supportedChainIds().forEach((chainIdA: number) => {

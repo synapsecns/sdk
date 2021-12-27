@@ -5,8 +5,8 @@ import {
     ChainId,
     Networks,
     NetworkSwappableTokensMap,
-    swappableTokens,
-    swappableTokensAllNetworks,
+    networkSwapTokensMap,
+    allNetworksSwapTokensMap,
     Token,
     Tokens,
 } from "../../src";
@@ -17,18 +17,18 @@ describe("Basic tests", function(this: Mocha.Suite) {
             supportedChains   = ChainId.supportedChainIds(),
             supportedNetworks = Networks.supportedNetworks();
 
-        it("supportedChainIds should return 9 chains", () => expect(supportedChains).to.have.a.lengthOf(10))
+        it("supportedChainIds should return 10 chains", () => expect(supportedChains).to.have.a.lengthOf(10))
 
-        it("supportedNetworks should return 9 networks", () => expect(supportedNetworks).to.have.a.lengthOf(10))
+        it("supportedNetworks should return 10 networks", () => expect(supportedNetworks).to.have.a.lengthOf(10))
     })
 
     describe("Check swappableTokens", function(this: Mocha.Suite) {
         const
             chainA = ChainId.ETH,
             chainB = ChainId.BSC,
-            resA = swappableTokens(chainA, chainB),
-            resB = swappableTokens(chainA),
-            resC = swappableTokensAllNetworks();
+            resA = networkSwapTokensMap(chainA, chainB),
+            resB = networkSwapTokensMap(chainA),
+            resC = allNetworksSwapTokensMap();
 
         const symbolsForChain = (m: NetworkSwappableTokensMap, c: number): string[] => m[c].map((t: Token) => t.symbol)
 
