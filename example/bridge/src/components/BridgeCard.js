@@ -1,6 +1,8 @@
 import {
     Tokens,
-    Networks
+    Networks,
+    SwapPools,
+    swappableTokensAllNetworks,
 } from "@synapseprotocol/sdk";
 
 import {useEffect, useState} from "react";
@@ -9,12 +11,12 @@ import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
 const ALL_NETWORKS = [
-    Networks.Arbitrum,
-    Networks.Avalanche,
+    Networks.ARBITRUM,
+    Networks.AVALANCHE,
     Networks.BSC,
-    Networks.Ethereum,
-    Networks.Fantom,
-    Networks.Polygon
+    Networks.ETH,
+    Networks.FANTOM,
+    Networks.POLYGON
 ]
 
 const NETWORK_OPTS = ALL_NETWORKS.map((net, idx) => {
@@ -51,7 +53,7 @@ function useTokensForNetwork(selectedNetwork) {
 
     useEffect(() => {
         if (selectedNetwork !== null) {
-            let tokens = Tokens.getAllSwappableTokensForNetwork(selectedNetwork.chainId);
+            let tokens = SwapPools.getAllSwappableTokensForNetwork(selectedNetwork.chainId);
             setTokensForNetwork(tokens)
         }
     }, [selectedNetwork])
@@ -165,7 +167,7 @@ function SelectorsForDirection({
 }
 
 function BridgeCard() {
-    let [networkFrom, setNetworkFrom] = useState(Networks.Ethereum)
+    let [networkFrom, setNetworkFrom] = useState(Networks.ETH)
     let [tokensForNetworkFrom] = useTokensForNetwork(networkFrom);
     let [tokenFrom, setTokenFrom] = useState(null)
     let [valueFrom, setValueFrom] = useState("0.0")
