@@ -527,8 +527,8 @@ describe("SynapseBridge", function() {
             outputEstimate: Bridge.BridgeOutputEstimate,
             doBridgeArgs: Bridge.BridgeTransactionParams;
 
-        step("should return an output estimate greater than zero", async function(this: Mocha.Context, done: Done) {
-            Promise.resolve(bridgeInstance.estimateBridgeTokenOutput(bridgeArgs))
+        async function getBridgeEstimate(this: Mocha.Context, done: Done) {
+            bridgeInstance.estimateBridgeTokenOutput(bridgeArgs)
                 .then((res) => {
                     if (res.amountToReceive.gt(Zero)) {
                         expect(res.amountToReceive.gt(Zero)).true;
@@ -545,7 +545,7 @@ describe("SynapseBridge", function() {
                     }
                 })
                 .catch((e) => doneWithError(e, done))
-        });
+        }
 
         describe.skip("test using transaction builders", function(this: Mocha.Suite) {
             let
@@ -554,6 +554,7 @@ describe("SynapseBridge", function() {
                 approvalTxnHash: string,
                 bridgeTxnHash:   string;
 
+            step("should return an output estimate greater than zero", getBridgeEstimate);
 
             step("approval transaction should be populated successfully", async function(this: Mocha.Context, done: Done) {
                 if (tokenFrom.isEqual(Tokens.ETH)) {
@@ -625,6 +626,8 @@ describe("SynapseBridge", function() {
         })
 
         describe.skip("magic executors", function(this: Mocha.Suite) {
+            step("should return an output estimate greater than zero", getBridgeEstimate);
+
             step("should successfully approve", async function(this: Mocha.Context, done: Done) {
                 this.timeout(180*1000);
 
