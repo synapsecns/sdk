@@ -39,4 +39,18 @@ jobs:
         run: yarn install
 
       - name: Run Tests
-        run: yarn -s run test
+        run: yarn -s run test:coverage
+        env:
+          REPORTS_DIR: ${{ github.workspace }}/coverage
+
+      - name: Coverage report
+        run: yarn -s run coverage:report
+        env:
+          REPORTS_DIR: ${{ github.workspace }}/coverage
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ${{ github.workspace }}/coverage/lcov.info
+          flag-name: node-v${{ matrix.node-version }}

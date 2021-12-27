@@ -16,9 +16,8 @@
   "scripts": {
     "setup": "yarn && yarn -s run typegen",
     "test": "mocha",
-    "test:coverage": "c8 mocha",
-    "precoverage": "c8 mocha",
-    "coverage": "c8 report --reporter=text-lcov",
+    "test:coverage": "c8 --reports-dir $REPORTS_DIR mocha",
+    "coverage:report": "c8 report --reports-dir $REPORTS_DIR --reporter=text-lcov > $REPORTS_DIR/lcov.info",
     "prebuild": "rm -rf ./dist",
     "build": "tsc",
     "prepublishOnly": "yarn build",
