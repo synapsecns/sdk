@@ -18,7 +18,7 @@
     "test": "mocha",
     "test:coverage": "c8 mocha",
     "precoverage": "c8 mocha",
-    "coverage": "c8 report --reporter=text-lcov | coveralls",
+    "coverage": "c8 report --reporter=text-lcov",
     "prebuild": "rm -rf ./dist",
     "build": "tsc",
     "prepublishOnly": "yarn build",
