@@ -1,8 +1,8 @@
 # synapseprotocol-sdk
 
 [![NPM](https://img.shields.io/npm/v/@synapseprotocol/sdk?color=blue)](https://www.npmjs.com/package/@synapseprotocol/sdk)
-[![Tests (master)](https://img.shields.io/github/workflow/status/synapsecns/sdk/Test/master?event=push&label=tests%20%28master%29)](https://github.com/synapsecns/sdk/actions/workflows/tests.yaml)
-[![Tests (dev)](https://img.shields.io/github/workflow/status/synapsecns/sdk/Test/dev?event=push&label=tests%20%28dev%29)](https://github.com/synapsecns/sdk/actions/workflows/tests.yaml)
+[![Tests (master)](https://img.shields.io/github/workflow/status/synapsecns/sdk/Tests/master?event=push&label=tests%20%28master%29)](https://github.com/synapsecns/sdk/actions/workflows/tests.yaml)
+[![Tests (dev)](https://img.shields.io/github/workflow/status/synapsecns/sdk/Tests/dev?event=push&label=tests%20%28dev%29)](https://github.com/synapsecns/sdk/actions/workflows/tests.yaml)
 
 Typescript SDK for the Synapse Protocol.
 
