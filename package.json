@@ -4,7 +4,7 @@
   "description": "Synapse Protocol's NodeJS SDK",
   "repository": "github.com/synapsecns/sdk",
   "author": "synapsecns",
-  "license": "UNLICENSED",
+  "license": "ISC",
   "private": false,
   "publishConfig": {
     "access": "public",
