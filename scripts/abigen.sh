@@ -23,8 +23,14 @@ process_solc_compile () {
 }
 
 process_solc_output () {
+  filename="$COMBINED_OUTPUTS_DIR/$2"
+
   cd "$CURRENT_DIR"
-  PY_HELPER sol_output "$TEMP_OUTPUT" "$@" > "$COMBINED_OUTPUTS_DIR/$2.json"
+  PY_HELPER sol_output "$TEMP_OUTPUT" "$@" > "$filename.json"
+  rm -rf "$filename.ts"
+  touch "$filename.ts"
+  echo "const ABI = $(cat $filename.json | jq)\n" >> "$filename.ts"
+  echo "export default ABI" >> "$filename.ts"
 }
 
 process_abi () {

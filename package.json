@@ -23,8 +23,12 @@
     "prepublishOnly": "yarn build",
     "publish:patch": "yarn publish --patch",
     "publish:minor": "yarn publish --minor",
+    "typegen:all": "yarn -s run abigen",
+    "posttypegen:all": "yarn -s run typegen",
     "abigen": "scripts/abigen.sh",
-    "typegen": "typechain --target ethers-v5 --out-dir src/contracts/gen src/abis/*.json"
+    "typegen": "typechain --target ethers-v5 --out-dir src/contracts/gen src/abis/*.json",
+    "posttypegen": "yarn -s run typegen:clean",
+    "typegen:clean": "rm -rf src/abis/BridgeConfig.json src/abis/L1BridgeZap.json src/abis/L2BridgeZap.json src/abis/SynapseBridge.json src/abis/SynapseERC20.json"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",
