@@ -28,7 +28,7 @@
     "abigen": "scripts/abigen.sh",
     "typegen": "typechain --target ethers-v5 --out-dir src/contracts/gen src/abis/*.json",
     "posttypegen": "yarn -s run typegen:clean",
-    "typegen:clean": "rm -rf src/abis/BridgeConfig.json src/abis/L1BridgeZap.json src/abis/L2BridgeZap.json src/abis/SynapseBridge.json src/abis/SynapseERC20.json"
+    "typegen:clean": "mv src/abis/ERC20.json ./ERC20.json && rm -rf src/abis/*.json && mv ./ERC20.json src/abis/ERC20.json"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",
