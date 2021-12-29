@@ -10,6 +10,7 @@ export namespace ChainId {
     export const MOONRIVER: number = 1285;
     export const ARBITRUM:  number = 42161;
     export const AVALANCHE: number = 43114;
+    export const AURORA:    number = 1313161554;
     export const HARMONY:   number = 1666600000;
 
     export const asBigNumber = (n: BigNumberish): BigNumber => {
@@ -24,7 +25,7 @@ export namespace ChainId {
         ETH,       OPTIMISM,  BSC,
         POLYGON,   FANTOM,    BOBA,
         MOONRIVER, ARBITRUM,  AVALANCHE,
-        HARMONY,
+        AURORA,    HARMONY,
     ]
 }
 
