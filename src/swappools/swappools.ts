@@ -316,7 +316,7 @@ export namespace SwapPools {
 
     export const AURORA_POOL_SWAP_TOKEN = new SwapToken({
         addresses: {
-            [ChainId.AURORA]: '',
+            [ChainId.AURORA]: '0x5d5F01AaEc428356B54Ee091502dBBEaA935F21A',
         },
         decimals:      18,
         symbol:        'nUSD-LP',
@@ -325,9 +325,9 @@ export namespace SwapPools {
         poolId:        1,
         poolType:      'USD',
         swapAddresses: {
-            [ChainId.AURORA]: '',
+            [ChainId.AURORA]: '0xffd73E0642e8833cCE9854B963840A8cb2A218e8',
         },
-        poolTokens: [],
+        poolTokens: [Tokens.NUSD],
     })
 
     export interface SwapGroupTokenMap {
