@@ -31,7 +31,8 @@ export namespace Tokens {
             [ChainId.BOBA]:      '0xf74195Bb8a5cf652411867c5C2C5b8C2a402be35',
             [ChainId.ARBITRUM]:  '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
             [ChainId.AVALANCHE]: '0xd586E7F844cEa2F87f50152665BCbc2C279D8d70',
-            [ChainId.HARMONY]:   '0xef977d2f931c1978db5f6747666fa1eacb0d0339'
+            [ChainId.AURORA]:    '0xe3520349F477A5F6EB06107066048508498A291b',
+            [ChainId.HARMONY]:   '0xef977d2f931c1978db5f6747666fa1eacb0d0339',
         },
         swapType: SwapType.USD
     });
@@ -57,6 +58,7 @@ export namespace Tokens {
             [ChainId.BOBA]:      6,
             [ChainId.AVALANCHE]: 6,
             [ChainId.ARBITRUM]:  6,
+            [ChainId.AURORA]:    6,
             [ChainId.HARMONY]:   6,
         },
         addresses: {
@@ -67,7 +69,8 @@ export namespace Tokens {
             [ChainId.BOBA]:      '0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc',
             [ChainId.ARBITRUM]:  '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8',
             [ChainId.AVALANCHE]: '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664',
-            [ChainId.HARMONY]:   '0x985458e523db3d53125813ed68c274899e9dfab4'
+            [ChainId.AURORA]:    '0xB12BFcA5A55806AaF64E99521918A4bf0fC40802',
+            [ChainId.HARMONY]:   '0x985458e523db3d53125813ed68c274899e9dfab4',
         },
         swapType: SwapType.USD
     });
@@ -83,6 +86,7 @@ export namespace Tokens {
             [ChainId.BOBA]:      6,
             [ChainId.ARBITRUM]:  6,
             [ChainId.AVALANCHE]: 6,
+            [ChainId.AURORA]:    6,
             [ChainId.HARMONY]:   6,
         },
         addresses: {
@@ -93,7 +97,8 @@ export namespace Tokens {
             [ChainId.BOBA]:      '0x5DE1677344D3Cb0D7D465c10b72A8f60699C062d',
             [ChainId.ARBITRUM]:  '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9',
             [ChainId.AVALANCHE]: '0xc7198437980c041c805a1edcba50c1ce5db95118',
-            [ChainId.HARMONY]:   '0x3c2b8be99c50593081eaa2a724f0b8285f5aba8f'
+            [ChainId.AURORA]:    '0x4988a896b1227218e4A686fdE5EabdcAbd91571f',
+            [ChainId.HARMONY]:   '0x3c2b8be99c50593081eaa2a724f0b8285f5aba8f',
         },
         swapType: SwapType.USD
     });
@@ -251,8 +256,8 @@ export namespace Tokens {
         symbol:  "HIGH",
         decimals: 18,
         addresses: {
+            [ChainId.ETH]: "0x71Ab77b7dbB4fa7e017BC15090b2163221420282",
             [ChainId.BSC]: "0x5f4bde007dc06b867f86ebfe4802e34a1ffeed63",
-            [ChainId.ETH]: "0x71Ab77b7dbB4fa7e017BC15090b2163221420282"
         },
         swapType: SwapType.HIGH
     });
@@ -286,8 +291,8 @@ export namespace Tokens {
         decimals:     18,
         addresses: {
             [ChainId.BSC]:       "0x0fe9778c005a5a6115cbe12b0568a2d50b765a51",   // redeem
-            [ChainId.AVALANCHE]: "0xf1293574ee43950e7a8c9f1005ff097a9a713959",   // redeem
             [ChainId.POLYGON]:   "0x0a5926027d407222f8fe20f24cb16e103f617046",   // deposit
+            [ChainId.AVALANCHE]: "0xf1293574ee43950e7a8c9f1005ff097a9a713959",   // redeem
         },
         swapType: SwapType.NFD,
     });
@@ -315,7 +320,7 @@ export namespace Tokens {
             [ChainId.MOONRIVER]: "0x273508478e099Fdf953349e6B3704E7c3dEE91a5",
             [ChainId.ARBITRUM]:  "0x85662fd123280827e11C59973Ac9fcBE838dC3B4",
             [ChainId.AVALANCHE]: "0xcc5672600B948dF4b665d9979357bEF3af56B300",
-            [ChainId.HARMONY]:   "0xFa7191D292d5633f702B0bd7E3E3BcCC0e633200",   // Coming soon ;)
+            [ChainId.HARMONY]:   "0xFa7191D292d5633f702B0bd7E3E3BcCC0e633200",
         },
         swapType: SwapType.FRAX,
     })
