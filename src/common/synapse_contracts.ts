@@ -75,7 +75,7 @@ export namespace SynapseContracts {
 
     export const Aurora = new SynapseContract({
         bridge:     "0xaeD5b25BE1c3163c907a471082640450F928DDFE",
-        bridge_zap: "",
+        bridge_zap: "0x2D8Ee8d6951cB4Eecfe4a79eb9C2F973C02596Ed",
     });
 
     export const Harmony = new SynapseContract({
