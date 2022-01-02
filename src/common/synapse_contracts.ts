@@ -75,6 +75,6 @@ export namespace SynapseContracts {
 
     export const Harmony = new SynapseContract({
         bridge:     "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
-        bridge_zap: "0xF68cD56cF9a9e1cDa181fb2C44C5F0E98B5cC541",
+        bridge_zap: "0x9354b54dFEa0f70ddAdfdB430f304e1CC4D422ab",
     });
 }
