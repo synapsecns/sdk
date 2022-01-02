@@ -313,7 +313,7 @@ export namespace Tokens {
             [ChainId.MOONRIVER]: "0x273508478e099Fdf953349e6B3704E7c3dEE91a5",
             [ChainId.ARBITRUM]:  "0x85662fd123280827e11C59973Ac9fcBE838dC3B4",
             [ChainId.AVALANCHE]: "0xcc5672600B948dF4b665d9979357bEF3af56B300",
-            // [ChainId.HARMONY]:   "0x1852F70512298d56e9c8FDd905e02581E04ddb2a",   // Coming soon ;)
+            [ChainId.HARMONY]:   "0xFa7191D292d5633f702B0bd7E3E3BcCC0e633200",   // Coming soon ;)
         },
         swapType: SwapType.FRAX,
     })
