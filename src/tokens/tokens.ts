@@ -222,11 +222,14 @@ export namespace Tokens {
         decimals: 18,
         addresses: {
             [ChainId.ETH]:       '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f',
+            [ChainId.BSC]:       '0x88918495892BAF4536611E38E75D771Dc6Ec0863',
             [ChainId.POLYGON]:   '0xd8cA34fd379d9ca3C6Ee3b3905678320F5b45195',
             [ChainId.FANTOM]:    '0x91fa20244Fb509e8289CA630E5db3E9166233FDc',
+            [ChainId.BOBA]:      '0xd22C0a4Af486C7FA08e282E9eB5f30F9AaA62C95',
+            [ChainId.MOONRIVER]: '0x3bF21Ce864e58731B6f28D68d5928BcBEb0Ad172',
             [ChainId.ARBITRUM]:  '0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1',
             [ChainId.AVALANCHE]: '0x321E7092a180BB43555132ec53AaA65a5bF84251',
-            [ChainId.MOONRIVER]: '0x3bF21Ce864e58731B6f28D68d5928BcBEb0Ad172',
+            [ChainId.HARMONY]:   '0x67C10C397dD0Ba417329543c1a40eb48AAa7cd00',
         },
         swapType: SwapType.OHM,
     });
