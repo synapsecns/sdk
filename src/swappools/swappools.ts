@@ -314,6 +314,22 @@ export namespace SwapPools {
         poolTokens: [Tokens.NUSD, Tokens.DAI, Tokens.USDC, Tokens.USDT],
     });
 
+    export const AURORA_POOL_SWAP_TOKEN = new SwapToken({
+        addresses: {
+            [ChainId.AURORA]: '0xEAdC3524f3F007cdC5104BF28663b1141D3e3127',
+        },
+        decimals:      18,
+        symbol:        'nUSD-LP',
+        name:          'Synapse nUSD LP Token Aurora',
+        poolName:      'Aurora Stableswap Pool ',
+        poolId:        1,
+        poolType:      'USD',
+        swapAddresses: {
+            [ChainId.AURORA]: '0xcEf6C2e20898C2604886b888552CA6CcF66933B0',
+        },
+        poolTokens: [Tokens.NUSD, Tokens.USDC, Tokens.USDT],
+    })
+
     export interface SwapGroupTokenMap {
         [grp: string]: Token[]
     }
@@ -379,6 +395,10 @@ export namespace SwapPools {
             [SwapType.NFD]: [Tokens.NFD],
             [SwapType.ETH]: [...AVALANCHE_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.OHM]: [Tokens.GOHM],
+        },
+        [ChainId.AURORA]: {
+            [SwapType.USD]: [...AURORA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+            [SwapType.SYN]: [Tokens.SYN],
         },
         [ChainId.HARMONY]: {
             [SwapType.USD]: [...HARMONY_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
@@ -453,6 +473,10 @@ export namespace SwapPools {
             ...synPoolTokens,
             ...nfdPoolTokens,
             ...ohmPoolTokens,
+        },
+        [ChainId.AURORA]: {
+            [SwapType.USD]: AURORA_POOL_SWAP_TOKEN,
+            ...synPoolTokens,
         },
         [ChainId.HARMONY]: {
             [SwapType.USD]: HARMONY_POOL_SWAP_TOKEN,

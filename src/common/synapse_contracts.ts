@@ -73,6 +73,11 @@ export namespace SynapseContracts {
         bridge_zap: "0x407Bc506E6F262A0A1F2ea0cC4d66e3bEe29D577",
     });
 
+    export const Aurora = new SynapseContract({
+        bridge:     "0xaeD5b25BE1c3163c907a471082640450F928DDFE",
+        bridge_zap: "0x2D8Ee8d6951cB4Eecfe4a79eb9C2F973C02596Ed",
+    });
+
     export const Harmony = new SynapseContract({
         bridge:     "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
         bridge_zap: "0x9354b54dFEa0f70ddAdfdB430f304e1CC4D422ab",

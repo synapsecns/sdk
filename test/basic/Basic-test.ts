@@ -12,14 +12,16 @@ import {
 } from "../../src";
 
 describe("Basic tests", function(this: Mocha.Suite) {
+    const numChains: number = 11;
+
     describe("Check networks", function(this: Mocha.Suite) {
         const
             supportedChains   = ChainId.supportedChainIds(),
             supportedNetworks = Networks.supportedNetworks();
 
-        it("supportedChainIds should return 10 chains", () => expect(supportedChains).to.have.a.lengthOf(10))
+        it(`supportedChainIds should return ${numChains} chains`, () => expect(supportedChains).to.have.a.lengthOf(numChains))
 
-        it("supportedNetworks should return 10 networks", () => expect(supportedNetworks).to.have.a.lengthOf(10))
+        it(`supportedNetworks should return ${numChains} networks`, () => expect(supportedNetworks).to.have.a.lengthOf(numChains))
     })
 
     describe("Check swappableTokens", function(this: Mocha.Suite) {
@@ -50,7 +52,7 @@ describe("Basic tests", function(this: Mocha.Suite) {
         })
 
         describe("Check result of swappableTokensAllNetworks", function(this: Mocha.Suite) {
-            it("should have 10 map entries", () => expect(Object.keys(resC)).to.have.a.lengthOf(10))
+            it(`should have ${numChains} map entries`, () => expect(Object.keys(resC)).to.have.a.lengthOf(numChains))
         })
     })
 })
