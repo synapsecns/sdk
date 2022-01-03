@@ -31,6 +31,10 @@ export namespace GasUtils {
         approveGasLimit: BigNumber.from(75000),
     }
 
+    const AURORA_GAS_PARAMS: GasParams = {
+        gasPrice: parseUnits('0', 'gwei'),
+    }
+
     export function makeGasParams(chainId: number): GasParams {
         switch (chainId) {
             case ChainId.ETH:
@@ -41,6 +45,8 @@ export namespace GasUtils {
                 return ARBITRUM_GAS_PARAMS
             case ChainId.AVALANCHE:
                 return AVALANCHE_GAS_PARAMS
+            case ChainId.AURORA:
+                return AURORA_GAS_PARAMS
         }
 
         return {}
