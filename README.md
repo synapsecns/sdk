@@ -13,3 +13,6 @@ Typescript SDK for the Synapse Protocol.
 
 See the [Docs](https://github.com/synapsecns/sdk/wiki).
 
+## Looking to help?
+
+Read our guidelines for [contributing](https://github.com/synapsecns/sdk/blob/master/CONTRIBUTING.md).
