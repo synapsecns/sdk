@@ -334,7 +334,17 @@ export namespace Bridge {
             return ERC20.approve(approveArgs, {tokenAddress, chainId: this.chainId}, signer)
         }
 
-        async checkNeedsApprove(args: {
+        async getAllowanceForAddress(args: {
+            address: string,
+            token:   Token,
+        }): Promise<BigNumber> {
+            let { address, token } = args;
+            let tokenAddress = token.address(this.chainId);
+
+            return ERC20.allowanceOf(address, this.zapBridgeAddress, {tokenAddress, chainId: this.chainId})
+        }
+
+        private async checkNeedsApprove(args: {
             address: string,
             token: Token | string,
             amount?: BigNumberish,
