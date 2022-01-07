@@ -54,6 +54,8 @@ export namespace Networks {
         supportsToken(token: Token): boolean {
             if ((token.symbol === "ETH") && ETH_TOKEN_CHAINS.includes(this.chainId)) {
                 return true
+            } else if (this.chainId === ChainId.ETH && token.symbol === "WETH") {
+                return true
             }
 
             return this.tokenAddresses.includes(token.address(this.chainId));
