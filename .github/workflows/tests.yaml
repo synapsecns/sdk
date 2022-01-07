@@ -46,6 +46,10 @@ jobs:
         run: yarn -s run test:coverage
         env:
           REPORTS_DIR: ${{ github.workspace }}/coverage
+          ETH_RPC_URI: ${{ secrets.ETHEREUM_RPC_URI }}
+          OPTIMISM_RPC_URI: ${{ secrets.OPTIMISM_RPC_URI }}
+          BSC_RPC_URI: ${{ secrets.BSC_RPC_URI }}
+          POLYGON_RPC_URI: ${{ secrets.POLYGON_RPC_URI }}
 
       - name: Coverage report
         run: yarn -s run coverage:report
