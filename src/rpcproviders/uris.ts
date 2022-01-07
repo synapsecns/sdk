@@ -32,7 +32,7 @@ const ENV_KEY_MAP: {[c: number]: string} = {
 }
 
 const CHAIN_RPC_URIS: {[c: number]: string} = {
-    [ChainId.ETH]:       "https://eth-mainnet.alchemyapi.io/v2/0AovFRYl9L7l4YUf6nPaMrs7H2_pj_Pf",
+    [ChainId.ETH]:       "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     [ChainId.OPTIMISM]:  "https://mainnet.optimism.io",
     [ChainId.BSC]:       "https://bsc-dataseed1.binance.org/",
     [ChainId.POLYGON]:   "https://polygon-rpc.com/",
