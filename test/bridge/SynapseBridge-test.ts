@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {before, Done} from "mocha";
+import {before, Context, Done} from "mocha";
 import {step} from "mocha-steps";
 
 import {
@@ -135,6 +135,8 @@ describe("SynapseBridge", function() {
                 makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.AURORA,    Tokens.USDC, false),
                 makeTestCase(ChainId.ETH,       Tokens.NETH,   ChainId.AURORA,    Tokens.USDC, false),
                 makeTestCase(ChainId.AVALANCHE, Tokens.WETH_E, ChainId.AURORA,    Tokens.USDC, false),
+                makeTestCase(ChainId.ETH,       Tokens.WETH,   ChainId.AVALANCHE, Tokens.WETH_E,true),
+                makeTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.AVALANCHE, Tokens.NUSD,true),
             ];
 
             testCases.forEach(({ args, expected }) => {
@@ -533,6 +535,39 @@ describe("SynapseBridge", function() {
                     notZero:   true,
                     wantError: false,
                 },
+                {
+                    args: {
+                        chainIdFrom: ChainId.ETH,
+                        chainIdTo:   ChainId.AVALANCHE,
+                        tokenFrom:   Tokens.WETH,
+                        tokenTo:     Tokens.WETH_E,
+                        amountFrom:  Tokens.WETH.valueToWei("669", ChainId.ETH),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.ETH,
+                        chainIdTo:   ChainId.AVALANCHE,
+                        tokenFrom:   Tokens.NUSD,
+                        tokenTo:     Tokens.NUSD,
+                        amountFrom:  Tokens.NUSD.valueToWei("669", ChainId.ETH),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.AVALANCHE,
+                        chainIdTo:   ChainId.OPTIMISM,
+                        tokenFrom:   Tokens.WETH_E,
+                        tokenTo:     Tokens.WETH,
+                        amountFrom:  Tokens.WETH_E.valueToWei("420", ChainId.AVALANCHE),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
             ];
 
             testCases.forEach(({ args, notZero, wantError }) => {
@@ -575,7 +610,7 @@ describe("SynapseBridge", function() {
                         : expect(prom).to.eventually.be.true.notify(done)
                 })
 
-                it(testTitle1, function(done: Done) {
+                it(testTitle1, function(this: Context, done: Done) {
                     this.timeout(10*1000);
 
                     if (!wantError) {
