@@ -207,7 +207,7 @@ export namespace SwapPools {
 
     export const BOBA_ETH_SWAP_TOKEN = new SwapToken({
         addresses: {
-            [ChainId.BOBA]: '0x56A28e084B29f975bf0D31fD3aA074647F43728C',
+            [ChainId.BOBA]: '0x498657f2AF18D525049dE520dD86ee376Db9c67c',
         },
         decimals:      18,
         symbol:        'nETH-LP',                         // make sure this gets update to match conytract
@@ -216,10 +216,10 @@ export namespace SwapPools {
         poolId:        2,
         poolType:      'ETH',
         swapAddresses: {
-            [ChainId.BOBA]: '0xaB1EB0B9a0124D89445a547366C9eD61a5180E43',
+            [ChainId.BOBA]: '0x753bb855c8fe814233d26Bb23aF61cb3d2022bE5',
         },
         swapEthAddresses: {
-            [ChainId.BOBA]: '0x06Fea8513FF03a0d3f61324da709D4cf06F42A5c',
+            [ChainId.BOBA]: '0x4F4f66964335D7bef23C16a62Fcd3d1E89f02959',
         },
         poolTokens:   [Tokens.NETH, Tokens.WETH],                                // add eth token whether eth or weth here
         nativeTokens: [Tokens.NETH, Tokens.ETH],
@@ -279,7 +279,7 @@ export namespace SwapPools {
 
     export const AVALANCHE_ETH_SWAP_TOKEN = new SwapToken({
         addresses: {
-            [ChainId.AVALANCHE]: '0xD70A52248e546A3B260849386410C7170c7BD1E9',
+            [ChainId.AVALANCHE]: '0x5dF1dB940dd8fEE0e0eB0C8917cb50b4dfaDF98c',
         },
         decimals:      18,
         symbol:        'nETH-LP',                         // make sure this gets update to match conytract
@@ -298,22 +298,6 @@ export namespace SwapPools {
         depositTokens: [Tokens.NETH, Tokens.WETH_E],
     });
 
-    export const HARMONY_POOL_SWAP_TOKEN = new SwapToken({
-        addresses: {
-            [ChainId.HARMONY]: '0xE269abBFAF52b26D2632F55B6b223A5223088B96',
-        },
-        decimals:      18,
-        symbol:        'nUSD-LP',
-        name:          'Synapse nUSD LP Token Harmony',
-        poolName:      'Harmony Stableswap Pool ',        // DONT GET RID OF SPACE AFTER POOL
-        poolId:        1,
-        poolType:      'USD',
-        swapAddresses: {
-            [ChainId.HARMONY]: '0x3ea9B0ab55F34Fb188824Ee288CeaEfC63cf908e',
-        },
-        poolTokens: [Tokens.NUSD, Tokens.DAI, Tokens.USDC, Tokens.USDT],
-    });
-
     export const AURORA_POOL_SWAP_TOKEN = new SwapToken({
         addresses: {
             [ChainId.AURORA]: '0xEAdC3524f3F007cdC5104BF28663b1141D3e3127',
@@ -329,6 +313,22 @@ export namespace SwapPools {
         },
         poolTokens: [Tokens.NUSD, Tokens.USDC, Tokens.USDT],
     })
+
+    export const HARMONY_POOL_SWAP_TOKEN = new SwapToken({
+        addresses: {
+            [ChainId.HARMONY]: '0xE269abBFAF52b26D2632F55B6b223A5223088B96',
+        },
+        decimals:      18,
+        symbol:        'nUSD-LP',
+        name:          'Synapse nUSD LP Token Harmony',
+        poolName:      'Harmony Stableswap Pool ',        // DONT GET RID OF SPACE AFTER POOL
+        poolId:        1,
+        poolType:      'USD',
+        swapAddresses: {
+            [ChainId.HARMONY]: '0x3ea9B0ab55F34Fb188824Ee288CeaEfC63cf908e',
+        },
+        poolTokens: [Tokens.NUSD, Tokens.DAI, Tokens.USDC, Tokens.USDT],
+    });
 
     export interface SwapGroupTokenMap {
         [grp: string]: Token[]
