@@ -248,6 +248,11 @@ describe("SynapseBridge", function() {
                 makeTestCase(ChainId.AVALANCHE, Tokens.WETH_E, ChainId.AURORA,    Tokens.USDC, false),
                 makeTestCase(ChainId.ETH,       Tokens.WETH,   ChainId.AVALANCHE, Tokens.WETH_E,true),
                 makeTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.AVALANCHE, Tokens.NUSD,true),
+                makeTestCase(ChainId.ETH,       Tokens.WETH,   ChainId.HARMONY,   Tokens.ONE_ETH,true),
+                makeTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.ETH,       Tokens.WETH,true),
+                makeTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.AVALANCHE, Tokens.WETH_E,true),
+                makeTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.OPTIMISM,  Tokens.WETH,true),
+                makeTestCase(ChainId.OPTIMISM,  Tokens.WETH,   ChainId.HARMONY,   Tokens.ONE_ETH,true),
             ];
 
             testCases.forEach(({ args, expected }) => {
@@ -673,6 +678,28 @@ describe("SynapseBridge", function() {
                         tokenFrom:   Tokens.WETH_E,
                         tokenTo:     Tokens.WETH,
                         amountFrom:  Tokens.WETH_E.valueToWei("420", ChainId.AVALANCHE),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.ETH,
+                        chainIdTo:   ChainId.HARMONY,
+                        tokenFrom:   Tokens.WETH,
+                        tokenTo:     Tokens.ONE_ETH,
+                        amountFrom:  Tokens.WETH.valueToWei("669", ChainId.ETH),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.HARMONY,
+                        chainIdTo:   ChainId.AVALANCHE,
+                        tokenFrom:   Tokens.ONE_ETH,
+                        tokenTo:     Tokens.WETH_E,
+                        amountFrom:  Tokens.ONE_ETH.valueToWei("420", ChainId.HARMONY),
                     },
                     notZero:   true,
                     wantError: false,

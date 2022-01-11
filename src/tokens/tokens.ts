@@ -141,6 +141,7 @@ export namespace Tokens {
             [ChainId.BOBA]:      '0x96419929d7949D6A801A6909c145C8EEf6A40431',
             [ChainId.ARBITRUM]:  '0x3ea9B0ab55F34Fb188824Ee288CeaEfC63cf908e',
             [ChainId.AVALANCHE]: '0x19E1ae0eE35c0404f835521146206595d37981ae',
+            [ChainId.HARMONY]:   '0x0b5740c6b4a97f90eF2F0220651Cca420B868FfB',
         },
         swapType: SwapType.ETH
     });
@@ -174,6 +175,16 @@ export namespace Tokens {
         decimals: 18,
         addresses: {
             [ChainId.AVALANCHE]: "0x53f7c5869a859f0aec3d334ee8b4cf01e3492f21",
+        },
+        swapType: SwapType.ETH,
+    })
+
+    export const ONE_ETH: Token = new Token({
+        name:     "Harmony ETH",
+        symbol:   "1ETH",
+        decimals: 18,
+        addresses: {
+            [ChainId.HARMONY]: "0x6983d1e6def3690c4d616b13597a09e6193ea013",
         },
         swapType: SwapType.ETH,
     })

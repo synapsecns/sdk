@@ -618,6 +618,24 @@ export namespace Bridge {
                         bridgeTransactionDeadline,
                         {value: amountFrom}
                     )
+                case Tokens.WETH_E.hash:
+                    return zapBridge.populateTransaction.depositETHAndSwap(
+                        ...BridgeUtils.depositETHParams(castArgs),
+                        0, // nusd tokenindex,
+                        tokenArgs.tokenIndexTo,
+                        minToSwapDestFromOrigin, // minDy
+                        bridgeTransactionDeadline,
+                        {value: amountFrom}
+                    )
+                case Tokens.ONE_ETH.hash:
+                    return zapBridge.populateTransaction.depositETHAndSwap(
+                        ...BridgeUtils.depositETHParams(castArgs),
+                        0, // nusd tokenindex,
+                        tokenArgs.tokenIndexTo,
+                        minToSwapDestFromOrigin, // minDy
+                        bridgeTransactionDeadline,
+                        {value: amountFrom}
+                    )
                 case Tokens.NUSD.hash:
                     if (!args.tokenFrom.isEqual(Tokens.NUSD)) {
                         const liquidityAmounts = tokenArgs.fromChainTokens.map((t) => {

@@ -330,6 +330,24 @@ export namespace SwapPools {
         poolTokens: [Tokens.NUSD, Tokens.DAI, Tokens.USDC, Tokens.USDT],
     });
 
+    export const HARMONY_ONEETH_TOKEN = new SwapToken({
+        addresses: {
+            [ChainId.HARMONY]: '0x464d121D3cA63cEEfd390D76f19364D3Bd024cD2',
+        },
+        decimals:      18,
+        symbol:        'nETH-LP',
+        name:          'Synapse 1ETH LP Token Harmony',
+        poolName:      'Harmony 1ETH Pool ',        // DONT GET RID OF SPACE AFTER POOL
+        poolId:        1,
+        poolType:      'ETH',
+        swapAddresses: {
+            [ChainId.HARMONY]: '0x2913E812Cf0dcCA30FB28E6Cac3d2DCFF4497688',
+        },
+        poolTokens:    [Tokens.NETH, Tokens.ONE_ETH],
+        nativeTokens:  [Tokens.NETH, Tokens.ONE_ETH],
+        depositTokens: [Tokens.NETH, Tokens.ONE_ETH],
+    });
+
     export interface SwapGroupTokenMap {
         [grp: string]: Token[]
     }
@@ -364,8 +382,8 @@ export namespace SwapPools {
             [SwapType.USD]: [...POLYGON_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.SYN]: [Tokens.SYN],
             [SwapType.NFD]: [Tokens.NFD],
-            [SwapType.DOG]:   [Tokens.DOG],
-            [SwapType.OHM]:  [Tokens.GOHM],
+            [SwapType.DOG]: [Tokens.DOG],
+            [SwapType.OHM]: [Tokens.GOHM],
         },
         [ChainId.FANTOM]: {
             [SwapType.USD]:  [...FANTOM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
@@ -402,6 +420,7 @@ export namespace SwapPools {
         },
         [ChainId.HARMONY]: {
             [SwapType.USD]: [...HARMONY_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+            [SwapType.ETH]: [...HARMONY_ONEETH_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.SYN]: [Tokens.SYN],
         },
     }
@@ -480,6 +499,7 @@ export namespace SwapPools {
         },
         [ChainId.HARMONY]: {
             [SwapType.USD]: HARMONY_POOL_SWAP_TOKEN,
+            [SwapType.ETH]: HARMONY_ONEETH_TOKEN,
             ...synPoolTokens,
         }
     }

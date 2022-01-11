@@ -11,6 +11,7 @@ export namespace BridgeUtils {
         ChainId.BOBA,
         ChainId.ARBITRUM,
         ChainId.AVALANCHE,
+        ChainId.HARMONY,
     ];
 
     export const isL2ETHChain = (chainId: number): boolean => ETH_CHAINS.includes(chainId);
