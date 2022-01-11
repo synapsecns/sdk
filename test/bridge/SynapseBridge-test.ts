@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {before, Context, Done} from "mocha";
+import {Context, Done} from "mocha";
 import {step} from "mocha-steps";
 
 import {
@@ -10,21 +10,28 @@ import {
     Bridge
 } from "../../src";
 
-import {Zero} from "@ethersproject/constants";
+import {MaxUint256, Zero} from "@ethersproject/constants";
 import {PopulatedTransaction} from "@ethersproject/contracts";
 import {TransactionResponse} from "@ethersproject/providers";
-import {BigNumber} from "@ethersproject/bignumber";
+import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+
+import type {TestProvider} from "../helpers";
 
 import {
-    PROVIDER_BSC,
     PROVIDER_ETHEREUM,
+    PROVIDER_OPTIMISM,
+    PROVIDER_BSC,
     PROVIDER_FANTOM,
     PROVIDER_BOBA,
     PROVIDER_MOONRIVER,
-    PROVIDER_OPTIMISM,
+    PROVIDER_AVALANCHE,
+    PROVIDER_AURORA,
+    PROVIDER_HARMONY,
     makeWalletSignerWithProvider,
+    getActualWei
 } from "../helpers";
-import {parseEther} from "@ethersproject/units";
+import {parseEther, parseUnits} from "@ethersproject/units";
+import Assertion = Chai.Assertion;
 
 // Completely clean privkey with low balances.
 const bridgeTestPrivkey: string = "67544261a018b8a4e55261b3a30a018ebf83f508a5c87898b03eef57ea0a30d5";
@@ -37,7 +44,7 @@ function doneWithError(e: any, done: Done) {
 
 describe("SynapseBridge", function() {
     describe("read-only wrapper functions", function(this: Mocha.Suite) {
-        describe(".bridgeVersion()", function(this: Mocha.Suite) {
+        describe.skip(".bridgeVersion()", function(this: Mocha.Suite) {
             this.timeout(8*1000);
 
             const expected = 6;
@@ -54,7 +61,7 @@ describe("SynapseBridge", function() {
             })
         })
 
-        describe(".WETH_ADDRESS", function(this: Mocha.Suite) {
+        describe.skip(".WETH_ADDRESS", function(this: Mocha.Suite) {
             this.timeout(10*1000);
 
             testChains.forEach(({ chainId: network, provider }) => {
@@ -83,7 +90,84 @@ describe("SynapseBridge", function() {
             })
         })
 
-        describe("checkSwapSupported", function(this: Mocha.Suite) {
+        describe(".getAllowanceForAddress", function(this: Mocha.Suite) {
+            interface testCase {
+                provider:   TestProvider,
+                address:    string,
+                token:      Token,
+                want:       BigNumber,
+                isInfinite: boolean,
+            }
+
+            const
+                addr1: string = "0x7145a092158c215ff10cce4ddcb84b3a090bdd4e",
+                addr2: string = "0x41fe2231639268f01383b86cc8b64fbf24b5e156",
+                addr3: string = "0x89a2a295174d899c6d68dfc03535993ee15ff72e",
+                addr4: string = "0x39c46cFD4711d1B4D7141d87f057C89C9D2d7019",
+                addr5: string = "0xDF681Fe10B2fb7B5605107098EA3867187851DCe",
+                addr6: string = "0x982693778347b2a1817d6b0d2812be1d52964266",
+                infiniteCheckAmt: BigNumber = MaxUint256.div(2);
+
+            const makeTestCase = (p: TestProvider, t: Token, a: string, n: BigNumberish): testCase => {
+                return {
+                    provider:   p,
+                    token:      t,
+                    address:    a,
+                    want:       BigNumber.from(n),
+                    isInfinite: MaxUint256.eq(n),
+                }
+            }
+
+            let testCases: testCase[] = [
+                makeTestCase(PROVIDER_AURORA,    Tokens.DAI,  addr4, Zero),
+                makeTestCase(PROVIDER_AVALANCHE, Tokens.USDC, addr2, MaxUint256),
+                makeTestCase(PROVIDER_FANTOM,    Tokens.MIM,  addr3, MaxUint256),
+                makeTestCase(PROVIDER_BOBA,      Tokens.NUSD, addr3, Zero),
+                makeTestCase(PROVIDER_MOONRIVER, Tokens.SYN,  addr1, Zero),
+                makeTestCase(PROVIDER_HARMONY,   Tokens.NUSD, addr5, Zero),
+                makeTestCase(PROVIDER_AVALANCHE, Tokens.USDC, addr6, parseEther("12.98"))
+            ];
+
+            this.timeout((testCases.length * 10)*1000);
+
+            testCases.forEach((tc: testCase) => {
+                const
+                    {provider: {chainId: network, provider}} = tc,
+                    chainName: string = Networks.fromChainId(network).name,
+                    wantNum: string = parseUnits(tc.want.toString(), tc.token.decimals(network)).toString(),
+                    spendAllowanceTitle: string = `should have a spend allowance of ${tc.isInfinite ? "unlimited" : wantNum} wei`,
+                    title: string = `SynapseBridge on chain ${chainName} ${spendAllowanceTitle} for ${tc.token.name} holdings of ${tc.address}`;
+
+                it(title, function (this: Mocha.Context, done: Done) {
+                    this.timeout(10*1000);
+
+                    let bridgeInstance = new Bridge.SynapseBridge({network, provider});
+
+                    const
+                        {address, token} = tc,
+                        decimals = token.decimals(network),
+                        checkAmt: BigNumber = tc.isInfinite ? infiniteCheckAmt : tc.want,
+                        msg: string = tc.isInfinite ? "gte" : "equal";
+
+                    Promise.resolve(bridgeInstance.getAllowanceForAddress({address, token}))
+                        .then((res: BigNumber) => {
+                            const
+                                got = getActualWei(res, decimals),
+                                success: boolean = tc.isInfinite ? got.gte(infiniteCheckAmt) : got.eq(tc.want);
+
+                            expect(
+                                success,
+                                `expected ${got.toString()} to be ${msg} to ${checkAmt.toString()}`
+                            ).to.be.true;
+
+                            done();
+                        })
+                        .catch((err: any) => doneWithError(err, done))
+                })
+            })
+        })
+
+        describe.skip("checkSwapSupported", function(this: Mocha.Suite) {
             interface TestArgs {
                 chainIdFrom: number,
                 chainIdTo:   number,
@@ -162,7 +246,7 @@ describe("SynapseBridge", function() {
             })
         })
 
-        describe("getEstimatedBridgeOutput", function(this: Mocha.Suite) {
+        describe.skip("getEstimatedBridgeOutput", function(this: Mocha.Suite) {
             this.timeout(30*1000);
 
             interface TestArgs {

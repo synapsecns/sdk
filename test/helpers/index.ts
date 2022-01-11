@@ -9,19 +9,33 @@ import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 import {ChainId} from "../../src";
 import {newProviderForNetwork} from "../../src/rpcproviders";
 
+const TEN_BN: BigNumber = BigNumber.from(10);
+
 export function makeWalletSignerWithProvider(chainId: number, privKey: string): Wallet {
     const provider = newProviderForNetwork(chainId);
 
     return new Wallet(privKey, provider);
 }
 
+export const getActualWei = (n: BigNumber, decimals: number): BigNumber => n.mul(TEN_BN.pow(18 - decimals))
+
+export interface TestProvider {
+    chainId:  number,
+    provider: JsonRpcProvider,
+}
+
+const makeTestProvider = (chainId: number): TestProvider => ({ chainId, provider: newProviderForNetwork(chainId) })
+
 export const
-    PROVIDER_ETHEREUM  = {chainId: ChainId.ETH,       provider: newProviderForNetwork(ChainId.ETH)       },
-    PROVIDER_BSC       = {chainId: ChainId.BSC,       provider: newProviderForNetwork(ChainId.BSC)       },
-    PROVIDER_FANTOM    = {chainId: ChainId.FANTOM,    provider: newProviderForNetwork(ChainId.FANTOM)    },
-    PROVIDER_BOBA      = {chainId: ChainId.BOBA,      provider: newProviderForNetwork(ChainId.BOBA)      },
-    PROVIDER_MOONRIVER = {chainId: ChainId.MOONRIVER, provider: newProviderForNetwork(ChainId.MOONRIVER) },
-    PROVIDER_OPTIMISM  = {chainId: ChainId.OPTIMISM,  provider: newProviderForNetwork(ChainId.OPTIMISM)  };
+    PROVIDER_ETHEREUM:  TestProvider = makeTestProvider(ChainId.ETH),
+    PROVIDER_OPTIMISM:  TestProvider = makeTestProvider(ChainId.OPTIMISM),
+    PROVIDER_BSC:       TestProvider = makeTestProvider(ChainId.BSC),
+    PROVIDER_FANTOM:    TestProvider = makeTestProvider(ChainId.FANTOM),
+    PROVIDER_BOBA:      TestProvider = makeTestProvider(ChainId.BOBA),
+    PROVIDER_MOONRIVER: TestProvider = makeTestProvider(ChainId.MOONRIVER),
+    PROVIDER_AVALANCHE: TestProvider = makeTestProvider(ChainId.AVALANCHE),
+    PROVIDER_AURORA:    TestProvider = makeTestProvider(ChainId.AURORA),
+    PROVIDER_HARMONY:   TestProvider = makeTestProvider(ChainId.HARMONY);
 
 export interface TestCase<T> {
     chainId:       number,
