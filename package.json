@@ -10,6 +10,14 @@
     "access": "public",
     "registry": "https://registry.npmjs.org"
   },
+  "files": [
+    "/dist",
+    "/LICENSE",
+    "/README.md",
+    "/CONTRIBUTING.md",
+    "/tsconfig.json",
+    "/package.json"
+  ],
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
