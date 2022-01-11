@@ -166,7 +166,7 @@ describe("SynapseBridge", function() {
                     title: string = `SynapseBridge on chain ${chainName} ${spendAllowanceTitle} for ${tc.token.name} holdings of ${tc.address}`;
 
                 it(title, function (this: Mocha.Context, done: Done) {
-                    this.timeout(SHORT_TEST_TIMEOUT);
+                    this.timeout(DEFAULT_TEST_TIMEOUT);
 
                     let bridgeInstance = new Bridge.SynapseBridge({network, provider});
 
