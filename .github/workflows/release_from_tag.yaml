@@ -29,6 +29,14 @@ jobs:
       - name: Yarn Build
         run: yarn run build
 
-      - uses: "marvinpinto/action-automatic-releases@latest"
+      - name: Make tarball
+        run: |
+          mkdir -p ./artifacts
+          yarn pack --filename "./artifacts/synapseprotocol-sdk-$(git describe --tags --abbrev=0).tgz"
+
+      - name: Create release with tarball
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            "./artifacts/synapseprotocol-sdk-$(git describe --tags --abbrev=0).tgz"

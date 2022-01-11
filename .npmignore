@@ -5,6 +5,10 @@ example/
 test/
 scripts/
 src/
+artifacts/
+.github/
+coveralls.yml
+.env
 
 .gitignore
 .mocharc.json
