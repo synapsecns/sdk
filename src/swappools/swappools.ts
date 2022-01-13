@@ -435,6 +435,13 @@ export namespace SwapPools {
         },
     }
 
+
+
+    const
+        fraxOnly    = {[SwapType.FRAX]: { poolTokens: [Tokens.FRAX] } },
+        synFraxOnly = {[SwapType.FRAX]: { poolTokens: [Tokens.SYN_FRAX] } },
+        allTheFrax  = {[SwapType.FRAX]: { poolTokens: [Tokens.FRAX, Tokens.SYN_FRAX] } };
+
     const swapTypesToksMap = {
         [SwapType.SYN]:    {[SwapType.SYN]:   { poolTokens: [Tokens.SYN]   }},
         [SwapType.HIGH]:   {[SwapType.HIGH]:  { poolTokens: [Tokens.HIGH]  }},
@@ -445,7 +452,7 @@ export namespace SwapPools {
         [SwapType.OHM]:    {[SwapType.OHM]:   { poolTokens: [Tokens.GOHM]  }},
         [SwapType.GMX]:    {[SwapType.GMX]:   { poolTokens: [Tokens.GMX]   }},
         [SwapType.SOLAR]:  {[SwapType.SOLAR]: { poolTokens: [Tokens.SOLAR] }},
-        [SwapType.FRAX]:   {[SwapType.FRAX]:  { poolTokens: [Tokens.FRAX, Tokens.SYN_FRAX] }},
+        [SwapType.FRAX]:   allTheFrax,
     }
 
 
@@ -479,16 +486,18 @@ export namespace SwapPools {
     }
 
     export const bridgeSwappableTypePoolsByChain = {
-        [ChainId.ETH]: makeSwapTypeTokenPool(
-            ETH_POOL_SWAP_TOKEN,
-            null,
-            SwapType.ETH,
-            SwapType.SYN,
-            SwapType.HIGH,
-            SwapType.DOG,
-            SwapType.FRAX,
-            SwapType.OHM
-        ),
+        [ChainId.ETH]: {
+            ...makeSwapTypeTokenPool(
+                ETH_POOL_SWAP_TOKEN,
+                null,
+                SwapType.ETH,
+                SwapType.SYN,
+                SwapType.HIGH,
+                SwapType.DOG,
+                SwapType.OHM
+            ),
+            ...fraxOnly
+        },
         [ChainId.OPTIMISM]: makeSwapTypeTokenPool(
             null,
             OPTIMISM_ETH_SWAP_TOKEN,
@@ -525,10 +534,10 @@ export namespace SwapPools {
         ),
         [ChainId.MOONBEAM]: {
             [SwapType.ETH]: { poolTokens: [Tokens.WETHBEAM] },
+            ...fraxOnly,
             ...makeSwapTypeTokenPool(
                 null, null,
                 SwapType.SYN,
-                SwapType.FRAX,
                 SwapType.SOLAR,
                 SwapType.OHM,
             ),
