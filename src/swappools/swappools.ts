@@ -396,45 +396,58 @@ export namespace SwapPools {
             [SwapType.SYN]: [Tokens.SYN],
             [SwapType.ETH]: [...BOBA_ETH_SWAP_TOKEN.poolTokens],
         },
+        [ChainId.MOONBEAM]: {
+            [SwapType.ETH]:   [Tokens.WETHBEAM],
+            [SwapType.FRAX]:  [Tokens.FRAX, Tokens.SYN_FRAX],
+            [SwapType.SYN]:   [Tokens.SYN],
+            [SwapType.SOLAR]: [Tokens.SOLAR],
+        },
         [ChainId.MOONRIVER]: {
-            [SwapType.FRAX]: [Tokens.FRAX],
-            [SwapType.SYN]:  [Tokens.SYN],
-            [SwapType.OHM]:  [Tokens.GOHM],
+            [SwapType.FRAX]:  [Tokens.FRAX, Tokens.SYN_FRAX],
+            [SwapType.SYN]:   [Tokens.SYN],
+            [SwapType.OHM]:   [Tokens.GOHM],
+            [SwapType.SOLAR]: [Tokens.SOLAR],
         },
         [ChainId.ARBITRUM]: {
             [SwapType.USD]: [...ARBITRUM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
-            [SwapType.SYN]: [Tokens.SYN],
             [SwapType.ETH]: [...ARBITRUM_ETH_SWAP_TOKEN.poolTokens],
+            [SwapType.SYN]: [Tokens.SYN],
             [SwapType.OHM]: [Tokens.GOHM],
+            [SwapType.GMX]: [Tokens.GMX],
         },
         [ChainId.AVALANCHE]: {
             [SwapType.USD]: [...AVALANCHE_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+            [SwapType.ETH]: [...AVALANCHE_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.SYN]: [Tokens.SYN],
             [SwapType.NFD]: [Tokens.NFD],
-            [SwapType.ETH]: [...AVALANCHE_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.OHM]: [Tokens.GOHM],
+            [SwapType.GMX]: [Tokens.GMX],
         },
         [ChainId.AURORA]: {
             [SwapType.USD]: [...AURORA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.SYN]: [Tokens.SYN],
         },
         [ChainId.HARMONY]: {
-            [SwapType.USD]: [...HARMONY_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
-            [SwapType.ETH]: [...HARMONY_ONEETH_TOKEN.poolTokensForBridgeSwaps],
-            [SwapType.SYN]: [Tokens.SYN],
+            [SwapType.USD]:  [...HARMONY_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+            [SwapType.ETH]:  [...HARMONY_ONEETH_TOKEN.poolTokensForBridgeSwaps],
+            [SwapType.SYN]:  [Tokens.SYN],
+            [SwapType.FRAX]: [Tokens.FRAX, Tokens.SYN_FRAX],
         },
     }
 
     const swapTypesToksMap = {
-        [SwapType.SYN]:  {[SwapType.SYN]:  { poolTokens: [Tokens.SYN]  }},
-        [SwapType.HIGH]: {[SwapType.HIGH]: { poolTokens: [Tokens.HIGH] }},
-        [SwapType.DOG]:  {[SwapType.DOG]:  { poolTokens: [Tokens.DOG]  }},
-        [SwapType.JUMP]: {[SwapType.JUMP]: { poolTokens: [Tokens.JUMP] }},
-        [SwapType.ETH]:  {[SwapType.ETH]:  { poolTokens: [Tokens.ETH]  }},
-        [SwapType.FRAX]: {[SwapType.FRAX]: { poolTokens: [Tokens.FRAX] }},
-        [SwapType.NFD]:  {[SwapType.NFD]:  { poolTokens: [Tokens.NFD]  }},
-        [SwapType.OHM]:  {[SwapType.OHM]:  { poolTokens: [Tokens.GOHM] }},
+        [SwapType.SYN]:    {[SwapType.SYN]:   { poolTokens: [Tokens.SYN]   }},
+        [SwapType.HIGH]:   {[SwapType.HIGH]:  { poolTokens: [Tokens.HIGH]  }},
+        [SwapType.DOG]:    {[SwapType.DOG]:   { poolTokens: [Tokens.DOG]   }},
+        [SwapType.JUMP]:   {[SwapType.JUMP]:  { poolTokens: [Tokens.JUMP]  }},
+        [SwapType.ETH]:    {[SwapType.ETH]:   { poolTokens: [Tokens.ETH]   }},
+        [SwapType.NFD]:    {[SwapType.NFD]:   { poolTokens: [Tokens.NFD]   }},
+        [SwapType.OHM]:    {[SwapType.OHM]:   { poolTokens: [Tokens.GOHM]  }},
+        [SwapType.GMX]:    {[SwapType.GMX]:   { poolTokens: [Tokens.GMX]   }},
+        [SwapType.SOLAR]:  {[SwapType.SOLAR]: { poolTokens: [Tokens.SOLAR] }},
+        [SwapType.FRAX]:   {[SwapType.FRAX]:  { poolTokens: [Tokens.FRAX, Tokens.SYN_FRAX] }},
     }
+
 
     interface TokenPool {
         poolTokens: Token[],
@@ -510,24 +523,37 @@ export namespace SwapPools {
             BOBA_ETH_SWAP_TOKEN,
             SwapType.SYN,
         ),
+        [ChainId.MOONBEAM]: {
+            [SwapType.ETH]: { poolTokens: [Tokens.WETHBEAM] },
+            ...makeSwapTypeTokenPool(
+                null, null,
+                SwapType.SYN,
+                SwapType.FRAX,
+                SwapType.SOLAR,
+                SwapType.OHM,
+            ),
+        },
         [ChainId.MOONRIVER]: makeSwapTypeTokenPool(
             null, null,
             SwapType.SYN,
             SwapType.FRAX,
-            SwapType.OHM
+            SwapType.OHM,
+            SwapType.SOLAR,
         ),
         [ChainId.ARBITRUM]: makeSwapTypeTokenPool(
             ARBITRUM_POOL_SWAP_TOKEN,
             ARBITRUM_ETH_SWAP_TOKEN,
             SwapType.SYN,
-            SwapType.OHM
+            SwapType.OHM,
+            SwapType.GMX,
         ),
         [ChainId.AVALANCHE]: makeSwapTypeTokenPool(
             AVALANCHE_POOL_SWAP_TOKEN,
             AVALANCHE_ETH_SWAP_TOKEN,
             SwapType.SYN,
             SwapType.NFD,
-            SwapType.OHM
+            SwapType.OHM,
+            SwapType.GMX,
         ),
         [ChainId.AURORA]: makeSwapTypeTokenPool(
             AURORA_POOL_SWAP_TOKEN,
@@ -538,6 +564,7 @@ export namespace SwapPools {
             HARMONY_POOL_SWAP_TOKEN,
             HARMONY_ONEETH_TOKEN,
             SwapType.SYN,
+            SwapType.FRAX,
         )
     }
 

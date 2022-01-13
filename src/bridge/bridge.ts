@@ -479,7 +479,7 @@ export namespace Bridge {
                 switch (tokenFrom.swapType) {
                     case SwapType.SYN:
                         return [Tokens.SYN, Tokens.SYN]
-                    case SwapType.HIGH || SwapType.DOG || SwapType.JUMP || SwapType.NFD:
+                    case SwapType.HIGH || SwapType.DOG || SwapType.JUMP || SwapType.NFD || SwapType.OHM || SwapType.GMX || SwapType.SOLAR:
                         return [tokenFrom, tokenFrom]
                     case SwapType.FRAX:
                         if (chainIdTo === ChainId.ETH) {
@@ -873,10 +873,10 @@ export namespace Bridge {
 
             const
                 fromChainTokens = chainTokens(this.chainId, tokenFrom.swapType),
-                toChainTokens = chainTokens(chainIdTo, tokenTo.swapType),
+                toChainTokens   = chainTokens(chainIdTo, tokenTo.swapType),
 
                 tokenIndexFrom = tokenIndex(fromChainTokens, tokenFrom),
-                tokenIndexTo = tokenIndex(toChainTokens, tokenTo);
+                tokenIndexTo   = tokenIndex(toChainTokens, tokenTo);
 
             return {
                 fromChainTokens,

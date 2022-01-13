@@ -9,6 +9,7 @@ export namespace BridgeUtils {
     const ETH_CHAINS = [
         ChainId.OPTIMISM,
         ChainId.BOBA,
+        ChainId.MOONBEAM,
         ChainId.ARBITRUM,
         ChainId.AVALANCHE,
         ChainId.HARMONY,

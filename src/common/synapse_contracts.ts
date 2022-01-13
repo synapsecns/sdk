@@ -58,6 +58,11 @@ export namespace SynapseContracts {
         bridge_zap: "0x64B4097bCCD27D49BC2A081984C39C3EeC427a2d",
     });
 
+    export const Moonbeam = new SynapseContract(({
+        bridge:     "0x84A420459cd31C3c34583F67E0f0fB191067D32f",
+        bridge_zap: "0xadA10A7474f4c71A829b55D2cB4232C281383fd5",
+    }))
+
     export const Moonriver = new SynapseContract(({
         bridge:     "0xaeD5b25BE1c3163c907a471082640450F928DDFE",
         bridge_zap: "0xe37F21EFaF8242d086B79A799EB0fDC3Fb778704",

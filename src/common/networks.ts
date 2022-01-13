@@ -9,6 +9,7 @@ const ETH_TOKEN_CHAINS = [
     ChainId.ETH,
     ChainId.OPTIMISM,
     ChainId.BOBA,
+    ChainId.MOONBEAM,
     ChainId.ARBITRUM,
     ChainId.AVALANCHE,
 ];
@@ -100,6 +101,12 @@ export namespace Networks {
        chainCurrency: "ETH",
     });
 
+    export const MOONBEAM = new Network({
+        name:          "Moonbeam",
+        chainId:        ChainId.MOONBEAM,
+        chainCurrency: "GLMR",
+    })
+
     export const MOONRIVER = new Network({
         name:          "Moonriver",
         chainId:       ChainId.MOONRIVER,
@@ -137,6 +144,7 @@ export namespace Networks {
         [ChainId.POLYGON]:    POLYGON,
         [ChainId.FANTOM]:     FANTOM,
         [ChainId.BOBA]:       BOBA,
+        [ChainId.MOONBEAM]:   MOONBEAM,
         [ChainId.MOONRIVER]:  MOONRIVER,
         [ChainId.ARBITRUM]:   ARBITRUM,
         [ChainId.AVALANCHE]:  AVALANCHE,

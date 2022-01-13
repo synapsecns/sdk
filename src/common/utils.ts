@@ -35,6 +35,7 @@ const CHAINID_CONTRACTS_MAP: {[c: number]: SynapseContracts.SynapseContract} = {
     [ChainId.POLYGON]:   SynapseContracts.Polygon,
     [ChainId.FANTOM]:    SynapseContracts.Fantom,
     [ChainId.BOBA]:      SynapseContracts.Boba,
+    [ChainId.MOONBEAM]:  SynapseContracts.Moonbeam,
     [ChainId.MOONRIVER]: SynapseContracts.Moonriver,
     [ChainId.ARBITRUM]:  SynapseContracts.Arbitrum,
     [ChainId.AVALANCHE]: SynapseContracts.Avalanche,

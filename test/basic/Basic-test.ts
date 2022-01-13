@@ -12,7 +12,7 @@ import {
 } from "../../src";
 
 describe("Basic tests", function(this: Mocha.Suite) {
-    const numChains: number = 11;
+    const numChains: number = 12;
 
     describe("Check networks", function(this: Mocha.Suite) {
         const

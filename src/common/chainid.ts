@@ -7,6 +7,7 @@ export namespace ChainId {
     export const POLYGON:   number = 137;
     export const FANTOM:    number = 250;
     export const BOBA:      number = 288;
+    export const MOONBEAM:  number = 1284;
     export const MOONRIVER: number = 1285;
     export const ARBITRUM:  number = 42161;
     export const AVALANCHE: number = 43114;
@@ -24,8 +25,8 @@ export namespace ChainId {
     export const supportedChainIds = (): number[] => [
         ETH,       OPTIMISM,  BSC,
         POLYGON,   FANTOM,    BOBA,
-        MOONRIVER, ARBITRUM,  AVALANCHE,
-        AURORA,    HARMONY,
+        MOONBEAM,  MOONRIVER, ARBITRUM,
+        AVALANCHE, AURORA,    HARMONY,
     ]
 }
 
