@@ -15,6 +15,8 @@ import {
     Bridge
 } from "../../src";
 
+import {newProviderForNetwork} from "../../src/rpcproviders";
+
 import {TransactionResponse} from "@ethersproject/providers";
 import {
     PopulatedTransaction,
@@ -40,7 +42,7 @@ import {
     makeWalletSignerWithProvider,
     getActualWei
 } from "../helpers";
-import {newProviderForNetwork} from "../../dist/rpcproviders";
+
 
 // Completely clean privkey with low balances.
 const bridgeTestPrivkey: string = "53354287e3023f0629b7a5e187aa1ca3458c4b7ff9d66a6e3f4b2e821aafded7";
