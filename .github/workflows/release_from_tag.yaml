@@ -29,10 +29,14 @@ jobs:
       - name: Yarn Build
         run: yarn run build
 
+      - name: Set tagname in env
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+
       - name: Make tarball
         run: |
           mkdir -p ./artifacts
-          yarn pack --filename "./artifacts/synapseprotocol-sdk-$(git describe --tags --abbrev=0).tgz"
+          yarn pack --filename "./artifacts/synapseprotocol-sdk-${{ steps.vars.outputs.tag }}.tgz"
 
       - name: Create release with tarball
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -40,4 +44,4 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
           files: |
-            "./artifacts/synapseprotocol-sdk-$(git describe --tags --abbrev=0).tgz"
+            "./artifacts/synapseprotocol-sdk-${{ steps.vars.outputs.tag }}.tgz"
