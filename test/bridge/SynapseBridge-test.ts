@@ -780,9 +780,9 @@ describe("SynapseBridge", function() {
                     args: {
                         chainIdFrom: ChainId.MOONBEAM,
                         chainIdTo:   ChainId.HARMONY,
-                        tokenFrom:   Tokens.FRAX,
-                        tokenTo:     Tokens.SYN_FRAX,
-                        amountFrom:  Tokens.FRAX.valueToWei("420", ChainId.MOONBEAM),
+                        tokenFrom:   Tokens.SYN_FRAX,
+                        tokenTo:     Tokens.FRAX,
+                        amountFrom:  Tokens.SYN_FRAX.valueToWei("420", ChainId.MOONBEAM),
                     },
                     notZero:   true,
                     wantError: false,
