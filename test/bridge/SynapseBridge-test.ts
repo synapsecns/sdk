@@ -40,6 +40,7 @@ import {
     makeWalletSignerWithProvider,
     getActualWei
 } from "../helpers";
+import {newProviderForNetwork} from "../../dist/rpcproviders";
 
 // Completely clean privkey with low balances.
 const bridgeTestPrivkey: string = "53354287e3023f0629b7a5e187aa1ca3458c4b7ff9d66a6e3f4b2e821aafded7";
@@ -64,7 +65,7 @@ const makeTimeout = (seconds: number): number => seconds * 1000;
 
 const
     DEFAULT_TEST_TIMEOUT   = makeTimeout(10),
-    SHORT_TEST_TIMEOUT     = makeTimeout(3.5),
+    SHORT_TEST_TIMEOUT     = makeTimeout(4.5),
     LONG_TEST_TIMEOUT      = makeTimeout(30),
     EXECUTORS_TEST_TIMEOUT = makeTimeout(180);
 
@@ -74,9 +75,9 @@ describe("SynapseBridge", function() {
         describe(".bridgeVersion()", function(this: Mocha.Suite) {
             const expected = 6;
 
-            testChains.forEach((tp: TestProvider) => {
+            ChainId.supportedChainIds().forEach((network: number) => {
                 const
-                    { chainId: network, provider } = tp,
+                    provider = newProviderForNetwork(network),
                     bridgeInstance = new Bridge.SynapseBridge({ network, provider});
 
                 it(`Should return ${expected.toString()} on Chain ID ${network}`, function(this: Context, done: Done) {
@@ -92,17 +93,20 @@ describe("SynapseBridge", function() {
         })
 
         describe(".WETH_ADDRESS", function(this: Mocha.Suite) {
-            testChains.forEach(({ chainId: network, provider }) => {
+            ChainId.supportedChainIds().forEach((network: number) => {
                 const
+                    provider = newProviderForNetwork(network),
                     bridgeInstance = new Bridge.SynapseBridge({ network, provider }),
                     expected: string = ((): string => {
                         switch (network) {
                         case ChainId.ETH:
                             return "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
-                        case ChainId.BOBA:
-                            return "0xd203De32170130082896b4111eDF825a4774c18E"
                         case ChainId.OPTIMISM:
                             return "0x121ab82b49B2BC4c7901CA46B8277962b4350204"
+                        case ChainId.BOBA:
+                            return "0xd203De32170130082896b4111eDF825a4774c18E"
+                            case ChainId.ARBITRUM:
+                                return "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
                         default:
                             return "0x0000000000000000000000000000000000000000"
                     }})();
