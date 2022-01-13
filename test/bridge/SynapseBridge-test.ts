@@ -153,12 +153,12 @@ describe("SynapseBridge", function() {
 
             let testCases: testCase[] = [
                 makeTestCase(PROVIDER_AURORA,    Tokens.DAI,  addr4, Zero),
-                makeTestCase(PROVIDER_AVALANCHE, Tokens.USDC, addr2, MaxUint256),
+                // makeTestCase(PROVIDER_AVALANCHE, Tokens.USDC, addr2, MaxUint256),
                 makeTestCase(PROVIDER_FANTOM,    Tokens.MIM,  addr3, MaxUint256),
                 makeTestCase(PROVIDER_BOBA,      Tokens.NUSD, addr3, Zero),
                 makeTestCase(PROVIDER_MOONRIVER, Tokens.SYN,  addr1, Zero),
                 makeTestCase(PROVIDER_HARMONY,   Tokens.NUSD, addr5, Zero),
-                makeTestCase(PROVIDER_AVALANCHE, Tokens.USDC, addr6, parseEther("12.98"))
+                // makeTestCase(PROVIDER_AVALANCHE, Tokens.USDC, addr6, parseEther("12.98"))
             ];
 
             this.timeout(makeTimeout(10 * testCases.length));
