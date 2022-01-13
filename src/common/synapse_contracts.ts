@@ -70,7 +70,7 @@ export namespace SynapseContracts {
 
     export const Avalanche = new SynapseContract({
         bridge:     "0xC05e61d0E7a63D27546389B7aD62FdFf5A91aACE",
-        bridge_zap: "0x407Bc506E6F262A0A1F2ea0cC4d66e3bEe29D577",
+        bridge_zap: "0xAb325cDEc65823bA15d265cf68674aB7aFFd44c3",
     });
 
     export const Aurora = new SynapseContract({
