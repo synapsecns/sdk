@@ -344,6 +344,10 @@ export namespace Tokens {
             [ChainId.MOONBEAM]:  "0xDd47A348AB60c61Ad6B60cA8C31ea5e00eBfAB4F",
             [ChainId.MOONRIVER]: "0xE96AC70907ffF3Efee79f502C985A7A21Bce407d",
             [ChainId.HARMONY]:   "0x1852F70512298d56e9c8FDd905e02581E04ddb2a",
+            // [ChainId.POLYGON]:   "0x48A34796653aFdAA1647986b33544C911578e767",
+            // [ChainId.FANTOM]:    "0x1852F70512298d56e9c8FDd905e02581E04ddb2a",
+            // [ChainId.ARBITRUM]:  "0x85662fd123280827e11C59973Ac9fcBE838dC3B4",
+            // [ChainId.AVALANCHE]: "0xcc5672600B948dF4b665d9979357bEF3af56B300",
         },
         swapType: SwapType.FRAX,
     })
