@@ -60,7 +60,7 @@ export namespace SynapseContracts {
 
     export const Moonbeam = new SynapseContract(({
         bridge:     "0x84A420459cd31C3c34583F67E0f0fB191067D32f",
-        bridge_zap: "0xadA10A7474f4c71A829b55D2cB4232C281383fd5",
+        bridge_zap: "0x73783F028c60D463bc604cc53852C37C31dEC5e9",
     }))
 
     export const Moonriver = new SynapseContract(({
