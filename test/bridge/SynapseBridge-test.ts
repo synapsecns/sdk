@@ -266,6 +266,7 @@ describe("SynapseBridge", function() {
                 makeTestCase(ChainId.BSC,       Tokens.JUMP,   ChainId.FANTOM,    Tokens.JUMP, true),
                 makeTestCase(ChainId.BSC,       Tokens.DOG,    ChainId.POLYGON,   Tokens.DOG, true),
                 makeTestCase(ChainId.FANTOM,    Tokens.MIM,    ChainId.POLYGON,   Tokens.DAI, true),
+                makeTestCase(ChainId.POLYGON,   Tokens.NFD,    ChainId.AVALANCHE, Tokens.NFD, true),
             ];
 
             testCases.forEach(({ args, expected }) => {
@@ -716,6 +717,61 @@ describe("SynapseBridge", function() {
                         tokenFrom:   Tokens.ONE_ETH,
                         tokenTo:     Tokens.WETH_E,
                         amountFrom:  Tokens.ONE_ETH.valueToWei("420", ChainId.HARMONY),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.BSC,
+                        chainIdTo:   ChainId.ETH,
+                        tokenFrom:   Tokens.HIGH,
+                        tokenTo:     Tokens.HIGH,
+                        amountFrom:  Tokens.HIGH.valueToWei("420", ChainId.BSC),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.BSC,
+                        chainIdTo:   ChainId.FANTOM,
+                        tokenFrom:   Tokens.JUMP,
+                        tokenTo:     Tokens.JUMP,
+                        amountFrom:  Tokens.JUMP.valueToWei("420", ChainId.BSC),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.BSC,
+                        chainIdTo:   ChainId.POLYGON,
+                        tokenFrom:   Tokens.DOG,
+                        tokenTo:     Tokens.DOG,
+                        amountFrom:  Tokens.DOG.valueToWei("420", ChainId.BSC),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.FANTOM,
+                        chainIdTo:   ChainId.POLYGON,
+                        tokenFrom:   Tokens.MIM,
+                        tokenTo:     Tokens.DAI,
+                        amountFrom:  Tokens.MIM.valueToWei("420", ChainId.FANTOM),
+                    },
+                    notZero:   true,
+                    wantError: false,
+                },
+                {
+                    args: {
+                        chainIdFrom: ChainId.POLYGON,
+                        chainIdTo:   ChainId.AVALANCHE,
+                        tokenFrom:   Tokens.NFD,
+                        tokenTo:     Tokens.NFD,
+                        amountFrom:  Tokens.NFD.valueToWei("420", ChainId.POLYGON),
                     },
                     notZero:   true,
                     wantError: false,
