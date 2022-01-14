@@ -202,8 +202,8 @@ describe("SynapseBridge", function() {
 
         describe("checkSwapSupported", function(this: Mocha.Suite) {
             interface TestArgs {
-                chainIdFrom: number,
-                chainIdTo:   number,
+                chainIdFrom: number|Networks.Network,
+                chainIdTo:   number|Networks.Network,
                 tokenFrom:   Token,
                 tokenTo:     Token,
             }
@@ -213,7 +213,7 @@ describe("SynapseBridge", function() {
                 expected: boolean,
             }
 
-            const makeTestCase = (chainIdFrom: number, tokenFrom: Token, chainIdTo: number, tokenTo: Token, expected: boolean): TestCase => {
+            const makeTestCase = (chainIdFrom: number|Networks.Network, tokenFrom: Token, chainIdTo: number|Networks.Network, tokenTo: Token, expected: boolean): TestCase => {
                 return {args: {chainIdFrom, tokenFrom, chainIdTo, tokenTo}, expected}
             }
 
@@ -251,7 +251,7 @@ describe("SynapseBridge", function() {
                 makeTestCase(ChainId.AURORA,    Tokens.USDT,   ChainId.BSC,       Tokens.USDC, true),
                 makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.AURORA,    Tokens.USDC, false),
                 makeTestCase(ChainId.ETH,       Tokens.NETH,   ChainId.AURORA,    Tokens.USDC, false),
-                makeTestCase(ChainId.AVALANCHE, Tokens.WETH_E, ChainId.AURORA,    Tokens.USDC, false),
+                makeTestCase(Networks.AVALANCHE,Tokens.WETH_E, ChainId.AURORA,    Tokens.USDC, false),
                 makeTestCase(ChainId.ETH,       Tokens.WETH,   ChainId.AVALANCHE, Tokens.WETH_E,true),
                 makeTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.AVALANCHE, Tokens.NUSD,true),
                 makeTestCase(ChainId.ETH,       Tokens.WETH,   ChainId.HARMONY,   Tokens.ONE_ETH,true),
@@ -259,6 +259,13 @@ describe("SynapseBridge", function() {
                 makeTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.AVALANCHE, Tokens.WETH_E,true),
                 makeTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.OPTIMISM,  Tokens.WETH,true),
                 makeTestCase(ChainId.OPTIMISM,  Tokens.WETH,   ChainId.HARMONY,   Tokens.ONE_ETH,true),
+                makeTestCase(ChainId.AVALANCHE, Tokens.AVWETH, ChainId.AURORA,    Tokens.USDC, false),
+                makeTestCase(Networks.AVALANCHE,Tokens.AVWETH, ChainId.ETH,       Tokens.WETH, true),
+                makeTestCase(ChainId.HARMONY,   Tokens.AVWETH, ChainId.ETH,       Tokens.WETH,false),
+                makeTestCase(ChainId.BSC,       Tokens.HIGH,   ChainId.ETH,       Tokens.HIGH, true),
+                makeTestCase(ChainId.BSC,       Tokens.JUMP,   ChainId.FANTOM,    Tokens.JUMP, true),
+                makeTestCase(ChainId.BSC,       Tokens.DOG,    ChainId.POLYGON,   Tokens.DOG, true),
+                makeTestCase(ChainId.FANTOM,    Tokens.MIM,    ChainId.POLYGON,   Tokens.DAI, true),
             ];
 
             testCases.forEach(({ args, expected }) => {
@@ -270,15 +277,18 @@ describe("SynapseBridge", function() {
                 } = args;
 
                 const
-                    netNameFrom = Networks.fromChainId(chainIdFrom).name,
-                    netNameTo = Networks.fromChainId(chainIdTo).name
+                    netNameFrom = chainIdFrom instanceof Networks.Network ? chainIdFrom.name : Networks.fromChainId(chainIdFrom).name,
+                    netNameTo   = chainIdTo instanceof Networks.Network ? chainIdTo.name : Networks.fromChainId(chainIdTo).name
 
                 const testTitle = `checkSwapSupported with params ${tokenFromSymbol} on ${netNameFrom} to ${tokenToSymbol} on ${netNameTo} should return ${expected}`
 
                 it(testTitle, function() {
                     let { chainIdFrom, ...testArgs } = args;
                     const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
-                    const [swapAllowed, errReason] = bridgeInstance.swapSupported(testArgs);
+
+                    let chainIdTo = testArgs.chainIdTo instanceof Networks.Network ? testArgs.chainIdTo.chainId : testArgs.chainIdTo;
+
+                    const [swapAllowed, errReason] = bridgeInstance.swapSupported({ ...testArgs, chainIdTo });
                     expect(swapAllowed).to.equal(expected, errReason);
                 })
             })

@@ -56,6 +56,8 @@ export namespace Networks {
                 return true
             } else if (this.chainId === ChainId.ETH && token.symbol === "WETH") {
                 return true
+            } else if (this.chainId === ChainId.AVALANCHE && token.symbol === "AVWETH") {
+                return true
             }
 
             return this.tokenAddresses.includes(token.address(this.chainId));
