@@ -11,13 +11,11 @@ export interface IBaseToken {
     decimals: (chainId: number) => number | null
 }
 
-export type BridgeableToken = BaseToken | WrappedToken;
-
 export interface Token extends IBaseToken {
     isWrappedToken:   boolean,
     underlyingToken?: Token,
-    isEqual:    (other: Token) => boolean,
-    valueToWei: (amt: BigNumberish, chainId: number) => BigNumber,
+    isEqual:          (other: Token) => boolean,
+    valueToWei:       (amt: BigNumberish, chainId: number) => BigNumber,
 }
 
 /**
