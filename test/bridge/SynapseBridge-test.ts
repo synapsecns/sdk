@@ -371,18 +371,22 @@ describe("SynapseBridge", function() {
                 let {
                     args: {
                         amountFrom,
-                        tokenFrom: { symbol: tokenFromSymbol },
-                        tokenTo:   { symbol: tokenToSymbol   },
-                        chainIdFrom,
-                        chainIdTo,
+                        tokenFrom,
+                        tokenFrom: { symbol: tokFrom },
+                        tokenTo:   { symbol: tokTo   },
+                        chainIdFrom: chainFrom,
+                        chainIdTo:   chainTo,
                     },
                     notZero,
                     wantError
                 } = tc;
 
                 const
+                    amt             = formatUnits(amountFrom, tokenFrom.decimals(chainFrom)),
+                    netFrom         = netName(chainFrom),
+                    netTo           = netName(chainTo),
                     titleSuffix     = notZero ? "a value greater than zero" : "a value === zero",
-                    testParamsTitle = `with params ${formatUnits(amountFrom)} ${tokenFromSymbol} on ${netName(chainIdFrom)} to ${tokenToSymbol} on ${netName(chainIdTo)}`,
+                    testParamsTitle = `with params ${amt} ${tokFrom} on ${netFrom} to ${tokTo} on ${netTo}`,
                     testTitle       = `getEstimatedBridgeOutput ${testParamsTitle} should return ${titleSuffix}`,
                     titleSuffix1    =  wantError ? "should fail" : "should pass",
                     testTitle1      = `buildBridgeTokenTransaction ${testParamsTitle} ${titleSuffix1}`;
