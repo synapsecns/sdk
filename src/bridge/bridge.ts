@@ -9,7 +9,10 @@ import {
     rejectPromise,
 } from "../common/utils";
 
-import {Tokens} from "../tokens";
+import {
+    Tokens,
+    tokenFromSymbol,
+} from "../tokens";
 
 import {Token} from "../token";
 
@@ -896,17 +899,17 @@ export namespace Bridge {
             };
 
             const findSymbol = (tokA: Token, tokB: Token): boolean => {
-                let compareTok: string = tokB.symbol;
+                let compareTok: Token = tokB;
 
                 if (tokB.isEqual(Tokens.WETH_E)) {
-                    compareTok = Tokens.AVWETH.symbol;
+                    compareTok = Tokens.AVWETH;
                 } else if (tokB.isEqual(Tokens.ETH)) {
-                    compareTok = Tokens.WETH.symbol;
+                    compareTok = Tokens.WETH;
                 } else if (tokB.isWrapped && tokB.wrappedTokenSymbol !== "") {
-                    compareTok = tokB.wrappedTokenSymbol;
+                    compareTok = tokenFromSymbol(tokB.wrappedTokenSymbol);
                 }
 
-                return tokA.symbol === compareTok;
+                return tokA.isEqual(compareTok);
             }
 
             const tokenIndex = (toks: Token[], tok: Token): number =>

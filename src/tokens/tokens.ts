@@ -161,7 +161,7 @@ export namespace Tokens {
     });
 
     export const WETHBEAM: Token = new Token({
-        name:     "Wrapped ETH",
+        name:     "Moonbeam Wrapped ETH",
         symbol:   "WETH",
         decimals: 18,
         addresses: {
@@ -432,4 +432,9 @@ export namespace Tokens {
     export function isMintBurnToken(token: Token): boolean {
         return mintBurnTokens.map((t) => t.symbol).includes(token.symbol)
     }
+}
+
+export function tokenFromSymbol(symbol: string): Token {
+    let allTokens: Token[] = Object.values(Tokens).filter((val) => val instanceof Token) as Token[];
+    return allTokens.find((t: Token) => t.symbol === symbol);
 }
