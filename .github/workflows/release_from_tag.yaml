@@ -1,4 +1,4 @@
-name: Create Release
+name: Create Release and Publish
 
 on:
   push:
@@ -35,8 +35,8 @@ jobs:
 
       - name: Make tarball
         run: |
-          mkdir -p ./artifacts
-          yarn pack --filename "./artifacts/synapseprotocol-sdk-${{ steps.vars.outputs.tag }}.tgz"
+          mkdir -p artifacts
+          yarn pack --filename "artifacts/synapseprotocol-sdk-${{ steps.vars.outputs.tag }}.tgz"
 
       - name: Create release with tarball
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -44,4 +44,9 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
           files: |
-            "./artifacts/synapseprotocol-sdk-${{ steps.vars.outputs.tag }}.tgz"
+            "artifacts/synapseprotocol-sdk-${{ steps.vars.outputs.tag }}.tgz"
+
+      - name: Publish to NPM
+        run: yarn publish --non-interactive
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_SERVICE_ACCOUNT_TOKEN }}
