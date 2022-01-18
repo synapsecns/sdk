@@ -33,7 +33,6 @@ import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 import type {TestProvider} from "../helpers";
 
 import {
-    PROVIDER_FANTOM,
     PROVIDER_BOBA,
     PROVIDER_MOONRIVER,
     PROVIDER_AURORA,
@@ -139,12 +138,9 @@ describe("SynapseBridge", function() {
 
             let testCases: testCase[] = [
                 makeTestCase(PROVIDER_AURORA,    Tokens.DAI,  addr4, Zero),
-                // makeTestCase(PROVIDER_AVALANCHE, Tokens.USDC, addr2, MaxUint256),
-                makeTestCase(PROVIDER_FANTOM,    Tokens.MIM,  addr3, MaxUint256),
                 makeTestCase(PROVIDER_BOBA,      Tokens.NUSD, addr3, Zero),
                 makeTestCase(PROVIDER_MOONRIVER, Tokens.SYN,  addr1, Zero),
                 makeTestCase(PROVIDER_HARMONY,   Tokens.NUSD, addr5, Zero),
-                // makeTestCase(PROVIDER_AVALANCHE, Tokens.USDC, addr6, parseEther("12.98"))
             ];
 
             this.timeout(makeTimeout(10 * testCases.length));
@@ -363,12 +359,12 @@ describe("SynapseBridge", function() {
                 makeTestCase(Tokens.AVAX,    Tokens.WAVAX,   ChainId.AVALANCHE, ChainId.MOONBEAM),
                 makeTestCase(Tokens.WMOVR,   Tokens.MOVR,    ChainId.MOONBEAM,  ChainId.MOONRIVER),
                 makeTestCase(Tokens.MOVR,    Tokens.WMOVR,   ChainId.MOONRIVER, ChainId.MOONBEAM),
-                makeTestCase(Tokens.FTM_ETH, Tokens.WETH,    ChainId.FANTOM,    ChainId.ETH,       "100"),
-                makeTestCase(Tokens.FTM_ETH, Tokens.ETH,     ChainId.FANTOM,    ChainId.ETH,       "100"),
-                makeTestCase(Tokens.FTM_ETH, Tokens.WETH_E,  ChainId.FANTOM,    ChainId.AVALANCHE, "100"),
-                makeTestCase(Tokens.WETH_E,  Tokens.FTM_ETH, ChainId.AVALANCHE, ChainId.FANTOM,    "100"),
-                makeTestCase(Tokens.ETH,     Tokens.FTM_ETH, ChainId.ETH,       ChainId.FANTOM,    "100"),
-                makeTestCase(Tokens.WETH,    Tokens.FTM_ETH, ChainId.ETH,       ChainId.FANTOM,    "100"),
+                makeTestCase(Tokens.FTM_ETH, Tokens.WETH,    ChainId.FANTOM,    ChainId.ETH),
+                makeTestCase(Tokens.FTM_ETH, Tokens.ETH,     ChainId.FANTOM,    ChainId.ETH),
+                makeTestCase(Tokens.FTM_ETH, Tokens.WETH_E,  ChainId.FANTOM,    ChainId.AVALANCHE),
+                makeTestCase(Tokens.WETH_E,  Tokens.FTM_ETH, ChainId.AVALANCHE, ChainId.FANTOM),
+                makeTestCase(Tokens.ETH,     Tokens.FTM_ETH, ChainId.ETH,       ChainId.FANTOM),
+                makeTestCase(Tokens.WETH,    Tokens.FTM_ETH, ChainId.ETH,       ChainId.FANTOM),
             ];
 
             const netName = (c: number): string => Networks.fromChainId(c).name

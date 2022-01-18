@@ -37,7 +37,7 @@ import {
     MAX_APPROVAL_AMOUNT
 } from "./erc20";
 
-import {BridgeUtils, makeOverrides} from "./bridgeutils";
+import {BridgeUtils} from "./bridgeutils";
 import {GasUtils} from "./gasutils";
 import {BaseToken, WrappedToken} from "../token";
 
