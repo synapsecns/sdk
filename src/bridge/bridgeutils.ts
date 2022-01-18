@@ -152,4 +152,16 @@ export namespace BridgeUtils {
             amount
         )
     }
+
+    export const isETHLikeToken = (t: Token): boolean =>
+        t.isEqual(Tokens.WETH_E) || t.isEqual(Tokens.ONE_ETH)
+
+    export const makeOverrides = (value: BigNumber, withValue: boolean): any => {
+        let overrides: any = {}
+        if (withValue) {
+            overrides = {value}
+        }
+
+        return overrides
+    }
 }
