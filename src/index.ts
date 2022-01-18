@@ -1,6 +1,6 @@
 export {
     newSynapseBridgeInstance,
-    newNerveBridgeZapInstance,
+    newL1BridgeZapInstance,
     newL2BridgeZapInstance
 } from "./entities";
 
