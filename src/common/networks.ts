@@ -16,12 +16,6 @@ const ETH_TOKEN_CHAINS = [
 ];
 
 export namespace Networks {
-    const supportedWrappedTokens = {
-        [ChainId.ETH]:       [Tokens.WETH],
-        [ChainId.MOONRIVER]: [Tokens.WMOVR],
-        [ChainId.AVALANCHE]: [Tokens.AVWETH, Tokens.WAVAX],
-    }
-
     export class Network {
         readonly name:            string;
         readonly names:           string[];

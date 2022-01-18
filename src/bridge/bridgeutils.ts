@@ -145,15 +145,6 @@ export namespace BridgeUtils {
         tokenIndexTo: number,
         amount: BigNumber
     ): Promise<BigNumber> {
-        if ([
-            Tokens.WAVAX.address(ChainId.AVALANCHE),
-            Tokens.WAVAX.address(ChainId.MOONBEAM),
-            Tokens.WMOVR.address(ChainId.MOONBEAM),
-            Tokens.WMOVR.address(ChainId.MOONRIVER)
-        ].includes(intermediateToken)) {
-            console.log(intermediateToken, tokenIndexFrom, tokenIndexTo, amount.toString())
-        }
-
         return (zapBridge as L2BridgeZapContract).calculateSwap(
             intermediateToken,
             tokenIndexFrom,
