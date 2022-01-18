@@ -7,10 +7,11 @@ import {
 
 import {step} from "mocha-steps";
 
+import type {Token} from "../../src";
+
 import {
     ChainId,
     Networks,
-    Token,
     Tokens,
     Bridge
 } from "../../src";

@@ -1,7 +1,7 @@
 import {ChainId} from "./chainid";
 
 import {SwapPools} from "../swappools";
-import {Token} from "../token";
+import type {Token} from "../token";
 import {Tokens} from "../tokens";
 
 import {BigNumberish} from "@ethersproject/bignumber";
@@ -51,7 +51,7 @@ export namespace Networks {
 
         /**
          * Returns true if the passed token is available on this network.
-         * @param {Token|string} token Either an instance of {@link Token}, or the address of a token contract.
+         * @param {BaseToken|string} token Either an instance of {@link BaseToken}, or the address of a token contract.
          */
         supportsToken(token: Token): boolean {
             let checkSymbol = token.symbol;
@@ -164,7 +164,7 @@ export namespace Networks {
     /**
      * Returns true if the passed network supports the passed token.
      * @param {Network | BigNumberish} network Either a {@link Network} instance, or the Chain ID of a supported network.
-     * @param {Token | string} token Either a {@link Token} instance, or the address of a token contract.
+     * @param {BaseToken | string} token Either a {@link BaseToken} instance, or the address of a token contract.
      */
     export function networkSupportsToken(network: Network | BigNumberish, token: Token): boolean {
         network = network instanceof Network ? network : fromChainId(network);

@@ -1,12 +1,12 @@
+import type {Token} from "../token";
+
 import {ChainId} from "../common";
 import {Slippages} from "./slippages";
 import {BigNumber} from "@ethersproject/bignumber";
 import {Zero} from "@ethersproject/constants";
-import {Token} from "../token";
 import {GenericZapBridgeContract, L2BridgeZapContract} from "../contracts/index";
 import {Tokens} from "../tokens";
 
-import {SynapseContracts} from "../common";
 
 export namespace BridgeUtils {
     const ETH_CHAINS = [

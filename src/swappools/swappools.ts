@@ -1,8 +1,8 @@
 import {Tokens} from "../tokens";
 import {ChainId} from "../common";
 
-import {Token} from "../token";
-import type {BaseToken} from "../token";
+import {BaseToken} from "../token";
+import type {Token, IBaseToken} from "../token";
 
 
 import {SwapType} from "../common/swaptype";
@@ -16,8 +16,8 @@ export namespace SwapPools {
         ]
     }
 
-    export class SwapToken implements BaseToken {
-        readonly baseToken: Token;
+    export class SwapToken implements IBaseToken {
+        readonly baseToken: BaseToken;
         readonly poolId:   number;
         readonly poolName: string;
         readonly poolType: string;
@@ -42,7 +42,7 @@ export namespace SwapPools {
             nativeTokens?:  Token[],
             depositTokens?: Token[],
         }) {
-            this.baseToken = new Token({
+            this.baseToken = new BaseToken({
                 name:      args.name,
                 symbol:    args.symbol,
                 decimals:  args.decimals,

@@ -26,7 +26,8 @@ export {
     utils
 } from "./common";
 
-export {Token} from "./token";
+export {BaseToken, WrappedToken} from "./token";
+export type {Token} from "./token";
 
 export {Tokens} from "./tokens";
 

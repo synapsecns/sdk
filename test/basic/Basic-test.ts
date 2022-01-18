@@ -7,7 +7,7 @@ import {
     NetworkSwappableTokensMap,
     networkSwapTokensMap,
     allNetworksSwapTokensMap,
-    Token,
+    BaseToken,
     Tokens,
 } from "../../src";
 
@@ -32,7 +32,7 @@ describe("Basic tests", function(this: Mocha.Suite) {
             resB = networkSwapTokensMap(chainA),
             resC = allNetworksSwapTokensMap();
 
-        const symbolsForChain = (m: NetworkSwappableTokensMap, c: number): string[] => m[c].map((t: Token) => t.symbol)
+        const symbolsForChain = (m: NetworkSwappableTokensMap, c: number): string[] => m[c].map((t: BaseToken) => t.symbol)
 
         describe("Check result of two inputs", function(this: Mocha.Suite) {
             it("should have one map entry", () => expect(Object.keys(resA)).to.have.a.lengthOf(1));
