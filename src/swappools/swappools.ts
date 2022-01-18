@@ -189,6 +189,22 @@ export namespace SwapPools {
         poolTokens: [Tokens.NUSD, Tokens.MIM, Tokens.USDC, Tokens.USDT],
     });
 
+    export const FANTOM_ETH_SWAP_TOKEN = new SwapToken({
+        addresses: {
+            [ChainId.FANTOM]: "0x0e3dD3403ee498694A8f61B04AFed8919F747f77",
+        },
+        decimals:  18,
+        symbol:   "nETH-LP",
+        name:     "Synapse ETH LP Token Fantom",
+        poolName: "Fantom ETH Pool ",
+        poolId:    2,
+        poolType: "ETH",
+        swapAddresses: {
+            [ChainId.FANTOM]: "0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1",
+        },
+        poolTokens: [Tokens.NETH, Tokens.FTM_ETH],
+    })
+
     export const BOBA_POOL_SWAP_TOKEN = new SwapToken({
         addresses: {
             [ChainId.BOBA]: '0x9D7283A6AeeD9BCd4Ac70876fEA2b69a63DD8cb9',
@@ -387,6 +403,7 @@ export namespace SwapPools {
         },
         [ChainId.FANTOM]: {
             [SwapType.USD]:  [...FANTOM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+            [SwapType.ETH]:  [...FANTOM_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps],
             [SwapType.SYN]:  [Tokens.SYN],
             [SwapType.JUMP]: [Tokens.JUMP],
             [SwapType.OHM]:  [Tokens.GOHM],
@@ -528,7 +545,7 @@ export namespace SwapPools {
         ),
         [ChainId.FANTOM]: makeSwapTypeTokenPool(
             FANTOM_POOL_SWAP_TOKEN,
-            null,
+            FANTOM_ETH_SWAP_TOKEN,
             SwapType.SYN,
             SwapType.JUMP,
             SwapType.OHM

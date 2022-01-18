@@ -143,6 +143,7 @@ export namespace Tokens {
         decimals:    18,
         addresses: {
             [ChainId.OPTIMISM]:  '0x809DC529f07651bD43A172e8dB6f4a7a0d771036',
+            [ChainId.FANTOM]:    '0x67C10C397dD0Ba417329543c1a40eb48AAa7cd00',
             [ChainId.BOBA]:      '0x96419929d7949D6A801A6909c145C8EEf6A40431',
             [ChainId.MOONBEAM]:  '0x3192Ae73315c3634Ffa217f71CF6CBc30FeE349A',
             [ChainId.ARBITRUM]:  '0x3ea9B0ab55F34Fb188824Ee288CeaEfC63cf908e',
@@ -245,6 +246,16 @@ export namespace Tokens {
         decimals: 18,
         addresses: {
             [ChainId.HARMONY]: "0x6983d1e6def3690c4d616b13597a09e6193ea013",
+        },
+        swapType: SwapType.ETH,
+    })
+
+    export const FTM_ETH = new BaseToken({
+        name:     "Wrapped ETH",
+        symbol:   "ETH ",
+        decimals: 18,
+        addresses: {
+            [ChainId.FANTOM]: "0x74b23882a30290451A17c44f4F05243b6b58C76d"
         },
         swapType: SwapType.ETH,
     })

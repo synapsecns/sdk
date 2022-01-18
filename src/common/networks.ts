@@ -9,6 +9,7 @@ import {BigNumberish} from "@ethersproject/bignumber";
 const ETH_TOKEN_CHAINS = [
     ChainId.ETH,
     ChainId.OPTIMISM,
+    ChainId.FANTOM,
     ChainId.BOBA,
     ChainId.MOONBEAM,
     ChainId.ARBITRUM,
