@@ -20,6 +20,8 @@ export class Token implements BaseToken {
     readonly addresses: {[k: number]: string} = {};
     readonly swapType:  string;
     readonly isETH:     boolean;
+    readonly isWrapped: boolean;
+    readonly wrappedTokenSymbol: string;
 
     readonly hash: string;
 
@@ -39,12 +41,14 @@ export class Token implements BaseToken {
      * @param {string} args.swapType Swap type of this token
      */
     constructor(args: {
-        name:      string,
-        symbol:    string,
-        decimals:  number | {[k: number]: number},
-        addresses: {[k: number]: string},
-        swapType:  string,
-        isETH?:    boolean
+        name:       string,
+        symbol:     string,
+        decimals:   number | {[k: number]: number},
+        addresses:  {[k: number]: string},
+        swapType:   string,
+        isETH?:     boolean,
+        isWrapped?: boolean,
+        wrappedTokenSymbol?: string,
     }) {
         this.name      = args.name;
         this.symbol    = args.symbol;
@@ -60,6 +64,8 @@ export class Token implements BaseToken {
         }
 
         this.isETH = args.isETH ?? false;
+        this.isWrapped = args.isWrapped ?? false;
+        this.wrappedTokenSymbol = args.wrappedTokenSymbol ?? "";
 
         this.hash = Buffer.from(this.symbol).toString("base64");
     }

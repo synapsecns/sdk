@@ -74,7 +74,7 @@ const
 
 describe("SynapseBridge", function() {
     describe("read-only wrapper functions", function(this: Mocha.Suite) {
-        describe.skip(".bridgeVersion()", function(this: Mocha.Suite) {
+        describe(".bridgeVersion()", function(this: Mocha.Suite) {
             const expected = 6;
 
             ChainId.supportedChainIds().forEach((network: number) => {
@@ -94,7 +94,7 @@ describe("SynapseBridge", function() {
             })
         })
 
-        describe.skip(".WETH_ADDRESS", function(this: Mocha.Suite) {
+        describe(".WETH_ADDRESS", function(this: Mocha.Suite) {
             ChainId.supportedChainIds().forEach((network: number) => {
                 const
                     provider = newProviderForNetwork(network),
@@ -123,7 +123,7 @@ describe("SynapseBridge", function() {
             })
         })
 
-        describe.skip(".getAllowanceForAddress", function(this: Mocha.Suite) {
+        describe(".getAllowanceForAddress", function(this: Mocha.Suite) {
             interface testCase {
                 provider:   TestProvider,
                 address:    string,

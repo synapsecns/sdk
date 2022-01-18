@@ -202,13 +202,15 @@ export namespace Tokens {
 
     export const WAVAX: Token = new Token({
         name:     "Wrapped AVAX",
-        symbol:   "AVAX",
+        symbol:   "wAVAX",
         decimals: 18,
         addresses: {
             [ChainId.AVALANCHE]: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
             [ChainId.MOONBEAM]:  "0xA1f8890E39b4d8E33efe296D698fe42Fb5e59cC3",
         },
-        swapType: SwapType.AVAX,
+        swapType:  SwapType.AVAX,
+        isWrapped: true,
+        wrappedTokenSymbol: "AVAX",
     })
 
     export const MOVR: Token = new Token({
@@ -223,13 +225,15 @@ export namespace Tokens {
 
     export const WMOVR: Token = new Token({
         name:     "Wrapped MOVR",
-        symbol:   "MOVR",
+        symbol:   "wMOVR",
         decimals: 18,
         addresses: {
             [ChainId.MOONBEAM]:  "0x1d4C2a246311bB9f827F4C768e277FF5787B7D7E",
             [ChainId.MOONRIVER]: "0x98878b06940ae243284ca214f92bb71a2b032b8a",
         },
-        swapType: SwapType.MOVR,
+        swapType:  SwapType.MOVR,
+        isWrapped: true,
+        wrappedTokenSymbol: "MOVR",
     })
 
     export const ONE_ETH: Token = new Token({
@@ -421,8 +425,8 @@ export namespace Tokens {
         HIGH,  DOG,      JUMP,
         FRAX,  SYN_FRAX, NFD,
         GOHM,  SOLAR,    GMX,
-        AVAX,  WAVAX,    MOVR,
-        WMOVR,
+        // AVAX,  WAVAX,    MOVR,
+        // WMOVR,
     ];
 
     export function isMintBurnToken(token: Token): boolean {

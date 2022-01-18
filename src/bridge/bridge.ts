@@ -512,6 +512,8 @@ export namespace Bridge {
 
             if (amountFrom === Zero) {
                 amountToReceive_from = Zero;
+            } else if (tokenFrom.isWrapped) {
+                amountToReceive_from = amountFrom;
             } else if (Tokens.isMintBurnToken(tokenFrom)) {
                 amountToReceive_from = amountFrom;
             } else if (this.chainId === ChainId.ETH) {
@@ -544,6 +546,8 @@ export namespace Bridge {
             let amountToReceive_to: BigNumber;
             if (amountToReceive_from.isZero()) {
                 amountToReceive_to = Zero;
+            } else if (tokenTo.isWrapped) {
+                amountToReceive_to = amountToReceive_from;
             } else if (Tokens.isMintBurnToken(tokenTo)) {
                 amountToReceive_to = amountToReceive_from;
             } else if (chainIdTo === ChainId.ETH) {
@@ -866,17 +870,25 @@ export namespace Bridge {
             let {tokenFrom, tokenTo, chainIdTo} = args;
 
             const tokenFixer = (t: Token): Token => {
-                let fixed: Token = t;
-
                 switch (t.swapType) {
                     case SwapType.ETH:
                         if (t.isEqual(Tokens.ETH)) {
-                            fixed = Tokens.WETH;
+                            return Tokens.WETH
+                        }
+                        break;
+                    case SwapType.AVAX:
+                        if (t.isEqual(Tokens.AVAX)) {
+                            return Tokens.WAVAX
+                        }
+                        break;
+                    case SwapType.MOVR:
+                        if (t.isEqual(Tokens.MOVR)) {
+                            return Tokens.WMOVR
                         }
                         break;
                 }
 
-                return fixed;
+                return t
             }
 
             const chainTokens = (chainId: number, swapType: string): Token[] => {
@@ -884,15 +896,17 @@ export namespace Bridge {
             };
 
             const findSymbol = (tokA: Token, tokB: Token): boolean => {
-                let compareTok: Token = tokB;
+                let compareTok: string = tokB.symbol;
 
                 if (tokB.isEqual(Tokens.WETH_E)) {
-                    compareTok = Tokens.AVWETH;
-                } else if (compareTok.isEqual(Tokens.ETH)) {
-                    compareTok = Tokens.WETH;
+                    compareTok = Tokens.AVWETH.symbol;
+                } else if (tokB.isEqual(Tokens.ETH)) {
+                    compareTok = Tokens.WETH.symbol;
+                } else if (tokB.isWrapped && tokB.wrappedTokenSymbol !== "") {
+                    compareTok = tokB.wrappedTokenSymbol;
                 }
 
-                return tokA.isEqual(compareTok);
+                return tokA.symbol === compareTok;
             }
 
             const tokenIndex = (toks: Token[], tok: Token): number =>
