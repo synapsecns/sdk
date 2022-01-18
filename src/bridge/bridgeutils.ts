@@ -11,6 +11,7 @@ import {Tokens} from "../tokens";
 export namespace BridgeUtils {
     const ETH_CHAINS = [
         ChainId.OPTIMISM,
+        ChainId.FANTOM,
         ChainId.BOBA,
         ChainId.MOONBEAM,
         ChainId.ARBITRUM,
@@ -154,7 +155,7 @@ export namespace BridgeUtils {
     }
 
     export const isETHLikeToken = (t: Token): boolean =>
-        t.isEqual(Tokens.WETH_E) || t.isEqual(Tokens.ONE_ETH)
+        t.isEqual(Tokens.WETH_E) || t.isEqual(Tokens.ONE_ETH) || t.isEqual(Tokens.FTM_ETH)
 
     export const makeOverrides = (value: BigNumber, withValue: boolean): any => {
         let overrides: any = {}
