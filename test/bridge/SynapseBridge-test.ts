@@ -1,3 +1,5 @@
+import "../helpers/chaisetup";
+
 import {expect} from "chai";
 
 import {
@@ -407,18 +409,18 @@ describe("SynapseBridge", function() {
                     let { args: { chainIdFrom, ...testArgs }, notZero, wantError } = tc;
                     const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
 
-                    let prom: Promise<boolean> = bridgeInstance.estimateBridgeTokenOutput(testArgs).then((res): boolean => {
+                    let prom: Promise<BigNumber> = bridgeInstance.estimateBridgeTokenOutput(testArgs).then((res): BigNumber => {
                         amountTo = res.amountToReceive;
 
-                        return notZero
-                            ? amountTo.gt(0)
-                            : amountTo.isZero()
-                        }   
-                    )
+                        return res.amountToReceive
+                    })
 
                     wantError
                         ? expect(prom).to.eventually.be.rejected.notify(done)
-                        : expect(prom).to.eventually.be.true.notify(done)
+                        : (notZero
+                            ? expect(prom).to.eventually.be.gt(Zero).notify(done)
+                            : expect(prom).to.eventually.eq(Zero).notify(done)
+                        )
                 })
 
                 it(testTitle1, function(this: Context, done: Done) {
