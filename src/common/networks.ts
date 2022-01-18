@@ -2,6 +2,7 @@ import {ChainId} from "./chainid";
 
 import {SwapPools} from "../swappools";
 import {Token} from "../token";
+import {Tokens} from "../tokens";
 
 import {BigNumberish} from "@ethersproject/bignumber";
 
@@ -9,11 +10,18 @@ const ETH_TOKEN_CHAINS = [
     ChainId.ETH,
     ChainId.OPTIMISM,
     ChainId.BOBA,
+    ChainId.MOONBEAM,
     ChainId.ARBITRUM,
     ChainId.AVALANCHE,
 ];
 
 export namespace Networks {
+    const supportedWrappedTokens = {
+        [ChainId.ETH]:       [Tokens.WETH],
+        [ChainId.MOONRIVER]: [Tokens.WMOVR],
+        [ChainId.AVALANCHE]: [Tokens.AVWETH, Tokens.WAVAX],
+    }
+
     export class Network {
         readonly name:            string;
         readonly names:           string[];
@@ -52,11 +60,17 @@ export namespace Networks {
          * @param {Token|string} token Either an instance of {@link Token}, or the address of a token contract.
          */
         supportsToken(token: Token): boolean {
-            if ((token.symbol === "ETH") && ETH_TOKEN_CHAINS.includes(this.chainId)) {
+            let checkSymbol = token.symbol;
+
+            if (checkSymbol === "ETH") {
+                return ETH_TOKEN_CHAINS.includes(this.chainId)
+            } else if (token.isEqual(Tokens.WETH) && this.chainId === ChainId.ETH) {
                 return true
-            } else if (this.chainId === ChainId.ETH && token.symbol === "WETH") {
+            } else if (token.isEqual(Tokens.AVWETH) && this.chainId === ChainId.AVALANCHE) {
+              return true
+            } else if (token.isEqual(Tokens.WAVAX) && this.chainId === ChainId.AVALANCHE) {
                 return true
-            } else if (this.chainId === ChainId.AVALANCHE && token.symbol === "AVWETH") {
+            } else if (token.isEqual(Tokens.WMOVR) && this.chainId === ChainId.MOONRIVER) {
                 return true
             }
 
@@ -100,6 +114,12 @@ export namespace Networks {
        chainCurrency: "ETH",
     });
 
+    export const MOONBEAM = new Network({
+        name:          "Moonbeam",
+        chainId:        ChainId.MOONBEAM,
+        chainCurrency: "GLMR",
+    })
+
     export const MOONRIVER = new Network({
         name:          "Moonriver",
         chainId:       ChainId.MOONRIVER,
@@ -137,6 +157,7 @@ export namespace Networks {
         [ChainId.POLYGON]:    POLYGON,
         [ChainId.FANTOM]:     FANTOM,
         [ChainId.BOBA]:       BOBA,
+        [ChainId.MOONBEAM]:   MOONBEAM,
         [ChainId.MOONRIVER]:  MOONRIVER,
         [ChainId.ARBITRUM]:   ARBITRUM,
         [ChainId.AVALANCHE]:  AVALANCHE,

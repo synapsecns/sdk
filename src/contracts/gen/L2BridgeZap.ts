@@ -30,6 +30,7 @@ export interface L2BridgeZapInterface extends ethers.utils.Interface {
     "WETH_ADDRESS()": FunctionFragment;
     "calculateSwap(address,uint8,uint8,uint256)": FunctionFragment;
     "deposit(address,uint256,address,uint256)": FunctionFragment;
+    "depositETH(address,uint256,uint256)": FunctionFragment;
     "redeem(address,uint256,address,uint256)": FunctionFragment;
     "redeemAndRemove(address,uint256,address,uint256,uint8,uint256,uint256)": FunctionFragment;
     "redeemAndSwap(address,uint256,address,uint256,uint8,uint8,uint256,uint256)": FunctionFragment;
@@ -53,6 +54,10 @@ export interface L2BridgeZapInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "deposit",
     values: [string, BigNumberish, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "depositETH",
+    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "redeem",
@@ -174,6 +179,7 @@ export interface L2BridgeZapInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "depositETH", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "redeemAndRemove",
@@ -268,6 +274,19 @@ export interface L2BridgeZap extends BaseContract {
       token: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    /**
+     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     */
+    depositETH(
+      to: string,
+      chainId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -441,6 +460,19 @@ export interface L2BridgeZap extends BaseContract {
   ): Promise<ContractTransaction>;
 
   /**
+   * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
+   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+   * @param chainId which chain to bridge assets onto
+   * @param to address on other chain to bridge assets to
+   */
+  depositETH(
+    to: string,
+    chainId: BigNumberish,
+    amount: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  /**
    * wraps SynapseBridge redeem()
    * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
    * @param chainId which underlying chain to bridge assets onto
@@ -606,6 +638,19 @@ export interface L2BridgeZap extends BaseContract {
       to: string,
       chainId: BigNumberish,
       token: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    /**
+     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     */
+    depositETH(
+      to: string,
+      chainId: BigNumberish,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -784,6 +829,19 @@ export interface L2BridgeZap extends BaseContract {
     ): Promise<BigNumber>;
 
     /**
+     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     */
+    depositETH(
+      to: string,
+      chainId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    /**
      * wraps SynapseBridge redeem()
      * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
      * @param chainId which underlying chain to bridge assets onto
@@ -952,6 +1010,19 @@ export interface L2BridgeZap extends BaseContract {
       token: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    /**
+     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     */
+    depositETH(
+      to: string,
+      chainId: BigNumberish,
+      amount: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     /**

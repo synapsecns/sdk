@@ -139,6 +139,7 @@ export namespace Tokens {
         addresses: {
             [ChainId.OPTIMISM]:  '0x809DC529f07651bD43A172e8dB6f4a7a0d771036',
             [ChainId.BOBA]:      '0x96419929d7949D6A801A6909c145C8EEf6A40431',
+            [ChainId.MOONBEAM]:  '0x3192Ae73315c3634Ffa217f71CF6CBc30FeE349A',
             [ChainId.ARBITRUM]:  '0x3ea9B0ab55F34Fb188824Ee288CeaEfC63cf908e',
             [ChainId.AVALANCHE]: '0x19E1ae0eE35c0404f835521146206595d37981ae',
             [ChainId.HARMONY]:   '0x0b5740c6b4a97f90eF2F0220651Cca420B868FfB',
@@ -159,6 +160,16 @@ export namespace Tokens {
         swapType: SwapType.ETH
     });
 
+    export const WETHBEAM: Token = new Token({
+        name:     "Wrapped ETH",
+        symbol:   "WETH",
+        decimals: 18,
+        addresses: {
+            [ChainId.MOONBEAM]: "0x3192Ae73315c3634Ffa217f71CF6CBc30FeE349A",
+        },
+        swapType: SwapType.ETH,
+    })
+
     export const WETH_E: Token = new Token({
         name:     "Wrapped Ether",
         symbol:   "WETH.e",
@@ -177,6 +188,48 @@ export namespace Tokens {
             [ChainId.AVALANCHE]: "0x53f7c5869a859f0aec3d334ee8b4cf01e3492f21",
         },
         swapType: SwapType.ETH,
+    })
+
+    export const AVAX: Token = new Token({
+        name:     "Avalanche",
+        symbol:   "AVAX",
+        decimals: 18,
+        addresses: {
+            [ChainId.AVALANCHE]: "",
+        },
+        swapType: SwapType.AVAX,
+    })
+
+    export const WAVAX: Token = new Token({
+        name:     "Wrapped AVAX",
+        symbol:   "AVAX",
+        decimals: 18,
+        addresses: {
+            [ChainId.AVALANCHE]: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+            [ChainId.MOONBEAM]:  "0xA1f8890E39b4d8E33efe296D698fe42Fb5e59cC3",
+        },
+        swapType: SwapType.AVAX,
+    })
+
+    export const MOVR: Token = new Token({
+        name:     "Moonriver",
+        symbol:   "MOVR",
+        decimals: 18,
+        addresses: {
+            [ChainId.MOONRIVER]: "",
+        },
+        swapType: SwapType.MOVR,
+    })
+
+    export const WMOVR: Token = new Token({
+        name:     "Wrapped MOVR",
+        symbol:   "MOVR",
+        decimals: 18,
+        addresses: {
+            [ChainId.MOONBEAM]:  "0x1d4C2a246311bB9f827F4C768e277FF5787B7D7E",
+            [ChainId.MOONRIVER]: "0x98878b06940ae243284ca214f92bb71a2b032b8a",
+        },
+        swapType: SwapType.MOVR,
     })
 
     export const ONE_ETH: Token = new Token({
@@ -202,6 +255,7 @@ export namespace Tokens {
             [ChainId.POLYGON]:   '0xf8f9efc0db77d8881500bb06ff5d6abc3070e695',
             [ChainId.FANTOM]:    '0xE55e19Fb4F2D85af758950957714292DAC1e25B2', // yes this is same as avax swap addr, no its not error
             [ChainId.BOBA]:      '0xb554A55358fF0382Fb21F0a478C3546d1106Be8c',
+            [ChainId.MOONBEAM]:  '0xF44938b0125A6662f9536281aD2CD6c499F22004',
             [ChainId.MOONRIVER]: '0xd80d8688b02B3FD3afb81cDb124F188BB5aD0445',
             [ChainId.ARBITRUM]:  '0x080f6aed32fc474dd5717105dba5ea57268f46eb',
             [ChainId.AVALANCHE]: '0x1f1E7c893855525b303f99bDF5c3c05Be09ca251',
@@ -244,6 +298,7 @@ export namespace Tokens {
             [ChainId.POLYGON]:   '0xd8cA34fd379d9ca3C6Ee3b3905678320F5b45195',
             [ChainId.FANTOM]:    '0x91fa20244Fb509e8289CA630E5db3E9166233FDc',
             [ChainId.BOBA]:      '0xd22C0a4Af486C7FA08e282E9eB5f30F9AaA62C95',
+            [ChainId.MOONBEAM]:  '0xD2666441443DAa61492FFe0F37717578714a4521',
             [ChainId.MOONRIVER]: '0x3bF21Ce864e58731B6f28D68d5928BcBEb0Ad172',
             [ChainId.ARBITRUM]:  '0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1',
             [ChainId.AVALANCHE]: '0x321E7092a180BB43555132ec53AaA65a5bF84251',
@@ -316,7 +371,9 @@ export namespace Tokens {
         decimals: 18,
         addresses: {
             [ChainId.ETH]:       '0x853d955acef822db058eb8505911ed77f175b99e',
+            [ChainId.MOONBEAM]:  '',
             [ChainId.MOONRIVER]: '0x1a93b23281cc1cde4c4741353f3064709a16197d',
+            [ChainId.HARMONY]:   '0xFa7191D292d5633f702B0bd7E3E3BcCC0e633200',
         },
         swapType: SwapType.FRAX,
     });
@@ -326,6 +383,7 @@ export namespace Tokens {
         symbol:    'synFRAX',
         decimals:  18,
         addresses: {
+            [ChainId.MOONBEAM]:  "0xDd47A348AB60c61Ad6B60cA8C31ea5e00eBfAB4F",
             [ChainId.MOONRIVER]: "0xE96AC70907ffF3Efee79f502C985A7A21Bce407d",
             [ChainId.HARMONY]:   "0x1852F70512298d56e9c8FDd905e02581E04ddb2a",
             // [ChainId.POLYGON]:   "0x48A34796653aFdAA1647986b33544C911578e767",
@@ -336,10 +394,35 @@ export namespace Tokens {
         swapType: SwapType.FRAX,
     })
 
+    export const SOLAR: Token = new Token({
+        name:     "Vested SolarBeam",
+        symbol:   "veSOLAR",
+        decimals: 18,
+        addresses: {
+            [ChainId.MOONBEAM]:  "0x0DB6729C03C85B0708166cA92801BcB5CAc781fC",
+            [ChainId.MOONRIVER]: "0x76906411D07815491A5E577022757aD941fb5066",
+        },
+        swapType: SwapType.SOLAR,
+    })
+
+    export const GMX: Token = new Token({
+        name:     "GMX",
+        symbol:   "GMX",
+        decimals: 18,
+        addresses: {
+            [ChainId.ARBITRUM]:  "0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
+            [ChainId.AVALANCHE]: "0x62edc0692bd897d2295872a9ffcac5425011c661",
+        },
+        swapType: SwapType.GMX,
+    })
+
     export const mintBurnTokens: Token[] = [
-        NUSD, SYN, NETH,
-        HIGH, DOG, JUMP,
-        FRAX, NFD, GOHM,
+        NUSD,  SYN,      NETH,
+        HIGH,  DOG,      JUMP,
+        FRAX,  SYN_FRAX, NFD,
+        GOHM,  SOLAR,    GMX,
+        AVAX,  WAVAX,    MOVR,
+        WMOVR,
     ];
 
     export function isMintBurnToken(token: Token): boolean {
