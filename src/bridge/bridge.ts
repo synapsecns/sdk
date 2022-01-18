@@ -332,7 +332,10 @@ export namespace Bridge {
         }, signer: Signer): Promise<ContractTransaction> {
             const [approveArgs, tokenAddress] = this.buildERC20ApproveArgs(args);
 
-            return ERC20.approve(approveArgs, {tokenAddress, chainId: this.chainId}, signer)
+            return Promise.resolve(
+                ERC20.approve(approveArgs, {tokenAddress, chainId: this.chainId}, signer)
+                    .then((res: ContractTransaction) => res)
+            )
         }
 
         async getAllowanceForAddress(args: {
