@@ -124,6 +124,29 @@ const ABI = {
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "depositETH",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        },
+        {
           "internalType": "contract IERC20",
           "name": "token",
           "type": "address"
@@ -590,6 +613,13 @@ const ABI = {
           "token": "ERC20 compatible token to deposit into the bridge"
         }
       },
+      "depositETH(address,uint256,uint256)": {
+        "params": {
+          "amount": "Amount in native token decimals to transfer cross-chain pre-fees*",
+          "chainId": "which chain to bridge assets onto",
+          "to": "address on other chain to bridge assets to"
+        }
+      },
       "redeem(address,uint256,address,uint256)": {
         "params": {
           "amount": "Amount in native token decimals to transfer cross-chain pre-fees*",
@@ -632,6 +662,9 @@ const ABI = {
       },
       "deposit(address,uint256,address,uint256)": {
         "notice": "wraps SynapseBridge redeem()"
+      },
+      "depositETH(address,uint256,uint256)": {
+        "notice": "Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions"
       },
       "redeem(address,uint256,address,uint256)": {
         "notice": "wraps SynapseBridge redeem()"

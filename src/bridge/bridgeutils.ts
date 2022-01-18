@@ -4,6 +4,9 @@ import {BigNumber} from "@ethersproject/bignumber";
 import {Zero} from "@ethersproject/constants";
 import {Token} from "../token";
 import {GenericZapBridgeContract, L2BridgeZapContract} from "../contracts/index";
+import {Tokens} from "../tokens";
+
+import {SynapseContracts} from "../common";
 
 export namespace BridgeUtils {
     const ETH_CHAINS = [
@@ -16,6 +19,22 @@ export namespace BridgeUtils {
     ];
 
     export const isL2ETHChain = (chainId: number): boolean => ETH_CHAINS.includes(chainId);
+
+    interface DepositIfChainArgs {
+        chainId:     number,
+        tokens:      Token[],
+        depositEth:  boolean,
+        altChainId?: number,
+    }
+
+    export const DepositIfChainTokens: DepositIfChainArgs[] = [
+        {chainId: ChainId.FANTOM,    tokens: [Tokens.JUMP],  depositEth: false},
+        {chainId: ChainId.POLYGON,   tokens: [Tokens.NFD],   depositEth: false},
+        {chainId: ChainId.ARBITRUM,  tokens: [Tokens.GMX],   depositEth: false},
+        {chainId: ChainId.MOONRIVER, tokens: [Tokens.SOLAR], depositEth: false},
+        {chainId: ChainId.AVALANCHE, tokens: [Tokens.AVAX, Tokens.WAVAX], altChainId: ChainId.MOONBEAM, depositEth: true},
+        {chainId: ChainId.MOONRIVER, tokens: [Tokens.MOVR, Tokens.WMOVR], altChainId: ChainId.MOONBEAM, depositEth: true},
+    ]
 
     interface BridgeTxArgs {
         slippageCustom:            string,
@@ -126,6 +145,15 @@ export namespace BridgeUtils {
         tokenIndexTo: number,
         amount: BigNumber
     ): Promise<BigNumber> {
+        if ([
+            Tokens.WAVAX.address(ChainId.AVALANCHE),
+            Tokens.WAVAX.address(ChainId.MOONBEAM),
+            Tokens.WMOVR.address(ChainId.MOONBEAM),
+            Tokens.WMOVR.address(ChainId.MOONRIVER)
+        ].includes(intermediateToken)) {
+            console.log(intermediateToken, tokenIndexFrom, tokenIndexTo, amount.toString())
+        }
+
         return (zapBridge as L2BridgeZapContract).calculateSwap(
             intermediateToken,
             tokenIndexFrom,

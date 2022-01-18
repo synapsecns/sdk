@@ -397,16 +397,19 @@ export namespace SwapPools {
             [SwapType.ETH]: [...BOBA_ETH_SWAP_TOKEN.poolTokens],
         },
         [ChainId.MOONBEAM]: {
-            [SwapType.ETH]:   [Tokens.WETHBEAM],
-            [SwapType.FRAX]:  [Tokens.FRAX, Tokens.SYN_FRAX],
+            // [SwapType.ETH]:   [Tokens.WETHBEAM],
+            // [SwapType.FRAX]:  [Tokens.FRAX, Tokens.SYN_FRAX],
             [SwapType.SYN]:   [Tokens.SYN],
             [SwapType.SOLAR]: [Tokens.SOLAR],
+            [SwapType.AVAX]:  [Tokens.WAVAX],
+            [SwapType.MOVR]:  [Tokens.WMOVR],
         },
         [ChainId.MOONRIVER]: {
             [SwapType.FRAX]:  [Tokens.FRAX, Tokens.SYN_FRAX],
             [SwapType.SYN]:   [Tokens.SYN],
             [SwapType.OHM]:   [Tokens.GOHM],
             [SwapType.SOLAR]: [Tokens.SOLAR],
+            [SwapType.MOVR]:  [Tokens.MOVR],
         },
         [ChainId.ARBITRUM]: {
             [SwapType.USD]: [...ARBITRUM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
@@ -416,12 +419,13 @@ export namespace SwapPools {
             [SwapType.GMX]: [Tokens.GMX],
         },
         [ChainId.AVALANCHE]: {
-            [SwapType.USD]: [...AVALANCHE_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
-            [SwapType.ETH]: [...AVALANCHE_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps],
-            [SwapType.SYN]: [Tokens.SYN],
-            [SwapType.NFD]: [Tokens.NFD],
-            [SwapType.OHM]: [Tokens.GOHM],
-            [SwapType.GMX]: [Tokens.GMX],
+            [SwapType.USD]:  [...AVALANCHE_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+            [SwapType.ETH]:  [...AVALANCHE_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps],
+            [SwapType.SYN]:  [Tokens.SYN],
+            [SwapType.NFD]:  [Tokens.NFD],
+            [SwapType.OHM]:  [Tokens.GOHM],
+            [SwapType.GMX]:  [Tokens.GMX],
+            [SwapType.AVAX]: [Tokens.AVAX],
         },
         [ChainId.AURORA]: {
             [SwapType.USD]: [...AURORA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
@@ -434,8 +438,6 @@ export namespace SwapPools {
             [SwapType.FRAX]: [Tokens.FRAX, Tokens.SYN_FRAX],
         },
     }
-
-
 
     const
         fraxOnly    = {[SwapType.FRAX]: { poolTokens: [Tokens.FRAX] } },
@@ -453,6 +455,10 @@ export namespace SwapPools {
         [SwapType.GMX]:    {[SwapType.GMX]:   { poolTokens: [Tokens.GMX]   }},
         [SwapType.SOLAR]:  {[SwapType.SOLAR]: { poolTokens: [Tokens.SOLAR] }},
         [SwapType.FRAX]:   allTheFrax,
+        "movr":            {[SwapType.MOVR]:  { poolTokens: [Tokens.MOVR]  }},
+        "wmovr":           {[SwapType.MOVR]:  { poolTokens: [Tokens.WMOVR] }},
+        "avax":            {[SwapType.AVAX]:  { poolTokens: [Tokens.AVAX]  }},
+        "wavax":           {[SwapType.AVAX]:  { poolTokens: [Tokens.WAVAX] }},
     }
 
 
@@ -533,13 +539,15 @@ export namespace SwapPools {
             SwapType.SYN,
         ),
         [ChainId.MOONBEAM]: {
-            [SwapType.ETH]: { poolTokens: [Tokens.WETHBEAM] },
-            ...fraxOnly,
+            // [SwapType.ETH]: { poolTokens: [Tokens.WETHBEAM] },
+            // ...fraxOnly,
             ...makeSwapTypeTokenPool(
                 null, null,
                 SwapType.SYN,
                 SwapType.SOLAR,
                 SwapType.OHM,
+                "wmovr",
+                "wavax",
             ),
         },
         [ChainId.MOONRIVER]: makeSwapTypeTokenPool(
@@ -548,6 +556,7 @@ export namespace SwapPools {
             SwapType.FRAX,
             SwapType.OHM,
             SwapType.SOLAR,
+            "movr"
         ),
         [ChainId.ARBITRUM]: makeSwapTypeTokenPool(
             ARBITRUM_POOL_SWAP_TOKEN,
@@ -563,6 +572,7 @@ export namespace SwapPools {
             SwapType.NFD,
             SwapType.OHM,
             SwapType.GMX,
+            "avax"
         ),
         [ChainId.AURORA]: makeSwapTypeTokenPool(
             AURORA_POOL_SWAP_TOKEN,

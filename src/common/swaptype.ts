@@ -11,5 +11,7 @@ export namespace SwapType {
         NFD:   string = "NFD",
         OHM:   string = "OHM",
         GMX:   string = "GMX",
-        SOLAR: string = "SOLAR";
+        SOLAR: string = "SOLAR",
+        AVAX:  string = "AVAX",
+        MOVR:  string = "MOVR";
 }

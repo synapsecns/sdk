@@ -65,7 +65,7 @@ export namespace SynapseContracts {
 
     export const Moonriver = new SynapseContract(({
         bridge:     "0xaeD5b25BE1c3163c907a471082640450F928DDFE",
-        bridge_zap: "0xe37F21EFaF8242d086B79A799EB0fDC3Fb778704",
+        bridge_zap: "0xfA28DdB74b08B2b6430f5F61A1Dd5104268CC29e",
     }))
 
     export const Arbitrum = new SynapseContract({
@@ -75,7 +75,7 @@ export namespace SynapseContracts {
 
     export const Avalanche = new SynapseContract({
         bridge:     "0xC05e61d0E7a63D27546389B7aD62FdFf5A91aACE",
-        bridge_zap: "0xAb325cDEc65823bA15d265cf68674aB7aFFd44c3",
+        bridge_zap: "0xE85429C97589AD793Ca11A8BC3477C03d27ED140",
     });
 
     export const Aurora = new SynapseContract({
