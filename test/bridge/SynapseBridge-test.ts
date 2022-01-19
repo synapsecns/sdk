@@ -376,7 +376,7 @@ describe("SynapseBridge", function() {
 
             const netName = (c: number): string => Networks.fromChainId(c).name
 
-            const makeTestName = (tc: TestCase): [string, string] => {
+            const makeTestName = (tc: TestCase): [string, string, string] => {
                 let {
                     args: {
                         amountFrom,
@@ -398,15 +398,16 @@ describe("SynapseBridge", function() {
                     testParamsTitle = `with params ${amt} ${tokFrom} on ${netFrom} to ${tokTo} on ${netTo}`,
                     testTitle       = `getEstimatedBridgeOutput ${testParamsTitle} should return ${titleSuffix}`,
                     titleSuffix1    =  wantError ? "should fail" : "should pass",
-                    testTitle1      = `buildBridgeTokenTransaction ${testParamsTitle} ${titleSuffix1}`;
+                    testTitle1      = `buildBridgeTokenTransaction ${testParamsTitle} ${titleSuffix1}`,
+                    testTitle2      = `buildApproveTransaction ${testParamsTitle} ${titleSuffix1}`;
 
-                return [testTitle, testTitle1]
+                return [testTitle, testTitle1, testTitle2]
             }
 
             testCases.forEach((tc: TestCase) => {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                const [testTitle, testTitle1] = makeTestName(tc)
+                const [testTitle, testTitle1, testTitle2] = makeTestName(tc)
 
                 let amountTo: BigNumber;
 
@@ -437,6 +438,40 @@ describe("SynapseBridge", function() {
                         : expect(prom).to.eventually.be.true.notify(done)
                 })
 
+                it(testTitle2, function(this: Context, done: Done) {
+                    this.timeout(10*1000);
+
+                    let { args: { chainIdFrom, tokenFrom, amountFrom }, wantError } = tc;
+
+                    if (!wantError) {
+                        const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
+
+                        switch (true) {
+                            case tokenFrom.isEqual(Tokens.ETH):
+                                tokenFrom = Tokens.WETH;
+                                break;
+                            case tokenFrom.isEqual(Tokens.AVAX):
+                                tokenFrom = Tokens.WAVAX;
+                                break;
+                            case tokenFrom.isEqual(Tokens.MOVR):
+                                tokenFrom = Tokens.WMOVR;
+                                break;
+                        }
+
+                        let prom = Promise.resolve(
+                            bridgeInstance.buildApproveTransaction({
+                                token:  tokenFrom,
+                                amount: amountFrom
+                            })
+                        )
+
+                        expect(prom).to.eventually.be.fulfilled.notify(done);
+                        return
+                    }
+
+                    done();
+                })
+
                 it(testTitle1, function(this: Context, done: Done) {
                     this.timeout(10*1000);
 
@@ -447,12 +482,14 @@ describe("SynapseBridge", function() {
                         const wallet = makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey);
                         const addressTo = wallet.address;
                         
-                        Promise.resolve(
+                        let prom = Promise.resolve(
                             bridgeInstance.buildBridgeTokenTransaction({
                                 ...args, amountTo, addressTo
                             })
                         )
-                        // ).catch((e) => doneWithError(e, done));
+
+                        expect(prom).to.eventually.be.fulfilled.notify(done);
+                        return
                     }
 
                     done();
