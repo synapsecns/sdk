@@ -251,6 +251,7 @@ describe("SynapseBridge", function() {
                 makeTestCase(ChainId.BSC,       Tokens.DOG,    ChainId.POLYGON,   Tokens.DOG, true),
                 makeTestCase(ChainId.FANTOM,    Tokens.MIM,    ChainId.POLYGON,   Tokens.DAI, true),
                 makeTestCase(ChainId.POLYGON,   Tokens.NFD,    ChainId.AVALANCHE, Tokens.NFD, true),
+                makeTestCase(ChainId.OPTIMISM,  Tokens.WETH_E, ChainId.AVALANCHE, Tokens.WETH_E,false),
             ];
 
             testCases.forEach(({ args, expected }) => {
@@ -338,7 +339,7 @@ describe("SynapseBridge", function() {
                 makeTestCase(Tokens.NUSD,    Tokens.DAI,     ChainId.AVALANCHE, ChainId.ETH),
                 makeTestCase(Tokens.MIM,     Tokens.NUSD,    ChainId.FANTOM,    ChainId.ETH),
                 makeTestCase(Tokens.NUSD,    Tokens.DAI,     ChainId.AVALANCHE, ChainId.POLYGON),
-                makeTestCase(Tokens.DOG,     Tokens.DOG,     ChainId.POLYGON,   ChainId.ETH),
+                makeTestCase(Tokens.DOG,     Tokens.DOG,     ChainId.POLYGON,   ChainId.ETH, "1337"),
                 makeTestCase(Tokens.ETH,     Tokens.ETH,     ChainId.ARBITRUM,  ChainId.OPTIMISM),
                 makeTestCase(Tokens.NETH,    Tokens.ETH,     ChainId.ARBITRUM,  ChainId.OPTIMISM),
                 makeTestCase(Tokens.JUMP,    Tokens.JUMP,    ChainId.FANTOM,    ChainId.BSC),
@@ -358,7 +359,9 @@ describe("SynapseBridge", function() {
                 makeTestCase(Tokens.JUMP,    Tokens.JUMP,    ChainId.BSC,       ChainId.FANTOM),
                 makeTestCase(Tokens.DOG,     Tokens.DOG,     ChainId.BSC,       ChainId.POLYGON),
                 makeTestCase(Tokens.MIM,     Tokens.DAI,     ChainId.FANTOM,    ChainId.POLYGON),
-                makeTestCase(Tokens.NFD,     Tokens.NFD,     ChainId.POLYGON,   ChainId.AVALANCHE),
+                makeTestCase(Tokens.NFD,     Tokens.NFD,     ChainId.POLYGON,   ChainId.AVALANCHE, "1337"),
+                makeTestCase(Tokens.GMX,     Tokens.GMX,     ChainId.ARBITRUM,  ChainId.AVALANCHE),
+                makeTestCase(Tokens.SOLAR,   Tokens.SOLAR,   ChainId.MOONRIVER, ChainId.MOONBEAM),
                 makeTestCase(Tokens.WAVAX,   Tokens.AVAX,    ChainId.MOONBEAM,  ChainId.AVALANCHE),
                 makeTestCase(Tokens.AVAX,    Tokens.WAVAX,   ChainId.AVALANCHE, ChainId.MOONBEAM),
                 makeTestCase(Tokens.WMOVR,   Tokens.MOVR,    ChainId.MOONBEAM,  ChainId.MOONRIVER),
@@ -411,18 +414,27 @@ describe("SynapseBridge", function() {
                     let { args: { chainIdFrom, ...testArgs }, notZero, wantError } = tc;
                     const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
 
-                    let prom: Promise<BigNumber> = bridgeInstance.estimateBridgeTokenOutput(testArgs).then((res): BigNumber => {
-                        amountTo = res.amountToReceive;
+                    let prom: Promise<boolean> = Promise.resolve(bridgeInstance.estimateBridgeTokenOutput(testArgs)
+                        .then((res) => {
+                            amountTo = res.amountToReceive;
 
-                        return res.amountToReceive
+                            return res
+                        })
+                    ).then((res): boolean => {
+                        let {amountToReceive, bridgeFee} = res;
+
+                        if (bridgeFee.gte(testArgs.amountFrom)) {
+                            return true // merp
+                        }
+
+                        return notZero
+                            ? amountToReceive.gt(Zero)
+                            : amountToReceive.eq(Zero)
                     })
 
                     wantError
                         ? expect(prom).to.eventually.be.rejected.notify(done)
-                        : (notZero
-                            ? expect(prom).to.eventually.be.gt(Zero).notify(done)
-                            : expect(prom).to.eventually.eq(Zero).notify(done)
-                        )
+                        : expect(prom).to.eventually.be.true.notify(done)
                 })
 
                 it(testTitle1, function(this: Context, done: Done) {

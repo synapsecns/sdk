@@ -475,12 +475,20 @@ export namespace Bridge {
                 fromChainTokens
             } = this.makeBridgeTokenArgs(args);
 
+            const mintBurnSwapTypes = [
+                SwapType.HIGH,  SwapType.DOG, SwapType.JUMP,
+                SwapType.NFD,   SwapType.OHM, SwapType.GMX,
+                SwapType.SOLAR,
+            ];
+
             let [intermediateToken, bridgeConfigIntermediateToken] = ((): [Token, Token] => {
+                if (mintBurnSwapTypes.includes(tokenFrom.swapType)) {
+                    return [tokenFrom, tokenFrom]
+                }
+
                 switch (tokenFrom.swapType) {
                     case SwapType.SYN:
                         return [Tokens.SYN, Tokens.SYN]
-                    case SwapType.HIGH || SwapType.DOG || SwapType.JUMP || SwapType.NFD || SwapType.OHM || SwapType.GMX || SwapType.SOLAR:
-                        return [tokenFrom, tokenFrom]
                     case SwapType.FRAX:
                         if (chainIdTo === ChainId.ETH) {
                             return [null, Tokens.FRAX]
