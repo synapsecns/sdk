@@ -16,6 +16,7 @@ export interface Token extends IBaseToken {
     underlyingToken?: Token,
     isEqual:          (other: Token) => boolean,
     valueToWei:       (amt: BigNumberish, chainId: number) => BigNumber,
+    wrapperAddress:   (chainId: number) => string | null
 }
 
 /**
@@ -27,8 +28,10 @@ export class BaseToken implements Token {
     readonly addresses: {[k: number]: string} = {};
     readonly swapType:  string;
     readonly isETH:     boolean;
-
     readonly hash: string;
+
+    private readonly wrapperAddresses: {[k: number]: string} = {};
+
 
     protected readonly _decimals:  {[k: number]: number} = {};
 
@@ -52,11 +55,14 @@ export class BaseToken implements Token {
         addresses:  {[k: number]: string},
         swapType:   string,
         isETH?:     boolean,
+        wrapperAddresses?: {[k: number]: string},
     }) {
         this.name      = args.name;
         this.symbol    = args.symbol;
         this.addresses = args.addresses;
         this.swapType  = args.swapType;
+
+        this.wrapperAddresses = args.wrapperAddresses ?? {};
 
         if (typeof args.decimals === "number") {
             for (const [k,] of Object.entries(this.addresses)) {
@@ -79,6 +85,10 @@ export class BaseToken implements Token {
      */
     address(chainId: number): string | null {
         return this.addresses[chainId] || null
+    }
+
+    wrapperAddress(chainId: number): string | null {
+        return this.wrapperAddresses[chainId] || null
     }
 
     decimals(chainId: number): number | null {
@@ -111,6 +121,7 @@ export class WrappedToken extends BaseToken {
         swapType:     string,
         isETH?:       boolean,
         underlyingToken: BaseToken,
+        wrapperAddresses?: {[k: number]: string},
     }) {
         let {underlyingToken, ...tokenArgs} = args;
         super(tokenArgs);

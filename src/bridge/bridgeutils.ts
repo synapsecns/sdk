@@ -31,7 +31,6 @@ export namespace BridgeUtils {
     export const DepositIfChainTokens: DepositIfChainArgs[] = [
         {chainId: ChainId.FANTOM,    tokens: [Tokens.JUMP],  depositEth: false},
         {chainId: ChainId.POLYGON,   tokens: [Tokens.NFD],   depositEth: false},
-        {chainId: ChainId.ARBITRUM,  tokens: [Tokens.GMX],   depositEth: false},
         {chainId: ChainId.MOONRIVER, tokens: [Tokens.SOLAR], depositEth: false},
         {chainId: ChainId.AVALANCHE, tokens: [Tokens.AVAX, Tokens.WAVAX], altChainId: ChainId.MOONBEAM, depositEth: true},
         {chainId: ChainId.MOONRIVER, tokens: [Tokens.MOVR, Tokens.WMOVR], altChainId: ChainId.MOONBEAM, depositEth: true},

@@ -784,17 +784,28 @@ export namespace Bridge {
 
             switch (args.tokenTo.hash) {
                 case Tokens.NUSD.hash:
-                    if (!args.tokenFrom.isEqual(Tokens.NUSD)) {
-                        return zapBridge.populateTransaction.swapAndRedeem(
-                            ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.NUSD),
-                            tokenArgs.tokenIndexFrom,
-                            0,
-                            amountFrom,
-                            minToSwapOriginHighSlippage,
-                            transactionDeadline
-                        )
+                    return zapBridge.populateTransaction.swapAndRedeem(
+                        ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.NUSD),
+                        tokenArgs.tokenIndexFrom,
+                        0,
+                        amountFrom,
+                        minToSwapOriginHighSlippage,
+                        transactionDeadline
+                    )
+                case Tokens.GMX.hash:
+                    let params = BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.GMX);
+                    switch (this.chainId) {
+                        case ChainId.ARBITRUM:
+                            return zapBridge.populateTransaction.deposit(...params)
+                        default:
+                            let [addrTo, chainTo,,amount] = params;
+                            return this.bridgeInstance.populateTransaction.redeem(
+                                addrTo,
+                                chainTo,
+                                Tokens.GMX.wrapperAddress(this.chainId),
+                                amount
+                            )
                     }
-                    break;
                 default:
                     if (chainIdTo === ChainId.ETH) {
                         if ((BridgeUtils.isL2ETHChain(this.chainId)) && (args.tokenFrom.swapType === SwapType.ETH)) {

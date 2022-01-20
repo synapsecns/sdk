@@ -423,23 +423,25 @@ export namespace Tokens {
         swapType: SwapType.SOLAR,
     })
 
-    // export const GMX = new BaseToken({
-    //     name:     "GMX",
-    //     symbol:   "GMX",
-    //     decimals: 18,
-    //     addresses: {
-    //         [ChainId.ARBITRUM]:  "0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
-    //         [ChainId.AVALANCHE]: "0x62edc0692bd897d2295872a9ffcac5425011c661",
-    //     },
-    //     swapType: SwapType.GMX,
-    // })
+    export const GMX = new BaseToken({
+        name:     "GMX",
+        symbol:   "GMX",
+        decimals: 18,
+        addresses: {
+            [ChainId.ARBITRUM]:  "0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
+            [ChainId.AVALANCHE]: "0x62edc0692bd897d2295872a9ffcac5425011c661",
+        },
+        wrapperAddresses: {
+            [ChainId.AVALANCHE]: "0x20A9DC684B4d0407EF8C9A302BEAaA18ee15F656",
+        },
+        swapType: SwapType.GMX,
+    })
 
     export const mintBurnTokens: Token[] = [
         NUSD,  SYN,      NETH,
         HIGH,  DOG,      JUMP,
         FRAX,  SYN_FRAX, NFD,
-        GOHM,  SOLAR,
-        // GMX,
+        GOHM,  SOLAR,    GMX,
     ];
 
     export function isMintBurnToken(token: Token): boolean {
