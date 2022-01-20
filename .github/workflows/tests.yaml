@@ -28,6 +28,9 @@ jobs:
           - 17
         platform:
           - ubuntu-latest
+
+    if: ${{ !contains(toJSON(github.event.commits.*.message), '[ci notest]') }}
+
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout code

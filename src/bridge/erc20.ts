@@ -42,10 +42,20 @@ export namespace ERC20 {
         }
 
         approve = async (
-            args: ApproveArgs,
-            signer: Signer
-        ): Promise<ContractTransaction> => executePopulatedTransaction(this.buildApproveTransaction(args), signer)
+            args:    ApproveArgs,
+            signer:  Signer,
+            dryRun?: boolean
+        ): Promise<boolean|ContractTransaction> => {
+            dryRun = dryRun ?? false;
 
+            return dryRun
+                ? this.instance.callStatic.approve(
+                    args.spender,
+                    args.amount ?? MAX_APPROVAL_AMOUNT,
+                    {from: signer.getAddress()}
+                )
+                : executePopulatedTransaction(this.buildApproveTransaction(args), signer)
+        }
 
         buildApproveTransaction = async (args: ApproveArgs): Promise<PopulatedTransaction> => {
             let {spender, amount} = args;
@@ -85,8 +95,9 @@ export namespace ERC20 {
     export const approve = async (
         approveArgs: ApproveArgs,
         tokenParams: ERC20TokenParams,
-        signer:      Signer
-    ): Promise<ContractTransaction> => new ERC20(tokenParams).approve(approveArgs, signer)
+        signer:      Signer,
+        dryRun?:     boolean,
+    ): Promise<boolean|ContractTransaction> => new ERC20(tokenParams).approve(approveArgs, signer, dryRun)
 
     export const buildApproveTransaction = async (
         approveArgs: ApproveArgs,

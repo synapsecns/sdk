@@ -12,14 +12,13 @@ export type SignerOrProvider = Signer | Provider;
 export const rejectPromise = (e: any): Promise<never> => Promise.reject(e instanceof Error ? e : new Error(e))
 
 
-export function executePopulatedTransaction(
+export const executePopulatedTransaction = (
     populatedTxn: Promise<PopulatedTransaction>,
-    signer: Signer
-): Promise<ContractTransaction> {
-    return populatedTxn
-        .then((populatedTxn: PopulatedTransaction) => signer.sendTransaction(populatedTxn))
+    signer:       Signer,
+): Promise<ContractTransaction> =>
+    populatedTxn
+        .then((populatedTxn: PopulatedTransaction): Promise<ContractTransaction> => signer.sendTransaction(populatedTxn))
         .catch(rejectPromise)
-}
 
 
 export function contractAddressFor(chainId: number, key: string): string {

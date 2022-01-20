@@ -1,4 +1,9 @@
-import {Token} from "../token";
+import type {Token} from "../token";
+
+import {
+    BaseToken,
+    WrappedToken,
+} from "../token";
 
 import {
     ChainId,
@@ -7,7 +12,7 @@ import {
 import {SwapType} from "../common/swaptype";
 
 export namespace Tokens {
-    const KEEP_THIS_HERE = new Token({
+    const KEEP_THIS_HERE = new BaseToken({
         name:      "",
         symbol:    "",
         decimals:  18,
@@ -20,7 +25,7 @@ export namespace Tokens {
     /**
      * The DAI stablecoin, available on Arbitrum, Avalanche, Binance Smart Chain, Ethereum, and Polygon.
      */
-    export const DAI: Token = new Token({
+    export const DAI = new BaseToken({
         name:         'Dai',
         symbol:       'DAI',
         decimals:     18,
@@ -37,7 +42,7 @@ export namespace Tokens {
         swapType: SwapType.USD
     });
 
-    export const BUSD: Token = new Token({
+    export const BUSD = new BaseToken({
         name:        'Binance USD',
         symbol:      'BUSD',
         decimals:    18,
@@ -47,7 +52,7 @@ export namespace Tokens {
         swapType: SwapType.USD
     });
 
-    export const USDC: Token = new Token({
+    export const USDC = new BaseToken({
         name:   "USD Circle",
         symbol: "USDC",
         decimals: {
@@ -75,7 +80,7 @@ export namespace Tokens {
         swapType: SwapType.USD
     });
 
-    export const USDT: Token = new Token({
+    export const USDT = new BaseToken({
         name:     "USD Tether",
         symbol:   "USDT",
         decimals: {
@@ -103,7 +108,7 @@ export namespace Tokens {
         swapType: SwapType.USD
     });
 
-    export const UST: Token = new Token({
+    export const UST = new BaseToken({
         symbol:       'UST',
         name:         'TerraUSD',
         decimals:     18,
@@ -115,7 +120,7 @@ export namespace Tokens {
 
     // ETH, ETH wrappers, and nETH :D
 
-    export const ETH: Token = new Token({
+    export const ETH = new BaseToken({
         name:        'Ethereum',
         symbol:      'ETH',
         decimals:    18,
@@ -132,12 +137,13 @@ export namespace Tokens {
     /**
      * nETH is a token involved in the bridge.
      */
-    export const NETH: Token = new Token({
+    export const NETH = new BaseToken({
         name:        'Synapse nETH',
         symbol:      'nETH',
         decimals:    18,
         addresses: {
             [ChainId.OPTIMISM]:  '0x809DC529f07651bD43A172e8dB6f4a7a0d771036',
+            [ChainId.FANTOM]:    '0x67C10C397dD0Ba417329543c1a40eb48AAa7cd00',
             [ChainId.BOBA]:      '0x96419929d7949D6A801A6909c145C8EEf6A40431',
             [ChainId.MOONBEAM]:  '0x3192Ae73315c3634Ffa217f71CF6CBc30FeE349A',
             [ChainId.ARBITRUM]:  '0x3ea9B0ab55F34Fb188824Ee288CeaEfC63cf908e',
@@ -147,7 +153,7 @@ export namespace Tokens {
         swapType: SwapType.ETH
     });
 
-    export const WETH: Token = new Token({
+    export const WETH = new BaseToken({
         name:         'Wrapped ETH',
         symbol:       'WETH', // SHOULD BE WETH
         decimals:     18,
@@ -160,8 +166,8 @@ export namespace Tokens {
         swapType: SwapType.ETH
     });
 
-    export const WETHBEAM: Token = new Token({
-        name:     "Wrapped ETH",
+    export const WETHBEAM = new BaseToken({
+        name:     "Moonbeam Wrapped ETH",
         symbol:   "WETH",
         decimals: 18,
         addresses: {
@@ -170,7 +176,7 @@ export namespace Tokens {
         swapType: SwapType.ETH,
     })
 
-    export const WETH_E: Token = new Token({
+    export const WETH_E = new BaseToken({
         name:     "Wrapped Ether",
         symbol:   "WETH.e",
         decimals: 18,
@@ -180,7 +186,7 @@ export namespace Tokens {
         swapType: SwapType.ETH,
     })
 
-    export const AVWETH: Token = new Token({
+    export const AVWETH = new BaseToken({
         name:     "AAVE Wrapped Ether",
         symbol:   "AVWETH",
         decimals: 18,
@@ -190,7 +196,7 @@ export namespace Tokens {
         swapType: SwapType.ETH,
     })
 
-    export const AVAX: Token = new Token({
+    export const AVAX = new BaseToken({
         name:     "Avalanche",
         symbol:   "AVAX",
         decimals: 18,
@@ -200,18 +206,19 @@ export namespace Tokens {
         swapType: SwapType.AVAX,
     })
 
-    export const WAVAX: Token = new Token({
+    export const WAVAX = new WrappedToken({
         name:     "Wrapped AVAX",
-        symbol:   "AVAX",
+        symbol:   "wAVAX",
         decimals: 18,
         addresses: {
             [ChainId.AVALANCHE]: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
             [ChainId.MOONBEAM]:  "0xA1f8890E39b4d8E33efe296D698fe42Fb5e59cC3",
         },
-        swapType: SwapType.AVAX,
+        swapType:        SwapType.AVAX,
+        underlyingToken: AVAX,
     })
 
-    export const MOVR: Token = new Token({
+    export const MOVR = new BaseToken({
         name:     "Moonriver",
         symbol:   "MOVR",
         decimals: 18,
@@ -221,18 +228,19 @@ export namespace Tokens {
         swapType: SwapType.MOVR,
     })
 
-    export const WMOVR: Token = new Token({
+    export const WMOVR  = new WrappedToken({
         name:     "Wrapped MOVR",
-        symbol:   "MOVR",
+        symbol:   "wMOVR",
         decimals: 18,
         addresses: {
             [ChainId.MOONBEAM]:  "0x1d4C2a246311bB9f827F4C768e277FF5787B7D7E",
             [ChainId.MOONRIVER]: "0x98878b06940ae243284ca214f92bb71a2b032b8a",
         },
-        swapType: SwapType.MOVR,
+        swapType:        SwapType.MOVR,
+        underlyingToken: MOVR,
     })
 
-    export const ONE_ETH: Token = new Token({
+    export const ONE_ETH = new BaseToken({
         name:     "Harmony ETH",
         symbol:   "1ETH",
         decimals: 18,
@@ -242,9 +250,19 @@ export namespace Tokens {
         swapType: SwapType.ETH,
     })
 
+    export const FTM_ETH = new BaseToken({
+        name:     "Wrapped ETH",
+        symbol:   "ETH ",
+        decimals: 18,
+        addresses: {
+            [ChainId.FANTOM]: "0x74b23882a30290451A17c44f4F05243b6b58C76d"
+        },
+        swapType: SwapType.ETH,
+    })
+
     // Synapse tokens
 
-    export const SYN: Token = new Token({
+    export const SYN = new BaseToken({
         name:        'Synapse',
         symbol:      'SYN',
         decimals:    18,
@@ -268,7 +286,7 @@ export namespace Tokens {
     /**
      * nUSD is a token involved in the bridge.
      */
-    export const NUSD: Token = new Token({
+    export const NUSD = new BaseToken({
         name:        'Synapse nUSD',
         symbol:      'nUSD',
         decimals:    18,
@@ -288,7 +306,7 @@ export namespace Tokens {
 
     // non-Synapse, non-stablecoin tokens
 
-    export const GOHM = new Token({
+    export const GOHM = new BaseToken({
         name:     "Olympus DAO",
         symbol:   "gOHM",
         decimals: 18,
@@ -307,7 +325,7 @@ export namespace Tokens {
         swapType: SwapType.OHM,
     });
 
-    export const MIM: Token = new Token({
+    export const MIM = new BaseToken({
         name:         'MIM',
         symbol:       'MIM',
         decimals:     18,
@@ -317,7 +335,7 @@ export namespace Tokens {
         swapType: SwapType.USD
     });
 
-    export const HIGH: Token = new Token({
+    export const HIGH = new BaseToken({
         name:    "Highstreet",
         symbol:  "HIGH",
         decimals: 18,
@@ -328,7 +346,7 @@ export namespace Tokens {
         swapType: SwapType.HIGH
     });
 
-    export const JUMP: Token = new Token({
+    export const JUMP = new BaseToken({
         name:    "HyperJump",
         symbol:  "JUMP",
         decimals: 18,
@@ -339,7 +357,7 @@ export namespace Tokens {
         swapType: SwapType.JUMP
     });
 
-    export const DOG: Token = new Token({
+    export const DOG = new BaseToken({
         name:    "The Doge NFT",
         symbol:  "DOG",
         decimals: 18,
@@ -351,7 +369,7 @@ export namespace Tokens {
         swapType: SwapType.DOG
     });
 
-    export const NFD = new Token({
+    export const NFD = new BaseToken({
         name:         "Feisty Doge",
         symbol:       "NFD",
         decimals:     18,
@@ -365,7 +383,7 @@ export namespace Tokens {
 
     // FRAX/synFrax
 
-    export const FRAX: Token = new Token({
+    export const FRAX = new BaseToken({
         name:     'Frax',
         symbol:   'FRAX',
         decimals: 18,
@@ -378,7 +396,7 @@ export namespace Tokens {
         swapType: SwapType.FRAX,
     });
 
-    export const SYN_FRAX: Token = new Token({
+    export const SYN_FRAX = new BaseToken({
         name:      'Synapse Frax',
         symbol:    'synFRAX',
         decimals:  18,
@@ -394,7 +412,7 @@ export namespace Tokens {
         swapType: SwapType.FRAX,
     })
 
-    export const SOLAR: Token = new Token({
+    export const SOLAR = new BaseToken({
         name:     "Vested SolarBeam",
         symbol:   "veSOLAR",
         decimals: 18,
@@ -405,24 +423,23 @@ export namespace Tokens {
         swapType: SwapType.SOLAR,
     })
 
-    export const GMX: Token = new Token({
-        name:     "GMX",
-        symbol:   "GMX",
-        decimals: 18,
-        addresses: {
-            [ChainId.ARBITRUM]:  "0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
-            [ChainId.AVALANCHE]: "0x62edc0692bd897d2295872a9ffcac5425011c661",
-        },
-        swapType: SwapType.GMX,
-    })
+    // export const GMX = new BaseToken({
+    //     name:     "GMX",
+    //     symbol:   "GMX",
+    //     decimals: 18,
+    //     addresses: {
+    //         [ChainId.ARBITRUM]:  "0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
+    //         [ChainId.AVALANCHE]: "0x62edc0692bd897d2295872a9ffcac5425011c661",
+    //     },
+    //     swapType: SwapType.GMX,
+    // })
 
     export const mintBurnTokens: Token[] = [
         NUSD,  SYN,      NETH,
         HIGH,  DOG,      JUMP,
         FRAX,  SYN_FRAX, NFD,
-        GOHM,  SOLAR,    GMX,
-        AVAX,  WAVAX,    MOVR,
-        WMOVR,
+        GOHM,  SOLAR,
+        // GMX,
     ];
 
     export function isMintBurnToken(token: Token): boolean {

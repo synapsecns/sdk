@@ -1,16 +1,17 @@
+import type {Token} from "../token";
+
 import {ChainId} from "../common";
 import {Slippages} from "./slippages";
 import {BigNumber} from "@ethersproject/bignumber";
 import {Zero} from "@ethersproject/constants";
-import {Token} from "../token";
 import {GenericZapBridgeContract, L2BridgeZapContract} from "../contracts/index";
 import {Tokens} from "../tokens";
 
-import {SynapseContracts} from "../common";
 
 export namespace BridgeUtils {
     const ETH_CHAINS = [
         ChainId.OPTIMISM,
+        ChainId.FANTOM,
         ChainId.BOBA,
         ChainId.MOONBEAM,
         ChainId.ARBITRUM,
@@ -151,5 +152,17 @@ export namespace BridgeUtils {
             tokenIndexTo,
             amount
         )
+    }
+
+    export const isETHLikeToken = (t: Token): boolean =>
+        t.isEqual(Tokens.WETH_E) || t.isEqual(Tokens.ONE_ETH) || t.isEqual(Tokens.FTM_ETH)
+
+    export const makeOverrides = (value: BigNumber, withValue: boolean): any => {
+        let overrides: any = {}
+        if (withValue) {
+            overrides = {value}
+        }
+
+        return overrides
     }
 }

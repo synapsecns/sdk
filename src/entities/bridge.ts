@@ -16,7 +16,7 @@ export const newSynapseBridgeInstance = (params: {
 }): SynapseBridgeContract => SynapseBridgeFactory.connect(params.address, params.signerOrProvider);
 
 
-export const newNerveBridgeZapInstance = (params: {
+export const newL1BridgeZapInstance = (params: {
     address: string,
     signerOrProvider?: SignerOrProvider
 }): L1BridgeZapContract => L1BridgeZapFactory.connect(params.address, params.signerOrProvider);
