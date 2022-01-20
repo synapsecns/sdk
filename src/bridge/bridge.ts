@@ -476,9 +476,9 @@ export namespace Bridge {
             } = this.makeBridgeTokenArgs(args);
 
             const mintBurnSwapTypes = [
-                SwapType.HIGH,  SwapType.DOG, SwapType.JUMP,
-                SwapType.NFD,   SwapType.OHM, SwapType.GMX,
-                SwapType.SOLAR,
+                SwapType.HIGH, SwapType.DOG, SwapType.JUMP,
+                SwapType.NFD,  SwapType.OHM, SwapType.SOLAR,
+                SwapType.GMX,
             ];
 
             let [intermediateToken, bridgeConfigIntermediateToken] = ((): [Token, Token] => {
