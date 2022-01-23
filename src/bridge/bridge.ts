@@ -887,26 +887,24 @@ export namespace Bridge {
         private makeBridgeTokenArgs(args: BridgeParams): BridgeTokenArgs {
             let {tokenFrom, tokenTo, chainIdTo} = args;
 
-            const tokenFixer = (t: Token): Token => {
-                switch (t.swapType) {
-                    case SwapType.ETH:
-                        if (t.isEqual(Tokens.ETH)) {
-                            return Tokens.WETH
-                        }
-                        break;
-                    case SwapType.AVAX:
-                        if (t.isEqual(Tokens.AVAX)) {
-                            return Tokens.WAVAX
-                        }
-                        break;
-                    case SwapType.MOVR:
-                        if (t.isEqual(Tokens.MOVR)) {
-                            return Tokens.WMOVR
-                        }
-                        break;
-                }
+            const swapparoo = (t: Token, check: Token, swappy: Token): Token => t.isEqual(check) ? swappy : t
 
-                return t
+            switch (tokenFrom.swapType) {
+                case SwapType.ETH:
+                    tokenFrom = swapparoo(tokenFrom, Tokens.ETH, Tokens.WETH);
+                    tokenTo   = swapparoo(tokenTo,   Tokens.ETH, Tokens.WETH);
+
+                    break;
+                case SwapType.AVAX:
+                    tokenFrom = swapparoo(tokenFrom, Tokens.AVAX, Tokens.WAVAX);
+                    tokenTo   = swapparoo(tokenTo,   Tokens.AVAX, Tokens.WAVAX);
+
+                    break;
+                case SwapType.MOVR:
+                    tokenFrom = swapparoo(tokenFrom, Tokens.MOVR, Tokens.WMOVR);
+                    tokenTo   = swapparoo(tokenTo,   Tokens.MOVR, Tokens.WMOVR);
+
+                    break;
             }
 
             const chainTokens = (chainId: number, swapType: string): Token[] => {
@@ -929,8 +927,6 @@ export namespace Bridge {
 
             const tokenIndex = (toks: Token[], tok: Token): number =>
                 toks.findIndex((t: Token) => findSymbol(t, tok));
-
-            [tokenFrom, tokenTo] = [tokenFixer(tokenFrom), tokenFixer(tokenTo)];
 
             const
                 fromChainTokens = chainTokens(this.chainId, tokenFrom.swapType),
