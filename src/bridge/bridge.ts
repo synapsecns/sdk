@@ -231,23 +231,7 @@ export namespace Bridge {
                 : this.buildL2BridgeTxn(args, tokenArgs);
 
             return newTxn
-                .then((txn) => {
-                    let {maxPriorityFee, gasPrice, bridgeGasLimit} = GasUtils.makeGasParams(this.chainId);
-
-                    if (maxPriorityFee) {
-                        txn.maxPriorityFeePerGas = maxPriorityFee;
-                    }
-
-                    if (gasPrice) {
-                        txn.gasPrice = gasPrice;
-                    }
-
-                    if (bridgeGasLimit) {
-                        txn.gasLimit = bridgeGasLimit;
-                    }
-
-                    return txn
-                })
+                .then((txn) => GasUtils.populateGasParams(this.chainId, txn, "bridge"))
                 .catch(rejectPromise)
         }
 
@@ -947,16 +931,17 @@ export namespace Bridge {
     }
 
     const REQUIRED_CONFS = {
-        [ChainId.ETH]: 7,
-        [ChainId.OPTIMISM]: 1,
-        [ChainId.BSC]: 14,
-        [ChainId.POLYGON]: 128,
-        [ChainId.FANTOM]: 5,
-        [ChainId.BOBA]: 1,
+        [ChainId.ETH]:       7,
+        [ChainId.OPTIMISM]:  1,
+        [ChainId.BSC]:       14,
+        [ChainId.POLYGON]:   128,
+        [ChainId.FANTOM]:    5,
+        [ChainId.BOBA]:      1,
+        [ChainId.MOONBEAM]:  21,
         [ChainId.MOONRIVER]: 21,
-        [ChainId.ARBITRUM]: 40,
-        [ChainId.AVALANCHE]: 1,
-        [ChainId.HARMONY]: 1,
+        [ChainId.ARBITRUM]:  40,
+        [ChainId.AVALANCHE]: 5,
+        [ChainId.HARMONY]:   1,
     };
 
     export function getRequiredConfirmationsForBridge(network: Networks.Network | number): number {
