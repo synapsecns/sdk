@@ -497,29 +497,35 @@ export namespace Bridge {
                 }
             })();
 
+            const bigNumTen = BigNumber.from(10);
+
             bridgeConfigIntermediateToken = bridgeConfigIntermediateToken ?? intermediateToken;
             const bridgeFeeRequest = this.bridgeConfigInstance.calculateSwapFee(
                 bridgeConfigIntermediateToken.address(chainIdTo),
                 chainIdTo,
-                tokenFrom.valueToWei(amountFrom, this.chainId)
+                amountFrom.mul(bigNumTen.pow(18-tokenFrom.decimals(this.chainId)))
             );
+
+            const checkEthy = (c: number, t: Token): boolean => BridgeUtils.isL2ETHChain(c) && t.swapType === SwapType.ETH
+
+            const
+                ethToEth:   boolean = this.chainId === ChainId.ETH && checkEthy(chainIdTo,    tokenTo),
+                ethFromEth: boolean = chainIdTo    === ChainId.ETH && checkEthy(this.chainId, tokenFrom);
 
             let amountToReceive_from: BigNumber;
             switch (true) {
                 case amountFrom.eq(Zero):
                     amountToReceive_from = Zero;
                     break;
+                case ethToEth:
                 case Tokens.isMintBurnToken(tokenFrom):
                 case tokenFrom.isWrappedToken:
                     amountToReceive_from = amountFrom;
                     break;
                 case this.chainId === ChainId.ETH:
-                    if (BridgeUtils.isL2ETHChain(chainIdTo) && (tokenTo.swapType === SwapType.ETH)) {
-                        amountToReceive_from = amountFrom;
-                    } else {
-                        const liquidityAmounts = fromChainTokens.map((t) => tokenFrom.isEqual(t) ? amountFrom : Zero);
-                        amountToReceive_from = await this.zapBridgeInstance.calculateTokenAmount(liquidityAmounts, true);
-                    }
+                    let liquidityAmounts = fromChainTokens.map((t) => tokenFrom.isEqual(t) ? amountFrom : Zero);
+                    amountToReceive_from = await this.zapBridgeInstance.calculateTokenAmount(liquidityAmounts, true);
+
                     break;
                 default:
                     amountToReceive_from = await BridgeUtils.calculateSwapL2Zap(
@@ -546,17 +552,15 @@ export namespace Bridge {
                 case amountToReceive_from.isZero():
                     amountToReceive_to = Zero;
                     break;
+                case ethFromEth:
                 case Tokens.isMintBurnToken(tokenTo):
                 case tokenTo.isWrappedToken:
                     amountToReceive_to = amountToReceive_from;
                     break;
                 case chainIdTo === ChainId.ETH:
-                    if ((BridgeUtils.isL2ETHChain(this.chainId)) && (tokenFrom.swapType === SwapType.ETH)) {
-                        amountToReceive_to = amountToReceive_from;
-                    } else {
-                        amountToReceive_to = await (toChainZap as L1BridgeZapContract)
-                            .calculateRemoveLiquidityOneToken(amountToReceive_from, tokenIndexTo);
-                    }
+                    amountToReceive_to = await (toChainZap as L1BridgeZapContract)
+                        .calculateRemoveLiquidityOneToken(amountToReceive_from, tokenIndexTo);
+
                     break;
                 default:
                     amountToReceive_to = await BridgeUtils.calculateSwapL2Zap(
