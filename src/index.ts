@@ -26,6 +26,8 @@ export {
     utils
 } from "./common";
 
+export type {ChainIdTypeMap, AddressMap, DecimalsMap} from "./common";
+
 export {BaseToken, WrappedToken} from "./token";
 export type {Token} from "./token";
 
