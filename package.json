@@ -48,7 +48,7 @@
     "@ethersproject/providers": "^5.5.0",
     "@ethersproject/units": "^5.5.0",
     "@ethersproject/wallet": "^5.5.0",
-    "dotenv": "^10.0.0",
+    "dotenv": "^14.0.0",
     "ethers": "^5.5.1",
     "lodash": "^4.17.21"
   },
