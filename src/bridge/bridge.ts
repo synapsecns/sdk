@@ -880,26 +880,26 @@ export namespace Bridge {
 
             const
                 swapparoo = (t: Token, check: Token, swappy: Token): Token => t.isEqual(check) ? swappy : t,
-                swappadoo = (check: Token, swappy: Token): ((t: Token) => Token) => (t: Token) => swapparoo(t, check, swappy)
+                swappadoo = (check: Token, swappy: Token): ((t1: Token, t2: Token) => [Token, Token]) =>
+                    (t1: Token, t2: Token) => [swapparoo(t1, check, swappy), swapparoo(t2, check, swappy)];
 
-            let kangaroo: (t: Token) => Token;
+            let kangaroo: (t1: Token, t2: Token) => [Token, Token];
+
             switch (tokenFrom.swapType) {
                 case SwapType.ETH:
                     kangaroo = swappadoo(Tokens.ETH, Tokens.WETH);
-                    [tokenFrom, tokenTo] = [kangaroo(tokenFrom), kangaroo(tokenTo)];
-
                     break;
                 case SwapType.AVAX:
                     kangaroo = swappadoo(Tokens.AVAX, Tokens.WAVAX);
-                    [tokenFrom, tokenTo] = [kangaroo(tokenFrom), kangaroo(tokenTo)];
-
                     break;
                 case SwapType.MOVR:
                     kangaroo = swappadoo(Tokens.MOVR, Tokens.WMOVR);
-                    [tokenFrom, tokenTo] = [kangaroo(tokenFrom), kangaroo(tokenTo)];
-
                     break;
+                default:
+                    kangaroo = (t1: Token, t2: Token) => [t1, t2];
             }
+
+            [tokenFrom, tokenTo] = kangaroo(tokenFrom, tokenTo);
 
             const findSymbol = (tokA: Token, tokB: Token): boolean => {
                 let compareTok: Token = tokB;
