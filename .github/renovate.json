@@ -8,8 +8,41 @@
     "**/scripts/**",
     "**/node_modules/**"
   ],
-  "prConcurrentLimit": 0,
-  "prHourlyLimit": 0,
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin"],
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "dev dependencies (minor/patch/pin)",
+      "excludePackagePrefixes": [],
+      "matchManagers": ["npm"],
+      "automerge": false
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin"],
+      "matchDepTypes": ["dependencies"],
+      "groupName": "dependencies (minor/patch/pin)",
+      "excludePackagePrefixes": [],
+      "matchManagers": ["npm"],
+      "automerge": false
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "matchDepTypes": ["dependencies"],
+      "matchManagers": ["npm"],
+      "enabled": false
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "dev dependencies (major)",
+      "excludePackagePrefixes": [],
+      "matchManagers": ["npm"],
+      "automerge": false
+    }
+  ],
+  "prConcurrentLimit": 3,
+  "prHourlyLimit": 5,
+  "baseBranches": ["dev"],
   "enabledManagers": ["npm"],
   "lockFileMaintenance": { "enabled": true }
 }
