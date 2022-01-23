@@ -1,12 +1,14 @@
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 import {parseUnits} from "@ethersproject/units";
 
+import type {AddressMap, DecimalsMap} from "../common";
+
 export interface IBaseToken {
-    readonly name: string,
-    readonly symbol: string,
-    readonly addresses: {[k: number]: string},
-    readonly swapType: string,
-    readonly hash: string,
+    readonly name:      string,
+    readonly symbol:    string,
+    readonly addresses: AddressMap,
+    readonly swapType:  string,
+    readonly hash:      string,
     address: (chainId: number) => string | null
     decimals: (chainId: number) => number | null
 }
@@ -25,15 +27,15 @@ export interface Token extends IBaseToken {
 export class BaseToken implements Token {
     readonly name:      string;
     readonly symbol:    string;
-    readonly addresses: {[k: number]: string} = {};
+    readonly addresses: AddressMap = {};
     readonly swapType:  string;
     readonly isETH:     boolean;
-    readonly hash: string;
+    readonly hash:      string;
 
-    private readonly wrapperAddresses: {[k: number]: string} = {};
+    private readonly wrapperAddresses: AddressMap = {};
 
 
-    protected readonly _decimals:  {[k: number]: number} = {};
+    protected readonly _decimals: DecimalsMap = {};
 
     /**
      * Creates a new Token object with the defined arguments.
@@ -51,11 +53,11 @@ export class BaseToken implements Token {
     constructor(args: {
         name:       string,
         symbol:     string,
-        decimals:   number | {[k: number]: number},
-        addresses:  {[k: number]: string},
+        decimals:   number | DecimalsMap,
+        addresses:  AddressMap,
         swapType:   string,
         isETH?:     boolean,
-        wrapperAddresses?: {[k: number]: string},
+        wrapperAddresses?: AddressMap,
     }) {
         this.name      = args.name;
         this.symbol    = args.symbol;
@@ -109,19 +111,18 @@ export class BaseToken implements Token {
     }
 }
 
-
 export class WrappedToken extends BaseToken {
     readonly underlyingToken: BaseToken;
 
     constructor(args: {
-        name:         string,
-        symbol:       string,
-        decimals:     number | {[k: number]: number},
-        addresses:   {[k: number]: string},
-        swapType:     string,
-        isETH?:       boolean,
+        name:            string,
+        symbol:          string,
+        decimals:        number | DecimalsMap,
+        addresses:       AddressMap,
+        swapType:        string,
         underlyingToken: BaseToken,
-        wrapperAddresses?: {[k: number]: string},
+        isETH?:          boolean,
+        wrapperAddresses?: AddressMap,
     }) {
         let {underlyingToken, ...tokenArgs} = args;
         super(tokenArgs);
