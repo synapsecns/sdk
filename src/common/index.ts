@@ -8,6 +8,8 @@ export {
     supportedNetworks
 } from "./networks";
 
+export type {ChainIdTypeMap, AddressMap, DecimalsMap} from "./types";
+
 export {SynapseContracts} from "./synapse_contracts";
 
 import {
