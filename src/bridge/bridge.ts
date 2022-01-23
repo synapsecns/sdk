@@ -497,38 +497,38 @@ export namespace Bridge {
                 }
             })();
 
-            const BIGNUM_TEN = BigNumber.from(10);
-
             bridgeConfigIntermediateToken = bridgeConfigIntermediateToken ?? intermediateToken;
             const bridgeFeeRequest = this.bridgeConfigInstance.calculateSwapFee(
                 bridgeConfigIntermediateToken.address(chainIdTo),
                 chainIdTo,
-                amountFrom.mul(BIGNUM_TEN.pow(18 - tokenFrom.decimals(this.chainId)))
+                tokenFrom.valueToWei(amountFrom, this.chainId)
             );
 
             let amountToReceive_from: BigNumber;
-
-            if (amountFrom === Zero) {
-                amountToReceive_from = Zero;
-            } else if (tokenFrom.isWrappedToken) {
-                amountToReceive_from = amountFrom;
-            } else if (Tokens.isMintBurnToken(tokenFrom)) {
-                amountToReceive_from = amountFrom;
-            } else if (this.chainId === ChainId.ETH) {
-                if (BridgeUtils.isL2ETHChain(chainIdTo) && (tokenTo.swapType === SwapType.ETH)) {
+            switch (true) {
+                case amountFrom.eq(Zero):
+                    amountToReceive_from = Zero;
+                    break;
+                case Tokens.isMintBurnToken(tokenFrom):
+                case tokenFrom.isWrappedToken:
                     amountToReceive_from = amountFrom;
-                } else {
-                    const liquidityAmounts = fromChainTokens.map((t) => tokenFrom.isEqual(t) ? amountFrom : Zero);
-                    amountToReceive_from = await this.zapBridgeInstance.calculateTokenAmount(liquidityAmounts, true);
-                }
-            } else {
-                amountToReceive_from = await BridgeUtils.calculateSwapL2Zap(
-                    this.networkZapBridgeInstance,
-                    intermediateToken.address(this.chainId),
-                    tokenIndexFrom,
-                    0,
-                    amountFrom
-                )
+                    break;
+                case this.chainId === ChainId.ETH:
+                    if (BridgeUtils.isL2ETHChain(chainIdTo) && (tokenTo.swapType === SwapType.ETH)) {
+                        amountToReceive_from = amountFrom;
+                    } else {
+                        const liquidityAmounts = fromChainTokens.map((t) => tokenFrom.isEqual(t) ? amountFrom : Zero);
+                        amountToReceive_from = await this.zapBridgeInstance.calculateTokenAmount(liquidityAmounts, true);
+                    }
+                    break;
+                default:
+                    amountToReceive_from = await BridgeUtils.calculateSwapL2Zap(
+                        this.networkZapBridgeInstance,
+                        intermediateToken.address(this.chainId),
+                        tokenIndexFrom,
+                        0,
+                        amountFrom
+                    );
             }
 
             let bridgeFee: BigNumber;
@@ -542,27 +542,30 @@ export namespace Bridge {
             amountToReceive_from = BridgeUtils.subBigNumSafe(amountToReceive_from, bridgeFee);
 
             let amountToReceive_to: BigNumber;
-            if (amountToReceive_from.isZero()) {
-                amountToReceive_to = Zero;
-            } else if (tokenTo.isWrappedToken) {
-                amountToReceive_to = amountToReceive_from;
-            } else if (Tokens.isMintBurnToken(tokenTo)) {
-                amountToReceive_to = amountToReceive_from;
-            } else if (chainIdTo === ChainId.ETH) {
-                if ((BridgeUtils.isL2ETHChain(this.chainId)) && (tokenFrom.swapType === SwapType.ETH)) {
+            switch (true) {
+                case amountToReceive_from.isZero():
+                    amountToReceive_to = Zero;
+                    break;
+                case Tokens.isMintBurnToken(tokenTo):
+                case tokenTo.isWrappedToken:
                     amountToReceive_to = amountToReceive_from;
-                } else {
-                    amountToReceive_to = await (toChainZap as L1BridgeZapContract)
-                        .calculateRemoveLiquidityOneToken(amountToReceive_from, tokenIndexTo);
-                }
-            } else {
-                amountToReceive_to = await BridgeUtils.calculateSwapL2Zap(
-                    toChainZap,
-                    intermediateToken.address(chainIdTo),
-                    0,
-                    tokenIndexTo,
-                    amountToReceive_from
-                );
+                    break;
+                case chainIdTo === ChainId.ETH:
+                    if ((BridgeUtils.isL2ETHChain(this.chainId)) && (tokenFrom.swapType === SwapType.ETH)) {
+                        amountToReceive_to = amountToReceive_from;
+                    } else {
+                        amountToReceive_to = await (toChainZap as L1BridgeZapContract)
+                            .calculateRemoveLiquidityOneToken(amountToReceive_from, tokenIndexTo);
+                    }
+                    break;
+                default:
+                    amountToReceive_to = await BridgeUtils.calculateSwapL2Zap(
+                        toChainZap,
+                        intermediateToken.address(chainIdTo),
+                        0,
+                        tokenIndexTo,
+                        amountToReceive_from
+                    );
             }
 
             return {
@@ -871,29 +874,28 @@ export namespace Bridge {
         private makeBridgeTokenArgs(args: BridgeParams): BridgeTokenArgs {
             let {tokenFrom, tokenTo, chainIdTo} = args;
 
-            const swapparoo = (t: Token, check: Token, swappy: Token): Token => t.isEqual(check) ? swappy : t
+            const
+                swapparoo = (t: Token, check: Token, swappy: Token): Token => t.isEqual(check) ? swappy : t,
+                swappadoo = (check: Token, swappy: Token): ((t: Token) => Token) => (t: Token) => swapparoo(t, check, swappy)
 
+            let kangaroo: (t: Token) => Token;
             switch (tokenFrom.swapType) {
                 case SwapType.ETH:
-                    tokenFrom = swapparoo(tokenFrom, Tokens.ETH, Tokens.WETH);
-                    tokenTo   = swapparoo(tokenTo,   Tokens.ETH, Tokens.WETH);
+                    kangaroo = swappadoo(Tokens.ETH, Tokens.WETH);
+                    [tokenFrom, tokenTo] = [kangaroo(tokenFrom), kangaroo(tokenTo)];
 
                     break;
                 case SwapType.AVAX:
-                    tokenFrom = swapparoo(tokenFrom, Tokens.AVAX, Tokens.WAVAX);
-                    tokenTo   = swapparoo(tokenTo,   Tokens.AVAX, Tokens.WAVAX);
+                    kangaroo = swappadoo(Tokens.AVAX, Tokens.WAVAX);
+                    [tokenFrom, tokenTo] = [kangaroo(tokenFrom), kangaroo(tokenTo)];
 
                     break;
                 case SwapType.MOVR:
-                    tokenFrom = swapparoo(tokenFrom, Tokens.MOVR, Tokens.WMOVR);
-                    tokenTo   = swapparoo(tokenTo,   Tokens.MOVR, Tokens.WMOVR);
+                    kangaroo = swappadoo(Tokens.MOVR, Tokens.WMOVR);
+                    [tokenFrom, tokenTo] = [kangaroo(tokenFrom), kangaroo(tokenTo)];
 
                     break;
             }
-
-            const chainTokens = (chainId: number, swapType: string): Token[] => {
-                return SwapPools.bridgeSwappableTypePoolsByChain[chainId]?.[swapType]?.poolTokens
-            };
 
             const findSymbol = (tokA: Token, tokB: Token): boolean => {
                 let compareTok: Token = tokB;
@@ -909,15 +911,17 @@ export namespace Bridge {
                 return tokA.isEqual(compareTok);
             }
 
-            const tokenIndex = (toks: Token[], tok: Token): number =>
-                toks.findIndex((t: Token) => findSymbol(t, tok));
+            const makeTokenArgs = (chainId: number, t: Token): [Token[], number] => {
+                let
+                    toks = SwapPools.bridgeSwappableTypePoolsByChain[chainId]?.[t.swapType]?.poolTokens,
+                    idx  = toks.findIndex((tok: Token) => findSymbol(tok, t));
+
+                return [toks, idx]
+            }
 
             const
-                fromChainTokens = chainTokens(this.chainId, tokenFrom.swapType),
-                toChainTokens   = chainTokens(chainIdTo, tokenTo.swapType),
-
-                tokenIndexFrom = tokenIndex(fromChainTokens, tokenFrom),
-                tokenIndexTo   = tokenIndex(toChainTokens, tokenTo);
+                [fromChainTokens, tokenIndexFrom] = makeTokenArgs(this.chainId, tokenFrom),
+                [toChainTokens,   tokenIndexTo]   = makeTokenArgs(chainIdTo,    tokenTo);
 
             return {
                 fromChainTokens,
