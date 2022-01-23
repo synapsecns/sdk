@@ -572,10 +572,9 @@ export namespace Bridge {
                     );
             }
 
-            return {
-                amountToReceive: amountToReceive_to,
-                bridgeFee
-            }
+            let amountToReceive = amountToReceive_to;
+
+            return {amountToReceive, bridgeFee}
         }
 
         private checkEasyArgs(
