@@ -62,23 +62,7 @@ export namespace ERC20 {
             amount = amount ?? MAX_APPROVAL_AMOUNT;
 
             return this.instance.populateTransaction.approve(spender, amount)
-                .then((txn) => {
-                    let {maxPriorityFee, gasPrice, approveGasLimit} = GasUtils.makeGasParams(this.chainId);
-
-                    if (maxPriorityFee) {
-                        txn.maxPriorityFeePerGas = maxPriorityFee;
-                    }
-
-                    if (gasPrice) {
-                        txn.gasPrice = gasPrice;
-                    }
-
-                    if (approveGasLimit) {
-                        txn.gasLimit = approveGasLimit;
-                    }
-
-                    return txn
-                })
+                .then((txn) => GasUtils.populateGasParams(this.chainId, txn, "approve"))
                 .catch(rejectPromise)
         }
 

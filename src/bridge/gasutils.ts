@@ -1,6 +1,7 @@
 import {ChainId} from "../common";
 import {parseUnits} from "@ethersproject/units";
 import {BigNumber} from "@ethersproject/bignumber";
+import {PopulatedTransaction} from "ethers";
 
 export namespace GasUtils {
     export interface GasParams {
@@ -52,5 +53,27 @@ export namespace GasUtils {
         }
 
         return {}
+    }
+
+    export function populateGasParams(chainId: number, txn: PopulatedTransaction|Promise<PopulatedTransaction>, gasLimitKind: string): Promise<PopulatedTransaction> {
+        return Promise.resolve(txn)
+            .then((tx: PopulatedTransaction): PopulatedTransaction => {
+                let {maxPriorityFee, gasPrice, approveGasLimit, bridgeGasLimit} = makeGasParams(chainId);
+
+                if (gasPrice)        tx.gasPrice             = gasPrice;
+                if (maxPriorityFee)  tx.maxPriorityFeePerGas = maxPriorityFee;
+
+                switch (gasLimitKind) {
+                    case "bridge":
+                        if (bridgeGasLimit) tx.gasLimit = bridgeGasLimit;
+                        break;
+                    case "approve":
+                        if (approveGasLimit) tx.gasLimit = approveGasLimit;
+                        break;
+                }
+
+
+                return tx
+            })
     }
 }
