@@ -1,5 +1,4 @@
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
-import {parseUnits} from "@ethersproject/units";
 
 import type {AddressMap, DecimalsMap} from "../common";
 
@@ -20,6 +19,8 @@ export interface Token extends IBaseToken {
     valueToWei:       (amt: BigNumberish, chainId: number) => BigNumber,
     wrapperAddress:   (chainId: number) => string | null
 }
+
+const BIGNUM_TEN = BigNumber.from(10);
 
 /**
  * Token represents an ERC20 token on Ethereum-based blockchains.
@@ -102,8 +103,8 @@ export class BaseToken implements Token {
     }
 
     valueToWei(amt: BigNumberish, chainId: number): BigNumber {
-        let amtStr: string = BigNumber.from(amt).toString();
-        return parseUnits(amtStr, this.decimals(chainId))
+        amt = BigNumber.from(amt);
+        return amt.mul(BIGNUM_TEN.pow(18 - this.decimals(chainId)))
     }
 
     get isWrappedToken(): boolean {
