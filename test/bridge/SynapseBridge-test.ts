@@ -291,6 +291,7 @@ describe("SynapseBridge", function() {
                 },
                 notZero:   boolean,
                 wantError: boolean,
+                noAddrTo:  boolean,
             }
 
             const testAmounts: string[] = [
@@ -298,7 +299,14 @@ describe("SynapseBridge", function() {
                 "669", "555",
             ]
 
-            const makeTestCase = (t1: Token, t2: Token, c1: number, c2: number, amt?: string, notZero?: boolean, wantErr?: boolean): TestCase =>
+            const makeTestCase = (
+                t1: Token, t2: Token,
+                c1: number, c2: number,
+                amt?:      string,
+                notZero?:  boolean,
+                wantErr?:  boolean,
+                noAddrTo?: boolean,
+            ): TestCase =>
                 ({
                     args: {
                         tokenFrom:   t1,
@@ -310,8 +318,9 @@ describe("SynapseBridge", function() {
                             c1
                         ),
                     },
-                    notZero:   notZero ?? true,
-                    wantError: wantErr ?? false,
+                    notZero:   notZero  ?? true,
+                    wantError: wantErr  ?? false,
+                    noAddrTo:  noAddrTo ?? false,
                 })
 
             let testCases: TestCase[] = [
@@ -339,7 +348,7 @@ describe("SynapseBridge", function() {
                 makeTestCase(Tokens.NUSD,    Tokens.DAI,     ChainId.AVALANCHE, ChainId.ETH),
                 makeTestCase(Tokens.MIM,     Tokens.NUSD,    ChainId.FANTOM,    ChainId.ETH),
                 makeTestCase(Tokens.NUSD,    Tokens.DAI,     ChainId.AVALANCHE, ChainId.POLYGON),
-                makeTestCase(Tokens.DOG,     Tokens.DOG,     ChainId.POLYGON,   ChainId.ETH, "1337"),
+                makeTestCase(Tokens.DOG,     Tokens.DOG,     ChainId.POLYGON,   ChainId.ETH, "3133731337"),
                 makeTestCase(Tokens.ETH,     Tokens.ETH,     ChainId.ARBITRUM,  ChainId.OPTIMISM),
                 makeTestCase(Tokens.NETH,    Tokens.ETH,     ChainId.ARBITRUM,  ChainId.OPTIMISM),
                 makeTestCase(Tokens.JUMP,    Tokens.JUMP,    ChainId.FANTOM,    ChainId.BSC),
@@ -357,9 +366,9 @@ describe("SynapseBridge", function() {
                 makeTestCase(Tokens.ONE_ETH, Tokens.WETH_E,  ChainId.HARMONY,   ChainId.AVALANCHE),
                 makeTestCase(Tokens.HIGH,    Tokens.HIGH,    ChainId.BSC,       ChainId.ETH),
                 makeTestCase(Tokens.JUMP,    Tokens.JUMP,    ChainId.BSC,       ChainId.FANTOM),
-                makeTestCase(Tokens.DOG,     Tokens.DOG,     ChainId.BSC,       ChainId.POLYGON),
+                makeTestCase(Tokens.DOG,     Tokens.DOG,     ChainId.BSC,       ChainId.POLYGON,   "3133731337"),
                 makeTestCase(Tokens.MIM,     Tokens.DAI,     ChainId.FANTOM,    ChainId.POLYGON),
-                makeTestCase(Tokens.NFD,     Tokens.NFD,     ChainId.POLYGON,   ChainId.AVALANCHE, "1337"),
+                makeTestCase(Tokens.NFD,     Tokens.NFD,     ChainId.POLYGON,   ChainId.AVALANCHE, "3133731337"),
                 makeTestCase(Tokens.GMX,     Tokens.GMX,     ChainId.ARBITRUM,  ChainId.AVALANCHE),
                 makeTestCase(Tokens.GMX,     Tokens.GMX,     ChainId.AVALANCHE, ChainId.ARBITRUM),
                 makeTestCase(Tokens.SOLAR,   Tokens.SOLAR,   ChainId.MOONRIVER, ChainId.MOONBEAM),
@@ -373,6 +382,8 @@ describe("SynapseBridge", function() {
                 makeTestCase(Tokens.WETH_E,  Tokens.FTM_ETH, ChainId.AVALANCHE, ChainId.FANTOM),
                 makeTestCase(Tokens.ETH,     Tokens.FTM_ETH, ChainId.ETH,       ChainId.FANTOM),
                 makeTestCase(Tokens.WETH,    Tokens.FTM_ETH, ChainId.ETH,       ChainId.FANTOM),
+                makeTestCase(Tokens.NUSD,    Tokens.DAI,     ChainId.AVALANCHE, ChainId.POLYGON, undefined, true, false, true),
+                makeTestCase(Tokens.WETH,    Tokens.FTM_ETH, ChainId.ETH,       ChainId.FANTOM,  undefined, true, false, true),
             ];
 
             const netName = (c: number): string => Networks.fromChainId(c).name
@@ -425,9 +436,6 @@ describe("SynapseBridge", function() {
                     ).then((res): boolean => {
                         let {amountToReceive, bridgeFee} = res;
 
-                        if (bridgeFee.gte(testArgs.amountFrom)) {
-                            return true // merp
-                        }
 
                         return notZero
                             ? amountToReceive.gt(Zero)
@@ -473,15 +481,24 @@ describe("SynapseBridge", function() {
                     done();
                 })
 
+                const undefEmptyArr = [
+                    "", "", undefined, "", undefined,
+                    undefined, "", "", undefined, undefined, ""
+                ];
+
                 it(testTitle1, function(this: Context, done: Done) {
                     this.timeout(10*1000);
 
-                    let { args: { chainIdFrom }, args, wantError } = tc;
+                    let { args: { chainIdFrom }, args, wantError, noAddrTo } = tc;
 
                     if (!wantError) {
                         const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
-                        const wallet = makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey);
-                        const addressTo = wallet.address;
+                        let addressTo: string;
+
+                        noAddrTo
+                            ? addressTo = _.shuffle(undefEmptyArr)[0]
+                            : addressTo = makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey).address
+
                         
                         let prom = Promise.resolve(
                             bridgeInstance.buildBridgeTokenTransaction({
@@ -489,7 +506,9 @@ describe("SynapseBridge", function() {
                             })
                         )
 
-                        expect(prom).to.eventually.be.fulfilled.notify(done);
+                        noAddrTo
+                            ? expect(prom).to.eventually.be.rejected.notify(done)
+                            : expect(prom).to.eventually.be.fulfilled.notify(done);
                         return
                     }
 

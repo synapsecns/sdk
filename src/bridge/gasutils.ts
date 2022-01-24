@@ -1,6 +1,7 @@
 import {ChainId} from "../common";
 import {parseUnits} from "@ethersproject/units";
 import {BigNumber} from "@ethersproject/bignumber";
+import {PopulatedTransaction} from "ethers";
 
 export namespace GasUtils {
     export interface GasParams {
@@ -10,29 +11,31 @@ export namespace GasUtils {
         approveGasLimit?: BigNumber,
     }
 
+    const makeGwei = (n: string): BigNumber => parseUnits(n, "gwei")
+
     const ETH_GAS_PARAMS: GasParams = {
-        maxPriorityFee: parseUnits("1.5", "gwei"),
+        maxPriorityFee: makeGwei("1.5"),
         bridgeGasLimit: BigNumber.from(100000)
     };
 
     const BOBA_GAS_PARAMS: GasParams = {
-        gasPrice:        parseUnits("10", "gwei"),
+        gasPrice:        makeGwei("10"),
         approveGasLimit: BigNumber.from(60000),
     };
 
     const ARBITRUM_GAS_PARAMS: GasParams = {
-        gasPrice:       parseUnits("2.5", "gwei"),
+        gasPrice:       makeGwei("2.5"),
         bridgeGasLimit: BigNumber.from(1500000),
     };
 
     const AVALANCHE_GAS_PARAMS: GasParams = {
-        gasPrice:        parseUnits("150", "gwei"),
+        gasPrice:        makeGwei("150"),
         bridgeGasLimit:  BigNumber.from(800000),
         approveGasLimit: BigNumber.from(75000),
     }
 
     const AURORA_GAS_PARAMS: GasParams = {
-        gasPrice: parseUnits('0', 'gwei'),
+        gasPrice: makeGwei('0'),
     }
 
     export function makeGasParams(chainId: number): GasParams {
@@ -50,5 +53,27 @@ export namespace GasUtils {
         }
 
         return {}
+    }
+
+    export function populateGasParams(chainId: number, txn: PopulatedTransaction|Promise<PopulatedTransaction>, gasLimitKind: string): Promise<PopulatedTransaction> {
+        return Promise.resolve(txn)
+            .then((tx: PopulatedTransaction): PopulatedTransaction => {
+                let {maxPriorityFee, gasPrice, approveGasLimit, bridgeGasLimit} = makeGasParams(chainId);
+
+                if (gasPrice)        tx.gasPrice             = gasPrice;
+                if (maxPriorityFee)  tx.maxPriorityFeePerGas = maxPriorityFee;
+
+                switch (gasLimitKind) {
+                    case "bridge":
+                        if (bridgeGasLimit) tx.gasLimit = bridgeGasLimit;
+                        break;
+                    case "approve":
+                        if (approveGasLimit) tx.gasLimit = approveGasLimit;
+                        break;
+                }
+
+
+                return tx
+            })
     }
 }
