@@ -614,6 +614,50 @@ export namespace SwapPools {
     }
 
     export const swapGroupsForNetwork = (chainId: number): string[] => Object.keys(bridgeSwappableTokensByType[chainId])
+
+    export function stableswapPoolForNetwork(chainId: number): SwapPoolToken {
+        switch (chainId) {
+            case ChainId.ETH:
+                return ETH_POOL_SWAP_TOKEN
+            case ChainId.BSC:
+                return BSC_POOL_SWAP_TOKEN
+            case ChainId.POLYGON:
+                return POLYGON_POOL_SWAP_TOKEN
+            case ChainId.FANTOM:
+                return FANTOM_POOL_SWAP_TOKEN
+            case ChainId.BOBA:
+                return BOBA_POOL_SWAP_TOKEN
+            case ChainId.ARBITRUM:
+                return ARBITRUM_POOL_SWAP_TOKEN
+            case ChainId.AVALANCHE:
+                return AVALANCHE_POOL_SWAP_TOKEN
+            case ChainId.AURORA:
+                return AURORA_POOL_SWAP_TOKEN
+            case ChainId.HARMONY:
+                return HARMONY_POOL_SWAP_TOKEN
+        }
+
+        return undefined
+    }
+
+    export function ethSwapPoolForNetwork(chainId: number): SwapPoolToken {
+        switch (chainId) {
+            case ChainId.OPTIMISM:
+                return OPTIMISM_ETH_SWAP_TOKEN
+            case ChainId.FANTOM:
+                return FANTOM_ETH_SWAP_TOKEN
+            case ChainId.BOBA:
+                return BOBA_ETH_SWAP_TOKEN
+            case ChainId.ARBITRUM:
+                return ARBITRUM_ETH_SWAP_TOKEN
+            case ChainId.AVALANCHE:
+                return AVALANCHE_ETH_SWAP_TOKEN
+            case ChainId.HARMONY:
+                return HARMONY_ONEETH_TOKEN
+        }
+
+        return undefined
+    }
 }
 
 export interface NetworkSwappableTokensMap {

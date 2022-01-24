@@ -13,6 +13,10 @@ import {
     Tokens,
 } from "../tokens";
 
+import {
+    TokenSwap
+} from "../swap";
+
 import type {Token} from "../token";
 
 import {SwapPools} from "../swappools";
@@ -459,43 +463,8 @@ export namespace Bridge {
                 fromChainTokens
             } = this.makeBridgeTokenArgs(args);
 
-            const mintBurnSwapTypes = [
-                SwapType.HIGH, SwapType.DOG, SwapType.JUMP,
-                SwapType.NFD,  SwapType.OHM, SwapType.SOLAR,
-                SwapType.GMX,
-            ];
 
-            let [intermediateToken, bridgeConfigIntermediateToken] = ((): [Token, Token] => {
-                if (mintBurnSwapTypes.includes(tokenFrom.swapType)) {
-                    return [tokenFrom, tokenFrom]
-                }
-
-                switch (tokenFrom.swapType) {
-                    case SwapType.SYN:
-                        return [Tokens.SYN, Tokens.SYN]
-                    case SwapType.FRAX:
-                        if (chainIdTo === ChainId.ETH) {
-                            return [null, Tokens.FRAX]
-                        } else {
-                            return [null, Tokens.SYN_FRAX]
-                        }
-                    case SwapType.ETH:
-                        let intermediate: Token;
-                        if (chainIdTo === ChainId.ETH) {
-                            intermediate = Tokens.WETH;
-                        } else {
-                            intermediate = Tokens.NETH;
-                        }
-
-                        return [Tokens.NETH, intermediate]
-                    case SwapType.AVAX:
-                        return [Tokens.WAVAX, Tokens.WAVAX]
-                    case SwapType.MOVR:
-                        return [Tokens.WMOVR, Tokens.WMOVR]
-                    default:
-                        return [Tokens.NUSD, Tokens.NUSD]
-                }
-            })();
+            let [intermediateToken, bridgeConfigIntermediateToken] = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
 
             const bigNumTen = BigNumber.from(10);
 

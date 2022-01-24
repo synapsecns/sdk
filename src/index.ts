@@ -46,6 +46,8 @@ export type {
     NetworkSwappableTokensMap
 } from "./swappools";
 
+export {TokenSwap} from "./swap";
+
 export type {
     SynapseBridgeContract,
     GenericZapBridgeContract,
