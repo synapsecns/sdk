@@ -3,9 +3,9 @@ name: Publish (mainline)
 on:
   push:
     tags:
-      - 'v*'
-      - '!v**-alpha'
-      - '!v**-beta'
+      - "v*"
+      - "!v*-alpha*"
+      - "!v*-beta*"
 
 jobs:
   tagged_release:

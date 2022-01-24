@@ -3,8 +3,8 @@ name: Publish (dev)
 on:
   push:
     tags:
-      - 'v**-alpha'
-      - 'v**-beta'
+      - "v*-alpha*"
+      - "v*-beta*"
 
 jobs:
   tagged_release:
