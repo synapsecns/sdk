@@ -3,8 +3,7 @@ name: Publish (dev)
 on:
   push:
     tags:
-      - "v*-alpha*"
-      - "v*-beta*"
+      - "v*-dev*"
 
 jobs:
   tagged_release:
@@ -42,12 +41,13 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
+          automatic_release_tag: "dev"
           files: |
             synapseprotocol-sdk-${{ steps.vars.outputs.tag }}.tgz
             LICENSE
             README.md
 
       - name: Publish to NPM
-        run: yarn publish --non-interactive
+        run: yarn publish --non-interactive --tag dev
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_SERVICE_ACCOUNT_TOKEN }}
