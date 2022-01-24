@@ -22,6 +22,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "setup:dev": "yarn install --frozen-lockfile",
     "setup": "yarn && yarn -s run typegen",
     "test": "mocha",
     "test:coverage": "c8 --reports-dir $REPORTS_DIR mocha",
@@ -29,8 +30,6 @@
     "prebuild": "rm -rf ./dist",
     "build": "tsc",
     "prepublishOnly": "yarn build",
-    "publish:patch": "yarn publish --patch",
-    "publish:minor": "yarn publish --minor",
     "typegen:all": "yarn -s run abigen",
     "posttypegen:all": "yarn -s run typegen",
     "abigen": "scripts/abigen.sh",
