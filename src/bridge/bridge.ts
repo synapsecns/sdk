@@ -2,7 +2,7 @@ import {
     ChainId,
     Networks
 } from "../common";
-import {SwapType} from "../common/swaptype";
+import {SwapType} from "../internal/swaptype";
 import {
     contractAddressFor,
     executePopulatedTransaction,
@@ -21,7 +21,7 @@ import {GenericZapBridgeContract, L1BridgeZapContract, SynapseBridgeContract} fr
 
 import {SynapseEntities} from "../entities";
 
-import {newProviderForNetwork} from "../rpcproviders";
+import {newProviderForNetwork} from "../internal/rpcproviders";
 
 import {Zero} from "@ethersproject/constants";
 import {Signer} from "@ethersproject/abstract-signer";

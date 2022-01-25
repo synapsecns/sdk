@@ -4,7 +4,7 @@ import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 import {PopulatedTransaction, ContractTransaction} from "@ethersproject/contracts";
 
 import {ERC20Factory, ERC20Contract} from "../contracts";
-import {newProviderForNetwork} from "../rpcproviders";
+import {newProviderForNetwork} from "../internal/rpcproviders";
 
 import {
     executePopulatedTransaction,

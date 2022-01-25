@@ -7,7 +7,7 @@ import {JsonRpcProvider} from "@ethersproject/providers";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
 import {ChainId} from "../../src";
-import {newProviderForNetwork} from "../../src/rpcproviders";
+import {newProviderForNetwork} from "../../src/internal/rpcproviders";
 
 const TEN_BN: BigNumber = BigNumber.from(10);
 

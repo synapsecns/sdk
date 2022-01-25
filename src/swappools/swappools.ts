@@ -7,7 +7,7 @@ import {BaseToken} from "../token";
 import type {Token, IBaseToken} from "../token";
 
 
-import {SwapType} from "../common/swaptype";
+import {SwapType} from "../internal/swaptype";
 
 
 export namespace SwapPools {

@@ -15,7 +15,7 @@ import type {SignerOrProvider} from "../common";
 
 import {ChainId} from "../common";
 
-import {newProviderForNetwork} from "../rpcproviders";
+import {newProviderForNetwork} from "../internal/rpcproviders";
 
 
 export namespace SynapseEntities {
