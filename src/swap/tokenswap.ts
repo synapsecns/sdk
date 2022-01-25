@@ -30,30 +30,15 @@ export namespace TokenSwap {
         amountOut: BigNumber
     }
 
-    async function swapContract(token: Token, chainId: number): Promise<SwapContract> {
-        const
-            poolConfigInstance = SynapseEntities.poolConfig(),
-            lpToken = intermediateToken(token, chainId),
-            {poolAddress} = await poolConfigInstance.getPoolConfig(lpToken.address(chainId), chainId);
-
-        return SwapFactory.connect(poolAddress, newProviderForNetwork(chainId))
-    }
-
     export async function calculateSwapRate(args: CalculateSwapRateParams): Promise<EstimatedSwapRate> {
-        const
-            swapInstance   = await swapContract(args.tokenFrom,  args.chainId),
-            tokenIndexFrom = await getTokenIndex(args.tokenFrom, args.chainId, swapInstance),
-            tokenIndexTo   = await getTokenIndex(args.tokenTo,   args.chainId, swapInstance);
+        const {swapInstance, tokenIndexFrom, tokenIndexTo} = await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
 
         return swapInstance.calculateSwap(tokenIndexFrom, tokenIndexTo, args.amountIn)
             .then((res): EstimatedSwapRate => ({amountOut: res}))
     }
 
     export async function swapTokens(args: SwapTokensParams): Promise<ContractTransaction> {
-        const
-            swapInstance   = await swapContract(args.tokenFrom,  args.chainId),
-            tokenIndexFrom = await getTokenIndex(args.tokenFrom, args.chainId, swapInstance),
-            tokenIndexTo   = await getTokenIndex(args.tokenTo,   args.chainId, swapInstance);
+        const {swapInstance, tokenIndexFrom, tokenIndexTo} = await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
 
         return swapInstance.swap(
             tokenIndexFrom,
@@ -64,8 +49,32 @@ export namespace TokenSwap {
         )
     }
 
-    function getTokenIndex(token: Token, chainId: number, swap: SwapContract): Promise<number> {
-        return swap.getTokenIndex(token.address(chainId))
+    interface SwapSetup {
+        swapInstance:   SwapContract,
+        tokenIndexFrom: number,
+        tokenIndexTo:   number,
+    }
+
+    async function swapContract(token: Token, chainId: number): Promise<SwapContract> {
+        const
+            poolConfigInstance = SynapseEntities.poolConfig(),
+            lpToken = intermediateToken(token, chainId),
+            {poolAddress} = await poolConfigInstance.getPoolConfig(lpToken.address(chainId), chainId);
+
+        return SwapFactory.connect(poolAddress, newProviderForNetwork(chainId))
+    }
+
+    async function swapSetup(tokenFrom: Token, tokenTo: Token, chainId: number): Promise<SwapSetup> {
+        const
+            swapInstance   = await swapContract(tokenFrom, chainId),
+            tokenIndexFrom = await swapInstance.getTokenIndex(tokenFrom.address(chainId)),
+            tokenIndexTo   = await swapInstance.getTokenIndex(tokenTo.address(chainId));
+
+        return {
+            swapInstance,
+            tokenIndexFrom,
+            tokenIndexTo,
+        }
     }
 
     function intermediateToken(token: Token, chainId: number): Token {
