@@ -5,11 +5,12 @@ import {
     Networks,
 } from "../common";
 import {rejectPromise} from "../common/utils";
-import {SwapType} from "../common/swaptype";
 
 import {SynapseEntities} from "../entities";
-import {newProviderForNetwork} from "../rpcproviders";
 import {SwapContract, SwapFactory} from "../contracts";
+
+import {SwapType} from "../internal/swaptype";
+import {newProviderForNetwork} from "../internal/rpcproviders";
 
 import {UnsupportedSwapErrors} from "./unsupportedSwapErrors";
 
