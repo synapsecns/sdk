@@ -17,6 +17,7 @@ export namespace TokenSwap {
         tokenTo:       Token,
         amountIn:      BigNumberish,
         minAmountOut:  BigNumberish,
+        deadline?:     number,
     }
 
     export interface CalculateSwapRateParams {
@@ -40,12 +41,15 @@ export namespace TokenSwap {
     export async function swapTokens(args: SwapTokensParams): Promise<ContractTransaction> {
         const {swapInstance, tokenIndexFrom, tokenIndexTo} = await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
 
+        let {deadline} = args;
+        deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
+
         return swapInstance.swap(
             tokenIndexFrom,
             tokenIndexTo,
             args.amountIn,
             args.minAmountOut,
-            Math.round((new Date().getTime() / 1000) + 60 * 10)
+            deadline
         )
     }
 
