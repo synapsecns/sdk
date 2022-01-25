@@ -46,7 +46,7 @@ export type {
     NetworkSwappableTokensMap
 } from "./swappools";
 
-export {TokenSwap, UnsupportedSwapErrors} from "./swap";
+export {TokenSwap, UnsupportedSwapErrors} from "./tokenswap";
 
 export type {
     SynapseBridgeContract,

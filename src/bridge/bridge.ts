@@ -13,7 +13,7 @@ import {
     Tokens,
 } from "../tokens";
 
-import {TokenSwap} from "../swap";
+import {TokenSwap} from "../tokenswap";
 
 import type {Token} from "../token";
 
