@@ -13,9 +13,7 @@ import {
     Tokens,
 } from "../tokens";
 
-import {
-    TokenSwap
-} from "../swap";
+import {TokenSwap} from "../swap";
 
 import type {Token} from "../token";
 
@@ -33,8 +31,6 @@ import {Provider} from "@ethersproject/providers";
 import {formatUnits} from "@ethersproject/units";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 import {ContractTransaction, PopulatedTransaction} from "@ethersproject/contracts";
-
-import {UnsupportedSwapReason} from "./errors";
 
 import {
     ERC20,
@@ -161,34 +157,9 @@ export namespace Bridge {
             tokenTo: Token
             chainIdTo: number,
         }): [boolean, string] {
-            let {tokenFrom, tokenTo, chainIdTo} = args;
+            const {swapSupported, reasonNotSupported} = TokenSwap.bridgeSwapSupported({...args, chainIdFrom: this.chainId});
 
-            if (!this.network.supportsToken(tokenFrom)) {
-                return [false, UnsupportedSwapReason.TokenNotSupported_From]
-            }
-
-            if (!Networks.networkSupportsToken(chainIdTo, tokenTo)) {
-                return [false, UnsupportedSwapReason.TokenNotSupported_To]
-            }
-
-            if (tokenFrom.swapType !== tokenTo.swapType) {
-                return [false, UnsupportedSwapReason.NonmatchingSwapTypes]
-            }
-
-            let
-                isEthFromBoba = (this.chainId === ChainId.BOBA) && (tokenFrom.swapType === SwapType.ETH),
-                isEthToBoba = (chainIdTo === ChainId.BOBA) && (tokenTo.swapType === SwapType.ETH);
-
-            if (isEthFromBoba || isEthToBoba) {
-                return [false, UnsupportedSwapReason.ETHOnBOBA]
-            }
-            // if ((this.chainId === ChainId.BOBA) && (tokenFrom.swapType === SwapType.ETH)) {
-            //     if ((chainIdTo === ChainId.ETH) && (tokenTo.isETH)) {
-            //         return [false, UnsupportedSwapReason.BOBAToL1]
-            //     }
-            // }
-
-            return [true, ""]
+            return [swapSupported, reasonNotSupported?.reason || ""]
         }
 
         /**
@@ -424,27 +395,11 @@ export namespace Bridge {
         }
 
         private async checkSwapSupported(args: BridgeParams): Promise<boolean> {
-            const
-                {chainIdTo, tokenFrom, tokenTo} = args,
-                networkTo = Networks.fromChainId(chainIdTo);
-
             return new Promise<boolean>((resolve, reject) => {
-                let [swapSupported, errReason] = this.swapSupported({tokenFrom, chainIdTo, tokenTo});
+                let [swapSupported, errReason] = this.swapSupported(args);
                 if (!swapSupported) {
-                    switch (errReason) {
-                        case UnsupportedSwapReason.TokenNotSupported_From:
-                            reject(`Network '${this.network.name}' does not support token ${tokenFrom.name} (param: tokenFrom)`);
-                            break;
-                        case UnsupportedSwapReason.TokenNotSupported_To:
-                            reject(`Network '${networkTo.name}' (param: chainIdTo) does not support token ${tokenTo.name} (param: tokenTo)`);
-                            break;
-                        case UnsupportedSwapReason.NonmatchingSwapTypes:
-                            reject(`param tokenFrom with swapType '${tokenFrom.swapType}' cannot be bridge to param tokenTo with swapType '${tokenTo.swapType}'`);
-                            break;
-                        default:
-                            reject(errReason);
-                            break;
-                    }
+                    reject(errReason);
+                    return
                 }
 
                 resolve(true);

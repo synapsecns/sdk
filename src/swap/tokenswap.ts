@@ -1,31 +1,40 @@
 import {Token} from "../token";
 import {Tokens} from "../tokens";
-import {ChainId} from "../common";
+import {
+    ChainId,
+    Networks,
+} from "../common";
+import {rejectPromise} from "../common/utils";
 import {SwapType} from "../common/swaptype";
 
 import {SynapseEntities} from "../entities";
 import {newProviderForNetwork} from "../rpcproviders";
 import {SwapContract, SwapFactory} from "../contracts";
 
-import {ContractTransaction} from "@ethersproject/contracts";
+import {UnsupportedSwapErrors} from "./unsupportedSwapErrors";
+
+import {PopulatedTransaction} from "@ethersproject/contracts";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
 
 export namespace TokenSwap {
-    export interface SwapTokensParams {
+    export interface SwapParams {
         chainId:       number,
         tokenFrom:     Token,
         tokenTo:       Token,
         amountIn:      BigNumberish,
-        minAmountOut:  BigNumberish,
-        deadline?:     number,
     }
 
-    export interface CalculateSwapRateParams {
-        chainId:       number,
-        tokenFrom:     Token,
-        tokenTo:       Token,
-        amountIn:      BigNumberish,
+    export interface SwapTokensParams extends SwapParams {
+        minAmountOut: BigNumberish,
+        deadline?:    number,
+    }
+
+    export interface BridgeSwapSupportedParams {
+        tokenFrom:   Token,
+        tokenTo:     Token,
+        chainIdFrom: number,
+        chainIdTo:   number,
     }
 
     export interface EstimatedSwapRate {
@@ -37,34 +46,114 @@ export namespace TokenSwap {
         bridgeConfigIntermediateToken: Token
     }
 
-    export async function calculateSwapRate(args: CalculateSwapRateParams): Promise<EstimatedSwapRate> {
+    export interface SwapSupportedResult {
+        swapSupported:       boolean,
+        reasonNotSupported?: UnsupportedSwapErrors.UnsupportedSwapError,
+    }
+
+    export function swapSupported(args: SwapParams): SwapSupportedResult {
+        const
+            {tokenFrom, tokenTo, chainId} = args,
+            network = Networks.fromChainId(chainId);
+
+        let
+            swapSupported: boolean = true,
+            reasonNotSupported: UnsupportedSwapErrors.UnsupportedSwapError;
+
+        if (!network.supportsToken(tokenFrom)) {
+            swapSupported = false;
+            reasonNotSupported = UnsupportedSwapErrors.tokenNotSupported(tokenFrom, network.name);
+        } else if (!network.supportsToken(tokenTo)) {
+            swapSupported = false;
+            reasonNotSupported = UnsupportedSwapErrors.tokenNotSupported(tokenTo, network.name);
+        }
+
+        if (tokenFrom.swapType !== tokenTo.swapType) {
+            swapSupported = false;
+            reasonNotSupported = UnsupportedSwapErrors.nonMatchingSwapTypes(tokenFrom.swapType, tokenTo.swapType);
+        }
+
+        return {swapSupported, reasonNotSupported}
+    }
+
+    export function bridgeSwapSupported(args: BridgeSwapSupportedParams): SwapSupportedResult {
+        const
+            {tokenFrom, tokenTo, chainIdFrom, chainIdTo} = args,
+            netFrom = Networks.fromChainId(chainIdFrom),
+            netTo   = Networks.fromChainId(chainIdTo);
+
+        let
+            swapSupported: boolean = true,
+            reasonNotSupported: UnsupportedSwapErrors.UnsupportedSwapError;
+
+        if (!netFrom.supportsToken(tokenFrom)) {
+            swapSupported = false;
+            reasonNotSupported = UnsupportedSwapErrors.tokenNotSupportedNetFrom(tokenFrom, netFrom.name);
+        } else if (!netTo.supportsToken(tokenTo)) {
+            swapSupported = false;
+            reasonNotSupported = UnsupportedSwapErrors.tokenNotSupportedNetTo(tokenTo, netTo.name);
+        }
+
+        if (tokenFrom.swapType !== tokenTo.swapType) {
+            swapSupported = false;
+            reasonNotSupported = UnsupportedSwapErrors.nonMatchingSwapTypes(tokenFrom.swapType, tokenTo.swapType);
+        }
+
+        const checkBoba = (c: number, t: Token): boolean => c === ChainId.BOBA && t.swapType === SwapType.ETH;
+        const
+            isEthFromBoba = checkBoba(chainIdFrom, tokenFrom),
+            isEthToBoba   = checkBoba(chainIdTo,   tokenTo);
+
+        if (isEthFromBoba || isEthToBoba) {
+            swapSupported = false;
+            reasonNotSupported = UnsupportedSwapErrors.ethOnBoba();
+        }
+
+        return {swapSupported, reasonNotSupported}
+    }
+
+    export async function calculateSwapRate(args: SwapParams): Promise<EstimatedSwapRate> {
+        const {swapSupported: canSwap, reasonNotSupported} = swapSupported(args);
+        if (!canSwap) {
+            return rejectPromise(reasonNotSupported)
+        }
+
         const {swapInstance, tokenIndexFrom, tokenIndexTo} = await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
 
         return swapInstance.calculateSwap(tokenIndexFrom, tokenIndexTo, args.amountIn)
             .then((res): EstimatedSwapRate => ({amountOut: res}))
     }
 
-    export async function swapTokens(args: SwapTokensParams): Promise<ContractTransaction> {
+    export async function buildSwapTokensTransaction(args: SwapTokensParams): Promise<PopulatedTransaction> {
+        const {swapSupported: canSwap, reasonNotSupported} = swapSupported(args);
+        if (!canSwap) {
+            return rejectPromise(reasonNotSupported)
+        }
+
         const {swapInstance, tokenIndexFrom, tokenIndexTo} = await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
 
         let {deadline} = args;
         deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
 
-        return swapInstance.swap(
+        const overrides: any = args.tokenFrom.isEqual(Tokens.ETH) ? {value:args.amountIn} : {};
+
+        return swapInstance.populateTransaction.swap(
             tokenIndexFrom,
             tokenIndexTo,
             args.amountIn,
             args.minAmountOut,
-            deadline
+            deadline,
+            overrides
         )
     }
 
     export function intermediateTokens(chainId: number, token: Token): IntermediateSwapTokens {
         if (mintBurnSwapTypes.includes(token.swapType)) {
-            return {
-                intermediateToken:             token,
-                bridgeConfigIntermediateToken: token,
-            }
+            const
+                intermediateToken             = token,
+                bridgeConfigIntermediateToken = token;
+
+            return {intermediateToken, bridgeConfigIntermediateToken}
         }
 
         let
