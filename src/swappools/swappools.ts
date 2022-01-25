@@ -20,7 +20,7 @@ export namespace SwapPools {
 
     export interface LPToken {
         readonly poolTokens: Token[],
-        readonly swapType:   string,
+        readonly swapType:   SwapType,
     }
 
     export interface SwapPoolToken extends IBaseToken, LPToken {
@@ -41,7 +41,7 @@ export namespace SwapPools {
         addresses:      AddressMap,
         poolId:         number,
         poolName:       string,
-        poolType:       string,
+        poolType:       SwapType,
         poolTokens:     Token[],
         swapAddresses:  AddressMap,
     }
@@ -70,7 +70,7 @@ export namespace SwapPools {
             symbol:    args.notLP ? "nUSD" : "nUSD-LP",
             poolName:  `${args.netName} Stableswap Pool `,
             poolId:    args.poolId,
-            poolType:  "USD",
+            poolType:  SwapType.USD,
             swapAddresses: {
                 [args.chainId]: args.swapAddress,
             },
@@ -97,7 +97,7 @@ export namespace SwapPools {
             symbol:    "nETH-LP",
             poolName:  `${args.netName} ${args.poolName ?? "ETH"} Pool `,
             poolId:    args.poolId,
-            poolType:  "ETH",
+            poolType:  SwapType.ETH,
             swapAddresses: {
                 [args.chainId]: args.swapAddress,
             },
@@ -115,7 +115,7 @@ export namespace SwapPools {
 
         readonly poolId:   number;
         readonly poolName: string;
-        readonly poolType: string;
+        readonly poolType: SwapType;
 
         readonly poolTokens: Token[];
 
@@ -149,7 +149,7 @@ export namespace SwapPools {
             return this.baseToken.addresses
         }
 
-        get swapType(): string {
+        get swapType(): SwapType {
             return this.baseToken.swapType
         }
 
@@ -372,7 +372,7 @@ export namespace SwapPools {
     });
 
     const
-        makeSingleTokenPool = (t: Token, swapType: string): LPToken => ({poolTokens: [t], swapType}),
+        makeSingleTokenPool = (t: Token, swapType: SwapType): LPToken => ({poolTokens: [t], swapType}),
         ETH_Pool     = makeSingleTokenPool(Tokens.ETH,    SwapType.ETH),
         SYN_Pool     = makeSingleTokenPool(Tokens.SYN,    SwapType.SYN),
         FRAX_Pool    = makeSingleTokenPool(Tokens.FRAX,   SwapType.FRAX),
