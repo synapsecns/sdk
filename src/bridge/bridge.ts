@@ -464,11 +464,9 @@ export namespace Bridge {
             } = this.makeBridgeTokenArgs(args);
 
 
-            let [intermediateToken, bridgeConfigIntermediateToken] = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
+            let {intermediateToken, bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
 
             const bigNumTen = BigNumber.from(10);
-
-            bridgeConfigIntermediateToken = bridgeConfigIntermediateToken ?? intermediateToken;
             const bridgeFeeRequest = this.bridgeConfigInstance.calculateSwapFee(
                 bridgeConfigIntermediateToken.address(chainIdTo),
                 chainIdTo,

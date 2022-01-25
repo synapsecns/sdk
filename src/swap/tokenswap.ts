@@ -3,11 +3,12 @@ import {Tokens} from "../tokens";
 import {ChainId} from "../common";
 import {SwapType} from "../common/swaptype";
 
-import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 import {SynapseEntities} from "../entities";
-import {SwapContract, SwapFactory} from "../contracts/index";
 import {newProviderForNetwork} from "../rpcproviders";
-import {ContractTransaction} from "ethers";
+import {SwapContract, SwapFactory} from "../contracts";
+
+import {ContractTransaction} from "@ethersproject/contracts";
+import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
 
 export namespace TokenSwap {
@@ -29,6 +30,11 @@ export namespace TokenSwap {
 
     export interface EstimatedSwapRate {
         amountOut: BigNumber
+    }
+
+    export interface IntermediateSwapTokens {
+        intermediateToken?:            Token,
+        bridgeConfigIntermediateToken: Token
     }
 
     export async function calculateSwapRate(args: CalculateSwapRateParams): Promise<EstimatedSwapRate> {
@@ -53,6 +59,45 @@ export namespace TokenSwap {
         )
     }
 
+    export function intermediateTokens(chainId: number, token: Token): IntermediateSwapTokens {
+        if (mintBurnSwapTypes.includes(token.swapType)) {
+            return {
+                intermediateToken:             token,
+                bridgeConfigIntermediateToken: token,
+            }
+        }
+
+        let
+            intermediateToken:             Token,
+            bridgeConfigIntermediateToken: Token;
+
+        switch (token.swapType) {
+            case SwapType.SYN:
+                intermediateToken = Tokens.SYN;
+                break;
+            case SwapType.FRAX:
+                bridgeConfigIntermediateToken = chainId === ChainId.ETH ? Tokens.FRAX : Tokens.SYN_FRAX;
+                break;
+            case SwapType.ETH:
+                intermediateToken             = Tokens.NETH;
+                bridgeConfigIntermediateToken = chainId === ChainId.ETH ? Tokens.WETH : Tokens.NETH;
+                break;
+            case SwapType.AVAX:
+                intermediateToken = Tokens.WAVAX;
+                break;
+            case SwapType.MOVR:
+                intermediateToken = Tokens.WMOVR;
+                break;
+            default:
+                intermediateToken = Tokens.NUSD;
+                break;
+        }
+
+        bridgeConfigIntermediateToken = bridgeConfigIntermediateToken ?? intermediateToken;
+
+        return {intermediateToken, bridgeConfigIntermediateToken}
+    }
+
     interface SwapSetup {
         swapInstance:   SwapContract,
         tokenIndexFrom: number,
@@ -62,8 +107,8 @@ export namespace TokenSwap {
     async function swapContract(token: Token, chainId: number): Promise<SwapContract> {
         const
             poolConfigInstance = SynapseEntities.poolConfig(),
-            lpToken = intermediateToken(token, chainId),
-            {poolAddress} = await poolConfigInstance.getPoolConfig(lpToken.address(chainId), chainId);
+            lpToken            = intermediateToken(token, chainId),
+            {poolAddress}      = await poolConfigInstance.getPoolConfig(lpToken.address(chainId), chainId);
 
         return SwapFactory.connect(poolAddress, newProviderForNetwork(chainId))
     }
@@ -82,9 +127,9 @@ export namespace TokenSwap {
     }
 
     function intermediateToken(token: Token, chainId: number): Token {
-        const [intermediateTokenA, intermediateTokenB]  = intermediateTokens(chainId, token);
+        const {intermediateToken, bridgeConfigIntermediateToken}  = intermediateTokens(chainId, token);
 
-        return intermediateTokenA ?? intermediateTokenB
+        return intermediateToken ?? bridgeConfigIntermediateToken
     }
 
     const mintBurnSwapTypes = [
@@ -92,36 +137,4 @@ export namespace TokenSwap {
         SwapType.NFD,  SwapType.OHM, SwapType.SOLAR,
         SwapType.GMX,
     ];
-
-    export function intermediateTokens(chainId: number, token: Token): [Token, Token] {
-        if (mintBurnSwapTypes.includes(token.swapType)) {
-            return [token, token]
-        }
-
-        switch (token.swapType) {
-            case SwapType.SYN:
-                return [Tokens.SYN, Tokens.SYN]
-            case SwapType.FRAX:
-                if (chainId === ChainId.ETH) {
-                    return [null, Tokens.FRAX]
-                } else {
-                    return [null, Tokens.SYN_FRAX]
-                }
-            case SwapType.ETH:
-                let intermediate: Token;
-                if (chainId === ChainId.ETH) {
-                    intermediate = Tokens.WETH;
-                } else {
-                    intermediate = Tokens.NETH;
-                }
-
-                return [Tokens.NETH, intermediate]
-            case SwapType.AVAX:
-                return [Tokens.WAVAX, Tokens.WAVAX]
-            case SwapType.MOVR:
-                return [Tokens.WMOVR, Tokens.WMOVR]
-            default:
-                return [Tokens.NUSD, Tokens.NUSD]
-        }
-    }
 }
