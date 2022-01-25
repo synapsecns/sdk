@@ -52,51 +52,21 @@ export namespace TokenSwap {
     }
 
     export function swapSupported(args: SwapParams): SwapSupportedResult {
-        const
-            {tokenFrom, tokenTo, chainId} = args,
-            network = Networks.fromChainId(chainId);
+        const {tokenFrom, tokenTo, chainId} = args;
 
-        let
-            swapSupported: boolean = true,
-            reasonNotSupported: UnsupportedSwapErrors.UnsupportedSwapError;
-
-        if (!network.supportsToken(tokenFrom)) {
-            swapSupported = false;
-            reasonNotSupported = UnsupportedSwapErrors.tokenNotSupported(tokenFrom, network.name);
-        } else if (!network.supportsToken(tokenTo)) {
-            swapSupported = false;
-            reasonNotSupported = UnsupportedSwapErrors.tokenNotSupported(tokenTo, network.name);
-        }
-
-        if (tokenFrom.swapType !== tokenTo.swapType) {
-            swapSupported = false;
-            reasonNotSupported = UnsupportedSwapErrors.nonMatchingSwapTypes(tokenFrom.swapType, tokenTo.swapType);
-        }
-
-        return {swapSupported, reasonNotSupported}
+        return checkCanSwap(tokenFrom, tokenTo, chainId)
     }
 
     export function bridgeSwapSupported(args: BridgeSwapSupportedParams): SwapSupportedResult {
-        const
-            {tokenFrom, tokenTo, chainIdFrom, chainIdTo} = args,
-            netFrom = Networks.fromChainId(chainIdFrom),
-            netTo   = Networks.fromChainId(chainIdTo);
+        const {tokenFrom, tokenTo, chainIdFrom, chainIdTo} = args;
 
         let
             swapSupported: boolean = true,
             reasonNotSupported: UnsupportedSwapErrors.UnsupportedSwapError;
 
-        if (!netFrom.supportsToken(tokenFrom)) {
-            swapSupported = false;
-            reasonNotSupported = UnsupportedSwapErrors.tokenNotSupportedNetFrom(tokenFrom, netFrom.name);
-        } else if (!netTo.supportsToken(tokenTo)) {
-            swapSupported = false;
-            reasonNotSupported = UnsupportedSwapErrors.tokenNotSupportedNetTo(tokenTo, netTo.name);
-        }
-
-        if (tokenFrom.swapType !== tokenTo.swapType) {
-            swapSupported = false;
-            reasonNotSupported = UnsupportedSwapErrors.nonMatchingSwapTypes(tokenFrom.swapType, tokenTo.swapType);
+        const canSwap = checkCanSwap(tokenFrom, tokenTo, chainIdFrom, chainIdTo);
+        if (!canSwap.swapSupported) {
+            return canSwap
         }
 
         const checkBoba = (c: number, t: Token): boolean => c === ChainId.BOBA && t.swapType === SwapType.ETH;
@@ -149,11 +119,7 @@ export namespace TokenSwap {
 
     export function intermediateTokens(chainId: number, token: Token): IntermediateSwapTokens {
         if (mintBurnSwapTypes.includes(token.swapType)) {
-            const
-                intermediateToken             = token,
-                bridgeConfigIntermediateToken = token;
-
-            return {intermediateToken, bridgeConfigIntermediateToken}
+            return {intermediateToken: token, bridgeConfigIntermediateToken: token}
         }
 
         let
@@ -216,7 +182,7 @@ export namespace TokenSwap {
     }
 
     function intermediateToken(token: Token, chainId: number): Token {
-        const {intermediateToken, bridgeConfigIntermediateToken}  = intermediateTokens(chainId, token);
+        const {intermediateToken, bridgeConfigIntermediateToken} = intermediateTokens(chainId, token);
 
         return intermediateToken ?? bridgeConfigIntermediateToken
     }
@@ -226,4 +192,59 @@ export namespace TokenSwap {
         SwapType.NFD,  SwapType.OHM, SwapType.SOLAR,
         SwapType.GMX,
     ];
+
+    function checkCanSwap(tokenFrom: Token, tokenTo: Token, chainFrom: number, chainTo?: number): SwapSupportedResult {
+        const
+            tokensCanSwap   = checkTokensCanSwap(tokenFrom, tokenTo),
+            tokensSupported = checkTokensSupported(tokenFrom, tokenTo, chainFrom, chainTo);
+
+        if (!tokensSupported.swapSupported) {
+            return tokensSupported
+        } else if (!tokensCanSwap.swapSupported) {
+            return tokensCanSwap
+        }
+
+        return {swapSupported: true}
+    }
+
+    function checkTokensCanSwap(tokenFrom: Token, tokenTo: Token): SwapSupportedResult {
+        let
+            swapSupported: boolean = true,
+            reasonNotSupported: UnsupportedSwapErrors.UnsupportedSwapError;
+
+        if (tokenFrom.swapType !== tokenTo.swapType) {
+            swapSupported = false;
+            reasonNotSupported = UnsupportedSwapErrors.nonMatchingSwapTypes(tokenFrom.swapType, tokenTo.swapType);
+        }
+
+        return {swapSupported, reasonNotSupported}
+    }
+
+    function checkTokensSupported(tokenFrom: Token, tokenTo: Token, chainIdFrom: number, chainIdTo?: number): SwapSupportedResult {
+        const
+            unsupportedFromFunc = (typeof chainIdTo !== "undefined"
+                ? UnsupportedSwapErrors.tokenNotSupportedNetFrom
+                : UnsupportedSwapErrors.tokenNotSupported),
+            unsupportedToFunc = (typeof chainIdTo !== "undefined"
+                ? UnsupportedSwapErrors.tokenNotSupportedNetTo
+                : UnsupportedSwapErrors.tokenNotSupported);
+
+        const
+            netFrom = Networks.fromChainId(chainIdFrom),
+            netTo   = (typeof chainIdTo !== "undefined" ? Networks.fromChainId(chainIdTo) : netFrom);
+
+        let
+            swapSupported: boolean = true,
+            reasonNotSupported: UnsupportedSwapErrors.UnsupportedSwapError;
+
+        if (!netFrom.supportsToken(tokenFrom)) {
+            swapSupported = false;
+            reasonNotSupported = unsupportedFromFunc(tokenFrom, netFrom.name);
+        } else if (!netTo.supportsToken(tokenTo)) {
+            swapSupported = false;
+            reasonNotSupported = unsupportedToFunc(tokenTo, netTo.name);
+        }
+
+        return {swapSupported, reasonNotSupported}
+    }
 }
