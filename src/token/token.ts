@@ -10,7 +10,7 @@ export interface IBaseToken {
     readonly symbol:    string,
     readonly addresses: AddressMap,
     readonly swapType:  SwapType,
-    readonly hash:      string,
+    readonly hash:      symbol,
     address: (chainId: number) => string | null
     decimals: (chainId: number) => number | null
 }
@@ -32,7 +32,7 @@ export class BaseToken implements Token {
     readonly addresses: AddressMap = {};
     readonly swapType:  SwapType;
     readonly isETH:     boolean;
-    readonly hash:      string;
+    readonly hash:      symbol;
 
     private readonly wrapperAddresses: AddressMap = {};
 
@@ -78,7 +78,7 @@ export class BaseToken implements Token {
 
         this.isETH = args.isETH ?? false;
 
-        this.hash = Buffer.from(this.symbol).toString("base64");
+        this.hash = Symbol(this.symbol);
     }
 
     /**

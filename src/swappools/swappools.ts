@@ -153,7 +153,7 @@ export namespace SwapPools {
             return this.baseToken.swapType
         }
 
-        get hash(): string {
+        get hash(): symbol {
             return this.baseToken.hash
         }
 
