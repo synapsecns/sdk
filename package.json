@@ -60,7 +60,7 @@
     "@types/node": "16.11.21",
     "@zoltu/typescript-transformer-append-js-extension": "^1.0.1",
     "c8": "7.11.0",
-    "chai": "4.3.4",
+    "chai": "4.3.6",
     "chai-as-promised": "7.1.1",
     "chai-things": "0.2.0",
     "coveralls": "3.1.1",
