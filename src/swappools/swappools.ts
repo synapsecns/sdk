@@ -1,5 +1,5 @@
 import {Tokens} from "../tokens";
-import {ChainId} from "../common";
+import {ChainId, Networks} from "../common";
 
 import type {AddressMap, DecimalsMap} from "../common";
 
@@ -7,7 +7,7 @@ import {BaseToken} from "../token";
 import type {Token, IBaseToken} from "../token";
 
 
-import {SwapType} from "../common/swaptype";
+import {SwapType} from "../internal/swaptype";
 
 
 export namespace SwapPools {
@@ -20,7 +20,7 @@ export namespace SwapPools {
 
     export interface LPToken {
         readonly poolTokens: Token[],
-        readonly swapType:   string,
+        readonly swapType:   SwapType,
     }
 
     export interface SwapPoolToken extends IBaseToken, LPToken {
@@ -41,7 +41,7 @@ export namespace SwapPools {
         addresses:      AddressMap,
         poolId:         number,
         poolName:       string,
-        poolType:       string,
+        poolType:       SwapType,
         poolTokens:     Token[],
         swapAddresses:  AddressMap,
     }
@@ -70,7 +70,7 @@ export namespace SwapPools {
             symbol:    args.notLP ? "nUSD" : "nUSD-LP",
             poolName:  `${args.netName} Stableswap Pool `,
             poolId:    args.poolId,
-            poolType:  "USD",
+            poolType:  SwapType.USD,
             swapAddresses: {
                 [args.chainId]: args.swapAddress,
             },
@@ -97,7 +97,7 @@ export namespace SwapPools {
             symbol:    "nETH-LP",
             poolName:  `${args.netName} ${args.poolName ?? "ETH"} Pool `,
             poolId:    args.poolId,
-            poolType:  "ETH",
+            poolType:  SwapType.ETH,
             swapAddresses: {
                 [args.chainId]: args.swapAddress,
             },
@@ -115,7 +115,7 @@ export namespace SwapPools {
 
         readonly poolId:   number;
         readonly poolName: string;
-        readonly poolType: string;
+        readonly poolType: SwapType;
 
         readonly poolTokens: Token[];
 
@@ -149,11 +149,11 @@ export namespace SwapPools {
             return this.baseToken.addresses
         }
 
-        get swapType(): string {
+        get swapType(): SwapType {
             return this.baseToken.swapType
         }
 
-        get hash(): string {
+        get hash(): symbol {
             return this.baseToken.hash
         }
 
@@ -372,7 +372,7 @@ export namespace SwapPools {
     });
 
     const
-        makeSingleTokenPool = (t: Token, swapType: string): LPToken => ({poolTokens: [t], swapType}),
+        makeSingleTokenPool = (t: Token, swapType: SwapType): LPToken => ({poolTokens: [t], swapType}),
         ETH_Pool     = makeSingleTokenPool(Tokens.ETH,    SwapType.ETH),
         SYN_Pool     = makeSingleTokenPool(Tokens.SYN,    SwapType.SYN),
         FRAX_Pool    = makeSingleTokenPool(Tokens.FRAX,   SwapType.FRAX),
@@ -696,6 +696,50 @@ export function allNetworksSwapTokensMap(): AllNetworksSwappableTokensMap {
 
         res[chainIdA] = swapGroupsLoop(chainIdA, swapGrpsA);
     })
+
+    return res
+}
+
+export interface DetailedTokenSwapMap {
+    [chainId: number]: {
+        token: Token,
+        [chainId: number]: Token[],
+    }[],
+}
+
+interface TokenSwapMap {
+    token: Token,
+    [chainId: number]: Token[],
+}
+
+export function detailedTokenSwapMap(): DetailedTokenSwapMap {
+    let res: DetailedTokenSwapMap = {};
+
+    const allChainIds = ChainId.supportedChainIds();
+
+    for (const c1 of allChainIds) {
+        let n1: Networks.Network = Networks.fromChainId(c1);
+        let networkTokens: Token[] = n1.tokens;
+
+        res[c1] = networkTokens.map((t: Token) => {
+            let swapType = t.swapType;
+
+            let tokSwapMap: TokenSwapMap = {
+                token: t,
+            }
+
+            for (const c2 of allChainIds) {
+                if (c1 === c2) continue
+
+                let outToks: Token[] = SwapPools.bridgeSwappableTypePoolsByChain[c2][swapType]?.poolTokens || [];
+                if (outToks.length === 0) continue
+
+                tokSwapMap[c2] = outToks;
+            }
+
+            return tokSwapMap
+        })
+    }
 
     return res
 }

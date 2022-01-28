@@ -3,12 +3,14 @@ import {parseUnits} from "@ethersproject/units";
 
 import type {AddressMap, DecimalsMap} from "../common";
 
+import type {SwapType} from "../internal/swaptype"
+
 export interface IBaseToken {
     readonly name:      string,
     readonly symbol:    string,
     readonly addresses: AddressMap,
-    readonly swapType:  string,
-    readonly hash:      string,
+    readonly swapType:  SwapType,
+    readonly hash:      symbol,
     address: (chainId: number) => string | null
     decimals: (chainId: number) => number | null
 }
@@ -28,9 +30,9 @@ export class BaseToken implements Token {
     readonly name:      string;
     readonly symbol:    string;
     readonly addresses: AddressMap = {};
-    readonly swapType:  string;
+    readonly swapType:  SwapType;
     readonly isETH:     boolean;
-    readonly hash:      string;
+    readonly hash:      symbol;
 
     private readonly wrapperAddresses: AddressMap = {};
 
@@ -48,14 +50,14 @@ export class BaseToken implements Token {
      * If the latter is passed, values for ALL known chains must be provided.
      * @param {Object} args.addresses Mapping in the format of { chain id => address of token on chain },
      * providing the address of this token on different chains.
-     * @param {string} args.swapType Swap type of this token
+     * @param {SwapType} args.swapType Swap type of this token
      */
     constructor(args: {
         name:       string,
         symbol:     string,
         decimals:   number | DecimalsMap,
         addresses:  AddressMap,
-        swapType:   string,
+        swapType:   SwapType,
         isETH?:     boolean,
         wrapperAddresses?: AddressMap,
     }) {
@@ -76,7 +78,7 @@ export class BaseToken implements Token {
 
         this.isETH = args.isETH ?? false;
 
-        this.hash = Buffer.from(this.symbol).toString("base64");
+        this.hash = Symbol(this.symbol);
     }
 
     /**
@@ -119,7 +121,7 @@ export class WrappedToken extends BaseToken {
         symbol:          string,
         decimals:        number | DecimalsMap,
         addresses:       AddressMap,
-        swapType:        string,
+        swapType:        SwapType,
         underlyingToken: BaseToken,
         isETH?:          boolean,
         wrapperAddresses?: AddressMap,

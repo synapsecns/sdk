@@ -20,7 +20,7 @@ import {
     Bridge
 } from "../../src";
 
-import {newProviderForNetwork} from "../../src/rpcproviders";
+import {newProviderForNetwork} from "../../src/internal/rpcproviders";
 
 import {TransactionResponse} from "@ethersproject/providers";
 import {

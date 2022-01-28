@@ -1,6 +1,6 @@
 import {JsonRpcProvider} from "@ethersproject/providers";
 
-import {ChainId} from "../common";
+import {ChainId} from "../../common";
 
 import {rpcUriForChainId} from "./uris";
 

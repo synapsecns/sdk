@@ -2,7 +2,6 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { expect } from "chai";
 
 import { Slippages } from "../../src";
-import {BigNumberish} from "ethers";
 
 describe("Slippages tests", function(this: Mocha.Suite) {
     interface TestCase {

@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import {ChainId} from "../common";
+import {ChainId} from "../../common";
 
 dotenv.config()
 

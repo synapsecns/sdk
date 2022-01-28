@@ -2,7 +2,7 @@ import {
     ChainId,
     Networks
 } from "../common";
-import {SwapType} from "../common/swaptype";
+import {SwapType} from "../internal/swaptype";
 import {
     contractAddressFor,
     executePopulatedTransaction,
@@ -21,7 +21,7 @@ import {GenericZapBridgeContract, L1BridgeZapContract, SynapseBridgeContract} fr
 
 import {SynapseEntities} from "../entities";
 
-import {newProviderForNetwork} from "../rpcproviders";
+import {newProviderForNetwork} from "../internal/rpcproviders";
 
 import {Zero} from "@ethersproject/constants";
 import {Signer} from "@ethersproject/abstract-signer";
@@ -580,9 +580,9 @@ export namespace Bridge {
         private checkEasyArgs(
             args: BridgeTransactionParams,
             zapBridge: GenericZapBridgeContract,
-            easyDeposits:    string[],
-            easyRedeems:     string[],
-            easyDepositETH?: string[],
+            easyDeposits:    symbol[],
+            easyRedeems:     symbol[],
+            easyDepositETH?: symbol[],
         ): EasyArgsCheck {
             let castArgs = args as BridgeUtils.BridgeTxParams;
 
@@ -621,9 +621,9 @@ export namespace Bridge {
                 });
 
             let
-                easyRedeems:    string[] = [Tokens.SYN.hash],
-                easyDeposits:   string[] = [Tokens.HIGH.hash, Tokens.DOG.hash, Tokens.FRAX.hash],
-                easyDepositETH: string[] = [Tokens.NETH.hash]
+                easyRedeems:    symbol[] = [Tokens.SYN.hash],
+                easyDeposits:   symbol[] = [Tokens.HIGH.hash, Tokens.DOG.hash, Tokens.FRAX.hash],
+                easyDepositETH: symbol[] = [Tokens.NETH.hash]
 
             if (args.tokenFrom.isEqual(Tokens.NUSD)) {
                 easyDeposits.push(Tokens.NUSD.hash);
@@ -707,9 +707,9 @@ export namespace Bridge {
             }
 
             let
-                easyDeposits:   string[] = [],
-                easyRedeems:    string[] = [Tokens.SYN.hash, Tokens.HIGH.hash, Tokens.DOG.hash, Tokens.FRAX.hash],
-                easyDepositETH: string[] = []
+                easyDeposits:   symbol[] = [],
+                easyRedeems:    symbol[] = [Tokens.SYN.hash, Tokens.HIGH.hash, Tokens.DOG.hash, Tokens.FRAX.hash],
+                easyDepositETH: symbol[] = []
 
             if (args.tokenFrom.isEqual(Tokens.NUSD)) {
                 easyRedeems.push(Tokens.NUSD.hash);

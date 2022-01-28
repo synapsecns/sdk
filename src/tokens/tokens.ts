@@ -9,7 +9,7 @@ import {
     ChainId,
 } from "../common";
 
-import {SwapType} from "../common/swaptype";
+import {SwapType} from "../internal/swaptype";
 
 export namespace Tokens {
     const KEEP_THIS_HERE = new BaseToken({
