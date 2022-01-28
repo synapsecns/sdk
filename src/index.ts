@@ -12,13 +12,21 @@ export const {
     l2BridgeZap,
 } = SynapseEntities;
 
+<<<<<<< HEAD
 import {Bridge} from "./bridge/bridge";
+=======
+import {Bridge, Slippages} from "./bridge";
+>>>>>>> 3d8ea4e (Implement token swaps in the SDK (#35))
 
 export {Bridge};
 export {Slippages} from "./bridge/slippages";
 export {UnsupportedSwapReason} from "./bridge/errors";
 
+<<<<<<< HEAD
 export type BridgeOutputEstimate = Bridge.BridgeOutputEstimate;
+=======
+export {Bridge, Slippages}
+>>>>>>> 3d8ea4e (Implement token swaps in the SDK (#35))
 
 export {
     ChainId,
@@ -41,15 +49,15 @@ export {
     SwapPools,
     networkSwapTokensMap,
     allNetworksSwapTokensMap,
-    detailedTokenSwapMap,
     swappableTokens,
     swappableTokensAllNetworks,
 } from "./swappools";
 
 export type {
-    DetailedTokenSwapMap,
     NetworkSwappableTokensMap
 } from "./swappools";
+
+export {TokenSwap, UnsupportedSwapErrors} from "./tokenswap";
 
 export type {
     SynapseBridgeContract,

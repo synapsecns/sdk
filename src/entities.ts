@@ -6,11 +6,24 @@ import type {
     BridgeConfigContract,
 } from "./contracts";
 
+<<<<<<< HEAD:src/entities.ts
+=======
+import type {
+    SynapseBridgeContract,
+    L1BridgeZapContract,
+    L2BridgeZapContract,
+    GenericZapBridgeContract,
+    BridgeConfigContract,
+    PoolConfigContract,
+} from "../contracts";
+
+>>>>>>> 3d8ea4e (Implement token swaps in the SDK (#35)):src/entities/synapse_entities.ts
 import {
     SynapseBridgeFactory,
     L1BridgeZapFactory,
     L2BridgeZapFactory,
     BridgeConfigFactory,
+<<<<<<< HEAD:src/entities.ts
 } from "./contracts";
 
 import type {SignerOrProvider} from "./common/types";
@@ -23,6 +36,10 @@ export const newSynapseBridgeInstance = (params: {
     address: string,
     signerOrProvider?: SignerOrProvider
 }): SynapseBridgeContract => SynapseBridgeFactory.connect(params.address, params.signerOrProvider);
+=======
+    PoolConfigFactory,
+} from "../contracts";
+>>>>>>> 3d8ea4e (Implement token swaps in the SDK (#35)):src/entities/synapse_entities.ts
 
 
 export const newL1BridgeZapInstance = (params: {
@@ -37,8 +54,9 @@ export const newL2BridgeZapInstance = (params: {
 }): L2BridgeZapContract => L2BridgeZapFactory.connect(params.address, params.signerOrProvider);
 
 export namespace SynapseEntities {
-    export const bridgeConfigAddress: string = "0x7fd806049608b7d04076b8187dd773343e0589e6";
-    // export const bridgeConfigAddress: string = "0xAE908bb4905bcA9BdE0656CC869d0F23e77875E7"
+    const
+        bridgeConfigAddress: string = "0x7fd806049608b7d04076b8187dd773343e0589e6",
+        poolConfigAddress:   string = "0xB34C67DB5F0Fd8D3D4238FD0A1cBbfD50a72e177";
 
     export function synapseBridge(params: {
         chainId: number,
@@ -79,6 +97,11 @@ export namespace SynapseEntities {
 
     export function bridgeConfig(): BridgeConfigContract {
         const provider = newProviderForNetwork(ChainId.ETH);
-        return BridgeConfigFactory.connect(bridgeConfigAddress, provider);
+        return BridgeConfigFactory.connect(bridgeConfigAddress, provider)
+    }
+
+    export function poolConfig(): PoolConfigContract {
+        const provider = newProviderForNetwork(ChainId.ETH);
+        return PoolConfigFactory.connect(poolConfigAddress, provider)
     }
 }
