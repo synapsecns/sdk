@@ -1,15 +1,25 @@
 import "./chaisetup";
 
+import _ from "lodash";
+
 import {expect} from "chai";
 
 import {Wallet} from "@ethersproject/wallet";
 import {JsonRpcProvider} from "@ethersproject/providers";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
-import {ChainId} from "../../src";
+import {Token, ChainId} from "../../src";
 import {newProviderForNetwork} from "../../src/internal/rpcproviders";
 
+
 const TEN_BN: BigNumber = BigNumber.from(10);
+
+const testAmounts: string[] = [
+    "420", "1337", "31337",
+    "669", "555",
+];
+
+export const getTestAmount = (t: Token, c: number, amt?: BigNumberish): BigNumber => t.valueToWei(amt ?? _.shuffle(testAmounts)[0], c)
 
 export function makeWalletSignerWithProvider(chainId: number, privKey: string): Wallet {
     const provider = newProviderForNetwork(chainId);

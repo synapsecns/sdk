@@ -614,6 +614,50 @@ export namespace SwapPools {
     }
 
     export const swapGroupsForNetwork = (chainId: number): string[] => Object.keys(bridgeSwappableTokensByType[chainId])
+
+    export function stableswapPoolForNetwork(chainId: number): SwapPoolToken {
+        switch (chainId) {
+            case ChainId.ETH:
+                return ETH_POOL_SWAP_TOKEN
+            case ChainId.BSC:
+                return BSC_POOL_SWAP_TOKEN
+            case ChainId.POLYGON:
+                return POLYGON_POOL_SWAP_TOKEN
+            case ChainId.FANTOM:
+                return FANTOM_POOL_SWAP_TOKEN
+            case ChainId.BOBA:
+                return BOBA_POOL_SWAP_TOKEN
+            case ChainId.ARBITRUM:
+                return ARBITRUM_POOL_SWAP_TOKEN
+            case ChainId.AVALANCHE:
+                return AVALANCHE_POOL_SWAP_TOKEN
+            case ChainId.AURORA:
+                return AURORA_POOL_SWAP_TOKEN
+            case ChainId.HARMONY:
+                return HARMONY_POOL_SWAP_TOKEN
+        }
+
+        return undefined
+    }
+
+    export function ethSwapPoolForNetwork(chainId: number): SwapPoolToken {
+        switch (chainId) {
+            case ChainId.OPTIMISM:
+                return OPTIMISM_ETH_SWAP_TOKEN
+            case ChainId.FANTOM:
+                return FANTOM_ETH_SWAP_TOKEN
+            case ChainId.BOBA:
+                return BOBA_ETH_SWAP_TOKEN
+            case ChainId.ARBITRUM:
+                return ARBITRUM_ETH_SWAP_TOKEN
+            case ChainId.AVALANCHE:
+                return AVALANCHE_ETH_SWAP_TOKEN
+            case ChainId.HARMONY:
+                return HARMONY_ONEETH_TOKEN
+        }
+
+        return undefined
+    }
 }
 
 export interface NetworkSwappableTokensMap {
@@ -696,50 +740,6 @@ export function allNetworksSwapTokensMap(): AllNetworksSwappableTokensMap {
 
         res[chainIdA] = swapGroupsLoop(chainIdA, swapGrpsA);
     })
-
-    return res
-}
-
-export interface DetailedTokenSwapMap {
-    [chainId: number]: {
-        token: Token,
-        [chainId: number]: Token[],
-    }[],
-}
-
-interface TokenSwapMap {
-    token: Token,
-    [chainId: number]: Token[],
-}
-
-export function detailedTokenSwapMap(): DetailedTokenSwapMap {
-    let res: DetailedTokenSwapMap = {};
-
-    const allChainIds = ChainId.supportedChainIds();
-
-    for (const c1 of allChainIds) {
-        let n1: Networks.Network = Networks.fromChainId(c1);
-        let networkTokens: Token[] = n1.tokens;
-
-        res[c1] = networkTokens.map((t: Token) => {
-            let swapType = t.swapType;
-
-            let tokSwapMap: TokenSwapMap = {
-                token: t,
-            }
-
-            for (const c2 of allChainIds) {
-                if (c1 === c2) continue
-
-                let outToks: Token[] = SwapPools.bridgeSwappableTypePoolsByChain[c2][swapType]?.poolTokens || [];
-                if (outToks.length === 0) continue
-
-                tokSwapMap[c2] = outToks;
-            }
-
-            return tokSwapMap
-        })
-    }
 
     return res
 }
