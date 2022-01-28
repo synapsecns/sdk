@@ -1,14 +1,13 @@
 import {Token} from "../token";
 import {Tokens} from "../tokens";
 import {SwapPools} from "../swappools";
-import {
-    ChainId,
-    Networks,
-} from "../common";
 import {rejectPromise} from "../common/utils";
 
 import {SynapseEntities} from "../entities";
 import {SwapContract, SwapFactory} from "../contracts";
+
+import {ChainId} from "../common/chainid";
+import {Networks} from "../common/networks";
 
 import {SwapType} from "../internal/swaptype";
 import {newProviderForNetwork} from "../internal/rpcproviders";

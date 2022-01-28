@@ -10,6 +10,8 @@ import {
 import {SwapType} from "../internal/swaptype";
 import {newProviderForNetwork} from "../internal/rpcproviders";
 
+import type {Token} from "../token";
+
 import {Tokens} from "../tokens";
 import {SwapPools} from "../swappools";
 import {BaseToken, WrappedToken} from "../token";
@@ -19,10 +21,6 @@ import {TokenSwap} from "../tokenswap";
 import {SynapseEntities} from "../entities";
 
 import {GenericZapBridgeContract, L1BridgeZapContract, SynapseBridgeContract} from "../contracts";
-
-
-import type {Token} from "../token";
-
 
 import {Zero} from "@ethersproject/constants";
 import {Signer} from "@ethersproject/abstract-signer";

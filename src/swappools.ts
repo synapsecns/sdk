@@ -1,14 +1,24 @@
+<<<<<<< HEAD:src/swappools.ts
 import {Tokens} from "./tokens";
+=======
+import {Tokens} from "../tokens";
+import {ChainId} from "../common";
+>>>>>>> b3e415f (cleanup src/internal imports):src/swappools/swappools.ts
 
 import {ChainId} from "./common/chainid";
 import {Networks} from "./common/networks";
 
 import type {AddressMap, DecimalsMap} from "./common/types";
 
+<<<<<<< HEAD:src/swappools.ts
 import {BaseToken} from "./token";
 import type {Token, IBaseToken} from "./token";
 
 import {SwapType} from "./internal/swaptype";
+=======
+import {SwapType} from "../internal";
+
+>>>>>>> b3e415f (cleanup src/internal imports):src/swappools/swappools.ts
 
 
 export namespace SwapPools {

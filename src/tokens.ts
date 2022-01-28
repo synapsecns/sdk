@@ -5,9 +5,15 @@ import {
     WrappedToken,
 } from "./token";
 
+<<<<<<< HEAD:src/tokens.ts
 import {ChainId} from "./common/chainid";
 
 import {SwapType} from "./internal/swaptype";
+=======
+import {ChainId} from "../common";
+
+import {SwapType} from "../internal";
+>>>>>>> b3e415f (cleanup src/internal imports):src/tokens/tokens.ts
 
 export namespace Tokens {
     const KEEP_THIS_HERE = new BaseToken({
