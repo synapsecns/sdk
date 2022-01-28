@@ -37,10 +37,14 @@ export {
     SwapPools,
     networkSwapTokensMap,
     allNetworksSwapTokensMap,
+    detailedTokenSwapMap,
     swappableTokens,
     swappableTokensAllNetworks,
 } from "./swappools";
-export type {NetworkSwappableTokensMap} from "./swappools";
+export type {
+    DetailedTokenSwapMap,
+    NetworkSwappableTokensMap
+} from "./swappools";
 
 export type {
     SynapseBridgeContract,
