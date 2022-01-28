@@ -1,5 +1,6 @@
 import {Token} from "../token";
 import {Tokens} from "../tokens";
+import {SwapPools} from "../swappools";
 import {
     ChainId,
     Networks,
@@ -50,6 +51,18 @@ export namespace TokenSwap {
     export interface SwapSupportedResult {
         swapSupported:       boolean,
         reasonNotSupported?: UnsupportedSwapErrors.UnsupportedSwapError,
+    }
+
+    export interface DetailedTokenSwapMap {
+        [chainId: number]: {
+            token: Token,
+            [chainId: number]: Token[],
+        }[],
+    }
+
+    interface TokenSwapMap {
+        token: Token,
+        [chainId: number]: Token[],
     }
 
     export function swapSupported(args: SwapParams): SwapSupportedResult {
@@ -152,6 +165,38 @@ export namespace TokenSwap {
         bridgeConfigIntermediateToken = bridgeConfigIntermediateToken ?? intermediateToken;
 
         return {intermediateToken, bridgeConfigIntermediateToken}
+    }
+
+    export function detailedTokenSwapMap(): DetailedTokenSwapMap {
+        let res: DetailedTokenSwapMap = {};
+
+        const allChainIds = ChainId.supportedChainIds();
+
+        for (const c1 of allChainIds) {
+            let n1: Networks.Network = Networks.fromChainId(c1);
+            let networkTokens: Token[] = n1.tokens;
+
+            res[c1] = networkTokens.map((t: Token) => {
+                let swapType = t.swapType;
+
+                let tokSwapMap: TokenSwapMap = {
+                    token: t,
+                }
+
+                for (const c2 of allChainIds) {
+                    if (c1 === c2) continue
+
+                    let outToks: Token[] = SwapPools.bridgeSwappableTypePoolsByChain[c2][swapType]?.poolTokens || [];
+                    if (outToks.length === 0) continue
+
+                    tokSwapMap[c2] = outToks;
+                }
+
+                return tokSwapMap
+            })
+        }
+
+        return res
     }
 
     interface SwapSetup {
