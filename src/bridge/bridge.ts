@@ -228,23 +228,27 @@ export namespace Bridge {
 
             args.addressTo = addressTo ?? signerAddress
 
-            return this.checkCanBridge({
-                address: signerAddress,
-                token: tokenFrom,
-                amount: amountFrom,
-            })
-                .then((canBridgeRes: CanBridgeResult) => {
-                    const [canBridge, err] = canBridgeRes;
-
-                    if (!canBridge) {
-                        return rejectPromise(err)
-                    }
-
-                    let txnProm = this.buildBridgeTokenTransaction(args);
-
-                    return executePopulatedTransaction(txnProm, signer)
+            if (this.network.chainCurrency === args.tokenFrom.symbol) {
+                const balance = await signer.getBalance();
+                if (balance.lt(args.amountFrom))
+                    return rejectPromise(`Not enough funds for native currency ${args.tokenFrom.symbol}`);
+            } else {
+                await this.checkCanBridge({
+                    address: signerAddress,
+                    token: tokenFrom,
+                    amount: amountFrom,
                 })
-                .catch(rejectPromise)
+                  .then((canBridgeRes: CanBridgeResult) => {
+                      const [canBridge, err] = canBridgeRes;
+
+                      if (!canBridge) {
+                          return rejectPromise(err)
+                      }
+                  })
+                  .catch(rejectPromise);
+            }
+            let txnProm = this.buildBridgeTokenTransaction(args);
+            return executePopulatedTransaction(txnProm, signer);
         }
 
         /**
