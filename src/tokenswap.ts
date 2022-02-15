@@ -6,7 +6,7 @@ import {rejectPromise} from "./common/utils";
 import {SynapseEntities} from "./entities";
 import {SwapContract, SwapFactory} from "./contracts";
 
-import {ChainId} from "./common/chainid";
+import {ChainId, supportedChainIds} from "./common/chainid";
 import {Networks} from "./common/networks";
 
 import {SwapType} from "./internal/swaptype";
@@ -216,7 +216,7 @@ export namespace TokenSwap {
     export function detailedTokenSwapMap(): DetailedTokenSwapMap {
         let res: DetailedTokenSwapMap = {};
 
-        const allChainIds = ChainId.supportedChainIds();
+        const allChainIds = supportedChainIds();
 
         for (const c1 of allChainIds) {
             let n1: Networks.Network = Networks.fromChainId(c1);

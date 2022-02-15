@@ -1,6 +1,6 @@
 import {JsonRpcProvider} from "@ethersproject/providers";
 
-import {ChainId} from "../common/chainid";
+import {ChainId, supportedChainIds} from "../common/chainid";
 
 interface RpcProviderMap {[c: number]: JsonRpcProvider}
 
@@ -49,18 +49,15 @@ const CHAIN_RPC_URIS: {[c: number]: string} = {
     [ChainId.HARMONY]:   "https://api.harmony.one/",
 }
 
-
-
 const PROVIDERS: RpcProviderMap = ((): RpcProviderMap => {
     let m: RpcProviderMap = {};
 
-    ChainId.supportedChainIds().map((c) => {
+    supportedChainIds().map((c) => {
         m[c] = new JsonRpcProvider(rpcUriForChainId(c));
     })
 
     return m
 })()
-
 
 export function newProviderForNetwork(chainId: number): JsonRpcProvider {
     return PROVIDERS[chainId] ?? null

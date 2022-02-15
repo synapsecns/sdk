@@ -7,8 +7,11 @@
   "extensions":  ["ts"],
   "recursive": true,
   "spec": [
-    "./test/setup.ts",
-    "./test/**/*-test.ts"
+    "./test/basic/*-test.ts",
+    "./test/entities/*-test.ts",
+    "./test/erc20/*-test.ts",
+    "./test/tokenswap/*-test.ts",
+    "./test/bridge/*-test.ts"
   ],
   "watch-files": [
     "src"

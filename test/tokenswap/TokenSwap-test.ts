@@ -1,7 +1,6 @@
 import "../helpers/chaisetup";
 
 import {expect} from "chai";
-import {Context, Done} from "mocha";
 
 import {step} from "mocha-steps";
 
@@ -14,10 +13,20 @@ import {
     Token,
     Tokens,
     TokenSwap,
+    supportedChainIds,
 } from "../../src";
 
-import {getTestAmount} from "../helpers";
-import {PopulatedTransaction} from "ethers";
+import {
+    wrapExpect,
+    DEFAULT_TEST_TIMEOUT,
+    getTestAmount,
+    expectRejected,
+    expectFulfilled,
+    expectProperty,
+    expectLength,
+    expectUndefined,
+} from "../helpers";
+
 
 describe("TokenSwap tests", function(this: Mocha.Suite) {
     describe("Swap Rate tests", function(this: Mocha.Suite) {
@@ -49,75 +58,125 @@ describe("TokenSwap tests", function(this: Mocha.Suite) {
 
         for (const tc of testCases) {
             const
-                netName: string     = Networks.fromChainId(tc.chainId).name,
                 titleSuffix: string = tc.wantError ? "should fail" : "should pass",
                 tokFrom: string     = tc.tokenFrom.symbol,
                 tokTo: string       = tc.tokenTo.symbol,
-                testTitle: string   = `for ${tokFrom} => ${tokTo} on ${netName} ${titleSuffix}`,
+                testTitle: string   = `for ${tokFrom} => ${tokTo} on ${Networks.networkName(tc.chainId)} ${titleSuffix}`,
                 testTitle1: string  = `calculateSwapRate ${testTitle}`,
                 testTitle2: string  = `buildSwapTokensTransaction ${testTitle}`;
 
             let amountOut: BigNumber;
 
-            step(testTitle1, function(this: Context, done: Done) {
-                this.timeout(10*1000);
+            step(testTitle1, async function(this: Mocha.Context) {
+                this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                let prom: Promise<TokenSwap.EstimatedSwapRate> = TokenSwap.calculateSwapRate({
+                let prom: Promise<TokenSwap.EstimatedSwapRate> = Promise.resolve(TokenSwap.calculateSwapRate({
                     chainId:   tc.chainId,
                     tokenFrom: tc.tokenFrom,
                     tokenTo:   tc.tokenTo,
                     amountIn:  tc.amountIn,
+                })).then((res) => {
+                    amountOut = res.amountOut;
+                    return res
                 });
 
-                Promise.resolve(prom).then((res) => amountOut = res.amountOut);
-
-                tc.wantError
-                    ? expect(prom).to.eventually.be.rejected.notify(done)
-                    : expect(prom).to.eventually.have.property('amountOut').that.is.gt(Zero).notify(done);
+                return tc.wantError
+                    ? await expectRejected(prom)
+                    : expectProperty(await prom, "amountOut").that.is.gt(Zero.toNumber())
             })
 
-            step(testTitle2, function(this: Context, done: Done) {
-                this.timeout(10*1000);
+            step(testTitle2, async function(this: Mocha.Context) {
+                if (tc.wantError) return
 
-                if (!tc.wantError) {
-                    const args: TokenSwap.SwapTokensParams = {
-                        ...tc,
-                        minAmountOut: amountOut,
-                    };
+                this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                    let prom: Promise<PopulatedTransaction> = TokenSwap.buildSwapTokensTransaction(args);
-                    expect(prom).to.eventually.be.fulfilled.notify(done);
-                    return
-                }
+                const args: TokenSwap.SwapTokensParams = {
+                    ...tc,
+                    minAmountOut: amountOut,
+                };
 
-                done();
+                return (await expectFulfilled(
+                    TokenSwap.buildSwapTokensTransaction(args)
+                ))
             })
         }
     })
 
     describe("detailedTokenSwapMap test", function(this: Mocha.Suite) {
         const
-            allChains = ChainId.supportedChainIds(),
+            allChains   = supportedChainIds(),
             detailedMap = TokenSwap.detailedTokenSwapMap();
 
         it(`should have ${allChains.length} entries`, function() {
-            expect(Object.keys(detailedMap)).to.have.length(allChains.length);
+            expectLength(Object.keys(detailedMap), allChains.length);
         })
 
-        const
-            bscToksMap = detailedMap[ChainId.BSC],
-            ethToksMap = detailedMap[ChainId.ETH];
+        interface TokenOnChain {
+            chainId: ChainId,
+            token:   Token,
+        }
 
-        it("BSC tokens map should have certain results", function(this: Context) {
-            let bscUSDT = bscToksMap.find((sm) => sm.token.isEqual(Tokens.USDT));
-            expect(bscUSDT).to.not.be.undefined;
+        interface TestCase {
+            chainId:       ChainId,
+            chainTokens:   TokenOnChain[],
+        }
 
-            expect(bscUSDT).to.have.property(ChainId.ETH);
-        })
+        const testCases: TestCase[] = [
+            {
+                chainId:       ChainId.BSC,
+                chainTokens:   [
+                    {chainId: ChainId.ETH,       token: Tokens.USDT},
+                    {chainId: ChainId.ETH,       token: Tokens.BUSD},
+                    {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
+                ],
+            },
+            {
+                chainId:       ChainId.ETH,
+                chainTokens:   [
+                    {chainId: ChainId.BSC,       token: Tokens.USDC},
+                    {chainId: ChainId.AVALANCHE, token: Tokens.GOHM},
+                    {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
+                ],
+            },
+            {
+                chainId:       ChainId.FANTOM,
+                chainTokens:   [
+                    {chainId: ChainId.AVALANCHE, token: Tokens.FTM_ETH},
+                    {chainId: ChainId.BSC,       token: Tokens.MIM},
+                    {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
+                ],
+            }
+        ];
 
-        it("ETH tokens map should have certain results", function(this: Context) {
-            let ethGOHM = ethToksMap.find((sm) => sm.token.isEqual(Tokens.GOHM));
-            expect(ethGOHM).to.not.be.undefined;
-        })
+        const findTokenMap = (
+            tok:     Token,
+            toksMap: {[p: number]: Token[], token: Token}[]
+        ): {[p: number]: Token[], token: Token} | undefined =>
+            toksMap.find((sm) => sm.token.isEqual(tok))
+
+
+        for (const tc of testCases) {
+            const describeTitle: string = `${Networks.networkName(tc.chainId)} needs certain results`;
+
+            describe(describeTitle, function(this: Mocha.Suite) {
+                const toksMap = detailedMap[tc.chainId];
+
+                it(
+                    `detailedMap[${tc.chainId}] should not be undefined`,
+                    wrapExpect(expectUndefined(toksMap, false))
+                )
+
+                for (const tok of tc.chainTokens) {
+                    const
+                        testTitle: string = `should be able to send token ${tok.token.name} to ${Networks.networkName(tok.chainId)}`,
+                        tokMap            = findTokenMap(tok.token, toksMap);
+
+                    it(
+                        testTitle,
+                        wrapExpect(expectProperty(tokMap, tok.chainId.toString()))
+                    )
+                }
+            })
+        }
     })
 })

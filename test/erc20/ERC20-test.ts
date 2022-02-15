@@ -1,11 +1,5 @@
 import "../helpers/chaisetup";
 
-import {expect} from "chai";
-
-import {Context, Done} from "mocha";
-
-import _ from "lodash";
-
 import {
     Tokens,
     ChainId,
@@ -15,10 +9,20 @@ import {SynapseContracts} from "../../src/common/synapse_contracts";
 
 import {ERC20} from "../../src/bridge/erc20";
 
-import {makeWalletSignerWithProvider} from "../helpers";
+import {
+    DEFAULT_TEST_TIMEOUT,
+    wrapExpect,
+    getTestAmount,
+    makeWalletSignerWithProvider,
+    expectFulfilled,
+    expectBoolean,
+    expectGteZero,
+    expectNotZero,
+    expectNull,
+} from "../helpers";
 
-import {PopulatedTransaction} from "@ethersproject/contracts";
-import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+import type {BigNumberish} from "@ethersproject/bignumber";
+import type {PopulatedTransaction} from "@ethersproject/contracts";
 
 const bridgeTestPrivkey: string = "53354287e3023f0629b7a5e187aa1ca3458c4b7ff9d66a6e3f4b2e821aafded7";
 
@@ -37,66 +41,73 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
             amount?: BigNumberish
         }
 
-        const testAmounts: string[] = [
-            "420", "1337", "31337",
-            "669", "250",  "555",
-        ]
+        function makeTestCase(chainId: ChainId, amount?: BigNumberish): TestCase {
+            return {
+                chainId,
+                amount,
+                address: SynapseContracts.contractsForChainId(chainId).bridge_zap_address,
+            }
+        }
 
         let testCases: TestCase[] = [
-            { chainId: ChainId.BSC,       address: SynapseContracts.BSC.bridge_zap.address       },
-            { chainId: ChainId.ETH,       address: SynapseContracts.Ethereum.bridge_zap.address  },
-            { chainId: ChainId.AVALANCHE, address: SynapseContracts.Avalanche.bridge_zap.address },
-            { chainId: ChainId.BSC,       address: SynapseContracts.BSC.bridge_zap.address,       amount: _.shuffle(testAmounts)[0] },
-            { chainId: ChainId.ETH,       address: SynapseContracts.Ethereum.bridge_zap.address,  amount: _.shuffle(testAmounts)[0] },
-            { chainId: ChainId.AVALANCHE, address: SynapseContracts.Avalanche.bridge_zap.address, amount: _.shuffle(testAmounts)[0] },
-        ]
+            makeTestCase(ChainId.BSC),
+            makeTestCase(ChainId.ETH),
+            makeTestCase(ChainId.AVALANCHE),
+            makeTestCase(ChainId.BSC,       getTestAmount(Tokens.NUSD, ChainId.BSC)),
+            makeTestCase(ChainId.ETH,       getTestAmount(Tokens.NUSD, ChainId.ETH)),
+            makeTestCase(ChainId.AVALANCHE, getTestAmount(Tokens.NUSD, ChainId.AVALANCHE)),
+        ];
 
-        testCases.forEach(({chainId, address: spender, amount}) => {
+        for (const tc of testCases) {
+            let {chainId, address: spender, amount} = tc;
+
             const wallet = makeWalletSignerWithProvider(chainId, bridgeTestPrivkey)
             const args: ERC20.ApproveArgs = {spender, amount};
 
-            it("should build a transaction successfully", function(this: Context, done: Done) {
-                this.timeout(5*1000);
+            it("should build a transaction successfully", async function(this: Mocha.Context) {
+                this.timeout(DEFAULT_TEST_TIMEOUT);
 
                 let prom: Promise<PopulatedTransaction> = ERC20.buildApproveTransaction(args, tokenParams(chainId));
 
-                expect(prom).to
-                    .eventually.be.fulfilled
-                    .and.to.eventually.not.be.null
-                    .notify(done);
+                try {
+                    return expectNull(await prom, false)
+                } catch (e) {
+                    return (await expectFulfilled(prom))
+                }
             })
 
-            it("should do an approve successfully", function(this: Context, done: Done) {
-                this.timeout(5*1000);
+            it("should do an approve successfully", async function(this: Mocha.Context) {
+                this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                let prom: Promise<boolean> = Promise.resolve(
-                    ERC20.approve(args, tokenParams(chainId), wallet, true).then((res: boolean) => res)
-                );
+                let prom: Promise<boolean> = ERC20.approve(
+                    args,
+                    tokenParams(chainId),
+                    wallet,
+                    true
+                ).then((res: boolean) => res);
 
-                expect(prom).to
-                    .eventually.be.true
-                    .notify(done);
+                return expectBoolean(await prom, true)
             })
-        })
+        }
     })
 
     describe("Balance of test", function(this: Mocha.Suite) {
-        it("should have an nUSD balance greater than zero", function(this: Context, done: Done) {
-            this.timeout(5*1000);
+        it("should have an nUSD balance greater than zero", async function(this: Mocha.Context) {
+            this.timeout(DEFAULT_TEST_TIMEOUT);
 
-            let prom: Promise<BigNumber> = ERC20.balanceOf(testAddr, tokenParams(ChainId.BSC))
-
-            expect(prom).to.eventually.be.gt(0).notify(done);
+            return expectNotZero(await ERC20.balanceOf(testAddr, tokenParams(ChainId.BSC)))
         })
     })
 
     describe("allowanceOf test", function(this: Mocha.Suite) {
-        it("synapsebridgezap should have an nUSD allowance gte zero", function(this: Context, done: Done) {
-            this.timeout(5*1000);
+        it("synapsebridgezap should have an nUSD allowance gte zero", async function(this: Mocha.Context) {
+            this.timeout(DEFAULT_TEST_TIMEOUT);
 
-            let prom: Promise<BigNumber> = ERC20.balanceOf(testAddr, tokenParams(ChainId.BSC))
-
-            expect(prom).to.eventually.be.gte(0).notify(done);
+            return expectGteZero(await ERC20.allowanceOf(
+                testAddr,
+                SynapseContracts.contractsForChainId(ChainId.BSC).bridge_zap_address,
+                tokenParams(ChainId.BSC)
+            ))
         })
     })
 })
