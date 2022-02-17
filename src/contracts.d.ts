@@ -1,16 +1,16 @@
 import type {
     SynapseBridge,
-    NerveBridgeZap,
+    L1BridgeZap,
     L2BridgeZap,
     SynapseERC20,
     BridgeConfig,
-} from "./gen";
+} from "./internal/gen/index";
 
 
 export declare type SynapseBridgeContract = SynapseBridge;
-export declare type NerveBridgeZapContract = NerveBridgeZap;
+export declare type L1BridgeZapContract = L1BridgeZap;
 export declare type L2BridgeZapContract = L2BridgeZap;
 export declare type SynapseERC20Contract = SynapseERC20;
 export declare type BridgeConfigContract = BridgeConfig;
 
-export declare type GenericZapBridgeContract = NerveBridgeZapContract | L2BridgeZapContract;
+export declare type GenericZapBridgeContract = L1BridgeZap | L2BridgeZapContract;

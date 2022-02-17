@@ -12,21 +12,25 @@ export const {
     l2BridgeZap,
 } = SynapseEntities;
 
-import {Bridge, Slippages, UnsupportedSwapReason} from "./bridge";
+import {Bridge} from "./bridge/bridge";
+
+export {Bridge};
+export {Slippages} from "./bridge/slippages";
+export {UnsupportedSwapReason} from "./bridge/errors";
 
 export type BridgeOutputEstimate = Bridge.BridgeOutputEstimate;
 
-export {Bridge, Slippages, UnsupportedSwapReason}
-
 export {
     ChainId,
-    Networks,
-    supportedChainIds,
-    supportedNetworks,
-    utils
-} from "./common";
+    supportedChainIds
+} from "./common/chainid";
 
-export type {ChainIdTypeMap, AddressMap, DecimalsMap} from "./common";
+export {
+    Networks,
+    supportedNetworks
+} from "./common/networks";
+
+export type {ChainIdTypeMap, AddressMap, DecimalsMap} from "./common/types";
 
 export {BaseToken, WrappedToken} from "./token";
 export type {Token} from "./token";
@@ -41,6 +45,7 @@ export {
     swappableTokens,
     swappableTokensAllNetworks,
 } from "./swappools";
+
 export type {
     DetailedTokenSwapMap,
     NetworkSwappableTokensMap

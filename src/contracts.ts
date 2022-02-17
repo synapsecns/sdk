@@ -5,7 +5,7 @@ import type {
     SynapseERC20 as SynapseERC20Contract,
     BridgeConfig as BridgeConfigContract,
     ERC20 as ERC20Contract
-} from "./gen";
+} from "./internal/gen/index";
 
 type GenericZapBridgeContract = L1BridgeZapContract | L2BridgeZapContract;
 
@@ -26,4 +26,4 @@ export {
     SynapseERC20__factory as SynapseERC20Factory,
     BridgeConfig__factory as BridgeConfigFactory,
     ERC20__factory as ERC20Factory
-} from "./gen";
+} from "./internal/gen/index";

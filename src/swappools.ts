@@ -1,13 +1,14 @@
-import {Tokens} from "../tokens";
-import {ChainId, Networks} from "../common";
+import {Tokens} from "./tokens";
 
-import type {AddressMap, DecimalsMap} from "../common";
+import {ChainId} from "./common/chainid";
+import {Networks} from "./common/networks";
 
-import {BaseToken} from "../token";
-import type {Token, IBaseToken} from "../token";
+import type {AddressMap, DecimalsMap} from "./common/types";
 
+import {BaseToken} from "./token";
+import type {Token, IBaseToken} from "./token";
 
-import {SwapType} from "../internal/swaptype";
+import {SwapType} from "./internal/swaptype";
 
 
 export namespace SwapPools {

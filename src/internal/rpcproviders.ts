@@ -1,7 +1,8 @@
-import dotenv from 'dotenv'
-import {ChainId} from "../../common";
+import {JsonRpcProvider} from "@ethersproject/providers";
 
-dotenv.config()
+import {ChainId} from "../common/chainid";
+
+interface RpcProviderMap {[c: number]: JsonRpcProvider}
 
 const
     ETH_RPC_URI_ENV:       string = "ETH_RPC_URI",
@@ -48,11 +49,28 @@ const CHAIN_RPC_URIS: {[c: number]: string} = {
     [ChainId.HARMONY]:   "https://api.harmony.one/",
 }
 
-export const rpcUriForChainId = (chainId: number): string => {
+
+
+const PROVIDERS: RpcProviderMap = ((): RpcProviderMap => {
+    let m: RpcProviderMap = {};
+
+    ChainId.supportedChainIds().map((c) => {
+        m[c] = new JsonRpcProvider(rpcUriForChainId(c));
+    })
+
+    return m
+})()
+
+
+export function newProviderForNetwork(chainId: number): JsonRpcProvider {
+    return PROVIDERS[chainId] ?? null
+}
+
+export function rpcUriForChainId(chainId: number): string {
     return checkEnv(chainId) ?? CHAIN_RPC_URIS[chainId]
 }
 
-const checkEnv = (chainId: number): string|undefined => {
+function checkEnv(chainId: number): string|undefined {
     const envKey: string = ENV_KEY_MAP[chainId];
 
     if (envKey in process.env) {

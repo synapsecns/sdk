@@ -1,22 +1,40 @@
-import {contractAddressFor} from "../common/utils";
+import type {
+    SynapseBridgeContract,
+    L1BridgeZapContract,
+    L2BridgeZapContract,
+    GenericZapBridgeContract,
+    BridgeConfigContract,
+} from "./contracts";
 
 import {
-    SynapseBridgeContract,
     SynapseBridgeFactory,
-    L1BridgeZapContract,
     L1BridgeZapFactory,
-    L2BridgeZapContract,
     L2BridgeZapFactory,
-    BridgeConfigContract,
-    BridgeConfigFactory, GenericZapBridgeContract,
-} from "../contracts";
+    BridgeConfigFactory,
+} from "./contracts";
 
-import type {SignerOrProvider} from "../common";
+import type {SignerOrProvider} from "./common/types";
+import {contractAddressFor} from "./common/utils";
+import {ChainId} from "./common/chainid";
+import {newProviderForNetwork} from "./internal/rpcproviders";
 
-import {ChainId} from "../common";
 
-import {newProviderForNetwork} from "../internal/rpcproviders";
+export const newSynapseBridgeInstance = (params: {
+    address: string,
+    signerOrProvider?: SignerOrProvider
+}): SynapseBridgeContract => SynapseBridgeFactory.connect(params.address, params.signerOrProvider);
 
+
+export const newL1BridgeZapInstance = (params: {
+    address: string,
+    signerOrProvider?: SignerOrProvider
+}): L1BridgeZapContract => L1BridgeZapFactory.connect(params.address, params.signerOrProvider);
+
+
+export const newL2BridgeZapInstance = (params: {
+    address: string,
+    signerOrProvider?: SignerOrProvider
+}): L2BridgeZapContract => L2BridgeZapFactory.connect(params.address, params.signerOrProvider);
 
 export namespace SynapseEntities {
     export const bridgeConfigAddress: string = "0x7fd806049608b7d04076b8187dd773343e0589e6";

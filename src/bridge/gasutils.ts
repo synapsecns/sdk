@@ -1,4 +1,4 @@
-import {ChainId} from "../common";
+import {ChainId} from "../common/chainid";
 import {parseUnits} from "@ethersproject/units";
 import {BigNumber} from "@ethersproject/bignumber";
 import {PopulatedTransaction} from "ethers";

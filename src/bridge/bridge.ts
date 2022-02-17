@@ -1,27 +1,26 @@
-import {
-    ChainId,
-    Networks
-} from "../common";
-import {SwapType} from "../internal/swaptype";
+import {ChainId} from "../common/chainid";
+import {Networks} from "../common/networks";
+
 import {
     contractAddressFor,
     executePopulatedTransaction,
     rejectPromise,
 } from "../common/utils";
 
-import {
-    Tokens,
-} from "../tokens";
+import {SwapType} from "../internal/swaptype";
+import {newProviderForNetwork} from "../internal/rpcproviders";
 
-import type {Token} from "../token";
-
+import {Tokens} from "../tokens";
 import {SwapPools} from "../swappools";
-
-import {GenericZapBridgeContract, L1BridgeZapContract, SynapseBridgeContract} from "../contracts";
+import {BaseToken, WrappedToken} from "../token";
 
 import {SynapseEntities} from "../entities";
 
-import {newProviderForNetwork} from "../internal/rpcproviders";
+import {GenericZapBridgeContract, L1BridgeZapContract, SynapseBridgeContract} from "../contracts";
+
+
+import type {Token} from "../token";
+
 
 import {Zero} from "@ethersproject/constants";
 import {Signer} from "@ethersproject/abstract-signer";
@@ -39,7 +38,6 @@ import {
 
 import {BridgeUtils} from "./bridgeutils";
 import {GasUtils} from "./gasutils";
-import {BaseToken, WrappedToken} from "../token";
 
 
 /**

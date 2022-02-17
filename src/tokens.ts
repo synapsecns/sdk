@@ -1,15 +1,13 @@
-import type {Token} from "../token";
+import type {Token} from "./token";
 
 import {
     BaseToken,
     WrappedToken,
-} from "../token";
+} from "./token";
 
-import {
-    ChainId,
-} from "../common";
+import {ChainId} from "./common/chainid";
 
-import {SwapType} from "../internal/swaptype";
+import {SwapType} from "./internal/swaptype";
 
 export namespace Tokens {
     const KEEP_THIS_HERE = new BaseToken({
