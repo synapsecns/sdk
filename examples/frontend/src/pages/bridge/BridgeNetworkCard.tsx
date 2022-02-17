@@ -2,7 +2,8 @@ import {useEffect, useState} from "react";
 
 import {classNames} from "../../utils";
 
-import {DropdownMenu, useDropdownMenu} from "../../components/dropdown";
+import {Grid} from "../../components/Grid";
+import {DropdownMenu} from "../../components/DropdownMenu";
 
 import {supportedNetworks} from "@synapseprotocol/sdk"
 
@@ -11,50 +12,65 @@ const BridgeDirections = {
     TO:   "to"
 }
 
-function NetworksDropdown(props: {
+function NetworksDropdown({direction, selected, setSelected, networkDropdownItems}: {
     direction,
-    setSelected
+    selected,
+    setSelected,
+    networkDropdownItems,
 }) {
-    let {direction, setSelected} = props;
-
     const title = direction === BridgeDirections.FROM ? "Source chain" : "Destination chain";
-    const opts = supportedNetworks().map(({name, chainId}) => ({
-        label:   name,
-        key:     chainId,
-        chainId,
-    }))
-
-    let [selectedItem, setSelectedItem, Menu] = useDropdownMenu({title, items: opts})
 
     useEffect(() => {
-        console.log(selectedItem);
-    }, [selectedItem])
+        console.log(selected);
+    }, [selected])
 
-    return (<Menu />)
+    return(<div
+        className={classNames(
+            "rounded-md border",
+            "shadow-md",
+            "dark:bg-gray-800 dark:border-gray-600",
+        )}>
+            <DropdownMenu
+                title={title}
+                selectedItem={selected}
+                setSelectedItem={setSelected}
+                items={networkDropdownItems}
+            />
+    </div>)
 }
 
 export function BridgeNetworkCard(props: { className?: any }) {
+    const networkDropdownItems = supportedNetworks().map(({name, chainId}) => ({
+        label:   name,
+        key:     chainId.toString(),
+        chainId,
+    }));
+
     let [
         selectedChainFrom,
         setSelectedChainFrom
-    ] = useState("");
+    ] = useState(networkDropdownItems[0]);
 
     let [
         selectedChainTo,
         setSelectedChainTo
-    ] = useState("");
+    ] = useState(networkDropdownItems[1]);
 
     return(
-        <div
-            className={classNames(
-                "max-w-md rounded-lg border",
-                "shadow-md dark:bg-gray-800 dark:border-gray-700",
-                props.className ?? ""
-            )}
-        >
-            <div className={"flex justify-center px-4 pt-4"}>
-                <NetworksDropdown direction={BridgeDirections.FROM} setSelected={setSelectedChainFrom} />
-            </div>
-        </div>
+        <Grid className={"grid-flow-col"} rows={4} cols={2} gapX={4} gapY={4}>
+            <NetworksDropdown
+                direction={BridgeDirections.FROM}
+                selected={selectedChainFrom}
+                setSelected={setSelectedChainFrom}
+                networkDropdownItems={networkDropdownItems}
+            />
+
+            <NetworksDropdown
+                direction={BridgeDirections.TO}
+                selected={selectedChainTo}
+                setSelected={setSelectedChainTo}
+                networkDropdownItems={networkDropdownItems}
+            />
+        </Grid>
     )
 }
