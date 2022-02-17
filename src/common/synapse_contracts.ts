@@ -1,4 +1,4 @@
-import {ABIs} from "../abis";
+import {ABIs} from "../abis/index";
 import {ContractInterface} from "@ethersproject/contracts";
 
 

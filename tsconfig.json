@@ -1,29 +1,33 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "rootDirs": [
+      "src"
+    ],
+    "target": "ESNext",
     "module": "ESNext",
     "outDir": "dist",
     "strict": false,
     "esModuleInterop":   true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "baseUrl": "src",
+    "baseUrl": "./src",
     "allowJs": true,
     "checkJs": true,
     "declaration": true,
     "removeComments": true,
+    "downlevelIteration": true,
     "types": [
       "node",
       "mocha"
     ],
     "isolatedModules": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
   },
   "ts-node": {
     "files": true,
   },
   "include": [
-    "src"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",

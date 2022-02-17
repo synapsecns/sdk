@@ -11,7 +11,7 @@ import {
     ChainId,
 } from "../../src";
 
-import {SynapseContracts} from "../../src/common";
+import {SynapseContracts} from "../../src/common/synapse_contracts";
 
 import {ERC20} from "../../src/bridge/erc20";
 

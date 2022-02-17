@@ -4,13 +4,11 @@ import {expect} from "chai";
 
 import {Context} from "mocha";
 
+import {SynapseContracts} from "../../src/common/synapse_contracts";
 import {newProviderForNetwork} from "../../src/internal/rpcproviders";
 
-import {SynapseContracts} from "../../src/common";
-
-import {ChainId} from "../../src";
-
 import {
+    ChainId,
     newSynapseBridgeInstance,
     newL1BridgeZapInstance,
     newL2BridgeZapInstance,

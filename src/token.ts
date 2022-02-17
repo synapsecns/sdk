@@ -1,9 +1,9 @@
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 import {parseUnits} from "@ethersproject/units";
 
-import type {AddressMap, DecimalsMap} from "../common";
+import type {AddressMap, DecimalsMap} from "./common/types";
 
-import type {SwapType} from "../internal/swaptype"
+import type {SwapType} from "./internal/swaptype"
 
 export interface IBaseToken {
     readonly name:      string,

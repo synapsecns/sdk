@@ -2,11 +2,7 @@ import {ChainId} from "./chainid";
 import {SynapseContracts} from "./synapse_contracts";
 
 import {Signer} from "@ethersproject/abstract-signer";
-import {Provider} from "@ethersproject/providers";
 import {PopulatedTransaction, ContractTransaction} from "@ethersproject/contracts";
-
-
-export type SignerOrProvider = Signer | Provider;
 
 
 export const rejectPromise = (e: any): Promise<never> => Promise.reject(e instanceof Error ? e : new Error(e))
