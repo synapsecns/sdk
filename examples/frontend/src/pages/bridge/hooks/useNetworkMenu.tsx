@@ -1,4 +1,4 @@
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 
 import {
     Networks,
@@ -12,10 +12,12 @@ import {BridgeDirections} from "../Directions";
 
 import type {DropdownItem} from "../../../components/DropdownMenu";
 
-// function NetworkMenu
+import {isNullOrUndefined, SetStateFunction} from "../../../utils";
+
 
 interface NetworkDropdownItem extends DropdownItem {
     network: Networks.Network,
+    chainId: number,
 }
 
 interface UseNetworkMenu {
@@ -25,13 +27,52 @@ interface UseNetworkMenu {
     disabledChain?: number,
 }
 
+function NetworkMenu({dropdownItems, direction, selected, setSelected}) {
+    return (
+        <NetworkDropdown
+            networks={dropdownItems}
+            direction={direction}
+            selected={selected}
+            setSelected={setSelected}
+        />
+    )
+}
+
 export const useNetworkMenu = ({networks, direction, disabledChain, startIdx=0}: UseNetworkMenu) => {
     const {
         selectedNetwork,
         setSelectedNetwork
     } = useContext(NetworkMenuContext);
 
-    const dropdownItems: NetworkDropdownItem[] = networks.map((n) => {
+    const makeDropdownItems = (disabledChainId?: number): NetworkDropdownItem[] => networks.map((n) => ({
+        label:    n.name,
+        key:      n.name,
+        disabled: isNullOrUndefined(disabledChainId) ? false : n.chainId === disabledChain,
+        chainId:  n.chainId,
+        network:  n,
+    }));
 
-    })
+    const
+        [dropdownItems, setDropdownItems] = useState<NetworkDropdownItem[]>(makeDropdownItems(disabledChain)),
+        [selected,      setSelected]      = useState<NetworkDropdownItem>(dropdownItems[startIdx]);
+
+    useEffect(() => {
+        setDropdownItems(makeDropdownItems(disabledChain));
+    }, [disabledChain])
+
+    useEffect(() => {
+        let newSelection = selected.network;
+        if (newSelection.chainId !== selectedNetwork.chainId) {
+            setSelectedNetwork(newSelection);
+        }
+    }, [selected, selectedNetwork])
+
+    const networkMenuProps = {selected, setSelected, dropdownItems, direction};
+
+    return {
+        NetworkMenu,
+        networkMenuProps,
+        selectedNetwork,
+        setSelectedNetwork
+    }
 }

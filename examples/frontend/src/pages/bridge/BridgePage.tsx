@@ -50,16 +50,7 @@ export function BridgePage(props: {className?: string}) {
         chainId,
     }));
 
-    const allowedAmountsFrom: AmountDropdownItem[] = [10, 50, 100, 500, 1000].map((n) => {
-        let amount = BigNumber.from(n);
 
-        return {
-            amount,
-            label:    amount.toString(),
-            disabled: false,
-            key:      amount.toString(),
-        }
-    })
 
     const
         [selectedChainFrom, setSelectedChainFrom] = useState(networkDropdownItems[0]),
