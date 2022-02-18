@@ -3,11 +3,7 @@ import {parseUnits} from "@ethersproject/units";
 
 import type {AddressMap, DecimalsMap} from "./common/types";
 
-<<<<<<< HEAD:src/token.ts
 import type {SwapType} from "./internal/swaptype"
-=======
-import type {SwapType} from "../internal"
->>>>>>> b3e415f (cleanup src/internal imports):src/token/token.ts
 
 export interface IBaseToken {
     readonly name:      string,

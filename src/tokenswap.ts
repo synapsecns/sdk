@@ -1,22 +1,67 @@
-import {Token} from "../token";
-import {Tokens} from "../tokens";
-import {SwapPools} from "../swappools";
-import {rejectPromise} from "../common/utils";
+import {Token} from "./token";
+import {Tokens} from "./tokens";
+import {SwapPools} from "./swappools";
+import {rejectPromise} from "./common/utils";
 
-import {SynapseEntities} from "../entities";
-import {SwapContract, SwapFactory} from "../contracts";
+import {SynapseEntities} from "./entities";
+import {SwapContract, SwapFactory} from "./contracts";
 
-import {ChainId} from "../common/chainid";
-import {Networks} from "../common/networks";
+import {ChainId} from "./common/chainid";
+import {Networks} from "./common/networks";
 
-import {SwapType} from "../internal/swaptype";
-import {newProviderForNetwork} from "../internal/rpcproviders";
-
-import {UnsupportedSwapErrors} from "./unsupportedSwapErrors";
+import {SwapType} from "./internal/swaptype";
+import {newProviderForNetwork} from "./internal/rpcproviders";
 
 import {PopulatedTransaction} from "@ethersproject/contracts";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
+export namespace UnsupportedSwapErrors {
+    interface Tok {symbol: string}
+
+    export enum UnsupportedSwapErrorKind {
+        UnsupportedToken,
+        UnsupportedTokenNetFrom,
+        UnsupportedTokenNetTo,
+        NonmatchingSwapTypes,
+        BobaToL1,
+        ETHOnBoba,
+    }
+
+    export interface UnsupportedSwapError {
+        errorKind: UnsupportedSwapErrorKind,
+        reason:    string,
+    }
+
+    export const tokenNotSupported = (t: Tok, netName: string): UnsupportedSwapError => ({
+        errorKind:  UnsupportedSwapErrorKind.UnsupportedToken,
+        reason:    `Token ${t.symbol} not supported on network ${netName}`,
+    })
+
+    export const tokenNotSupportedNetFrom = (t: Tok, netName: string): UnsupportedSwapError => ({
+        errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetFrom,
+        reason:    `Token ${t.symbol} not supported on 'from' network ${netName}`,
+    })
+
+    export const tokenNotSupportedNetTo = (t: Tok, netName: string): UnsupportedSwapError => ({
+        errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetTo,
+        reason:    `Token ${t.symbol} not supported on 'to' network ${netName}`,
+    })
+
+    export const nonMatchingSwapTypes = (st1: string, st2: string): UnsupportedSwapError => ({
+        errorKind:  UnsupportedSwapErrorKind.NonmatchingSwapTypes,
+        reason:    "Token swap types don't match",
+    })
+
+    export const ethOnBoba = (): UnsupportedSwapError => ({
+        errorKind: UnsupportedSwapErrorKind.ETHOnBoba,
+        reason:    "Currently, the SDK only supports bridging Stablecoins to and from BOBA",
+    })
+
+    export const bobaToL1 = (): UnsupportedSwapError => ({
+        errorKind: UnsupportedSwapErrorKind.BobaToL1,
+        reason:    "Bridging ETH from Boba Mainnet to L1 not currently supported",
+    })
+}
 
 export namespace TokenSwap {
     export interface SwapParams {

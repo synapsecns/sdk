@@ -4,26 +4,15 @@ import type {
     L2BridgeZapContract,
     GenericZapBridgeContract,
     BridgeConfigContract,
+    PoolConfigContract,
 } from "./contracts";
 
-<<<<<<< HEAD:src/entities.ts
-=======
-import type {
-    SynapseBridgeContract,
-    L1BridgeZapContract,
-    L2BridgeZapContract,
-    GenericZapBridgeContract,
-    BridgeConfigContract,
-    PoolConfigContract,
-} from "../contracts";
-
->>>>>>> 3d8ea4e (Implement token swaps in the SDK (#35)):src/entities/synapse_entities.ts
 import {
     SynapseBridgeFactory,
     L1BridgeZapFactory,
     L2BridgeZapFactory,
     BridgeConfigFactory,
-<<<<<<< HEAD:src/entities.ts
+    PoolConfigFactory,
 } from "./contracts";
 
 import type {SignerOrProvider} from "./common/types";
@@ -36,11 +25,6 @@ export const newSynapseBridgeInstance = (params: {
     address: string,
     signerOrProvider?: SignerOrProvider
 }): SynapseBridgeContract => SynapseBridgeFactory.connect(params.address, params.signerOrProvider);
-=======
-    PoolConfigFactory,
-} from "../contracts";
->>>>>>> 3d8ea4e (Implement token swaps in the SDK (#35)):src/entities/synapse_entities.ts
-
 
 export const newL1BridgeZapInstance = (params: {
     address: string,

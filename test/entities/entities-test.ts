@@ -4,12 +4,8 @@ import {expect} from "chai";
 
 import {Context} from "mocha";
 
-<<<<<<< HEAD
 import {SynapseContracts} from "../../src/common/synapse_contracts";
 import {newProviderForNetwork} from "../../src/internal/rpcproviders";
-=======
-import {newProviderForNetwork} from "../../src/internal";
->>>>>>> b3e415f (cleanup src/internal imports)
 
 import {
     ChainId,
