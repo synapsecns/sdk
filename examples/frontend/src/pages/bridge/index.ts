@@ -1,1 +1,1 @@
-export * from "./BridgeNetworkCard";
+export * from "./BridgePage";

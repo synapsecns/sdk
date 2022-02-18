@@ -14,19 +14,19 @@ import { SelectorIcon } from '@heroicons/react/solid';
 
 import {classNames} from "../utils";
 
-export interface DropdownItemProps {
+export interface DropdownItem {
     label:      string,
     key:        string,
-    value?:     any,
     className?: string,
     link?:      string,
+    disabled:   boolean,
 }
 
 interface DropdownMenuProps {
     selectedItem:    any,
     setSelectedItem: any,
     title:           string,
-    items:           DropdownItemProps[],
+    items:           DropdownItem[],
 }
 
 export function DropdownMenu({title, selectedItem, setSelectedItem, items}: DropdownMenuProps) {
@@ -36,7 +36,7 @@ export function DropdownMenu({title, selectedItem, setSelectedItem, items}: Drop
                 <Listbox value={selectedItem} onChange={setSelectedItem} as={"div"} className={"space-y-1"}>
                     {({open}) => (
                         <>
-                            <Listbox.Label className={"block text-sm font-medium"}>{`${title}: `}</Listbox.Label>
+                            <Listbox.Label className={"block text-sm font-medium"}>{title}</Listbox.Label>
                             <div className={"relative"}>
                                 <span className={"inline-block w-full rounded-md"}>
                                     <Listbox.Button
@@ -74,7 +74,7 @@ export function DropdownMenu({title, selectedItem, setSelectedItem, items}: Drop
                                             return(<Listbox.Option
                                                     key={item.key}
                                                     value={item}
-                                                    disabled={selected}
+                                                    disabled={item.disabled || selected}
                                                 >
                                                     {({ active }) => (
                                                         <div className={classNames(
