@@ -1,21 +1,24 @@
+import {useEffect, useState} from "react";
+
 import {BridgeDirections} from "./Directions";
-import {NetworkDropdown} from "./NetworkDropdown";
-import {TokenDropdown} from "./TokenDropdown";
+
+import NetworkDropdown from "./components/NetworkDropdown";
+import TokenDropdown from "./components/TokenDropdown";
+import BridgeEstimateSection from "./components/BridgeEstimateSection";
+import AmountFromDropdown, {AmountDropdownItem} from "./components/AmountFromDropdown";
 
 import type {Token} from "@synapseprotocol/sdk";
 import {
-    Bridge,
     Networks,
     detailedTokenSwapMap,
     supportedNetworks,
 } from "@synapseprotocol/sdk";
 
-import {useEffect, useState} from "react";
 import {Grid} from "../../components/Grid";
 
 import {BigNumber} from "ethers";
-import {DropdownItem, DropdownMenu} from "../../components/DropdownMenu";
-import {classNames} from "../../utils";
+
+import {DropdownItem} from "../../components/DropdownMenu";
 
 function getDestinationChainTokens({sourceChain, destChain, sourceToken}: {
     sourceChain: number,
@@ -39,65 +42,6 @@ function makeTokenDropdownItems(tokens: Token[]): TokenDropdownItem[] {
     }))
 }
 
-interface AmountDropdownItem extends DropdownItem {
-    amount: BigNumber,
-}
-
-
-interface AmountDropdownProps {
-    selected:    AmountDropdownItem,
-    setSelected: any,
-    items:       AmountDropdownItem[]
-}
-
-function AmountFromDropdown({selected, setSelected, items}: AmountDropdownProps) {
-    return(<div
-        className={classNames(
-            "rounded-md border",
-            "shadow-md",
-            "dark:bg-gray-800 dark:border-gray-600",
-        )}>
-        <DropdownMenu
-            title={"Select amount from"}
-            selectedItem={selected}
-            setSelectedItem={setSelected}
-            items={items}
-        />
-    </div>)
-}
-
-function useGetAmountOutEstimate({synapseBridge, amountIn, chainTo, tokenFrom, tokenTo}: {
-    synapseBridge: Bridge.SynapseBridge,
-    amountIn:      BigNumber,
-    chainTo:       number,
-    tokenFrom:     Token,
-    tokenTo:       Token
-}): [BigNumber, () => void] {
-    let [amountOut, setAmountOut] = useState(BigNumber.from(0));
-
-    function getEstimate(): void {
-        console.log({amountIn, chainTo, tokenFrom, tokenTo});
-        synapseBridge.estimateBridgeTokenOutput({
-            tokenFrom,
-            tokenTo,
-            amountFrom: amountIn,
-            chainIdTo: chainTo,
-        }).then((res) =>
-            setAmountOut(res.amountToReceive)
-        ).catch((err) => console.error(err))
-
-        return
-    }
-
-    // getEstimate();
-
-    // useEffect(() => {
-    //     getEstimate();
-    // }, [amountIn, chainTo, tokenFrom, tokenTo])
-
-    return [amountOut, getEstimate]
-}
-
 export function BridgePage(props: {className?: string}) {
     const networkDropdownItems = supportedNetworks().map(({name, chainId}) => ({
         label:    name,
@@ -117,26 +61,20 @@ export function BridgePage(props: {className?: string}) {
         }
     })
 
-    let
+    const
         [selectedChainFrom, setSelectedChainFrom] = useState(networkDropdownItems[0]),
         [selectedChainTo,   setSelectedChainTo]   = useState(networkDropdownItems[1]),
         [amountFrom,        setAmountFrom]        = useState(allowedAmountsFrom[0]);
 
-    let
+    const
         sourceNetwork = Networks.fromChainId(selectedChainFrom.chainId),
         destNetwork   = Networks.fromChainId(selectedChainTo.chainId);
 
-    let synapseBridge = new Bridge.SynapseBridge({network: selectedChainFrom.chainId});
-
-    useEffect(() => {
-        synapseBridge = new Bridge.SynapseBridge({network: selectedChainFrom.chainId});
-    }, [selectedChainFrom])
-
     let sourceTokenItems = makeTokenDropdownItems(sourceNetwork.tokens);
 
-    let [sourceToken, setSourceToken] = useState(sourceTokenItems[0]);
+    const [sourceToken, setSourceToken] = useState(sourceTokenItems[0]);
 
-    let [allowedDestTokens, setAllowedDestTokens] = useState(getDestinationChainTokens({
+    const [allowedDestTokens, setAllowedDestTokens] = useState(getDestinationChainTokens({
         sourceChain: sourceNetwork.chainId,
         destChain:   destNetwork.chainId,
         sourceToken: sourceToken.token,
@@ -159,19 +97,9 @@ export function BridgePage(props: {className?: string}) {
         }
     }, [selectedChainFrom, selectedChainTo]);
 
-    let [amountOutEstimate, getEstimate] = useGetAmountOutEstimate({
-        synapseBridge,
-        tokenFrom: sourceToken.token,
-        tokenTo:   destToken.token,
-        chainTo:   selectedChainTo.chainId,
-        amountIn:  amountFrom.amount,
-    });
-
-    getEstimate();
-
     useEffect(() => {
-        console.log(amountOutEstimate.toString());
-    }, [amountOutEstimate])
+        console.log(`amountFrom changed to ${amountFrom.amount}`);
+    }, [amountFrom])
 
     return(
         <Grid className={"grid-flow-col"} rows={4} cols={2} gapX={4} gapY={4}>
@@ -207,14 +135,13 @@ export function BridgePage(props: {className?: string}) {
                     setSelected={setDestToken}
                     tokens={destTokenItems}
                 />
-                <div
-                    className={classNames(
-                        "rounded-md border",
-                        "shadow-md",
-                        "dark:bg-gray-800 dark:border-gray-600",
-                    )}>
-                    <span>{amountOutEstimate && amountOutEstimate.toString()}</span>
-                </div>
+                <BridgeEstimateSection
+                    tokenFrom={sourceToken.token}
+                    tokenTo={destToken.token}
+                    chainFrom={selectedChainFrom.chainId}
+                    chainTo={selectedChainTo.chainId}
+                    amountIn={amountFrom.amount}
+                />
             </div>
         </Grid>
     )

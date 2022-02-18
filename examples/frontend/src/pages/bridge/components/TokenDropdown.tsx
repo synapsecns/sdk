@@ -6,10 +6,6 @@ import {DropdownMenu, DropdownItem} from "../../components/DropdownMenu";
 
 import {BridgeDirections} from "./Directions";
 
-import {
-    Token
-} from "@synapseprotocol/sdk";
-
 interface TokenDropdownProps {
     tokens:      DropdownItem[],
     selected:    DropdownItem,
@@ -17,7 +13,7 @@ interface TokenDropdownProps {
     direction:   BridgeDirections,
 }
 
-export function TokenDropdown({tokens, direction, selected, setSelected}: TokenDropdownProps) {
+export default function TokenDropdown({tokens, direction, selected, setSelected}: TokenDropdownProps) {
     const title = direction === BridgeDirections.FROM ? "Source token" : "Destination token";
 
     useEffect(() => {
