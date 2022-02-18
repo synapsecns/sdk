@@ -7,26 +7,28 @@ import {
     rejectPromise,
 } from "../common/utils";
 
-import {SwapType} from "../internal/swaptype";
+import {SwapType}              from "../internal/swaptype";
 import {newProviderForNetwork} from "../internal/rpcproviders";
 
 import type {Token} from "../token";
 
-import {Tokens} from "../tokens";
-import {SwapPools} from "../swappools";
+import {Tokens}                  from "../tokens";
+import {SwapPools}               from "../swappools";
+import {TokenSwap}               from "../tokenswap";
+import {SynapseEntities}         from "../entities";
 import {BaseToken, WrappedToken} from "../token";
 
-import {TokenSwap} from "../tokenswap";
+import type {
+    GenericZapBridgeContract,
+    L1BridgeZapContract,
+    SynapseBridgeContract,
+} from "../contracts";
 
-import {SynapseEntities} from "../entities";
-
-import {GenericZapBridgeContract, L1BridgeZapContract, SynapseBridgeContract} from "../contracts";
-
-import {Zero} from "@ethersproject/constants";
-import {Signer} from "@ethersproject/abstract-signer";
-import {Provider} from "@ethersproject/providers";
-import {formatUnits} from "@ethersproject/units";
-import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+import {Zero}                                      from "@ethersproject/constants";
+import {Signer}                                    from "@ethersproject/abstract-signer";
+import {Provider}                                  from "@ethersproject/providers";
+import {formatUnits}                               from "@ethersproject/units";
+import {BigNumber, BigNumberish}                   from "@ethersproject/bignumber";
 import {ContractTransaction, PopulatedTransaction} from "@ethersproject/contracts";
 
 import {
@@ -879,5 +881,9 @@ export namespace Bridge {
         isEasy: boolean,
         castArgs: BridgeUtils.BridgeTxParams,
         txn?: Promise<PopulatedTransaction>,
+    }
+
+    export function bridgeSwapSupported(args: TokenSwap.BridgeSwapSupportedParams): TokenSwap.SwapSupportedResult {
+        return TokenSwap.bridgeSwapSupported(args)
     }
 }
