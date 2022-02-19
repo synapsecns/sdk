@@ -5,7 +5,7 @@ import {useDestinationTokenMenu} from "./hooks/useTokenMenu";
 
 import {BigNumber} from "ethers";
 
-import {supportedNetworks} from "@synapseprotocol/sdk";
+import {ChainId, supportedNetworks} from "@synapseprotocol/sdk";
 
 import {BridgeDirections} from "./Directions";
 
@@ -31,7 +31,7 @@ export default function DestinationGrid(props: DestinationGridProps) {
         networks:      supportedNetworks(),
         direction:     BridgeDirections.TO,
         disabledChain: selectedNetworkFrom.chainId,
-        startIdx:      1
+        startIdx:      supportedNetworks().findIndex((n) => n.chainId === ChainId.BSC)
     });
 
     const {
@@ -43,13 +43,7 @@ export default function DestinationGrid(props: DestinationGridProps) {
         <div>
             <NetworkMenu {...networkMenuProps} />
             <TokenMenu {...tokenMenuProps} />
-            <BridgeEstimateSection
-                tokenFrom={selectedTokenFrom}
-                tokenTo={selectedTokenTo}
-                chainFrom={selectedNetworkFrom.chainId}
-                chainTo={selectedNetworkTo.chainId}
-                amountIn={props.amountIn}
-            />
+            <BridgeEstimateSection amountIn={props.amountIn}/>
         </div>
     )
 }

@@ -13,16 +13,16 @@ type Context = {
 }
 
 export const TokenMenuContext = createContext<Context>({
-    selectedTokenFrom:    Tokens.SYN,
+    selectedTokenFrom:    Tokens.USDT,
     setSelectedTokenFrom: null,
-    selectedTokenTo:      Tokens.SYN,
+    selectedTokenTo:      Tokens.USDT,
     setSelectedTokenTo:   null,
 })
 
 export const TokenMenuContextProvider = ({children}) => {
     const
-        [selectedTokenFrom, setSelectedTokenFrom] = useState<Token>(Tokens.SYN),
-        [selectedTokenTo,   setSelectedTokenTo]   = useState<Token>(Tokens.SYN);
+        [selectedTokenFrom, setSelectedTokenFrom] = useState<Token>(Tokens.USDT),
+        [selectedTokenTo,   setSelectedTokenTo]   = useState<Token>(Tokens.USDT);
 
     return (
         <TokenMenuContext.Provider

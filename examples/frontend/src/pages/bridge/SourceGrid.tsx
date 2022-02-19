@@ -5,7 +5,7 @@ import type {AmountDropdownItem} from "./components/AmountFromDropdown";
 
 import {BigNumber} from "ethers";
 
-import {Networks, supportedNetworks, Token} from "@synapseprotocol/sdk";
+import {ChainId, Networks, supportedNetworks, Token} from "@synapseprotocol/sdk";
 import {isNullOrUndefined, SetStateFunction} from "../../utils";
 import {BridgeDirections} from "./Directions";
 import TokenDropdown from "./components/TokenDropdown";
@@ -43,6 +43,7 @@ export default function SourceGrid(props: SourceNetworkGridProps) {
     } = useNetworkMenu({
         networks:  allNetworks,
         direction: BridgeDirections.FROM,
+        startIdx:  allNetworks.findIndex((n) => n.chainId === ChainId.AVALANCHE)
     });
 
     const {

@@ -10,6 +10,7 @@ import {useSynapseBridge} from "./useSynapseBridge";
 import {asError} from "../utils";
 import {NetworkMenuContext} from "../pages/bridge/contexts/NetworkMenuContext";
 import {TokenMenuContext} from "../pages/bridge/contexts/TokenMenuContext";
+import {formatEther} from "@ethersproject/units";
 
 const NO_AMT_OUT: BigNumber = BigNumber.from(0);
 
@@ -39,14 +40,8 @@ export function useGetBridgeEstimate(args: UseGetBridgeEstimateArgs) {
 
     const
         [synapseBridge] = useSynapseBridge({chainId: selectedNetworkFrom.chainId}),
-        [amountOut, setAmountOut] = useState<BigNumber>(null),
-        [bridgeFee, setBridgeFee] = useState<BigNumber>(null);
-
-    // useEffect(() => {
-    //     console.log(`chainFrom changed to ${chainFrom}`);
-    //     setAmountOut(NO_AMT_OUT);
-    //     setBridgeFee(NO_AMT_OUT);
-    // }, [chainFrom])
+        [amountOut, setAmountOut] = useState<string>(null),
+        [bridgeFee, setBridgeFee] = useState<string>(null);
 
     useEffect(() => {
         if (typeof amountIn !== "undefined" && !amountIn.eq(0)) {
@@ -54,16 +49,17 @@ export function useGetBridgeEstimate(args: UseGetBridgeEstimateArgs) {
                 chainIdTo:  selectedNetworkTo.chainId,
                 tokenFrom:  selectedTokenFrom,
                 tokenTo:    selectedTokenTo,
-                amountFrom: amountIn
+                amountFrom: selectedTokenFrom.valueToWei(amountIn, selectedNetworkFrom.chainId)
             };
-
-            console.log(estimateArgs);
 
             getBridgeEstimate(estimateArgs, synapseBridge)
                 .then((res) => {
-                    console.log(res);
-                    setAmountOut(res.amountToReceive);
-                    // setBridgeFee(bridgeFee);
+                    let
+                        amtOut = formatEther(res.amountToReceive),
+                        fee    = formatEther(res.bridgeFee);
+
+                    setAmountOut(amtOut);
+                    setBridgeFee(fee);
                 })
                 .catch((err) => {
                     console.error(asError(err));
@@ -71,7 +67,5 @@ export function useGetBridgeEstimate(args: UseGetBridgeEstimateArgs) {
         }
     }, [amountIn]);
 
-    // console.log(amountOut);
-
-    return [amountOut, bridgeFee] as const;
+    return [amountOut, bridgeFee, selectedTokenTo] as const;
 }

@@ -13,7 +13,7 @@ type Context = {
 }
 
 export const NetworkMenuContext = createContext<Context>({
-    selectedNetworkFrom:    Networks.ETH,
+    selectedNetworkFrom:    Networks.AVALANCHE,
     setSelectedNetworkFrom: null,
     selectedNetworkTo:      Networks.BSC,
     setSelectedNetworkTo:   null,
@@ -21,7 +21,7 @@ export const NetworkMenuContext = createContext<Context>({
 
 export const NetworkMenuContextProvider = ({children}) => {
     const
-        [selectedNetworkFrom, setSelectedNetworkFrom] = useState<Networks.Network>(Networks.ETH),
+        [selectedNetworkFrom, setSelectedNetworkFrom] = useState<Networks.Network>(Networks.AVALANCHE),
         [selectedNetworkTo,   setSelectedNetworkTo]   = useState<Networks.Network>(Networks.BSC);
 
     return (
