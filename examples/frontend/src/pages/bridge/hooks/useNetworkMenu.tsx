@@ -1,9 +1,6 @@
 import {useContext, useEffect, useState} from "react";
 
-import {
-    Networks,
-    supportedNetworks
-} from "@synapseprotocol/sdk";
+import {Networks} from "@synapseprotocol/sdk";
 
 import {NetworkMenuContext} from "../contexts/NetworkMenuContext";
 
@@ -12,7 +9,7 @@ import {BridgeDirections} from "../Directions";
 
 import type {DropdownItem} from "../../../components/DropdownMenu";
 
-import {isNullOrUndefined, SetStateFunction} from "../../../utils";
+import {isNullOrUndefined} from "../../../utils";
 
 
 interface NetworkDropdownItem extends DropdownItem {
@@ -40,17 +37,42 @@ function NetworkMenu({dropdownItems, direction, selected, setSelected}) {
 
 export const useNetworkMenu = ({networks, direction, disabledChain, startIdx=0}: UseNetworkMenu) => {
     const {
-        selectedNetwork,
-        setSelectedNetwork
-    } = useContext(NetworkMenuContext);
+        selectedNetworkFrom,
+        setSelectedNetworkFrom,
+        selectedNetworkTo,
+        setSelectedNetworkTo,
+    } = useContext(NetworkMenuContext)
 
-    const makeDropdownItems = (disabledChainId?: number): NetworkDropdownItem[] => networks.map((n) => ({
-        label:    n.name,
-        key:      n.name,
-        disabled: isNullOrUndefined(disabledChainId) ? false : n.chainId === disabledChain,
-        chainId:  n.chainId,
-        network:  n,
-    }));
+    const [selectedNetwork, setSelectedNetwork] = (() => {
+        switch (direction) {
+            case BridgeDirections.FROM:
+                return [selectedNetworkFrom, setSelectedNetworkFrom] as const
+            case BridgeDirections.TO:
+                return [selectedNetworkTo, setSelectedNetworkTo] as const
+        }
+    })()
+
+    function isDisabled(chainId: number, disabledChainId?: number): boolean {
+        if (!isNullOrUndefined(disabledChainId)) {
+            return chainId === disabledChainId;
+        }
+
+        if (!isNullOrUndefined(selectedNetwork)) {
+            return chainId === selectedNetwork.chainId
+        }
+
+        return false
+    }
+
+    function makeDropdownItems(disabledChainId?: number): NetworkDropdownItem[] {
+        return networks.map((n) => ({
+            label:    n.name,
+            key:      n.name,
+            disabled: isDisabled(n.chainId, disabledChainId),
+            chainId:  n.chainId,
+            network:  n,
+        }));
+    }
 
     const
         [dropdownItems, setDropdownItems] = useState<NetworkDropdownItem[]>(makeDropdownItems(disabledChain)),
@@ -62,7 +84,11 @@ export const useNetworkMenu = ({networks, direction, disabledChain, startIdx=0}:
 
     useEffect(() => {
         let newSelection = selected.network;
-        if (newSelection.chainId !== selectedNetwork.chainId) {
+        if (selectedNetwork) {
+            if (newSelection.chainId !== selectedNetwork.chainId) {
+                setSelectedNetwork(newSelection);
+            }
+        } else {
             setSelectedNetwork(newSelection);
         }
     }, [selected, selectedNetwork])
@@ -71,8 +97,6 @@ export const useNetworkMenu = ({networks, direction, disabledChain, startIdx=0}:
 
     return {
         NetworkMenu,
-        networkMenuProps,
-        selectedNetwork,
-        setSelectedNetwork
+        networkMenuProps
     }
 }

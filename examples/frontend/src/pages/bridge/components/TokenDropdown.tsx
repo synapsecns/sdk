@@ -1,36 +1,36 @@
 import {useEffect} from "react";
 
-import {classNames} from "../../utils";
+import {classNames, SetStateFunction} from "../../../utils";
 
-import {DropdownMenu, DropdownItem} from "../../components/DropdownMenu";
+import {DarkRoundedItem} from "../../../components/DarkRoundedItem";
 
-import {BridgeDirections} from "./Directions";
+import {DropdownMenu, DropdownItem} from "../../../components/DropdownMenu";
+
+import {BridgeDirections} from "../Directions";
+import {Token} from "@synapseprotocol/sdk";
+
+export interface TokenDropdownItem extends DropdownItem {
+    token: Token,
+}
 
 interface TokenDropdownProps {
-    tokens:      DropdownItem[],
-    selected:    DropdownItem,
-    setSelected: any,
+    tokens:      TokenDropdownItem[],
+    selected:    TokenDropdownItem,
+    setSelected: SetStateFunction<TokenDropdownItem>,
     direction:   BridgeDirections,
 }
 
 export default function TokenDropdown({tokens, direction, selected, setSelected}: TokenDropdownProps) {
     const title = direction === BridgeDirections.FROM ? "Source token" : "Destination token";
 
-    useEffect(() => {
-        console.log(selected);
-    }, [selected])
-
-    return(<div
-        className={classNames(
-            "rounded-md border",
-            "shadow-md",
-            "dark:bg-gray-800 dark:border-gray-600",
-        )}>
-        <DropdownMenu
-            title={title}
-            selectedItem={selected}
-            setSelectedItem={setSelected}
-            items={tokens}
-        />
-    </div>)
+    return (
+        <DarkRoundedItem>
+            <DropdownMenu
+                title={title}
+                selectedItem={selected}
+                setSelectedItem={setSelected}
+                items={tokens}
+            />
+        </DarkRoundedItem>
+    )
 }

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 
 import {BridgeDirections} from "./Directions";
 
@@ -6,6 +6,9 @@ import NetworkDropdown from "./components/NetworkDropdown";
 import TokenDropdown from "./components/TokenDropdown";
 import BridgeEstimateSection from "./components/BridgeEstimateSection";
 import AmountFromDropdown, {AmountDropdownItem} from "./components/AmountFromDropdown";
+
+import {TokenMenuContext,   TokenMenuContextProvider}   from "./contexts/TokenMenuContext";
+import {NetworkMenuContext, NetworkMenuContextProvider} from "./contexts/NetworkMenuContext";
 
 import type {Token} from "@synapseprotocol/sdk";
 import {
@@ -20,73 +23,31 @@ import {BigNumber} from "ethers";
 
 import {DropdownItem} from "../../components/DropdownMenu";
 
-function getDestinationChainTokens({sourceChain, destChain, sourceToken}: {
-    sourceChain: number,
-    destChain:   number,
-    sourceToken: Token,
-}): Token[] {
-    const swapMap = detailedTokenSwapMap()[sourceChain].find(({token}) => sourceToken.isEqual(token));
-    return swapMap[destChain] ?? [];
-}
+import SourceGrid, {AMOUNTS_FROM_OPTIONS} from "./SourceGrid";
+import DestinationGrid from "./DestinationGrid";
 
-interface TokenDropdownItem extends DropdownItem {
-    token: Token,
-}
+function BridgePageContent(props: {className?: string}) {
+    const {
+        selectedNetworkFrom,
+        selectedNetworkTo
+    } = useContext(NetworkMenuContext);
 
-function makeTokenDropdownItems(tokens: Token[]): TokenDropdownItem[] {
-    return tokens.map((t) => ({
-        label:    t.name,
-        key:      String(t.hash),
-        token:    t,
-        disabled: false,
-    }))
-}
-
-export function BridgePage(props: {className?: string}) {
-    const networkDropdownItems = supportedNetworks().map(({name, chainId}) => ({
-        label:    name,
-        key:      chainId.toString(),
-        disabled: false,
-        chainId,
-    }));
-
-
-
-    const
-        [selectedChainFrom, setSelectedChainFrom] = useState(networkDropdownItems[0]),
-        [selectedChainTo,   setSelectedChainTo]   = useState(networkDropdownItems[1]),
-        [amountFrom,        setAmountFrom]        = useState(allowedAmountsFrom[0]);
-
-    const
-        sourceNetwork = Networks.fromChainId(selectedChainFrom.chainId),
-        destNetwork   = Networks.fromChainId(selectedChainTo.chainId);
-
-    let sourceTokenItems = makeTokenDropdownItems(sourceNetwork.tokens);
-
-    const [sourceToken, setSourceToken] = useState(sourceTokenItems[0]);
-
-    const [allowedDestTokens, setAllowedDestTokens] = useState(getDestinationChainTokens({
-        sourceChain: sourceNetwork.chainId,
-        destChain:   destNetwork.chainId,
-        sourceToken: sourceToken.token,
-    }));
-
-    let destTokenItems = makeTokenDropdownItems(allowedDestTokens)
-    let [destToken, setDestToken] = useState(destTokenItems[0]);
+    const {
+        selectedTokenFrom,
+        selectedTokenTo
+    } = useContext(TokenMenuContext);
 
     useEffect(() => {
-        setAllowedDestTokens(getDestinationChainTokens({
-            sourceChain: sourceNetwork.chainId,
-            destChain:   destNetwork.chainId,
-            sourceToken: sourceToken.token,
-        }));
-    }, [sourceToken])
+        console.log({selectedNetworkFrom});
+    }, [selectedNetworkFrom])
 
-    useEffect(() => {
-        if (selectedChainFrom.chainId === selectedChainTo.chainId) {
-            // disable the network on the other side?
-        }
-    }, [selectedChainFrom, selectedChainTo]);
+    const [amountFrom, setAmountFrom] = useState(AMOUNTS_FROM_OPTIONS[0]);
+
+    // useEffect(() => {
+    //     if (selectedChainFrom.chainId === selectedChainTo.chainId) {
+    //         // disable the network on the other side?
+    //     }
+    // }, [selectedChainFrom, selectedChainTo]);
 
     useEffect(() => {
         console.log(`amountFrom changed to ${amountFrom.amount}`);
@@ -94,46 +55,21 @@ export function BridgePage(props: {className?: string}) {
 
     return(
         <Grid className={"grid-flow-col"} rows={4} cols={2} gapX={4} gapY={4}>
-            <div>
-                <NetworkDropdown
-                    direction={BridgeDirections.FROM}
-                    selected={selectedChainFrom}
-                    setSelected={setSelectedChainFrom}
-                    networks={networkDropdownItems}
-                />
-                <TokenDropdown
-                    direction={BridgeDirections.FROM}
-                    selected={sourceToken}
-                    setSelected={setSourceToken}
-                    tokens={sourceTokenItems}
-                />
-                <AmountFromDropdown
-                    selected={amountFrom}
-                    setSelected={setAmountFrom}
-                    items={allowedAmountsFrom}
-                />
-            </div>
-            <div>
-                <NetworkDropdown
-                    direction={BridgeDirections.TO}
-                    selected={selectedChainTo}
-                    setSelected={setSelectedChainTo}
-                    networks={networkDropdownItems}
-                />
-                <TokenDropdown
-                    direction={BridgeDirections.TO}
-                    selected={destToken}
-                    setSelected={setDestToken}
-                    tokens={destTokenItems}
-                />
-                <BridgeEstimateSection
-                    tokenFrom={sourceToken.token}
-                    tokenTo={destToken.token}
-                    chainFrom={selectedChainFrom.chainId}
-                    chainTo={selectedChainTo.chainId}
-                    amountIn={amountFrom.amount}
-                />
-            </div>
+            <SourceGrid
+                selectedAmountFrom={amountFrom}
+                setSelectedAmountFrom={setAmountFrom}
+            />
+            {amountFrom && <DestinationGrid amountIn={amountFrom?.amount || BigNumber.from(0)}/>}
         </Grid>
+    )
+}
+
+export function BridgePage(props: {className?: string}) {
+    return (
+        <NetworkMenuContextProvider>
+            <TokenMenuContextProvider>
+                <BridgePageContent className={props.className}/>
+            </TokenMenuContextProvider>
+        </NetworkMenuContextProvider>
     )
 }

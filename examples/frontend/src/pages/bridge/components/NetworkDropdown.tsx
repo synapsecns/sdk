@@ -1,8 +1,7 @@
-import {useEffect} from "react";
-
-import {classNames} from "../../../utils";
 
 import type {SetStateFunction} from "../../../utils";
+
+import {DarkRoundedItem} from "../../../components/DarkRoundedItem";
 
 import {DropdownMenu} from "../../../components/DropdownMenu";
 import type {DropdownItem} from "../../../components/DropdownMenu";
@@ -25,21 +24,15 @@ interface NetworkDropdownProps {
 export default function NetworkDropdown({direction, selected, setSelected, networks}: NetworkDropdownProps) {
     const title = direction === BridgeDirections.FROM ? "Source chain" : "Destination chain";
 
-    useEffect(() => {
-        console.log(selected);
-    }, [selected])
 
-    return(<div
-        className={classNames(
-            "rounded-md border",
-            "shadow-md",
-            "dark:bg-gray-800 dark:border-gray-600",
-        )}>
+    return (
+        <DarkRoundedItem>
             <DropdownMenu
                 title={title}
                 selectedItem={selected}
                 setSelectedItem={setSelected}
                 items={networks}
             />
-    </div>)
+        </DarkRoundedItem>
+    )
 }

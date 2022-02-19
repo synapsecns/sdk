@@ -4,9 +4,11 @@ import type {Token} from "@synapseprotocol/sdk";
 
 import {BigNumber} from "ethers";
 
-import {useGetBridgeEstimate} from "../../hooks";
+import {useGetBridgeEstimate} from "../../../hooks";
 
-import {classNames} from "../../utils";
+import {classNames} from "../../../utils";
+
+import {DarkRoundedItem} from "../../../components/DarkRoundedItem";
 
 interface BridgeEstimateSectionProps {
     chainFrom:  number,
@@ -19,16 +21,13 @@ interface BridgeEstimateSectionProps {
 export default function BridgeEstimateSection(props: BridgeEstimateSectionProps) {
     const [amountOutEstimate, bridgeFee] = useGetBridgeEstimate(props);
 
-    useEffect(() => {
-        console.log(amountOutEstimate.toString());
-    }, [amountOutEstimate])
+    // useEffect(() => {
+    //     console.log(amountOutEstimate.toString());
+    // }, [amountOutEstimate])
 
-    return(<div
-            className={classNames(
-            "rounded-md border",
-            "shadow-md",
-            "dark:bg-gray-800 dark:border-gray-600",
-    )}>
-    <span>{amountOutEstimate && amountOutEstimate.toString()}</span>
-    </div>)
+    return (
+        <DarkRoundedItem>
+            <span>{amountOutEstimate && amountOutEstimate.toString()}</span>
+        </DarkRoundedItem>
+    )
 }
