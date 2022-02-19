@@ -40,8 +40,8 @@ export function useGetBridgeEstimate(args: UseGetBridgeEstimateArgs) {
 
     const
         [synapseBridge] = useSynapseBridge({chainId: selectedNetworkFrom.chainId}),
-        [amountOut, setAmountOut] = useState<string>(null),
-        [bridgeFee, setBridgeFee] = useState<string>(null);
+        [amountOut, setAmountOut] = useState<BigNumber>(null),
+        [bridgeFee, setBridgeFee] = useState<BigNumber>(null);
 
     useEffect(() => {
         if (typeof amountIn !== "undefined" && !amountIn.eq(0)) {
@@ -54,9 +54,10 @@ export function useGetBridgeEstimate(args: UseGetBridgeEstimateArgs) {
 
             getBridgeEstimate(estimateArgs, synapseBridge)
                 .then((res) => {
+                    console.log(`${res.amountToReceive.toString()} ${res.bridgeFee.toString()}`);
                     let
-                        amtOut = formatEther(res.amountToReceive),
-                        fee    = formatEther(res.bridgeFee);
+                        amtOut = res.amountToReceive,
+                        fee    = res.bridgeFee;
 
                     setAmountOut(amtOut);
                     setBridgeFee(fee);
@@ -65,7 +66,7 @@ export function useGetBridgeEstimate(args: UseGetBridgeEstimateArgs) {
                     console.error(asError(err));
                 })
         }
-    }, [amountIn]);
+    }, [amountIn, selectedTokenFrom, selectedTokenTo]);
 
-    return [amountOut, bridgeFee, selectedTokenTo] as const;
+    return [amountOut, bridgeFee, selectedTokenFrom, selectedTokenTo] as const;
 }

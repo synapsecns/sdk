@@ -102,31 +102,36 @@ export function useDestinationTokenMenu() {
         {selectedNetworkFrom, selectedNetworkTo}                 = useContext(NetworkMenuContext),
         {selectedTokenFrom, selectedTokenTo, setSelectedTokenTo} = useContext(TokenMenuContext);
 
-    function getDestTokens(t: Token) {
+    function getDestTokens(t: Token, chainFrom: number, chainTo: number) {
         return getDestinationChainTokens({
-            sourceChain: selectedNetworkFrom.chainId,
-            destChain:   selectedNetworkTo.chainId,
+            sourceChain: chainFrom,
+            destChain:   chainTo,
             sourceToken: t,
         });
     }
 
-    const [tokens, setTokens] = useState<Token[]>(getDestTokens(selectedTokenFrom));
+    const [tokens, setTokens] = useState<Token[]>(getDestTokens(selectedTokenFrom, selectedNetworkFrom.chainId, selectedNetworkTo.chainId));
+
+    useEffect(() => {
+        let newTokens = getDestTokens(selectedTokenFrom, selectedNetworkFrom.chainId, selectedNetworkTo.chainId);
+        setTokens(newTokens);
+    }, [selectedNetworkTo])
 
     const
         [dropdownItems, setDropdownItems] = useState<TokenDropdownItem[]>(makeDropdownItems(tokens, selectedTokenTo)),
         [selected,      setSelected]      = useState<TokenDropdownItem>(dropdownItems[0] ?? null);
 
     useEffect(() => {
-        console.log(selectedTokenFrom);
-        let newTokens = getDestTokens(selectedTokenFrom);
-
+        let newTokens = getDestTokens(selectedTokenFrom, selectedNetworkFrom.chainId, selectedNetworkTo.chainId);
         setTokens(newTokens);
+    }, [selectedTokenFrom])
 
-        let newDropdownItems = makeDropdownItems(newTokens, selectedTokenTo);
+    useEffect(() => {
+        let newDropdownItems = makeDropdownItems(tokens, selectedTokenTo);
         let newSelected = newDropdownItems[0];
         setSelected(newSelected);
         setDropdownItems(newDropdownItems);
-    }, [selectedTokenFrom])
+    }, [tokens])
 
     useEffect(() => {
         if (!isNullOrUndefined(selected)) {
