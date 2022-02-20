@@ -26,6 +26,7 @@ import {DropdownItem} from "../../components/DropdownMenu";
 
 import SourceGrid, {AMOUNTS_FROM_OPTIONS} from "./SourceGrid";
 import DestinationGrid from "./DestinationGrid";
+import BridgeButton from "./components/BridgeButton";
 
 function BridgePageContent(props: {className?: string}) {
     const {
@@ -54,7 +55,8 @@ function BridgePageContent(props: {className?: string}) {
     //     console.log(`amountFrom changed to ${amountFrom.amount}`);
     // }, [amountFrom])
 
-    const [approved, setApproved] = useState<boolean>(false);
+    const [approved, setApproved] = useState<boolean>(true);
+    const [amountOut, setAmountOut] = useState<BigNumber>(BigNumber.from(0));
 
     return(
         <div>
@@ -63,12 +65,21 @@ function BridgePageContent(props: {className?: string}) {
                     selectedAmountFrom={amountFrom}
                     setSelectedAmountFrom={setAmountFrom}
                 />
-                {amountFrom && <DestinationGrid amountIn={amountFrom?.amount || BigNumber.from(0)}/>}
+                {amountFrom && <DestinationGrid
+                    amountIn={amountFrom?.amount || BigNumber.from(0)}
+                    amountOut={amountOut}
+                    setAmountOut={setAmountOut}
+                />}
             </Grid>
             <ApproveButon
                 amountFrom={amountFrom?.amount || BigNumber.from(0)}
                 approved={approved}
                 setApproved={setApproved}
+            />
+            <BridgeButton
+                amountFrom={amountFrom?.amount || BigNumber.from(0)}
+                approved={approved}
+                amountOut={amountOut}
             />
         </div>
     )

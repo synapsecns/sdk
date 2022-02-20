@@ -1,4 +1,4 @@
-import {TransactionStatus, DeferredPopulatedTransaction} from "./types";
+import {DeferredPopulatedTransaction} from "./types";
 import {ethers} from "ethers";
 
 function getSigner(ethereum: any) {
