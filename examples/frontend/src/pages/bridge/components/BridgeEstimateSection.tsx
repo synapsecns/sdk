@@ -6,12 +6,13 @@ import {BigNumber} from "ethers";
 
 import {useGetBridgeEstimate} from "../../../hooks";
 
-import {classNames, valueEther} from "../../../utils";
+import {classNames, SetStateFunction, valueEther} from "../../../utils";
 
 import {DarkRoundedItem} from "../../../components/DarkRoundedItem";
 
 interface BridgeEstimateSectionProps {
     amountIn:   BigNumber,
+    setAmountOut: SetStateFunction<BigNumber>
 }
 
 const LabeledItem = ({title, value}) => (
@@ -27,7 +28,13 @@ function formatValue(t: Token, value: string): string {
 }
 
 export default function BridgeEstimateSection(props: BridgeEstimateSectionProps) {
+    const {setAmountOut} = props;
+
     const [estimate, fee, tokenFrom, tokenTo] = useGetBridgeEstimate(props);
+
+    useEffect(() => {
+        setAmountOut(estimate);
+    }, [estimate])
 
     return (
         <DarkRoundedItem>

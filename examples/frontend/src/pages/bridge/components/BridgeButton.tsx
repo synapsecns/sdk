@@ -5,7 +5,6 @@ import {
     MetamaskStatus,
     sendTransaction,
     SendTransactionResponse,
-    SetStateFunction,
     TransactionStatus
 } from "../../../utils";
 import {NetworkMenuContext} from "../contexts/NetworkMenuContext";
@@ -25,37 +24,39 @@ interface TxnResponseData {
 
 function onClick({
     setButtonProps,
-    setApproved,
     setDisabled,
+    selectedNetworkTo,
+    selectedTokenFrom,
+    selectedTokenTo,
     synapseBridge,
+    amountFrom, amountTo,
+    addressTo,
     ethereum,
-   selectedTokenFrom,
-   amountFrom,
 }) {
     return async () => {
         setButtonProps({
-            text:     "Waiting for approval transaction...",
+            text:     "Waiting for bridge transaction...",
         });
         setDisabled(true);
 
         try {
-            const populatedTxn = await synapseBridge.buildApproveTransaction({
-                token:  selectedTokenFrom,
-                amount: amountFrom,
+            const populated = await synapseBridge.buildBridgeTokenTransaction({
+                tokenFrom:  selectedTokenFrom,
+                tokenTo:    selectedTokenTo,
+                amountFrom,
+                amountTo,
+                chainIdTo:   selectedNetworkTo.chainId,
+                addressTo,
             });
 
-            console.log(ethereum);
-
-            const txn = await sendTransaction(populatedTxn, ethereum);
+            const txn = await sendTransaction(populated, ethereum);
             // setTxnStatus({
             //     response: txn,
             //     status:   txn.error ? TransactionStatus.ERROR : TransactionStatus.COMPLETE,
             // });
 
-            setApproved(!txn.error);
-
             setButtonProps({
-                text:     txn.error ? `error: ${txn.error.message}` : "Approved!",
+                text:     "Success!",
             });
             setDisabled(true);
         } catch (e) {
@@ -66,8 +67,10 @@ function onClick({
             //     status: TransactionStatus.ERROR,
             // });
 
+            console.error(e);
+
             setButtonProps({
-                text:     "Error sending approval transaction",
+                text:     "Error sending bridge transaction",
             });
             setDisabled(true);
         }
@@ -76,70 +79,75 @@ function onClick({
     }
 }
 
-export default function ApproveButon(props: {amountFrom: BigNumber, approved: boolean, setApproved: SetStateFunction<boolean>}) {
-    const {status, ethereum} = useMetaMask();
+export default function BridgeButton(props: {approved: boolean, amountFrom: BigNumber, amountOut: BigNumber}) {
+    const {account, status, ethereum} = useMetaMask();
 
-    const {amountFrom, approved, setApproved} = props;
+    const {amountFrom, amountOut: amountTo, approved} = props;
 
-    const {selectedNetworkFrom} = useContext(NetworkMenuContext);
-    const {selectedTokenFrom}   = useContext(TokenMenuContext);
+    const {selectedNetworkFrom, selectedNetworkTo} = useContext(NetworkMenuContext);
+    const {selectedTokenFrom, selectedTokenTo}     = useContext(TokenMenuContext);
 
     const [synapseBridge] = useSynapseBridge({chainId: selectedNetworkFrom.chainId});
 
     // const [txnStatus, setTxnStatus] = useState<TxnResponseData>({
-    //     response: null,
-    //     status:   TransactionStatus.NOT_SENT,
+    //     status: TransactionStatus.NOT_SENT,
     // });
 
     const [disabled, setDisabled] = useState<boolean>(true);
 
-    const APPROVE_TEXT = "Approve token";
+    const BRIDGE_TEXT = "Bridge token";
 
     const [buttonProps, setButtonProps] = useState<ButtonProps>({
-        text:    APPROVE_TEXT,
+        text:    BRIDGE_TEXT,
         onClick:  emptyOnClick,
     });
 
     useEffect(() => {
-        if (buttonProps.text === APPROVE_TEXT) {
-            if (disabled && status === MetamaskStatus.CONNECTED) {
+        if (approved && disabled) {
+            if (status === MetamaskStatus.CONNECTED && buttonProps.text === BRIDGE_TEXT) {
                 setDisabled(false);
                 setButtonProps({
-                    text:    APPROVE_TEXT,
+                    text: BRIDGE_TEXT,
                     onClick: onClick({
                         setButtonProps,
                         setDisabled,
-                        setApproved,
                         synapseBridge,
                         ethereum,
-                        amountFrom,
                         selectedTokenFrom,
+                        amountFrom,
+                        amountTo,
+                        selectedNetworkTo,
+                        selectedTokenTo,
+                        addressTo: account,
                     })
                 });
             }
         }
-    }, [status, disabled]);
+    }, [status, approved, disabled, buttonProps])
 
     useEffect(() => {
-        if (buttonProps.text === APPROVE_TEXT) {
+        if (buttonProps.text === BRIDGE_TEXT) {
             setButtonProps({
-                text: APPROVE_TEXT,
+                text: BRIDGE_TEXT,
                 onClick: onClick({
                     setButtonProps,
                     setDisabled,
-                    setApproved,
                     synapseBridge,
                     ethereum,
-                    amountFrom,
                     selectedTokenFrom,
+                    amountFrom,
+                    amountTo,
+                    selectedNetworkTo,
+                    selectedTokenTo,
+                    addressTo: account,
                 }),
             });
         }
-    }, [amountFrom, selectedTokenFrom])
+    }, [amountFrom, selectedTokenFrom, selectedTokenTo, selectedNetworkTo, amountTo, account])
 
     return (
         <div>
-            <ActionButton {...buttonProps} disabled={disabled}/>
+            <ActionButton {...buttonProps}/>
         </div>
     )
 }

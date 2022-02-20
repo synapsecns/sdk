@@ -13,10 +13,13 @@ import {NetworkMenuContext} from "./contexts/NetworkMenuContext";
 import {TokenMenuContext} from "./contexts/TokenMenuContext";
 
 import BridgeEstimateSection from "./components/BridgeEstimateSection";
+import {SetStateFunction} from "../../utils";
 
 interface DestinationGridProps {
-    className?: string,
-    amountIn:   BigNumber,
+    className?:   string,
+    amountIn:     BigNumber,
+    amountOut:    BigNumber,
+    setAmountOut: SetStateFunction<BigNumber>
 }
 
 export default function DestinationGrid(props: DestinationGridProps) {
@@ -43,7 +46,7 @@ export default function DestinationGrid(props: DestinationGridProps) {
         <div>
             <NetworkMenu {...networkMenuProps} />
             <TokenMenu {...tokenMenuProps} />
-            <BridgeEstimateSection amountIn={props.amountIn}/>
+            <BridgeEstimateSection {...props} />
         </div>
     )
 }
