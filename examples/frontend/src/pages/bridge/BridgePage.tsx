@@ -6,7 +6,7 @@ import NetworkDropdown from "./components/NetworkDropdown";
 import TokenDropdown from "./components/TokenDropdown";
 import BridgeEstimateSection from "./components/BridgeEstimateSection";
 import AmountFromDropdown, {AmountDropdownItem} from "./components/AmountFromDropdown";
-import ApproveAndBridgeButton from "./components/ApproveAndBridgeButton";
+import ApproveButon from "./components/ApproveButon";
 
 import {TokenMenuContext,   TokenMenuContextProvider}   from "./contexts/TokenMenuContext";
 import {NetworkMenuContext, NetworkMenuContextProvider} from "./contexts/NetworkMenuContext";
@@ -54,6 +54,8 @@ function BridgePageContent(props: {className?: string}) {
     //     console.log(`amountFrom changed to ${amountFrom.amount}`);
     // }, [amountFrom])
 
+    const [approved, setApproved] = useState<boolean>(false);
+
     return(
         <div>
             <Grid className={"grid-flow-col"} rows={4} cols={2} gapX={4} gapY={4}>
@@ -63,9 +65,10 @@ function BridgePageContent(props: {className?: string}) {
                 />
                 {amountFrom && <DestinationGrid amountIn={amountFrom?.amount || BigNumber.from(0)}/>}
             </Grid>
-            <ApproveAndBridgeButton
+            <ApproveButon
                 amountFrom={amountFrom?.amount || BigNumber.from(0)}
-                amountTo={BigNumber.from(0)}
+                approved={approved}
+                setApproved={setApproved}
             />
         </div>
     )

@@ -4,9 +4,12 @@ export * from "./amounts";
 
 export * from "./types";
 
+export * from "./transactions";
+
 export type {
     EventFunction,
     SetStateFunction,
+    DeferredPopulatedTransaction,
 } from "./types";
 
 export const asError = (e: any): Error => e instanceof Error ? e : new Error(e)
