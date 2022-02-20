@@ -16,7 +16,6 @@ import {Bridge} from "./bridge/bridge";
 
 export {Bridge};
 export {Slippages} from "./bridge/slippages";
-export {UnsupportedSwapReason} from "./bridge/errors";
 
 export type BridgeOutputEstimate = Bridge.BridgeOutputEstimate;
 
@@ -25,10 +24,17 @@ export {
     supportedChainIds
 } from "./common/chainid";
 
-export {
+import {
     Networks,
     supportedNetworks
 } from "./common/networks";
+
+export {
+    Networks,
+    supportedNetworks
+};
+
+export type Network = Networks.Network;
 
 export type {ChainIdTypeMap, AddressMap, DecimalsMap} from "./common/types";
 
@@ -41,15 +47,15 @@ export {
     SwapPools,
     networkSwapTokensMap,
     allNetworksSwapTokensMap,
-    detailedTokenSwapMap,
     swappableTokens,
     swappableTokensAllNetworks,
 } from "./swappools";
 
 export type {
-    DetailedTokenSwapMap,
     NetworkSwappableTokensMap
 } from "./swappools";
+
+export {TokenSwap, UnsupportedSwapErrors} from "./tokenswap";
 
 export type {
     SynapseBridgeContract,

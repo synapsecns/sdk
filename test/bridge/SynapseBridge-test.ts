@@ -40,7 +40,8 @@ import {
     PROVIDER_AURORA,
     PROVIDER_HARMONY,
     makeWalletSignerWithProvider,
-    getActualWei
+    getActualWei,
+    getTestAmount,
 } from "../helpers";
 
 
@@ -59,7 +60,7 @@ const
     EXECUTORS_TEST_TIMEOUT = makeTimeout(180);
 
 
-describe("SynapseBridge", function() {
+describe("SynapseBridge", function(this: Mocha.Suite) {
     describe("read-only wrapper functions", function(this: Mocha.Suite) {
         describe(".bridgeVersion()", function(this: Mocha.Suite) {
             const expected = 6;
@@ -294,11 +295,6 @@ describe("SynapseBridge", function() {
                 noAddrTo:  boolean,
             }
 
-            const testAmounts: string[] = [
-                "420", "1337", "31337",
-                "669", "555",
-            ]
-
             const makeTestCase = (
                 t1: Token, t2: Token,
                 c1: number, c2: number,
@@ -313,10 +309,7 @@ describe("SynapseBridge", function() {
                         chainIdFrom: c1,
                         tokenTo:     t2,
                         chainIdTo:   c2,
-                        amountFrom:  t1.valueToWei(
-                            amt ?? _.shuffle(testAmounts)[0],
-                            c1
-                        ),
+                        amountFrom:  getTestAmount(t1, c1, amt),
                     },
                     notZero:   notZero  ?? true,
                     wantError: wantErr  ?? false,
