@@ -147,7 +147,7 @@ export namespace TokenSwap {
             return rejectPromise(reasonNotSupported)
         }
         
-        const { swapData } = args;
+        const {swapData} = args;
         const {swapInstance, tokenIndexFrom, tokenIndexTo} = swapData 
             ? swapData 
             : await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
@@ -163,7 +163,7 @@ export namespace TokenSwap {
             return rejectPromise(reasonNotSupported)
         }
 
-        const { swapData } = args;
+        const {swapData} = args;
         const {swapInstance, tokenIndexFrom, tokenIndexTo} = swapData 
             ? swapData 
             : await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
