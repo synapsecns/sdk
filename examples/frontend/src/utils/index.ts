@@ -2,9 +2,11 @@ export * from "./react_utils";
 
 export * from "./amounts";
 
+export * from "./types";
+
 export type {
     EventFunction,
-    SetStateFunction
+    SetStateFunction,
 } from "./types";
 
 export const asError = (e: any): Error => e instanceof Error ? e : new Error(e)

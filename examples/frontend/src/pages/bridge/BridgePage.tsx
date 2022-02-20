@@ -38,9 +38,9 @@ function BridgePageContent(props: {className?: string}) {
         selectedTokenTo
     } = useContext(TokenMenuContext);
 
-    useEffect(() => {
-        console.log({selectedNetworkFrom});
-    }, [selectedNetworkFrom])
+    // useEffect(() => {
+    //     console.log({selectedNetworkFrom});
+    // }, [selectedNetworkFrom])
 
     const [amountFrom, setAmountFrom] = useState(AMOUNTS_FROM_OPTIONS[0]);
 
@@ -50,9 +50,9 @@ function BridgePageContent(props: {className?: string}) {
     //     }
     // }, [selectedChainFrom, selectedChainTo]);
 
-    useEffect(() => {
-        console.log(`amountFrom changed to ${amountFrom.amount}`);
-    }, [amountFrom])
+    // useEffect(() => {
+    //     console.log(`amountFrom changed to ${amountFrom.amount}`);
+    // }, [amountFrom])
 
     return(
         <div>
@@ -63,7 +63,10 @@ function BridgePageContent(props: {className?: string}) {
                 />
                 {amountFrom && <DestinationGrid amountIn={amountFrom?.amount || BigNumber.from(0)}/>}
             </Grid>
-            <ApproveAndBridgeButton />
+            <ApproveAndBridgeButton
+                amountFrom={amountFrom?.amount || BigNumber.from(0)}
+                amountTo={BigNumber.from(0)}
+            />
         </div>
     )
 }

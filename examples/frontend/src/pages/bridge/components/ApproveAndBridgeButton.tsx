@@ -1,5 +1,11 @@
 import {useMetaMask} from "metamask-react";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
+import {BigNumber, ethers} from "ethers";
+import {useApprove} from "../hooks/useApprove";
+import {TransactionStatus, MetamaskStatus} from "../../../utils";
+import {NetworkMenuContext} from "../contexts/NetworkMenuContext";
+import {TokenMenuContext} from "../contexts/TokenMenuContext";
+import {useWeb3Signer} from "../../../hooks/useWeb3Signer";
 
 const ButtonStates = {
     INIT:           "Loading...",
@@ -8,61 +14,98 @@ const ButtonStates = {
     BRIDGE:         "Execute bridge transaction"
 };
 
-const MetamaskStatus = {
-    INIT:          "initializing",
-    UNAVAILABLE:   "unavailable",
-    NOT_CONNECTED: "notConnected",
-    CONNECTING:    "connecting",
-    CONNECTED:     "connected"
-}
+type OnClickFunction = (...args: any[]) => (void | any);
 
 interface ButtonProps {
-    text: string,
-    onClick: (...args: any[]) => (void | any),
+    text:      string,
+    onClick?:  OnClickFunction,
+    disabled:  boolean,
 }
 
-function executeApprove() {}
+const emptyOnClick: OnClickFunction = () => {}
 
-function executeBridge() {}
+const ActionButton = ({text, onClick, disabled}: ButtonProps) => (
+    <div>
+        <button
+            className={"w-full bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded-full"}
+            onClick={onClick ?? emptyOnClick}
+            disabled={disabled}
+        >
+            {text}
+        </button>
+    </div>
+)
 
-export default function ApproveAndBridgeButton(props: {className?: string}) {
-    const { status, connect, account, chainId, ethereum } = useMetaMask();
+function getSigner(ethereum: any) {
+    return (new ethers.providers.Web3Provider(ethereum)).getSigner()
+}
 
-    const needsConnect = status === MetamaskStatus.NOT_CONNECTED;
+export default function ApproveAndBridgeButton(props: {amountFrom: BigNumber, amountTo: BigNumber}) {
+    const { status, connect, ethereum } = useMetaMask();
+
+    const {selectedNetworkFrom, selectedNetworkTo} = useContext(NetworkMenuContext);
+    const {selectedTokenFrom, selectedTokenTo} = useContext(TokenMenuContext);
 
     const [needsApprove, setNeedsApprove] = useState<boolean>(true);
 
     const ButtonStatesProps = {
-        [ButtonStates.INIT]:           {text: ButtonStates.INIT,           onClick: () => {}},
-        [ButtonStates.CONNECT_WALLET]: {text: ButtonStates.CONNECT_WALLET, onClick: connect},
-        [ButtonStates.APPROVE]:        {text: ButtonStates.APPROVE,        onClick: executeApprove},
-        [ButtonStates.BRIDGE]:         {text: ButtonStates.BRIDGE,         onClick: executeBridge}
+        [ButtonStates.INIT]:           {text: ButtonStates.INIT, disabled: true},
+        [ButtonStates.CONNECT_WALLET]: {text: ButtonStates.CONNECT_WALLET, onClick: connect, disabled: false},
     };
 
-    const [buttonState, setButtonState] = useState<ButtonProps>(ButtonStatesProps[ButtonStates.INIT]);
+    const [sendApproveTxn, approveTxnStatus] = useApprove({
+        token:   selectedTokenFrom,
+        chainId: selectedNetworkFrom.chainId,
+        amount:  props.amountFrom,
+    });
+
+    const [buttonProps, setButtonProps] = useState<ButtonProps>(ButtonStatesProps[ButtonStates.INIT]);
 
     useEffect(() => {
-        if (needsConnect) {
-            setButtonState(ButtonStatesProps[ButtonStates.CONNECT_WALLET]);
-        } else if (!needsConnect) {
-            if (status === MetamaskStatus.CONNECTING) {
-                setButtonState(ButtonStatesProps[ButtonStates.INIT]);
-            } else {
-                setButtonState(ButtonStatesProps[ButtonStates.APPROVE]);
+        if (buttonProps.text === ButtonStates.INIT) {
+            if (status === MetamaskStatus.NOT_CONNECTED) {
+                setButtonProps(ButtonStatesProps[ButtonStates.CONNECT_WALLET]);
             }
-        } else if (!needsConnect && !needsApprove) {
-            setButtonState(ButtonStatesProps[ButtonStates.BRIDGE]);
         }
-    }, [status, needsConnect, needsApprove])
+    }, [status])
+
+    useEffect(() => {
+        if (status !== MetamaskStatus.CONNECTED) {
+            return
+        }
+
+        if (needsApprove) {
+            switch (approveTxnStatus) {
+                case TransactionStatus.NOT_SENT:
+                    setButtonProps({
+                        text:    "Approve token",
+                        onClick:  () => sendApproveTxn(getSigner(ethereum)),
+                        disabled: false,
+                    });
+                    break;
+                case TransactionStatus.SENT:
+                    setButtonProps({
+                        text:     "Waiting for approval transaction...",
+                        disabled: true,
+                    });
+                    break;
+                case TransactionStatus.COMPLETE:
+                    setNeedsApprove(false);
+                    break;
+                case TransactionStatus.ERROR:
+                    setButtonProps({
+                        text:     "Error sending approval transaction",
+                        disabled: true,
+                    });
+                    break;
+            }
+        }
+    }, [status, needsApprove, approveTxnStatus])
+
 
     return (
         <div>
-            <button
-                className={"w-full bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded-full"}
-                onClick={buttonState.onClick}
-            >
-                {buttonState.text}
-            </button>
+            <ActionButton {...buttonProps}/>
         </div>
     )
 }
