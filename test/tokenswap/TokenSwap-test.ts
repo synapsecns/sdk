@@ -17,7 +17,7 @@ import {
 } from "../../src";
 
 import {getTestAmount} from "../helpers";
-import {PopulatedTransaction} from "ethers";
+import {Contract, PopulatedTransaction} from "ethers";
 
 describe("TokenSwap tests", function(this: Mocha.Suite) {
     describe("Swap Rate tests", function(this: Mocha.Suite) {
@@ -55,7 +55,8 @@ describe("TokenSwap tests", function(this: Mocha.Suite) {
                 tokTo: string       = tc.tokenTo.symbol,
                 testTitle: string   = `for ${tokFrom} => ${tokTo} on ${netName} ${titleSuffix}`,
                 testTitle1: string  = `calculateSwapRate ${testTitle}`,
-                testTitle2: string  = `buildSwapTokensTransaction ${testTitle}`;
+                testTitle2: string  = `buildSwapTokensTransaction ${testTitle}`,
+                testTitle3: string  = `swapSetup ${testTitle}`;
 
             let amountOut: BigNumber;
 
@@ -91,6 +92,20 @@ describe("TokenSwap tests", function(this: Mocha.Suite) {
                 }
 
                 done();
+            })
+
+            step(testTitle3, function(this: Context, done: Done) {
+                this.timeout(10*1000);
+
+                let prom = TokenSwap.swapSetup(
+                    tc.tokenFrom, 
+                    tc.tokenTo, 
+                    tc.chainId,
+                )
+
+                tc.wantError
+                    ? expect(prom).to.eventually.be.rejected.notify(done)
+                    : expect(prom).to.eventually.have.property('swapInstance').that.is.instanceof(Contract).notify(done);
             })
         }
     })
