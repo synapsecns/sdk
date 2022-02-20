@@ -11,6 +11,7 @@ import type {DropdownItem} from "../../../components/DropdownMenu";
 
 import {isNullOrUndefined} from "../../../utils";
 import {useMetaMask} from "metamask-react";
+import {BigNumber} from "ethers";
 
 
 interface NetworkDropdownItem extends DropdownItem {
@@ -76,9 +77,8 @@ export const useNetworkMenu = ({networks, direction, disabledChain, startIdx=0}:
         }));
     }
 
-    const
-        [dropdownItems, setDropdownItems] = useState<NetworkDropdownItem[]>(makeDropdownItems(disabledChain)),
-        [selected,      setSelected]      = useState<NetworkDropdownItem>(dropdownItems[startIdx]);
+    const [dropdownItems, setDropdownItems] = useState<NetworkDropdownItem[]>(makeDropdownItems(disabledChain));
+    const [selected, setSelected] = useState<NetworkDropdownItem>(dropdownItems[startIdx]);
 
     useEffect(() => {
         setDropdownItems(makeDropdownItems(disabledChain));

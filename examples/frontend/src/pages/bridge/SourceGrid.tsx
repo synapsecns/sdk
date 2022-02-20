@@ -53,6 +53,14 @@ export default function SourceGrid(props: SourceNetworkGridProps) {
         startIdx:  allNetworks.findIndex((n) => n.chainId === (connectedNetwork !== null ? connectedNetwork.chainId : ChainId.AVALANCHE))
     });
 
+    useEffect(() => {
+        if (status === "connected") {
+            networkMenuProps.setSelected(networkMenuProps.dropdownItems.find((n) =>
+                BigNumber.from(chainId).eq(n.chainId)
+            ))
+        }
+    }, [status])
+
     const {
         TokenMenu,
         tokenMenuProps
