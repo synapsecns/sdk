@@ -10,8 +10,9 @@ import {isNullOrUndefined, SetStateFunction} from "../../utils";
 import {BridgeDirections} from "./Directions";
 import TokenDropdown from "./components/TokenDropdown";
 import AmountFromDropdown from "./components/AmountFromDropdown";
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import {NetworkMenuContext} from "./contexts/NetworkMenuContext";
+import {useMetaMask} from "metamask-react";
 
 export const AMOUNTS_FROM_OPTIONS: AmountDropdownItem[] = [50, 75, 100, 500, 1000].map((n) => {
     let amount = BigNumber.from(n);
@@ -37,13 +38,19 @@ export default function SourceGrid(props: SourceNetworkGridProps) {
 
     const allNetworks = supportedNetworks();
 
+    const {status, chainId} = useMetaMask();
+
+    const [connectedNetwork, setConnectedNetwork] = useState<Networks.Network>(
+        status === "connected" ? Networks.fromChainId(chainId) : null
+    );
+
     const {
         NetworkMenu,
         networkMenuProps
     } = useNetworkMenu({
         networks:  allNetworks,
         direction: BridgeDirections.FROM,
-        startIdx:  allNetworks.findIndex((n) => n.chainId === ChainId.AVALANCHE)
+        startIdx:  allNetworks.findIndex((n) => n.chainId === (connectedNetwork !== null ? connectedNetwork.chainId : ChainId.AVALANCHE))
     });
 
     const {

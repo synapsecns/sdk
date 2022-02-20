@@ -1,6 +1,8 @@
-import React, {useState, createContext, useContext} from "react";
+import React, {useState, createContext, useContext, useEffect} from "react";
 
 import {Networks} from "@synapseprotocol/sdk";
+
+import {useMetaMask} from "metamask-react";
 
 import type {SetStateFunction} from "../../../utils";
 import {isNullOrUndefined} from "../../../utils";
@@ -20,13 +22,30 @@ export const NetworkMenuContext = createContext<Context>({
 })
 
 export const NetworkMenuContextProvider = ({children}) => {
+    const {status, chainId} = useMetaMask();
+
+    const [connectedNetwork, setConnectedNetwork] = useState<Networks.Network>(null);
+
+    useEffect(() => {
+        if (status === "connected") {
+            setConnectedNetwork(Networks.fromChainId(chainId));
+        }
+    }, [status, chainId])
+
     const
-        [selectedNetworkFrom, setSelectedNetworkFrom] = useState<Networks.Network>(Networks.AVALANCHE),
+        [selectedNetworkFrom, setSelectedNetworkFrom] = useState<Networks.Network>(connectedNetwork ?? Networks.AVALANCHE),
         [selectedNetworkTo,   setSelectedNetworkTo]   = useState<Networks.Network>(Networks.BSC);
+
+    useEffect(() => {
+        if (connectedNetwork !== null) {
+            setSelectedNetworkFrom(connectedNetwork);
+        }
+    }, [connectedNetwork])
 
     return (
         <NetworkMenuContext.Provider
             value={{
+
                 selectedNetworkFrom,
                 setSelectedNetworkFrom,
                 selectedNetworkTo,

@@ -6,6 +6,7 @@ import NetworkDropdown from "./components/NetworkDropdown";
 import TokenDropdown from "./components/TokenDropdown";
 import BridgeEstimateSection from "./components/BridgeEstimateSection";
 import AmountFromDropdown, {AmountDropdownItem} from "./components/AmountFromDropdown";
+import ApproveAndBridgeButton from "./components/ApproveAndBridgeButton";
 
 import {TokenMenuContext,   TokenMenuContextProvider}   from "./contexts/TokenMenuContext";
 import {NetworkMenuContext, NetworkMenuContextProvider} from "./contexts/NetworkMenuContext";
@@ -54,13 +55,16 @@ function BridgePageContent(props: {className?: string}) {
     }, [amountFrom])
 
     return(
-        <Grid className={"grid-flow-col"} rows={4} cols={2} gapX={4} gapY={4}>
-            <SourceGrid
-                selectedAmountFrom={amountFrom}
-                setSelectedAmountFrom={setAmountFrom}
-            />
-            {amountFrom && <DestinationGrid amountIn={amountFrom?.amount || BigNumber.from(0)}/>}
-        </Grid>
+        <div>
+            <Grid className={"grid-flow-col"} rows={4} cols={2} gapX={4} gapY={4}>
+                <SourceGrid
+                    selectedAmountFrom={amountFrom}
+                    setSelectedAmountFrom={setAmountFrom}
+                />
+                {amountFrom && <DestinationGrid amountIn={amountFrom?.amount || BigNumber.from(0)}/>}
+            </Grid>
+            <ApproveAndBridgeButton />
+        </div>
     )
 }
 

@@ -10,6 +10,7 @@ import {BridgeDirections} from "../Directions";
 import type {DropdownItem} from "../../../components/DropdownMenu";
 
 import {isNullOrUndefined} from "../../../utils";
+import {useMetaMask} from "metamask-react";
 
 
 interface NetworkDropdownItem extends DropdownItem {
@@ -41,7 +42,8 @@ export const useNetworkMenu = ({networks, direction, disabledChain, startIdx=0}:
         setSelectedNetworkFrom,
         selectedNetworkTo,
         setSelectedNetworkTo,
-    } = useContext(NetworkMenuContext)
+    } = useContext(NetworkMenuContext);
+
 
     const [selectedNetwork, setSelectedNetwork] = (() => {
         switch (direction) {
