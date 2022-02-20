@@ -36,9 +36,7 @@ const ActionButton = ({text, onClick, disabled}: ButtonProps) => (
     </div>
 )
 
-function getSigner(ethereum: any) {
-    return (new ethers.providers.Web3Provider(ethereum)).getSigner()
-}
+
 
 export default function ApproveAndBridgeButton(props: {amountFrom: BigNumber, amountTo: BigNumber}) {
     const { status, connect, ethereum } = useMetaMask();
@@ -79,7 +77,7 @@ export default function ApproveAndBridgeButton(props: {amountFrom: BigNumber, am
                 case TransactionStatus.NOT_SENT:
                     setButtonProps({
                         text:    "Approve token",
-                        onClick:  () => sendApproveTxn(getSigner(ethereum)),
+                        onClick:  () => sendApproveTxn(),
                         disabled: false,
                     });
                     break;
