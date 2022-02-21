@@ -100,7 +100,7 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                     testTitle: string = `Should return ${expected} for Chain ID ${network}`;
 
                 it(testTitle, async function(this: Mocha.Context) {
-                    this.timeout(SHORT_TEST_TIMEOUT);
+                    this.timeout(DEFAULT_TEST_TIMEOUT);
 
                     try {
                         return expect(await bridgeInstance.WETH_ADDRESS()).to.equal(expected)
