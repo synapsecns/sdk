@@ -312,10 +312,13 @@ export namespace Tokens {
         decimals: 18,
         addresses: {
             [ChainId.ETH]:       '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f',
+            [ChainId.OPTIMISM]:  '0x0b5740c6b4a97f90eF2F0220651Cca420B868FfB',
+            [ChainId.CHRONOS]:   '0xbB0A63A6CA2071c6C4bcAC11a1A317b20E3E999C',
             [ChainId.BSC]:       '0x88918495892BAF4536611E38E75D771Dc6Ec0863',
             [ChainId.POLYGON]:   '0xd8cA34fd379d9ca3C6Ee3b3905678320F5b45195',
             [ChainId.FANTOM]:    '0x91fa20244Fb509e8289CA630E5db3E9166233FDc',
             [ChainId.BOBA]:      '0xd22C0a4Af486C7FA08e282E9eB5f30F9AaA62C95',
+            [ChainId.METIS]:     '0x91fa20244Fb509e8289CA630E5db3E9166233FDc',
             [ChainId.MOONBEAM]:  '0xD2666441443DAa61492FFe0F37717578714a4521',
             [ChainId.MOONRIVER]: '0x3bF21Ce864e58731B6f28D68d5928BcBEb0Ad172',
             [ChainId.ARBITRUM]:  '0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1',
