@@ -8,7 +8,7 @@ import {useGetBridgeEstimate} from "@hooks";
 
 import {SetStateFunction, valueEther} from "@utils";
 
-import {DarkRoundedItem} from "@components/DarkRoundedItem";
+import DarkRoundedItem from "@components/DarkRoundedItem";
 
 interface BridgeEstimateSectionProps {
     amountIn:   BigNumber,
@@ -18,7 +18,7 @@ interface BridgeEstimateSectionProps {
 const LabeledItem = ({title, value}) => (
     <div>
         <label className={"block text-sm font-medium"}>{title}</label>
-        <span className={"block text-md"}>{value}</span>
+        <span className={"block text-2xl"}>{value}</span>
     </div>
 )
 

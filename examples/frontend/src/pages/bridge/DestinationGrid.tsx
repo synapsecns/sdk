@@ -1,18 +1,19 @@
 import {useContext} from "react";
 
-import {useNetworkMenu} from "./hooks/useNetworkMenu";
-import {useDestinationTokenMenu} from "./hooks/useTokenMenu";
-
-import {BigNumber} from "ethers";
-
-import {ChainId, supportedNetworks} from "@synapseprotocol/sdk";
+import type {SetStateFunction} from "@utils";
 
 import {BridgeDirections} from "./Directions";
 
 import {NetworkMenuContext} from "./contexts/NetworkMenuContext";
 
 import BridgeEstimateSection from "./components/BridgeEstimateSection";
-import {SetStateFunction} from "@utils";
+
+import {useNetworkMenu} from "./hooks/useNetworkMenu";
+import {useDestinationTokenMenu} from "./hooks/useTokenMenu";
+
+import {BigNumber} from "ethers";
+
+import {ChainId, supportedNetworks} from "@synapseprotocol/sdk";
 
 interface DestinationGridProps {
     className?:   string,

@@ -1,16 +1,19 @@
+import {useMetaMask} from "metamask-react";
+import {useEffect, useState} from "react";
+
+import type {SetStateFunction} from "@utils";
+
+import {ChainId, Networks, supportedNetworks} from "@synapseprotocol/sdk";
+
 import {useNetworkMenu} from "./hooks/useNetworkMenu";
 import {useSourceTokenMenu} from "./hooks/useTokenMenu";
 
+import AmountFromDropdown from "./components/AmountFromDropdown";
 import type {AmountDropdownItem} from "./components/AmountFromDropdown";
 
 import {BigNumber} from "ethers";
 
-import {ChainId, Networks, supportedNetworks} from "@synapseprotocol/sdk";
-import {SetStateFunction} from "@utils";
 import {BridgeDirections} from "./Directions";
-import AmountFromDropdown from "./components/AmountFromDropdown";
-import {useEffect, useState} from "react";
-import {useMetaMask} from "metamask-react";
 
 export const AMOUNTS_FROM_OPTIONS: AmountDropdownItem[] = [5, 10, 50, 75, 100, 500, 1000].map((n) => {
     let amount = BigNumber.from(n);

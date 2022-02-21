@@ -1,11 +1,11 @@
 import {SetStateFunction} from "@utils";
 
-import {DarkRoundedItem} from "@components/DarkRoundedItem";
+import type {Token} from "@synapseprotocol/sdk";
 
-import {DropdownMenu, DropdownItem} from "@components/DropdownMenu";
+import DarkRoundedItem from "@components/DarkRoundedItem";
+import DropdownMenu, {DropdownItem} from "@components/DropdownMenu";
 
 import {BridgeDirections} from "../Directions";
-import {Token} from "@synapseprotocol/sdk";
 
 export interface TokenDropdownItem extends DropdownItem {
     token: Token,

@@ -5,7 +5,7 @@ import {
 
 import { SelectorIcon } from '@heroicons/react/solid';
 
-import {classNames} from "../utils";
+import {classNames} from "@utils";
 
 export interface DropdownItem {
     label:      string,
@@ -22,7 +22,7 @@ interface DropdownMenuProps {
     items:           DropdownItem[],
 }
 
-export function DropdownMenu({title, selectedItem, setSelectedItem, items}: DropdownMenuProps) {
+export default function DropdownMenu({title, selectedItem, setSelectedItem, items}: DropdownMenuProps) {
     return(
         <div className={"flex items-center justify-center"}>
             <div className={"w-60 max-w-xs"}>
@@ -43,7 +43,7 @@ export function DropdownMenu({title, selectedItem, setSelectedItem, items}: Drop
                                             "focus-visible:ring-offset-2 focus-visible:border-indigo-500"
                                         )}
                                     >
-                                        <span className={"block truncate"}>{selectedItem?.label || ""}</span>
+                                        <span className={"block truncate text-lg"}>{selectedItem?.label || ""}</span>
                                         <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                                             <SelectorIcon className="w-5 h-5 text-gray-400" aria-hidden="true"/>
                                         </span>
