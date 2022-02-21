@@ -52,6 +52,7 @@ jobs:
           ETH_RPC_URI:      ${{ secrets.ETHEREUM_RPC_URI }}
           POLYGON_RPC_URI:  ${{ secrets.POLYGON_RPC_URI }}
           HARMONY_RPC_URI:  "https://api.fuzz.fi/"
+          TEST_PRIVKEY_A: ${{ secrets.TEST_PRIVKEY_A }}
 
       - name: Coverage report
         run: yarn -s run coverage:report
