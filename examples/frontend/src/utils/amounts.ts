@@ -1,6 +1,5 @@
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
-import type {Token} from "@synapseprotocol/sdk";
 import {formatEther, parseUnits} from "@ethersproject/units";
 
 export function valueWei(ether: BigNumberish, decimals: number): BigNumber {

@@ -5,13 +5,11 @@ import type {AmountDropdownItem} from "./components/AmountFromDropdown";
 
 import {BigNumber} from "ethers";
 
-import {ChainId, Networks, supportedNetworks, Token} from "@synapseprotocol/sdk";
-import {isNullOrUndefined, SetStateFunction} from "../../utils";
+import {ChainId, Networks, supportedNetworks} from "@synapseprotocol/sdk";
+import {SetStateFunction} from "../../utils";
 import {BridgeDirections} from "./Directions";
-import TokenDropdown from "./components/TokenDropdown";
 import AmountFromDropdown from "./components/AmountFromDropdown";
-import {useContext, useEffect, useState} from "react";
-import {NetworkMenuContext} from "./contexts/NetworkMenuContext";
+import {useEffect, useState} from "react";
 import {useMetaMask} from "metamask-react";
 
 export const AMOUNTS_FROM_OPTIONS: AmountDropdownItem[] = [5, 10, 50, 75, 100, 500, 1000].map((n) => {
@@ -40,7 +38,7 @@ export default function SourceGrid(props: SourceNetworkGridProps) {
 
     const {status, chainId} = useMetaMask();
 
-    const [connectedNetwork, setConnectedNetwork] = useState<Networks.Network>(
+    const [connectedNetwork,] = useState<Networks.Network>(
         status === "connected" ? Networks.fromChainId(chainId) : null
     );
 

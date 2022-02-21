@@ -7,6 +7,8 @@ export type EventFunction = MouseEventHandler<HTMLButtonElement>;
 
 export type SetStateFunction<T> = React.Dispatch<React.SetStateAction<T>>
 
+export type OnClickFunction = (...args: any[]) => (void | any);
+
 export type DeferredPopulatedTransaction = ethers.PopulatedTransaction | Promise<ethers.PopulatedTransaction>;
 
 

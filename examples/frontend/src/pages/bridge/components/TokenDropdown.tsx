@@ -1,6 +1,4 @@
-import {useEffect} from "react";
-
-import {classNames, SetStateFunction} from "../../../utils";
+import {SetStateFunction} from "../../../utils";
 
 import {DarkRoundedItem} from "../../../components/DarkRoundedItem";
 

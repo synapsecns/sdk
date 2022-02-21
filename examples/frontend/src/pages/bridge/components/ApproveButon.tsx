@@ -10,11 +10,10 @@ import {NetworkMenuContext} from "../contexts/NetworkMenuContext";
 import {TokenMenuContext} from "../contexts/TokenMenuContext";
 import {useSynapseBridge} from "../../../hooks";
 
-import {
+import Button, {
     ButtonProps,
-    ActionButton,
     emptyOnClick,
-} from "./ActionButton";
+} from "../../../components/Button";
 
 import {useActionButtonOnClick} from "../hooks/useActionButtonOnClick";
 
@@ -72,7 +71,7 @@ export default function ApproveButon(props: {amountFrom: BigNumber, approved: bo
 
     return (
         <div>
-            <ActionButton {...buttonProps} disabled={disabled}/>
+            <Button {...buttonProps} disabled={disabled}/>
         </div>
     )
 }

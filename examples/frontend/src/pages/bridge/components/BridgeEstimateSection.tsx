@@ -6,7 +6,7 @@ import {BigNumber} from "ethers";
 
 import {useGetBridgeEstimate} from "../../../hooks";
 
-import {classNames, SetStateFunction, valueEther} from "../../../utils";
+import {SetStateFunction, valueEther} from "../../../utils";
 
 import {DarkRoundedItem} from "../../../components/DarkRoundedItem";
 

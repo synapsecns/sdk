@@ -14,13 +14,10 @@ import {useActionButtonOnClick} from "../hooks/useActionButtonOnClick";
 
 import {useSynapseBridge} from "../../../hooks";
 
-import {
+import Button, {
     ButtonProps,
-    ActionButton,
     emptyOnClick,
-} from "./ActionButton";
-
-import {Networks, Token, Bridge} from "@synapseprotocol/sdk";
+} from "../../../components/Button";
 
 export default function BridgeButton(props: {approved: boolean, amountFrom: BigNumber, amountOut: BigNumber}) {
     const {account, status, ethereum} = useMetaMask();
@@ -84,7 +81,7 @@ export default function BridgeButton(props: {approved: boolean, amountFrom: BigN
 
     return (
         <div>
-            <ActionButton {...buttonProps}/>
+            <Button {...buttonProps}/>
         </div>
     )
 }

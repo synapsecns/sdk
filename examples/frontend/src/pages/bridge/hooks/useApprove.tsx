@@ -2,8 +2,7 @@ import {Token} from "@synapseprotocol/sdk";
 import {BigNumber, ethers} from "ethers";
 import {useSendTransaction} from "../../../hooks/useSendTransaction";
 import {useSynapseBridge} from "../../../hooks";
-import {PopulatedTransaction} from "ethers/lib/ethers";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
 interface UseApprove {
     token:   Token,

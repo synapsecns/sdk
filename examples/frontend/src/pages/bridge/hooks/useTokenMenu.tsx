@@ -1,14 +1,12 @@
 import {useContext, useEffect, useState} from "react";
 
-import _ from "lodash";
-
 import TokenDropdown, {TokenDropdownItem} from "../components/TokenDropdown";
 
 import {TokenMenuContext} from "../contexts/TokenMenuContext";
 
-import {detailedTokenSwapMap, Networks} from "@synapseprotocol/sdk";
-
+import {detailedTokenSwapMap} from "@synapseprotocol/sdk";
 import type {Token} from "@synapseprotocol/sdk";
+
 import {BridgeDirections} from "../Directions";
 import {NetworkMenuContext} from "../contexts/NetworkMenuContext";
 import {isNullOrUndefined, SetStateFunction} from "../../../utils";

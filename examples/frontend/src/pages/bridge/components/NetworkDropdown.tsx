@@ -1,4 +1,3 @@
-
 import type {SetStateFunction} from "../../../utils";
 
 import {DarkRoundedItem} from "../../../components/DarkRoundedItem";
@@ -23,7 +22,6 @@ interface NetworkDropdownProps {
 
 export default function NetworkDropdown({direction, selected, setSelected, networks}: NetworkDropdownProps) {
     const title = direction === BridgeDirections.FROM ? "Source chain" : "Destination chain";
-
 
     return (
         <DarkRoundedItem>

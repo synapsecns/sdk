@@ -10,9 +10,6 @@ import {useSynapseBridge} from "./useSynapseBridge";
 import {asError} from "../utils";
 import {NetworkMenuContext} from "../pages/bridge/contexts/NetworkMenuContext";
 import {TokenMenuContext} from "../pages/bridge/contexts/TokenMenuContext";
-import {formatEther} from "@ethersproject/units";
-
-const NO_AMT_OUT: BigNumber = BigNumber.from(0);
 
 interface UseGetBridgeEstimateArgs {
     amountIn:      BigNumber,

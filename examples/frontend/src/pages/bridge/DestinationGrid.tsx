@@ -10,7 +10,6 @@ import {ChainId, supportedNetworks} from "@synapseprotocol/sdk";
 import {BridgeDirections} from "./Directions";
 
 import {NetworkMenuContext} from "./contexts/NetworkMenuContext";
-import {TokenMenuContext} from "./contexts/TokenMenuContext";
 
 import BridgeEstimateSection from "./components/BridgeEstimateSection";
 import {SetStateFunction} from "../../utils";
@@ -23,9 +22,7 @@ interface DestinationGridProps {
 }
 
 export default function DestinationGrid(props: DestinationGridProps) {
-    const
-        {selectedNetworkFrom, selectedNetworkTo} = useContext(NetworkMenuContext),
-        {selectedTokenFrom,   selectedTokenTo}   = useContext(TokenMenuContext);
+    const {selectedNetworkFrom} = useContext(NetworkMenuContext);
 
     const {
         NetworkMenu,

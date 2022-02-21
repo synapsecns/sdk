@@ -10,6 +10,7 @@ export type {
     EventFunction,
     SetStateFunction,
     DeferredPopulatedTransaction,
+    OnClickFunction,
 } from "./types";
 
 export const asError = (e: any): Error => e instanceof Error ? e : new Error(e)
