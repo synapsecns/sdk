@@ -47,6 +47,10 @@ function updateContextSelection(
     setContextSelection: SetStateFunction<Token>
 ) {
     let newSelection = dropdownSelection.token;
+    if (isNullOrUndefined(newSelection)) {
+        return
+    }
+
     if (!isNullOrUndefined(contextSelection)) {
         if (!contextSelection.isEqual(newSelection)) {
             setContextSelection(newSelection);
@@ -88,6 +92,13 @@ export function useSourceTokenMenu() {
     }
 }
 
+const NO_SUPPORTED_TOKENS: TokenDropdownItem = {
+    label:     "no supported output tokens",
+    key:       "NO_SUPPORTED_TOKENS",
+    disabled:  true,
+    token:     null,
+}
+
 function getDestinationChainTokens({sourceChain, destChain, sourceToken}: {
     sourceChain: number,
     destChain:   number,
@@ -119,7 +130,9 @@ export function useDestinationTokenMenu() {
 
     const
         [dropdownItems, setDropdownItems] = useState<TokenDropdownItem[]>(makeDropdownItems(tokens, selectedTokenTo)),
-        [selected,      setSelected]      = useState<TokenDropdownItem>(dropdownItems[0] ?? null);
+        [selected,      setSelected]      = useState<TokenDropdownItem>(
+            dropdownItems.length > 0 ? dropdownItems[0] : NO_SUPPORTED_TOKENS
+        );
 
     useEffect(() => {
         let newTokens = getDestTokens(selectedTokenFrom, selectedNetworkFrom.chainId, selectedNetworkTo.chainId);
@@ -128,30 +141,43 @@ export function useDestinationTokenMenu() {
 
     useEffect(() => {
         let newDropdownItems = makeDropdownItems(tokens, selectedTokenTo);
-        let newSelected = newDropdownItems[0];
-        setSelected(newSelected);
+        let newSelected = newDropdownItems.length > 0 ? newDropdownItems[0] : NO_SUPPORTED_TOKENS;
         setDropdownItems(newDropdownItems);
+        setSelected(newSelected);
     }, [tokens])
 
     useEffect(() => {
         if (!isNullOrUndefined(selected)) {
             updateContextSelection(selected, selectedTokenTo, setSelectedTokenTo);
         }
-    }, [selected]);
+    }, [selected, selectedTokenTo]);
 
-    const [menuProps, setMenuProps] = useState({
+    // useEffect(() => {
+    //     if (!isNullOrUndefined(selected) && !selectedTokenTo.isEqual(selected.token)) {
+    //         setSelected(dropdownItems.find(t => t.token.isEqual(selectedTokenTo)));
+    //     }
+    // }, [selected, selectedTokenTo]);
+
+    // const [menuProps, setMenuProps] = useState({
+    //     selected,
+    //     setSelected,
+    //     dropdownItems,
+    //     direction: BridgeDirections.TO
+    // });
+    //
+    // useEffect(() => {
+    //     if (!_.isEqual(menuProps.dropdownItems, dropdownItems)) {
+    //         let newProps = {...menuProps, selected, dropdownItems}
+    //         setMenuProps(newProps);
+    //     }
+    // }, [dropdownItems, menuProps])
+
+    const menuProps = {
         selected,
         setSelected,
         dropdownItems,
         direction: BridgeDirections.TO
-    });
-
-    useEffect(() => {
-        if (!_.isEqual(menuProps.dropdownItems, dropdownItems)) {
-            let newProps = {...menuProps, selected, dropdownItems}
-            setMenuProps(newProps);
-        }
-    }, [dropdownItems, menuProps])
+    };
 
     return {
         TokenMenu,

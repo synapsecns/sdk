@@ -10,8 +10,6 @@ import {BridgeDirections} from "../Directions";
 import type {DropdownItem} from "../../../components/DropdownMenu";
 
 import {isNullOrUndefined} from "../../../utils";
-import {useMetaMask} from "metamask-react";
-import {BigNumber} from "ethers";
 
 
 interface NetworkDropdownItem extends DropdownItem {
@@ -83,6 +81,20 @@ export const useNetworkMenu = ({networks, direction, disabledChain, startIdx=0}:
     useEffect(() => {
         setDropdownItems(makeDropdownItems(disabledChain));
     }, [disabledChain])
+
+    useEffect(() => {
+        switch (direction) {
+            case BridgeDirections.TO:
+                if (selectedNetworkTo.chainId === selectedNetworkFrom.chainId) {
+                    const idx = dropdownItems.findIndex(n => n.chainId === selected.network.chainId);
+                    if (idx === dropdownItems.length - 1) {
+                        setSelected(dropdownItems[idx-1]);
+                    } else {
+                        setSelected(dropdownItems[idx+1]);
+                    }
+                }
+        }
+    }, [selected, selectedNetworkFrom, selectedNetworkTo])
 
     useEffect(() => {
         let newSelection = selected.network;
