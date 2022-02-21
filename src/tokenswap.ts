@@ -156,7 +156,7 @@ export namespace TokenSwap {
             ? swapData 
             : await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
         
-            return swapInstance.calculateSwap(tokenIndexFrom, tokenIndexTo, args.amountIn)
+        return swapInstance.calculateSwap(tokenIndexFrom, tokenIndexTo, args.amountIn)
             .then((res): EstimatedSwapRate => ({amountOut: res}))
     }
 
