@@ -35,7 +35,7 @@ export namespace GasUtils {
             approveGasLimit: BigNumber.from(75000),
         },
         [ChainId.AURORA]: {
-            gasPrice: makeGwei('0'),
+            gasPrice: makeGwei('1'),
         },
     }
 
