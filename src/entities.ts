@@ -18,7 +18,7 @@ import {
 import type {SignerOrProvider} from "./common/types";
 import {contractAddressFor} from "./common/utils";
 import {ChainId} from "./common/chainid";
-import {newProviderForNetwork} from "./internal/rpcproviders";
+import {rpcProviderForNetwork} from "./internal/rpcproviders";
 
 
 export const newSynapseBridgeInstance = (params: {
@@ -80,12 +80,12 @@ export namespace SynapseEntities {
     }
 
     export function bridgeConfig(): BridgeConfigContract {
-        const provider = newProviderForNetwork(ChainId.ETH);
+        const provider = rpcProviderForNetwork(ChainId.ETH);
         return BridgeConfigFactory.connect(bridgeConfigAddress, provider)
     }
 
     export function poolConfig(): PoolConfigContract {
-        const provider = newProviderForNetwork(ChainId.ETH);
+        const provider = rpcProviderForNetwork(ChainId.ETH);
         return PoolConfigFactory.connect(poolConfigAddress, provider)
     }
 }

@@ -8,7 +8,7 @@ import {Wallet} from "@ethersproject/wallet";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
 import type {Token} from "../../src";
-import {newProviderForNetwork} from "../../src/internal/rpcproviders";
+import {rpcProviderForNetwork} from "../../src/internal/rpcproviders";
 
 const TEN_BN: BigNumber = BigNumber.from(10);
 
@@ -36,7 +36,7 @@ export const
     makeWalletSignerWithProvider = (
         chainId: number,
         privKey: string
-    ): Wallet => new Wallet(privKey, newProviderForNetwork(chainId));
+    ): Wallet => new Wallet(privKey, rpcProviderForNetwork(chainId));
 
 
 export const

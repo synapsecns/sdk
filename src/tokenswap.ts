@@ -10,7 +10,7 @@ import {ChainId, supportedChainIds} from "./common/chainid";
 import {Networks} from "./common/networks";
 
 import {SwapType} from "./internal/swaptype";
-import {newProviderForNetwork} from "./internal/rpcproviders";
+import {rpcProviderForNetwork} from "./internal/rpcproviders";
 
 import {PopulatedTransaction} from "@ethersproject/contracts";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
@@ -258,7 +258,7 @@ export namespace TokenSwap {
             lpToken            = intermediateToken(token, chainId),
             {poolAddress}      = await POOL_CONFIG_INSTANCE.getPoolConfig(lpToken.address(chainId), chainId);
 
-        return SwapFactory.connect(poolAddress, newProviderForNetwork(chainId))
+        return SwapFactory.connect(poolAddress, rpcProviderForNetwork(chainId))
     }
 
     async function swapSetup(tokenFrom: Token, tokenTo: Token, chainId: number): Promise<SwapSetup> {

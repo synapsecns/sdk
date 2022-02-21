@@ -6,7 +6,7 @@ import {
 } from "../helpers";
 
 import {SynapseContracts} from "../../src/common/synapse_contracts";
-import {newProviderForNetwork} from "../../src/internal/rpcproviders";
+import {rpcProviderForNetwork} from "../../src/internal/rpcproviders";
 
 import type {SignerOrProvider} from "../../src/common/types";
 
@@ -24,7 +24,6 @@ import {
 import type {BaseContract} from "@ethersproject/contracts";
 
 describe("Entities tests", function(this: Mocha.Suite) {
-
     enum EntityKind {
         SynapseBridge = "SynapseBridge",
         L1BridgeZap   = "L1BridgeZap",
@@ -90,7 +89,7 @@ describe("Entities tests", function(this: Mocha.Suite) {
     for (const tc of testCases) {
         describe(Networks.networkName(tc.chainId), function(this: Mocha.Suite) {
             const
-                provider                = newProviderForNetwork(tc.chainId),
+                provider                = rpcProviderForNetwork(tc.chainId),
                 newInstanceArgs: fnArgs = {address: tc.address, chainId: tc.chainId, signerOrProvider: provider};
 
             let
