@@ -259,10 +259,12 @@ export namespace TokenSwap {
     }
 
     async function swapSetup(tokenFrom: Token, tokenTo: Token, chainId: number): Promise<SwapSetup> {
-        const
-            swapInstance   = await swapContract(tokenFrom, chainId),
-            tokenIndexFrom = await swapInstance.getTokenIndex(tokenFrom.address(chainId)),
-            tokenIndexTo   = await swapInstance.getTokenIndex(tokenTo.address(chainId));
+        const swapInstance   = await swapContract(tokenFrom, chainId)
+
+        const [tokenIndexFrom, tokenIndexTo] = await Promise.all([
+            swapInstance.getTokenIndex(tokenFrom.address(chainId)),
+            swapInstance.getTokenIndex(tokenTo.address(chainId))
+        ])
 
         return {
             swapInstance,
