@@ -185,74 +185,92 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
             })
         })
 
+        interface BridgeSwapTestArgs {
+            chainIdFrom: number,
+            chainIdTo:   number,
+            tokenFrom:   Token,
+            tokenTo:     Token,
+            amountFrom:  BigNumber,
+        }
+
+        interface BridgeSwapTestCase<T> {
+            args:     BridgeSwapTestArgs,
+            expected: T,
+        }
+
+        function makeBridgeSwapTestCase<T>(
+            chainIdFrom: number|Networks.Network,
+            tokenFrom:   Token,
+            chainIdTo:   number|Networks.Network,
+            tokenTo:     Token,
+            expected:    T,
+            amountFrom:  BigNumber=BigNumber.from(0)
+        ): BridgeSwapTestCase<T> {
+            const
+                c1 = chainIdFrom instanceof Networks.Network ? chainIdFrom.chainId : chainIdFrom,
+                c2 = chainIdTo   instanceof Networks.Network ? chainIdTo.chainId   : chainIdTo;
+
+            return {args: {chainIdFrom: c1, tokenFrom, chainIdTo: c2, tokenTo, amountFrom}, expected}
+        }
+
         describe("checkSwapSupported", function(this: Mocha.Suite) {
-            interface TestArgs {
-                chainIdFrom: number|Networks.Network,
-                chainIdTo:   number|Networks.Network,
-                tokenFrom:   Token,
-                tokenTo:     Token,
-            }
-
-            interface TestCase {
-                args:     TestArgs,
-                expected: boolean,
-            }
-
-            const makeTestCase = (chainIdFrom: number|Networks.Network, tokenFrom: Token, chainIdTo: number|Networks.Network, tokenTo: Token, expected: boolean): TestCase => {
-                return {args: {chainIdFrom, tokenFrom, chainIdTo, tokenTo}, expected}
-            }
+            type TestCase = BridgeSwapTestCase<boolean>
 
             let testCases: TestCase[] = [
-                makeTestCase(ChainId.ETH,       Tokens.DAI,    ChainId.BSC,       Tokens.USDC, true),
-                makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BSC,       Tokens.USDC, false),
-                makeTestCase(ChainId.ARBITRUM,  Tokens.WETH,   ChainId.ETH,       Tokens.ETH,  true),
-                makeTestCase(ChainId.ARBITRUM,  Tokens.WETH,   ChainId.AVALANCHE, Tokens.ETH,  true),
-                makeTestCase(ChainId.AVALANCHE, Tokens.SYN,    ChainId.BSC,       Tokens.SYN,  true),
-                makeTestCase(ChainId.POLYGON,   Tokens.MIM,    ChainId.BSC,       Tokens.USDT, false),
-                makeTestCase(ChainId.FANTOM,    Tokens.MIM,    ChainId.BSC,       Tokens.USDT, true),
-                makeTestCase(ChainId.BOBA,      Tokens.MIM,    ChainId.ETH,       Tokens.MIM,  false),
-                makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BOBA,      Tokens.NETH, false),
-                makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BOBA,      Tokens.ETH,  false),
-                makeTestCase(ChainId.BOBA,      Tokens.ETH,    ChainId.ETH,       Tokens.ETH,  false),
-                makeTestCase(ChainId.BOBA,      Tokens.ETH,    ChainId.ETH,       Tokens.NETH, false),
-                makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BOBA,      Tokens.USDT, false),
-                makeTestCase(ChainId.ETH,       Tokens.NETH,   ChainId.BOBA,      Tokens.USDC, false),
-                makeTestCase(ChainId.BOBA,      Tokens.ETH,    ChainId.ETH,       Tokens.USDT, false),
-                makeTestCase(ChainId.BOBA,      Tokens.NETH,   ChainId.ETH,       Tokens.USDC, false),
-                makeTestCase(ChainId.BOBA,      Tokens.USDC,   ChainId.ETH,       Tokens.USDT, true),
-                makeTestCase(ChainId.ETH,       Tokens.USDT,   ChainId.ETH,       Tokens.USDC, true),
-                makeTestCase(ChainId.BOBA,      Tokens.SYN,    ChainId.ETH,       Tokens.SYN,  true),
-                makeTestCase(ChainId.ETH,       Tokens.SYN,    ChainId.BOBA,      Tokens.SYN,  true),
-                makeTestCase(ChainId.BOBA,      Tokens.SYN,    ChainId.ETH,       Tokens.NUSD, false),
-                makeTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.BOBA,      Tokens.NUSD, true),
-                makeTestCase(ChainId.ETH,       Tokens.SYN,    ChainId.MOONRIVER, Tokens.SYN,  true),
-                makeTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.MOONRIVER, Tokens.FRAX, false),
-                makeTestCase(ChainId.MOONRIVER, Tokens.FRAX,   ChainId.ETH,       Tokens.FRAX, true),
-                makeTestCase(ChainId.ETH,       Tokens.FRAX,   ChainId.MOONRIVER, Tokens.FRAX, true),
-                makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.OPTIMISM,  Tokens.NETH, true),
-                makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.OPTIMISM,  Tokens.ETH,  true),
-                makeTestCase(ChainId.OPTIMISM,  Tokens.ETH,    ChainId.ETH,       Tokens.ETH,  true),
-                makeTestCase(ChainId.OPTIMISM,  Tokens.ETH,    ChainId.ETH,       Tokens.NETH, true),
-                makeTestCase(ChainId.AURORA,    Tokens.USDT,   ChainId.BSC,       Tokens.USDC, true),
-                makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.AURORA,    Tokens.USDC, false),
-                makeTestCase(ChainId.ETH,       Tokens.NETH,   ChainId.AURORA,    Tokens.USDC, false),
-                makeTestCase(Networks.AVALANCHE,Tokens.WETH_E, ChainId.AURORA,    Tokens.USDC, false),
-                makeTestCase(ChainId.ETH,       Tokens.WETH,   ChainId.AVALANCHE, Tokens.WETH_E,true),
-                makeTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.AVALANCHE, Tokens.NUSD,true),
-                makeTestCase(ChainId.ETH,       Tokens.WETH,   ChainId.HARMONY,   Tokens.ONE_ETH,true),
-                makeTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.ETH,       Tokens.WETH,true),
-                makeTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.AVALANCHE, Tokens.WETH_E,true),
-                makeTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.OPTIMISM,  Tokens.WETH,true),
-                makeTestCase(ChainId.OPTIMISM,  Tokens.WETH,   ChainId.HARMONY,   Tokens.ONE_ETH,true),
-                makeTestCase(ChainId.AVALANCHE, Tokens.AVWETH, ChainId.AURORA,    Tokens.USDC, false),
-                makeTestCase(Networks.AVALANCHE,Tokens.AVWETH, ChainId.ETH,       Tokens.WETH, true),
-                makeTestCase(ChainId.HARMONY,   Tokens.AVWETH, ChainId.ETH,       Tokens.WETH,false),
-                makeTestCase(ChainId.BSC,       Tokens.HIGH,   ChainId.ETH,       Tokens.HIGH, true),
-                makeTestCase(ChainId.BSC,       Tokens.JUMP,   ChainId.FANTOM,    Tokens.JUMP, true),
-                makeTestCase(ChainId.BSC,       Tokens.DOG,    ChainId.POLYGON,   Tokens.DOG, true),
-                makeTestCase(ChainId.FANTOM,    Tokens.MIM,    ChainId.POLYGON,   Tokens.DAI, true),
-                makeTestCase(ChainId.POLYGON,   Tokens.NFD,    ChainId.AVALANCHE, Tokens.NFD, true),
-                makeTestCase(ChainId.OPTIMISM,  Tokens.WETH_E, ChainId.AVALANCHE, Tokens.WETH_E,false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.DAI,    ChainId.BSC,       Tokens.USDC,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BSC,       Tokens.USDC,   false),
+                makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.WETH,   ChainId.ETH,       Tokens.ETH,    true),
+                makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.WETH,   ChainId.AVALANCHE, Tokens.ETH,    true),
+                makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.SYN,    ChainId.BSC,       Tokens.SYN,    true),
+                makeBridgeSwapTestCase(ChainId.POLYGON,   Tokens.MIM,    ChainId.BSC,       Tokens.USDT,   false),
+                makeBridgeSwapTestCase(ChainId.FANTOM,    Tokens.MIM,    ChainId.BSC,       Tokens.USDT,   true),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.MIM,    ChainId.ETH,       Tokens.MIM,    false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BOBA,      Tokens.NETH,   false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BOBA,      Tokens.ETH,    false),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.ETH,    ChainId.ETH,       Tokens.ETH,    false),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.ETH,    ChainId.ETH,       Tokens.NETH,   false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BOBA,      Tokens.USDT,   false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.NETH,   ChainId.BOBA,      Tokens.USDC,   false),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.ETH,    ChainId.ETH,       Tokens.USDT,   false),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.NETH,   ChainId.ETH,       Tokens.USDC,   false),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.USDC,   ChainId.ETH,       Tokens.USDT,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.USDT,   ChainId.ETH,       Tokens.USDC,   true),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.SYN,    ChainId.ETH,       Tokens.SYN,    true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.SYN,    ChainId.BOBA,      Tokens.SYN,    true),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.SYN,    ChainId.ETH,       Tokens.NUSD,   false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.BOBA,      Tokens.NUSD,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.SYN,    ChainId.MOONRIVER, Tokens.SYN,    true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.MOONRIVER, Tokens.FRAX,   false),
+                makeBridgeSwapTestCase(ChainId.MOONRIVER, Tokens.FRAX,   ChainId.ETH,       Tokens.FRAX,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.FRAX,   ChainId.MOONRIVER, Tokens.FRAX,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.OPTIMISM,  Tokens.NETH,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.OPTIMISM,  Tokens.ETH,    true),
+                makeBridgeSwapTestCase(ChainId.OPTIMISM,  Tokens.ETH,    ChainId.ETH,       Tokens.ETH,    true),
+                makeBridgeSwapTestCase(ChainId.OPTIMISM,  Tokens.ETH,    ChainId.ETH,       Tokens.NETH,   true),
+                makeBridgeSwapTestCase(ChainId.AURORA,    Tokens.USDT,   ChainId.BSC,       Tokens.USDC,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.AURORA,    Tokens.USDC,   false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.NETH,   ChainId.AURORA,    Tokens.USDC,   false),
+                makeBridgeSwapTestCase(Networks.AVALANCHE,Tokens.WETH_E, ChainId.AURORA,    Tokens.USDC,   false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.WETH,   ChainId.AVALANCHE, Tokens.WETH_E, true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.AVALANCHE, Tokens.NUSD,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.WETH,   ChainId.HARMONY,   Tokens.ONE_ETH,true),
+                makeBridgeSwapTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.ETH,       Tokens.WETH,   true),
+                makeBridgeSwapTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.AVALANCHE, Tokens.WETH_E, true),
+                makeBridgeSwapTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.OPTIMISM,  Tokens.WETH,   true),
+                makeBridgeSwapTestCase(ChainId.OPTIMISM,  Tokens.WETH,   ChainId.HARMONY,   Tokens.ONE_ETH,true),
+                makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.AVWETH, ChainId.AURORA,    Tokens.USDC,   false),
+                makeBridgeSwapTestCase(Networks.AVALANCHE,Tokens.AVWETH, ChainId.ETH,       Tokens.WETH,   true),
+                makeBridgeSwapTestCase(ChainId.HARMONY,   Tokens.AVWETH, ChainId.ETH,       Tokens.WETH,   false),
+                makeBridgeSwapTestCase(ChainId.BSC,       Tokens.HIGH,   ChainId.ETH,       Tokens.HIGH,   true),
+                makeBridgeSwapTestCase(ChainId.BSC,       Tokens.JUMP,   ChainId.FANTOM,    Tokens.JUMP,   true),
+                makeBridgeSwapTestCase(ChainId.BSC,       Tokens.DOG,    ChainId.POLYGON,   Tokens.DOG,    true),
+                makeBridgeSwapTestCase(ChainId.FANTOM,    Tokens.MIM,    ChainId.POLYGON,   Tokens.DAI,    true),
+                makeBridgeSwapTestCase(ChainId.POLYGON,   Tokens.NFD,    ChainId.AVALANCHE, Tokens.NFD,    true),
+                makeBridgeSwapTestCase(ChainId.OPTIMISM,  Tokens.WETH_E, ChainId.AVALANCHE, Tokens.WETH_E, false),
+                makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.ETH,    ChainId.AVALANCHE, Tokens.WETH_E, true),
+                makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.WETH,   ChainId.AVALANCHE, Tokens.WETH_E, true),
+                makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.WETH_E, ChainId.ARBITRUM,  Tokens.ETH,    true),
+                makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.WETH_E, ChainId.ARBITRUM,  Tokens.WETH,   true),
             ];
 
             testCases.forEach(({ args, expected }) => {
@@ -264,16 +282,14 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                 } = args;
 
                 const
-                    netNameFrom = chainIdFrom instanceof Networks.Network ? chainIdFrom.name : Networks.fromChainId(chainIdFrom).name,
-                    netNameTo   = chainIdTo instanceof Networks.Network ? chainIdTo.name : Networks.fromChainId(chainIdTo).name
+                    netNameFrom = Networks.fromChainId(chainIdFrom).name,
+                    netNameTo   = Networks.fromChainId(chainIdTo).name;
 
                 const testTitle = `checkSwapSupported with params ${tokenFromSymbol} on ${netNameFrom} to ${tokenToSymbol} on ${netNameTo} should return ${expected}`
 
                 it(testTitle, function() {
-                    let { chainIdFrom, ...testArgs } = args;
+                    let { chainIdFrom, chainIdTo, ...testArgs } = args;
                     const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
-
-                    let chainIdTo = testArgs.chainIdTo instanceof Networks.Network ? testArgs.chainIdTo.chainId : testArgs.chainIdTo;
 
                     const [swapAllowed, errReason] = bridgeInstance.swapSupported({ ...testArgs, chainIdTo });
                     expect(swapAllowed).to.equal(expected, errReason);
@@ -282,18 +298,13 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
         })
 
         describe("getEstimatedBridgeOutput", function(this: Mocha.Suite) {
-            interface TestCase {
-                args: {
-                    chainIdFrom: number,
-                    chainIdTo:   number,
-                    tokenFrom:   Token,
-                    tokenTo:     Token,
-                    amountFrom:  BigNumber,
-                },
+            interface Expected {
                 notZero:   boolean,
                 wantError: boolean,
                 noAddrTo:  boolean,
             }
+
+            type TestCase = BridgeSwapTestCase<Expected>
 
             const makeTestCase = (
                 t1: Token, t2: Token,
@@ -302,24 +313,20 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                 notZero?:  boolean,
                 wantErr?:  boolean,
                 noAddrTo?: boolean,
-            ): TestCase =>
-                ({
-                    args: {
-                        tokenFrom:   t1,
-                        chainIdFrom: c1,
-                        tokenTo:     t2,
-                        chainIdTo:   c2,
-                        amountFrom:  getTestAmount(t1, c1, amt),
-                    },
+            ): TestCase => {
+                const expected: Expected = {
                     notZero:   notZero  ?? true,
                     wantError: wantErr  ?? false,
                     noAddrTo:  noAddrTo ?? false,
-                })
+                };
+
+                return makeBridgeSwapTestCase(c1, t1, c2, t2, expected, getTestAmount(t1, c1, amt))
+            }
 
             let testCases: TestCase[] = [
                 makeTestCase(Tokens.DAI,     Tokens.USDC,    ChainId.ETH,       ChainId.BSC, "500"),
                 makeTestCase(Tokens.DAI,     Tokens.USDC,    ChainId.ETH,       ChainId.BSC, "50"),
-                makeTestCase(Tokens.DAI,     Tokens.USDC,    ChainId.ETH,       ChainId.BSC, "1", false),
+                makeTestCase(Tokens.DAI,     Tokens.USDC,    ChainId.ETH,       ChainId.BSC, "1",   false),
                 makeTestCase(Tokens.NETH,    Tokens.ETH,     ChainId.BOBA,      ChainId.ETH, "555", false, true),
                 makeTestCase(Tokens.NETH,    Tokens.NETH,    ChainId.BOBA,      ChainId.ETH, "555", false, true),
                 makeTestCase(Tokens.USDC,    Tokens.NUSD,    ChainId.BOBA,      ChainId.BSC, "20"),
@@ -377,6 +384,10 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                 makeTestCase(Tokens.WETH,    Tokens.FTM_ETH, ChainId.ETH,       ChainId.FANTOM),
                 makeTestCase(Tokens.NUSD,    Tokens.DAI,     ChainId.AVALANCHE, ChainId.POLYGON, undefined, true, false, true),
                 makeTestCase(Tokens.WETH,    Tokens.FTM_ETH, ChainId.ETH,       ChainId.FANTOM,  undefined, true, false, true),
+                makeTestCase(Tokens.ETH,     Tokens.WETH_E,  ChainId.ARBITRUM,  ChainId.AVALANCHE),
+                makeTestCase(Tokens.WETH,    Tokens.WETH_E,  ChainId.ARBITRUM,  ChainId.AVALANCHE),
+                makeTestCase(Tokens.WETH_E,  Tokens.ETH,     ChainId.AVALANCHE, ChainId.ARBITRUM),
+                makeTestCase(Tokens.WETH_E,  Tokens.WETH,    ChainId.AVALANCHE, ChainId.ARBITRUM),
             ];
 
             const netName = (c: number): string => Networks.fromChainId(c).name
@@ -391,8 +402,10 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                         chainIdFrom: chainFrom,
                         chainIdTo:   chainTo,
                     },
-                    notZero,
-                    wantError
+                    expected: {
+                        notZero,
+                        wantError
+                    }
                 } = tc;
 
                 const
@@ -417,7 +430,7 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                 let amountTo: BigNumber;
 
                 it(testTitle, function(done: Done) {
-                    let { args: { chainIdFrom, ...testArgs }, notZero, wantError } = tc;
+                    let {args: { chainIdFrom, ...testArgs }, expected: {notZero, wantError}} = tc;
                     const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
 
                     let prom: Promise<boolean> = Promise.resolve(bridgeInstance.estimateBridgeTokenOutput(testArgs)
@@ -443,7 +456,7 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                 it(testTitle2, function(this: Context, done: Done) {
                     this.timeout(10*1000);
 
-                    let { args: { chainIdFrom, tokenFrom, amountFrom }, wantError } = tc;
+                    let {args: {chainIdFrom, tokenFrom, amountFrom}, expected: {wantError}} = tc;
 
                     if (!wantError) {
                         const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
@@ -482,7 +495,7 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                 it(testTitle1, function(this: Context, done: Done) {
                     this.timeout(10*1000);
 
-                    let { args: { chainIdFrom }, args, wantError, noAddrTo } = tc;
+                    let {args: { chainIdFrom }, args, expected: {wantError, noAddrTo}} = tc;
 
                     if (!wantError) {
                         const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
@@ -536,7 +549,7 @@ describe("SynapseBridge token bridge tests", async function(this: Mocha.Suite) {
     const
         tokenFrom      = Tokens.ETH,
         tokenTo        = Tokens.WETH_E,
-        chainIdFrom    = ChainId.ETH,
+        chainIdFrom    = ChainId.ARBITRUM,
         chainIdTo      = ChainId.AVALANCHE,
         amountFrom     = parseEther("420.696969"),
         bridgeArgs     = {tokenFrom, tokenTo, chainIdFrom, chainIdTo, amountFrom},
