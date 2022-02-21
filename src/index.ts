@@ -17,8 +17,6 @@ import {Bridge} from "./bridge/bridge";
 export {Bridge};
 export {Slippages} from "./bridge/slippages";
 
-export type BridgeOutputEstimate = Bridge.BridgeOutputEstimate;
-
 export {
     ChainId,
     supportedChainIds
@@ -34,13 +32,7 @@ export {
     supportedNetworks
 };
 
-export type Network = Networks.Network;
-
-export type {ChainIdTypeMap, AddressMap, DecimalsMap} from "./common/types";
-
 export {BaseToken, WrappedToken} from "./token";
-export type {Token} from "./token";
-
 export {Tokens} from "./tokens";
 
 export {
@@ -51,13 +43,12 @@ export {
     swappableTokensAllNetworks,
 } from "./swappools";
 
-export type {
-    NetworkSwappableTokensMap
-} from "./swappools";
-
 export {TokenSwap, UnsupportedSwapErrors} from "./tokenswap";
 
-export type {
+import type {ChainIdTypeMap, AddressMap, DecimalsMap} from "./common/types";
+import type {Token} from "./token";
+import type {NetworkSwappableTokensMap} from "./swappools";
+import type {
     SynapseBridgeContract,
     GenericZapBridgeContract,
     L1BridgeZapContract,
@@ -65,3 +56,22 @@ export type {
     SynapseERC20Contract,
     BridgeConfigContract
 } from "./contracts";
+
+type Network = Networks.Network;
+type BridgeOutputEstimate = Bridge.BridgeOutputEstimate;
+
+export type {
+    Network,
+    Token,
+    ChainIdTypeMap,
+    AddressMap,
+    DecimalsMap,
+    NetworkSwappableTokensMap,
+    SynapseBridgeContract,
+    GenericZapBridgeContract,
+    L1BridgeZapContract,
+    L2BridgeZapContract,
+    SynapseERC20Contract,
+    BridgeConfigContract,
+    BridgeOutputEstimate,
+}

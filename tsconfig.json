@@ -18,7 +18,9 @@
     "downlevelIteration": true,
     "types": [
       "node",
-      "mocha"
+      "chai",
+      "mocha",
+      "expect",
     ],
     "isolatedModules": true,
     "skipLibCheck": true,
@@ -31,7 +33,7 @@
   ],
   "exclude": [
     "node_modules",
-    "test",
+//    "test",
     "dist",
     "**/*-test.ts"
   ]

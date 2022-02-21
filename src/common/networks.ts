@@ -1,43 +1,66 @@
 import {ChainId} from "./chainid";
 
-import {SwapPools} from "../swappools";
-import type {Token} from "../token";
 import {Tokens} from "../tokens";
+import {SwapPools} from "../swappools";
 
-import {BigNumberish} from "@ethersproject/bignumber";
 
-const ETH_TOKEN_CHAINS = [
-    ChainId.ETH,
-    ChainId.OPTIMISM,
-    ChainId.FANTOM,
-    ChainId.BOBA,
-    ChainId.MOONBEAM,
-    ChainId.ARBITRUM,
-    ChainId.AVALANCHE,
-];
+import type {
+    ID,
+    Entity,
+} from "../internal/entity";
+
+import {BridgeUtils} from "../bridge/bridgeutils";
+
+import type {Token} from "../token";
+import type {ChainIdTypeMap} from "./types";
 
 export namespace Networks {
-    export class Network {
+    interface SupportsTokenChecks {
+        chainId: ChainId,
+        token:   Token,
+    }
+
+    const tokenSupportChecks: SupportsTokenChecks[] = [
+        {chainId: ChainId.ETH,       token: Tokens.WETH},
+        {chainId: ChainId.ETH,       token: Tokens.NETH},
+        {chainId: ChainId.AVALANCHE, token: Tokens.AVAX},
+        {chainId: ChainId.AVALANCHE, token: Tokens.WAVAX},
+        {chainId: ChainId.AVALANCHE, token: Tokens.AVWETH},
+        {chainId: ChainId.MOONRIVER, token: Tokens.MOVR},
+        {chainId: ChainId.MOONRIVER, token: Tokens.WMOVR},
+    ]
+
+    const checkWrappedToken = (chainId: ChainId, token: Token): boolean => {
+        let check = tokenSupportChecks.find((check) =>
+            check.chainId === chainId && check.token.isEqual(token)
+        );
+        
+        return typeof check !== "undefined"
+    }
+
+    interface NetworkArgs {
+        name:          string,
+        chainId:       number,
+        chainCurrency: string,
+    }
+
+    export class Network implements Entity {
+        readonly id:              ID;
         readonly name:            string;
-        readonly names:           string[];
         readonly chainCurrency:   string;
         readonly chainId:         number;
         readonly tokens:          Token[];
         readonly tokenAddresses:  string[];
 
-        constructor(args: {
-            name:        string,
-            names?:      string[],
-            chainId:     number,
-            chainCurrency: string,
-        }) {
-            this.name = args.name
-            this.names = args.names || [];
-            this.chainId = args.chainId;
+        constructor(args: NetworkArgs) {
+            this.name          = args.name
+            this.chainId       = args.chainId;
             this.chainCurrency = args.chainCurrency;
 
             this.tokens         = SwapPools.getAllSwappableTokensForNetwork(this.chainId);
             this.tokenAddresses = this.tokens.map((t) => t.address(this.chainId));
+
+            this.id = Symbol(`${this.name}:${this.chainId}`);
         }
 
         /**
@@ -52,24 +75,24 @@ export namespace Networks {
 
         /**
          * Returns true if the passed token is available on this network.
-         * @param {BaseToken|string} token Either an instance of {@link BaseToken}, or the address of a token contract.
+         * @param {Token} token A {@link Token} object.
          */
         supportsToken(token: Token): boolean {
             let checkSymbol = token.symbol;
 
-            if (checkSymbol === "ETH") {
-                return ETH_TOKEN_CHAINS.includes(this.chainId)
-            } else if (token.isEqual(Tokens.WETH) && this.chainId === ChainId.ETH) {
-                return true
-            } else if (token.isEqual(Tokens.AVWETH) && this.chainId === ChainId.AVALANCHE) {
-              return true
-            } else if (token.isEqual(Tokens.WAVAX) && this.chainId === ChainId.AVALANCHE) {
-                return true
-            } else if (token.isEqual(Tokens.WMOVR) && this.chainId === ChainId.MOONRIVER) {
+            const
+                isEthish  = checkSymbol === "ETH" && (this.chainId === ChainId.ETH || BridgeUtils.isL2ETHChain(this.chainId)),
+                isWrapped = checkWrappedToken(this.chainId, token);
+
+            if (isEthish || isWrapped) {
                 return true
             }
 
-            return this.tokenAddresses.includes(token.address(this.chainId));
+            let tokenAddr: string = token.address(this.chainId);
+
+            return tokenAddr !== null
+                ? this.tokenAddresses.includes(tokenAddr)
+                : false
         }
     }
 
@@ -145,7 +168,7 @@ export namespace Networks {
         chainCurrency: "ONE",
     });
 
-    const CHAINID_NETWORK_MAP: {[c:number]:Network} = {
+    const CHAINID_NETWORK_MAP: ChainIdTypeMap<Network> = {
         [ChainId.ETH]:        ETH,
         [ChainId.OPTIMISM]:   OPTIMISM,
         [ChainId.BSC]:        BSC,
@@ -160,16 +183,17 @@ export namespace Networks {
         [ChainId.HARMONY]:    HARMONY,
     }
 
-    export const fromChainId = (chainId: BigNumberish): Network => CHAINID_NETWORK_MAP[ChainId.asNumber(chainId)] ?? null
+    export const networkName = (chainId: number): string => fromChainId(chainId).name
+
+    export const fromChainId = (chainId: number): Network => CHAINID_NETWORK_MAP[chainId] ?? null
 
     /**
      * Returns true if the passed network supports the passed token.
-     * @param {Network | BigNumberish} network Either a {@link Network} instance, or the Chain ID of a supported network.
-     * @param {BaseToken | string} token Either a {@link BaseToken} instance, or the address of a token contract.
+     * @param {Network | number} network Either a {@link Network} instance, or the Chain ID of a supported network.
+     * @param {Token} token A {@link Token} object.
      */
-    export function networkSupportsToken(network: Network | BigNumberish, token: Token): boolean {
-        network = network instanceof Network ? network : fromChainId(network);
-        return network.supportsToken(token);
+    export function networkSupportsToken(network: Network | number, token: Token): boolean {
+        return (network instanceof Network ? network : fromChainId(network)).supportsToken(token)
     }
 
     export const supportedNetworks = (): Network[] => Object.values(CHAINID_NETWORK_MAP)

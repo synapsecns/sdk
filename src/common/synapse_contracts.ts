@@ -1,4 +1,8 @@
 import {ABIs} from "../abis/index";
+
+import {ChainId} from "./chainid";
+import type {ChainIdTypeMap} from "./types";
+
 import {ContractInterface} from "@ethersproject/contracts";
 
 
@@ -24,6 +28,22 @@ export namespace SynapseContracts {
                 address: bridge_zap,
                 abi: isEthMainnet ? ABIs.L1BridgeZap : ABIs.L2BridgeZap,
             };
+        }
+
+        get bridge_address(): string {
+            return this.bridge.address
+        }
+
+        get bridge_abi(): ContractInterface {
+            return this.bridge.abi
+        }
+
+        get bridge_zap_address(): string {
+            return this.bridge_zap.address
+        }
+
+        get bridge_zap_abi(): ContractInterface {
+            return this.bridge_zap.abi
         }
     }
 
@@ -87,4 +107,23 @@ export namespace SynapseContracts {
         bridge:     "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
         bridge_zap: "0xB729B5bAD4B42f3bDd4A3518a1Cc00178cb5920a",
     });
+
+    const chainIdContractsMap: ChainIdTypeMap<SynapseContract> = {
+        [ChainId.ETH]:       Ethereum,
+        [ChainId.OPTIMISM]:  Optimism,
+        [ChainId.BSC]:       BSC,
+        [ChainId.POLYGON]:   Polygon,
+        [ChainId.FANTOM]:    Fantom,
+        [ChainId.BOBA]:      Boba,
+        [ChainId.MOONBEAM]:  Moonbeam,
+        [ChainId.MOONRIVER]: Moonriver,
+        [ChainId.ARBITRUM]:  Arbitrum,
+        [ChainId.AVALANCHE]: Avalanche,
+        [ChainId.AURORA]:    Aurora,
+        [ChainId.HARMONY]:   Harmony,
+    }
+
+    export function contractsForChainId(chainId: number): SynapseContract {
+        return chainIdContractsMap[chainId]
+    }
 }

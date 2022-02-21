@@ -1,12 +1,14 @@
 import {ChainId} from "./chainid";
 import {SynapseContracts} from "./synapse_contracts";
 
-import {Signer} from "@ethersproject/abstract-signer";
-import {PopulatedTransaction, ContractTransaction} from "@ethersproject/contracts";
+import type {Signer} from "@ethersproject/abstract-signer";
 
+import type {
+    PopulatedTransaction,
+    ContractTransaction,
+} from "@ethersproject/contracts";
 
 export const rejectPromise = (e: any): Promise<never> => Promise.reject(e instanceof Error ? e : new Error(e))
-
 
 export const executePopulatedTransaction = (
     populatedTxn: Promise<PopulatedTransaction>,

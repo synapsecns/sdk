@@ -1,16 +1,32 @@
+import "../helpers/chaisetup";
+
 import {expect} from "chai";
-import {before, Done} from "mocha";
 
 import {
+    allNetworksSwapTokensMap,
     ChainId,
     Networks,
     NetworkSwappableTokensMap,
     networkSwapTokensMap,
-    allNetworksSwapTokensMap,
+    supportedChainIds,
+    SwapPools,
     Token,
-    Tokens,
-    SwapPools
+    Tokens
 } from "../../src";
+
+import {
+    wrapExpect,
+    expectLength,
+    expectIncludes,
+    expectBoolean,
+} from "../helpers";
+
+interface _tc {
+    want: boolean,
+}
+
+const makeWantString = (tc: _tc, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
+
 
 
 describe("Basic tests", function(this: Mocha.Suite) {
@@ -18,15 +34,31 @@ describe("Basic tests", function(this: Mocha.Suite) {
 
     describe("Check networks", function(this: Mocha.Suite) {
         const
-            supportedChains   = ChainId.supportedChainIds(),
-            supportedNetworks = Networks.supportedNetworks();
+            supportedChains   = supportedChainIds(),
+            supportedNetworks = Networks.supportedNetworks(),
+            testSuffix: string = `should return ${numChains} entries`;
 
-        it(`supportedChainIds should return ${numChains} chains`, () => expect(supportedChains).to.have.a.lengthOf(numChains))
+        it(
+            `supportedChainIds ${testSuffix}`,
+            wrapExpect(expectLength(supportedChains, numChains))
+        )
 
-        it(`supportedNetworks should return ${numChains} networks`, () => expect(supportedNetworks).to.have.a.lengthOf(numChains))
+        it(
+            `supportedNetworks ${testSuffix}`,
+            wrapExpect(expectLength(supportedNetworks, numChains))
+        )
     })
 
     describe("Check swappableTokens", function(this: Mocha.Suite) {
+        interface TestCase {
+            token:   Token,
+            want:    boolean,
+        }
+
+        interface ChainTestCase extends TestCase {
+            chainId: number,
+        }
+
         const
             chainA = ChainId.ETH,
             chainB = ChainId.BSC,
@@ -36,51 +68,130 @@ describe("Basic tests", function(this: Mocha.Suite) {
 
         const symbolsForChain = (m: NetworkSwappableTokensMap, c: number): string[] => m[c].map((t: Token) => t.symbol)
 
+        it(
+            "resA should have one map entry",
+            wrapExpect(expectLength(Object.keys(resA), 1))
+        );
+
+        it(
+            "resB should have more than one map entry",
+            wrapExpect(expect(Object.keys(resB)).length.to.be.gte(1))
+        );
+
+        it(
+            `resC should have ${numChains} map entries`,
+            wrapExpect(expectLength(Object.keys(resC), numChains))
+        )
+
         describe("Check result of two inputs", function(this: Mocha.Suite) {
-            it("should have one map entry", () => expect(Object.keys(resA)).to.have.a.lengthOf(1));
-            it("should have USDC and USDT", () => {
-                const symbols = symbolsForChain(resA, chainB);
-                expect(symbols).to.include(Tokens.USDC.symbol);
-                expect(symbols).to.include(Tokens.USDT.symbol);
-            })
+            const testCases: TestCase[] = [
+                {token: Tokens.USDC, want: true},
+                {token: Tokens.USDT, want: true},
+            ];
+
+            const symbols = symbolsForChain(resA, chainB);
+
+            for (const tc of testCases) {
+                const testTitle: string = `symbolsForChain(resA, ${chainB}) ${makeWantString(tc)} token ${tc.token.name}`;
+
+                it(
+                    testTitle,
+                    wrapExpect(expectIncludes(symbols, tc.token.symbol, tc.want))
+                )
+            }
         })
 
         describe("Check result of one input", function(this: Mocha.Suite) {
-            it("should have more than one map entry", () => expect(Object.keys(resB)).length.to.be.gte(1));
-            it("should have nETH on BOBA and Arbitrum", () => {
-                expect(symbolsForChain(resB, ChainId.ARBITRUM)).to.include(Tokens.NETH.symbol);
-                expect(symbolsForChain(resB, ChainId.BOBA)).to.include(Tokens.NETH.symbol);
-            })
+            const testCases: ChainTestCase[] = [
+                {token: Tokens.NETH, want: true, chainId: ChainId.ARBITRUM},
+                {token: Tokens.NETH, want: true, chainId: ChainId.BOBA},
+            ];
+
+            for (const tc of testCases) {
+                const testTitle: string = `network ${Networks.networkName(tc.chainId)} ${makeWantString(tc)} token ${tc.token.name}`;
+
+                it(
+                    testTitle,
+                    wrapExpect(expectIncludes(symbolsForChain(resB, tc.chainId), tc.token.symbol, tc.want))
+                )
+            }
         })
 
-        describe("Check result of bsc", function(this: Mocha.Suite) {
-            it("should have nusd, busd, usdc, and usdt", () => {
-                const net = Networks.fromChainId(chainB);
-                expect(net.supportsToken(Tokens.NUSD)).to.be.true;
-                expect(net.supportsToken(Tokens.BUSD)).to.be.true;
-                expect(net.supportsToken(Tokens.DAI)).to.be.false;
-            })
-        })
+        describe("Test supported tokens", function(this: Mocha.Suite) {
+            const testCases: ChainTestCase[] = [
+                {chainId: ChainId.BSC,          token: Tokens.NUSD,         want: true},
+                {chainId: ChainId.BSC,          token: Tokens.BUSD,         want: true},
+                {chainId: ChainId.BSC,          token: Tokens.DAI,          want: false},
+                {chainId: ChainId.ETH,          token: Tokens.NUSD,         want: true},
+                {chainId: ChainId.ETH,          token: Tokens.BUSD,         want: false},
+                {chainId: ChainId.ETH,          token: Tokens.DAI,          want: true},
+                {chainId: ChainId.ETH,          token: Tokens.ETH,          want: true},
+                {chainId: ChainId.ETH,          token: Tokens.WETH,         want: true},
+                {chainId: ChainId.AVALANCHE,    token: Tokens.AVWETH,       want: true},
+                {chainId: ChainId.AVALANCHE,    token: Tokens.WAVAX,        want: true},
+                {chainId: ChainId.MOONRIVER,    token: Tokens.WMOVR,        want: true},
+            ];
 
-        describe("Check result of swappableTokensAllNetworks", function(this: Mocha.Suite) {
-            it(`should have ${numChains} map entries`, () => expect(Object.keys(resC)).to.have.a.lengthOf(numChains))
+            for (const tc of testCases) {
+                const
+                    net: Networks.Network = Networks.fromChainId(tc.chainId),
+                    testTitle: string  = `${net.name} ${makeWantString(tc, "support")} token ${tc.token.name}`,
+                    supported: boolean = net.supportsToken(tc.token);
+
+                it(
+                    testTitle,
+                    wrapExpect(expectBoolean(supported, tc.want))
+                )
+            }
         })
     })
 })
 
 describe("SwapPools", function(this: Mocha.Suite) {
     describe("Pool tokens", function(this: Mocha.Suite) {
-        it("BSC stableswap pool should have nUSD, BUSD, USDC, and USDC", function() {
-            let
-                poolTokens = SwapPools.BSC_POOL_SWAP_TOKEN.poolTokens,
-                poolSymbols = poolTokens.map((t: Token) => t.symbol);
+        interface testCaseToken {
+            token: Token,
+            want:  boolean,
+        }
+        interface testCase {
+            chainId:   number,
+            swapToken: SwapPools.SwapPoolToken,
+            tokens:    testCaseToken[]
+        }
 
-            expect(poolSymbols).to.include(Tokens.NUSD.symbol);
-            expect(poolSymbols).to.include(Tokens.BUSD.symbol);
-            expect(poolSymbols).to.include(Tokens.USDC.symbol);
-            expect(poolSymbols).to.include(Tokens.USDT.symbol);
+        const testCases: testCase[] = [
+            {
+                chainId:       ChainId.BSC,
+                swapToken:     SwapPools.BSC_POOL_SWAP_TOKEN,
+                tokens: [
+                    {token: Tokens.NUSD, want: true},
+                    {token: Tokens.BUSD, want: true},
+                    {token: Tokens.USDC, want: true},
+                    {token: Tokens.USDT, want: true},
+                    {token: Tokens.DAI,  want: false},
+                    {token: Tokens.FRAX, want: false},
+                ],
+            }
+        ];
 
-            expect(poolSymbols).to.not.include(Tokens.DAI.symbol);
-        })
+        for (const tc of testCases) {
+            const
+                describeTitle: string = `test ${Networks.networkName(tc.chainId)} ${tc.swapToken.name.trimEnd()} pool tokens`,
+                poolSymbols: string[] = tc.swapToken.poolTokens.map((t: Token) => t.symbol);
+
+            describe(describeTitle, function(this: Mocha.Suite) {
+                for (const tok of tc.tokens) {
+                    const
+                        wantTok: boolean  = tok.want,
+                        tokSymbol: string = tok.token.symbol,
+                        testTitle: string = `pool symbols ${makeWantString(tok)} symbol ${tokSymbol}`;
+
+                    it(
+                        testTitle,
+                        wrapExpect(expectIncludes(poolSymbols, tokSymbol, wantTok))
+                    )
+                }
+            })
+        }
     })
 })

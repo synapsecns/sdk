@@ -6,7 +6,7 @@ import {rejectPromise} from "./common/utils";
 import {SynapseEntities} from "./entities";
 import {SwapContract, SwapFactory} from "./contracts";
 
-import {ChainId} from "./common/chainid";
+import {ChainId, supportedChainIds} from "./common/chainid";
 import {Networks} from "./common/networks";
 
 import {SwapType} from "./internal/swaptype";
@@ -66,6 +66,8 @@ export namespace UnsupportedSwapErrors {
 }
 
 export namespace TokenSwap {
+    const POOL_CONFIG_INSTANCE = SynapseEntities.poolConfig();
+
     export interface SwapParams {
         chainId:       number,
         tokenFrom:     Token,
@@ -216,7 +218,7 @@ export namespace TokenSwap {
     export function detailedTokenSwapMap(): DetailedTokenSwapMap {
         let res: DetailedTokenSwapMap = {};
 
-        const allChainIds = ChainId.supportedChainIds();
+        const allChainIds = supportedChainIds();
 
         for (const c1 of allChainIds) {
             let n1: Networks.Network = Networks.fromChainId(c1);
@@ -253,9 +255,8 @@ export namespace TokenSwap {
 
     async function swapContract(token: Token, chainId: number): Promise<SwapContract> {
         const
-            poolConfigInstance = SynapseEntities.poolConfig(),
             lpToken            = intermediateToken(token, chainId),
-            {poolAddress}      = await poolConfigInstance.getPoolConfig(lpToken.address(chainId), chainId);
+            {poolAddress}      = await POOL_CONFIG_INSTANCE.getPoolConfig(lpToken.address(chainId), chainId);
 
         return SwapFactory.connect(poolAddress, newProviderForNetwork(chainId))
     }

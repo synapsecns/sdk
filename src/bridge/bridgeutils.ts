@@ -10,7 +10,7 @@ import {Zero} from "@ethersproject/constants";
 
 
 export namespace BridgeUtils {
-    const ETH_CHAINS = [
+    export const L2_ETH_CHAINS = [
         ChainId.OPTIMISM,
         ChainId.FANTOM,
         ChainId.BOBA,
@@ -20,7 +20,7 @@ export namespace BridgeUtils {
         ChainId.HARMONY,
     ];
 
-    export const isL2ETHChain = (chainId: number): boolean => ETH_CHAINS.includes(chainId);
+    export const isL2ETHChain = (chainId: number): boolean => L2_ETH_CHAINS.includes(chainId);
 
     interface DepositIfChainArgs {
         chainId:     number,
@@ -126,7 +126,8 @@ export namespace BridgeUtils {
         args: BridgeTxParams,
         chainId: number,
         t: Token
-    ): [string, number, string, BigNumber] => [args.addressTo, args.chainIdTo, t.address(chainId), args.amountFrom]
+    ): [string, number, string, BigNumber] =>
+        [args.addressTo, args.chainIdTo, t.address(chainId), args.amountFrom]
 
     export const makeEasySubParams = (
         args: BridgeTxParams,
@@ -137,32 +138,25 @@ export namespace BridgeUtils {
         return [x[0], x[1], x[2]]
     }
 
-    export const depositETHParams = (args: BridgeTxParams): [string, number, BigNumber] => [args.addressTo, args.chainIdTo, args.amountFrom];
+    export const depositETHParams = (args: BridgeTxParams): [string, number, BigNumber] =>
+        [args.addressTo, args.chainIdTo, args.amountFrom];
 
-    export async function calculateSwapL2Zap(
-        zapBridge: GenericZapBridgeContract,
+    export const calculateSwapL2Zap = async (
+        zapBridge:         GenericZapBridgeContract,
         intermediateToken: string,
-        tokenIndexFrom: number,
-        tokenIndexTo: number,
-        amount: BigNumber
-    ): Promise<BigNumber> {
-        return (zapBridge as L2BridgeZapContract).calculateSwap(
+        tokenIndexFrom:    number,
+        tokenIndexTo:      number,
+        amount:           BigNumber
+    ): Promise<BigNumber> =>
+        (zapBridge as L2BridgeZapContract).calculateSwap(
             intermediateToken,
             tokenIndexFrom,
             tokenIndexTo,
             amount
         )
-    }
 
     export const isETHLikeToken = (t: Token): boolean =>
         t.isEqual(Tokens.WETH_E) || t.isEqual(Tokens.ONE_ETH) || t.isEqual(Tokens.FTM_ETH)
 
-    export const makeOverrides = (value: BigNumber, withValue: boolean): any => {
-        let overrides: any = {}
-        if (withValue) {
-            overrides = {value}
-        }
-
-        return overrides
-    }
+    export const makeOverrides = (value: BigNumber, withValue: boolean): any => withValue ? {value} : {};
 }

@@ -441,7 +441,5 @@ export namespace Tokens {
         GOHM,  SOLAR,    GMX,
     ];
 
-    export function isMintBurnToken(token: Token): boolean {
-        return mintBurnTokens.map((t) => t.symbol).includes(token.symbol)
-    }
+    export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
 }
