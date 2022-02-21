@@ -9,7 +9,7 @@ import type {Token} from "@synapseprotocol/sdk";
 
 import {BridgeDirections} from "../Directions";
 import {NetworkMenuContext} from "../contexts/NetworkMenuContext";
-import {isNullOrUndefined, SetStateFunction} from "../../../utils";
+import {isNullOrUndefined, SetStateFunction} from "@utils";
 
 function TokenMenu({dropdownItems, direction, selected, setSelected}) {
     return (

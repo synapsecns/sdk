@@ -1,6 +1,6 @@
 import {ethers} from "ethers";
-import {SetStateFunction} from "../../../utils";
-import {ButtonProps} from "../../../components/Button";
+import {SetStateFunction} from "@utils";
+import {ButtonProps} from "@components/Button";
 
 
 export function useActionButtonOnClick(

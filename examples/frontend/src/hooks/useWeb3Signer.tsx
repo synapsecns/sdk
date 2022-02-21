@@ -1,7 +1,7 @@
 import {useMetaMask} from "metamask-react";
 import {ethers} from "ethers";
 import {useEffect, useState} from "react";
-import {MetamaskStatus} from "../utils";
+import {MetamaskStatus} from "@utils";
 
 export function useWeb3Signer() {
     const {account, status, ethereum} = useMetaMask();

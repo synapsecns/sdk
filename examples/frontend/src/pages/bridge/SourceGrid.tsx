@@ -6,7 +6,7 @@ import type {AmountDropdownItem} from "./components/AmountFromDropdown";
 import {BigNumber} from "ethers";
 
 import {ChainId, Networks, supportedNetworks} from "@synapseprotocol/sdk";
-import {SetStateFunction} from "../../utils";
+import {SetStateFunction} from "@utils";
 import {BridgeDirections} from "./Directions";
 import AmountFromDropdown from "./components/AmountFromDropdown";
 import {useEffect, useState} from "react";

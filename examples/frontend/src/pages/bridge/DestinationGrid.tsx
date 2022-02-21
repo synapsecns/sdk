@@ -12,7 +12,7 @@ import {BridgeDirections} from "./Directions";
 import {NetworkMenuContext} from "./contexts/NetworkMenuContext";
 
 import BridgeEstimateSection from "./components/BridgeEstimateSection";
-import {SetStateFunction} from "../../utils";
+import {SetStateFunction} from "@utils";
 
 interface DestinationGridProps {
     className?:   string,

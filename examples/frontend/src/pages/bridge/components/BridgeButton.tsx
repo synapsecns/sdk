@@ -5,19 +5,19 @@ import {
     MetamaskStatus,
     getSigner,
     valueWei,
-} from "../../../utils";
+} from "@utils";
 
 import {NetworkMenuContext} from "../contexts/NetworkMenuContext";
 import {TokenMenuContext} from "../contexts/TokenMenuContext";
 
 import {useActionButtonOnClick} from "../hooks/useActionButtonOnClick";
 
-import {useSynapseBridge} from "../../../hooks";
+import {useSynapseBridge} from "@hooks";
 
 import Button, {
     ButtonProps,
     emptyOnClick,
-} from "../../../components/Button";
+} from "@components/Button";
 
 export default function BridgeButton(props: {approved: boolean, amountFrom: BigNumber, amountOut: BigNumber}) {
     const {account, status, ethereum} = useMetaMask();

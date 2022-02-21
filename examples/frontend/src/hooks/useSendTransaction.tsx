@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {DeferredPopulatedTransaction, TransactionStatus, sendTransaction, SendTransactionResponse} from "../utils";
+import {DeferredPopulatedTransaction, TransactionStatus, sendTransaction, SendTransactionResponse} from "@utils";
 import {useMetaMask} from "metamask-react";
 
 interface UseSendTransaction {

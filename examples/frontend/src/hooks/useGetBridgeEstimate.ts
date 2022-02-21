@@ -7,9 +7,9 @@ import {BigNumber} from "ethers";
 
 import {useSynapseBridge} from "./useSynapseBridge";
 
-import {asError} from "../utils";
-import {NetworkMenuContext} from "../pages/bridge/contexts/NetworkMenuContext";
-import {TokenMenuContext} from "../pages/bridge/contexts/TokenMenuContext";
+import {asError} from "@utils";
+import {NetworkMenuContext} from "@pages/bridge/contexts/NetworkMenuContext";
+import {TokenMenuContext} from "@pages/bridge/contexts/TokenMenuContext";
 
 interface UseGetBridgeEstimateArgs {
     amountIn:      BigNumber,

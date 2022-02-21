@@ -5,15 +5,16 @@ import {
     MetamaskStatus,
     getSigner,
     SetStateFunction,
-} from "../../../utils";
+} from "@utils";
+import {useSynapseBridge} from "@hooks";
+
 import {NetworkMenuContext} from "../contexts/NetworkMenuContext";
 import {TokenMenuContext} from "../contexts/TokenMenuContext";
-import {useSynapseBridge} from "../../../hooks";
 
 import Button, {
     ButtonProps,
     emptyOnClick,
-} from "../../../components/Button";
+} from "@components/Button";
 
 import {useActionButtonOnClick} from "../hooks/useActionButtonOnClick";
 

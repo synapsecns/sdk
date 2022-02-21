@@ -1,4 +1,4 @@
-import {OnClickFunction} from "../utils";
+import type {OnClickFunction} from "@utils";
 
 export interface ButtonProps {
     text:      string,

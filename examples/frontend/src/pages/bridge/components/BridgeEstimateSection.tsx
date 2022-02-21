@@ -4,11 +4,11 @@ import type {Token} from "@synapseprotocol/sdk";
 
 import {BigNumber} from "ethers";
 
-import {useGetBridgeEstimate} from "../../../hooks";
+import {useGetBridgeEstimate} from "@hooks";
 
-import {SetStateFunction, valueEther} from "../../../utils";
+import {SetStateFunction, valueEther} from "@utils";
 
-import {DarkRoundedItem} from "../../../components/DarkRoundedItem";
+import {DarkRoundedItem} from "@components/DarkRoundedItem";
 
 interface BridgeEstimateSectionProps {
     amountIn:   BigNumber,

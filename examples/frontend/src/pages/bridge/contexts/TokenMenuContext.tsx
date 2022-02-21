@@ -1,9 +1,9 @@
 import React, {useState, createContext} from "react";
 
+import {Tokens} from "@synapseprotocol/sdk";
 import type {Token} from "@synapseprotocol/sdk";
 
-import type {SetStateFunction} from "../../../utils";
-import {Tokens} from "@synapseprotocol/sdk";
+import type {SetStateFunction} from "@utils";
 
 type Context = {
     selectedTokenFrom:     Token,

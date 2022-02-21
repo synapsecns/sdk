@@ -1,9 +1,9 @@
-import type {SetStateFunction} from "../../../utils";
+import type {SetStateFunction} from "@utils";
 
-import {DarkRoundedItem} from "../../../components/DarkRoundedItem";
+import {DarkRoundedItem} from "@components/DarkRoundedItem";
 
-import {DropdownMenu} from "../../../components/DropdownMenu";
-import type {DropdownItem} from "../../../components/DropdownMenu";
+import {DropdownMenu} from "@components/DropdownMenu";
+import type {DropdownItem} from "@components/DropdownMenu";
 
 import {BridgeDirections} from "../Directions";
 

@@ -5,7 +5,7 @@ import ApproveButon from "./components/ApproveButon";
 import {TokenMenuContextProvider}   from "./contexts/TokenMenuContext";
 import {NetworkMenuContextProvider} from "./contexts/NetworkMenuContext";
 
-import {Grid} from "../../components/Grid";
+import {Grid} from "@components/Grid";
 
 import {BigNumber} from "ethers";
 

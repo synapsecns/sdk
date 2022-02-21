@@ -7,9 +7,9 @@ import {NetworkMenuContext} from "../contexts/NetworkMenuContext";
 import NetworkDropdown from "../components/NetworkDropdown";
 import {BridgeDirections} from "../Directions";
 
-import type {DropdownItem} from "../../../components/DropdownMenu";
+import type {DropdownItem} from "@components/DropdownMenu";
 
-import {isNullOrUndefined} from "../../../utils";
+import {isNullOrUndefined} from "@utils";
 
 
 interface NetworkDropdownItem extends DropdownItem {

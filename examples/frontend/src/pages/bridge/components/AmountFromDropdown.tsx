@@ -1,7 +1,7 @@
-import {DropdownItem, DropdownMenu} from "../../../components/DropdownMenu";
+import {DropdownItem, DropdownMenu} from "@components/DropdownMenu";
 import {BigNumber} from "ethers";
 
-import {DarkRoundedItem} from "../../../components/DarkRoundedItem";
+import {DarkRoundedItem} from "@components/DarkRoundedItem";
 
 export interface AmountDropdownItem extends DropdownItem {
     amount: BigNumber,

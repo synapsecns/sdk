@@ -1,4 +1,4 @@
-import {classNames} from "../utils";
+import {classNames} from "@utils";
 
 const CLASS_NAME: string = classNames(
     "rounded-md border",

@@ -1,11 +1,10 @@
-import React, {useState, createContext, useContext, useEffect} from "react";
+import React, {useState, createContext, useEffect} from "react";
 
 import {Networks} from "@synapseprotocol/sdk";
 
 import {useMetaMask} from "metamask-react";
 
-import type {SetStateFunction} from "../../../utils";
-import {isNullOrUndefined} from "../../../utils";
+import type {SetStateFunction} from "@utils";
 
 type Context = {
     selectedNetworkFrom:     Networks.Network,
