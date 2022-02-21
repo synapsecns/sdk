@@ -32,6 +32,8 @@ export namespace UnsupportedSwapErrors {
         reason:    string,
     }
 
+    export type UnsupportedSwapErrorFunc = (t: Tok, netName: string) => UnsupportedSwapErrors.UnsupportedSwapError;
+
     export const tokenNotSupported = (t: Tok, netName: string): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedToken,
         reason:    `Token ${t.symbol} not supported on network ${netName}`,
@@ -313,13 +315,17 @@ export namespace TokenSwap {
     }
 
     function checkTokensSupported(tokenFrom: Token, tokenTo: Token, chainIdFrom: number, chainIdTo?: number): SwapSupportedResult {
+        const unsupportedFunc = (
+            chainId: number,
+            notSupportedErr: UnsupportedSwapErrors.UnsupportedSwapErrorFunc
+        ): UnsupportedSwapErrors.UnsupportedSwapErrorFunc => (typeof chainId !== "undefined"
+            ? notSupportedErr
+            : UnsupportedSwapErrors.tokenNotSupported
+        );
+
         const
-            unsupportedFromFunc = (typeof chainIdTo !== "undefined"
-                ? UnsupportedSwapErrors.tokenNotSupportedNetFrom
-                : UnsupportedSwapErrors.tokenNotSupported),
-            unsupportedToFunc = (typeof chainIdTo !== "undefined"
-                ? UnsupportedSwapErrors.tokenNotSupportedNetTo
-                : UnsupportedSwapErrors.tokenNotSupported);
+            unsupportedFromErr = unsupportedFunc(chainIdFrom, UnsupportedSwapErrors.tokenNotSupportedNetFrom),
+            unsupportedToErr   = unsupportedFunc(chainIdTo,   UnsupportedSwapErrors.tokenNotSupportedNetTo);
 
         const
             netFrom = Networks.fromChainId(chainIdFrom),
@@ -331,10 +337,10 @@ export namespace TokenSwap {
 
         if (!netFrom.supportsToken(tokenFrom)) {
             swapSupported = false;
-            reasonNotSupported = unsupportedFromFunc(tokenFrom, netFrom.name);
+            reasonNotSupported = unsupportedFromErr(tokenFrom, netFrom.name);
         } else if (!netTo.supportsToken(tokenTo)) {
             swapSupported = false;
-            reasonNotSupported = unsupportedToFunc(tokenTo, netTo.name);
+            reasonNotSupported = unsupportedToErr(tokenTo, netTo.name);
         }
 
         return {swapSupported, reasonNotSupported}
