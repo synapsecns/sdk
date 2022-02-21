@@ -73,6 +73,7 @@ export namespace TokenSwap {
         tokenFrom:     Token,
         tokenTo:       Token,
         amountIn:      BigNumberish,
+        swapData?:     SwapSetup,
     }
 
     export interface SwapTokensParams extends SwapParams {
@@ -150,13 +151,13 @@ export namespace TokenSwap {
             return rejectPromise(reasonNotSupported)
         }
 
-        return swapSetup(args.tokenFrom, args.tokenTo, args.chainId)
-            .then(({swapInstance, tokenIndexFrom, tokenIndexTo}) =>
-                swapInstance.calculateSwap(tokenIndexFrom, tokenIndexTo, args.amountIn)
-                    .then((res): EstimatedSwapRate => ({amountOut: res}))
-                    .catch(rejectPromise)
-            )
-            .catch(rejectPromise)
+        const {swapData} = args;
+        const {swapInstance, tokenIndexFrom, tokenIndexTo} = swapData 
+            ? swapData 
+            : await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
+        
+        return swapInstance.calculateSwap(tokenIndexFrom, tokenIndexTo, args.amountIn)
+            .then((res): EstimatedSwapRate => ({amountOut: res}))
     }
 
     export async function buildSwapTokensTransaction(args: SwapTokensParams): Promise<PopulatedTransaction> {
@@ -165,23 +166,24 @@ export namespace TokenSwap {
             return rejectPromise(reasonNotSupported)
         }
 
-        return swapSetup(args.tokenFrom, args.tokenTo, args.chainId)
-            .then(({swapInstance, tokenIndexFrom, tokenIndexTo}) => {
-                let {deadline} = args;
-                deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
+        const {swapData} = args;
+        const {swapInstance, tokenIndexFrom, tokenIndexTo} = swapData 
+            ? swapData 
+            : await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
 
-                const overrides: any = args.tokenFrom.isEqual(Tokens.ETH) ? {value:args.amountIn} : {};
+        let {deadline} = args;
+        deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
 
-                return swapInstance.populateTransaction.swap(
-                    tokenIndexFrom,
-                    tokenIndexTo,
-                    args.amountIn,
-                    args.minAmountOut,
-                    deadline,
-                    overrides
-                )
-            })
-            .catch(rejectPromise)
+        const overrides: any = args.tokenFrom.isEqual(Tokens.ETH) ? {value:args.amountIn} : {};
+
+        return swapInstance.populateTransaction.swap(
+            tokenIndexFrom,
+            tokenIndexTo,
+            args.amountIn,
+            args.minAmountOut,
+            deadline,
+            overrides
+        )
     }
 
     export function intermediateTokens(chainId: number, token: Token): IntermediateSwapTokens {
@@ -266,23 +268,19 @@ export namespace TokenSwap {
             .catch(rejectPromise)
     }
 
-    async function swapSetup(tokenFrom: Token, tokenTo: Token, chainId: number): Promise<SwapSetup> {
-        return swapContract(tokenFrom, chainId)
-            .then(swapInstance =>
-                Promise.all([
-                    swapInstance.getTokenIndex(tokenFrom.address(chainId)),
-                    swapInstance.getTokenIndex(tokenTo.address(chainId))
-                ])
-                    .then(([tokenIndexFrom, tokenIndexTo]) => ({
-                        swapInstance,
-                        tokenIndexFrom,
-                        tokenIndexTo,
-                    }))
-                    .catch(rejectPromise)
-            )
-            .catch(rejectPromise)
-    }
+    export async function swapSetup(tokenFrom: Token, tokenTo: Token, chainId: number): Promise<SwapSetup> {
+        const swapInstance = await swapContract(tokenFrom, chainId);
 
+        return Promise.all([
+                swapInstance.getTokenIndex(tokenFrom.address(chainId)),
+                swapInstance.getTokenIndex(tokenTo.address(chainId)),
+        ]).then(([tokenIndexFrom, tokenIndexTo]) => ({
+            swapInstance,
+            tokenIndexFrom,
+            tokenIndexTo,
+        })).catch(rejectPromise)
+
+    }
 
     function intermediateToken(token: Token, chainId: number): Token {
         const {intermediateToken, bridgeConfigIntermediateToken} = intermediateTokens(chainId, token);
