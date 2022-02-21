@@ -73,6 +73,7 @@ export namespace TokenSwap {
         tokenFrom:     Token,
         tokenTo:       Token,
         amountIn:      BigNumberish,
+        swapData?:     SwapSetup,
     }
 
     export interface SwapTokensParams extends SwapParams {
@@ -150,9 +151,12 @@ export namespace TokenSwap {
             return rejectPromise(reasonNotSupported)
         }
 
-        const {swapInstance, tokenIndexFrom, tokenIndexTo} = await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
-
-        return swapInstance.calculateSwap(tokenIndexFrom, tokenIndexTo, args.amountIn)
+        const {swapData} = args;
+        const {swapInstance, tokenIndexFrom, tokenIndexTo} = swapData 
+            ? swapData 
+            : await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
+        
+            return swapInstance.calculateSwap(tokenIndexFrom, tokenIndexTo, args.amountIn)
             .then((res): EstimatedSwapRate => ({amountOut: res}))
     }
 
@@ -162,7 +166,10 @@ export namespace TokenSwap {
             return rejectPromise(reasonNotSupported)
         }
 
-        const {swapInstance, tokenIndexFrom, tokenIndexTo} = await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
+        const {swapData} = args;
+        const {swapInstance, tokenIndexFrom, tokenIndexTo} = swapData 
+            ? swapData 
+            : await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
 
         let {deadline} = args;
         deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
@@ -261,13 +268,13 @@ export namespace TokenSwap {
         return SwapFactory.connect(poolAddress, newProviderForNetwork(chainId))
     }
 
-    async function swapSetup(tokenFrom: Token, tokenTo: Token, chainId: number): Promise<SwapSetup> {
-        const swapInstance = await swapContract(tokenFrom, chainId)
-
-        const [tokenIndexFrom, tokenIndexTo] = await Promise.all([
-            swapInstance.getTokenIndex(tokenFrom.address(chainId)),
-            swapInstance.getTokenIndex(tokenTo.address(chainId))
-        ])
+    export async function swapSetup(tokenFrom: Token, tokenTo: Token, chainId: number): Promise<SwapSetup> {
+        const
+            swapInstance = await swapContract(tokenFrom, chainId),
+            [tokenIndexFrom, tokenIndexTo] = await Promise.all([
+                swapInstance.getTokenIndex(tokenFrom.address(chainId)),
+                swapInstance.getTokenIndex(tokenTo.address(chainId)),
+            ]);
 
         return {
             swapInstance,
