@@ -4,10 +4,10 @@ import {ChainId, supportedChainIds} from "./common/chainid";
 
 import type {AddressMap, DecimalsMap} from "./common/types";
 
+import type {IBaseToken, Token} from "./token";
 import {BaseToken} from "./token";
-import type {Token, IBaseToken} from "./token";
 
-import type {ID}  from "./internal/entity";
+import type {ID} from "./internal/entity";
 import {SwapType} from "./internal/swaptype";
 
 
@@ -434,6 +434,11 @@ export namespace SwapPools {
             null,
             OPTIMISM_ETH_SWAP_TOKEN.poolTokens,
         ),
+        [ChainId.CHRONOS]: makeTokenPoolsMap(
+            [Tokens.NUSD], null,
+            SYN_Pool,
+            GOHM_Pool,
+        ),
         [ChainId.BSC]: makeTokenPoolsMap(
             BSC_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
             null,
@@ -459,6 +464,11 @@ export namespace SwapPools {
         [ChainId.BOBA]: makeTokenPoolsMap(
             BOBA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
             BOBA_ETH_SWAP_TOKEN.poolTokens,
+        ),
+        [ChainId.METIS]: makeTokenPoolsMap(
+            [Tokens.NUSD], null,
+            SYN_Pool,
+            GOHM_Pool,
         ),
         [ChainId.MOONBEAM]: makeTokenPoolsMap(
             null,
@@ -531,6 +541,12 @@ export namespace SwapPools {
             OPTIMISM_ETH_SWAP_TOKEN,
             SYN_Pool,
         ),
+        [ChainId.CHRONOS]: makeSwapTypeTokenPool(
+            {poolTokens: [Tokens.NUSD], swapType: SwapType.USD},
+            null,
+            SYN_Pool,
+            GOHM_Pool,
+        ),
         [ChainId.BSC]: makeSwapTypeTokenPool(
             BSC_POOL_SWAP_TOKEN,
             null,
@@ -560,6 +576,12 @@ export namespace SwapPools {
             BOBA_POOL_SWAP_TOKEN,
             BOBA_ETH_SWAP_TOKEN,
             SYN_Pool,
+        ),
+        [ChainId.METIS]: makeSwapTypeTokenPool(
+            {poolTokens: [Tokens.NUSD], swapType: SwapType.USD},
+            null,
+            SYN_Pool,
+            GOHM_Pool,
         ),
         [ChainId.MOONBEAM]: makeSwapTypeTokenPool(
             null, null,
