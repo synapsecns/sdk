@@ -18,6 +18,7 @@ const testAmounts: string[] = [
 ];
 
 export const
+    valueIfUndefined = <T>(data: T, fallback: T) => typeof data === "undefined" ? fallback : data,
     makeTimeout = (seconds: number): number => seconds * 1000,
     doneWithError = (
         e:    any,
@@ -87,5 +88,18 @@ export const
 export function wrapExpect(expectFn: Chai.Assertion): Mocha.Func {
     return function(this: Mocha.Context): void {
         expect(expectFn);
+    }
+}
+
+export async function wrapExpectAsync(expectFn: Chai.Assertion, prom: Promise<any>, wantResolve: boolean=true): Promise<void|any> {
+    try {
+        await prom;
+        expect(expectFn)
+        return
+    } catch (err) {
+        return (await (wantResolve
+            ? expectFulfilled(prom)
+            : expectRejected(prom)
+        ))
     }
 }

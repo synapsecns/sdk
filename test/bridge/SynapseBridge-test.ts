@@ -41,7 +41,7 @@ import {
     expectPromiseResolve,
     expectBnEqual,
     expectZero,
-    expectNotZero,
+    expectNotZero, wrapExpectAsync, valueIfUndefined,
 } from "../helpers";
 
 import dotenv from "dotenv";
@@ -74,7 +74,8 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
 
                 it(testTitle, async function(this: Mocha.Context) {
                     this.timeout(DEFAULT_TEST_TIMEOUT);
-                    return expectBnEqual(await bridgeInstance.bridgeVersion(), expected)
+                    let prom = bridgeInstance.bridgeVersion();
+                    return wrapExpectAsync(expectBnEqual(await prom, expected), prom)
                 })
             }
         })
@@ -101,13 +102,8 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
 
                 it(testTitle, async function(this: Mocha.Context) {
                     this.timeout(DEFAULT_TEST_TIMEOUT);
-
-                    try {
-                        return expect(await bridgeInstance.WETH_ADDRESS()).to.equal(expected)
-                    } catch (err) {
-                        const e: Error = err instanceof Error ? err : new Error(err);
-                        expect(e.message).to.equal("");
-                    }
+                    let prom = bridgeInstance.WETH_ADDRESS();
+                    return wrapExpectAsync(expectEqual(await prom, expected), prom)
                 })
             }
         })
@@ -158,11 +154,16 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                         decimals = token.decimals(network),
                         checkAmt: BigNumber = tc.isInfinite ? infiniteCheckAmt : tc.want;
 
-                    let res = await Promise.resolve(bridgeInstance.getAllowanceForAddress({address, token})).then(res => getActualWei(res, decimals));
+                    let prom = Promise.resolve(bridgeInstance.getAllowanceForAddress({address, token})).then(res => getActualWei(res, decimals));
 
-                    return tc.isInfinite
-                        ? expect(res).to.be.gte(checkAmt)
-                        : expect(res).to.be.eq(checkAmt)
+                    try {
+                        const res = await prom;
+                        return tc.isInfinite
+                            ? expect(res).to.be.gte(checkAmt)
+                            : expect(res).to.be.eq(checkAmt)
+                    } catch (err) {
+                        return (await expectFulfilled(prom))
+                    }
                 })
             }
 
@@ -356,9 +357,9 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                 noAddrTo?: boolean,
             ): TestCase => {
                 const expected: Expected = {
-                    notZero:   notZero  ?? true,
-                    wantError: wantErr  ?? false,
-                    noAddrTo:  noAddrTo ?? false,
+                    notZero:   valueIfUndefined(notZero,  true),
+                    wantError: valueIfUndefined(wantErr,  false),
+                    noAddrTo:  valueIfUndefined(noAddrTo, false),
                 };
 
                 return makeBridgeSwapTestCase(c1, t1, c2, t2, expected, getTestAmount(t1, c1, amt))
@@ -452,30 +453,28 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                     netFrom         = Networks.networkName(chainFrom),
                     netTo           = Networks.networkName(chainTo),
                     titleSuffix     = notZero ? "a value greater than zero" : "a value === zero",
+                    passFailSuffix  =  wantError ? "should fail" : "should pass",
                     testParamsTitle = `with params ${amt} ${tokFrom} on ${netFrom} to ${tokTo} on ${netTo}`,
-                    testTitle       = `getEstimatedBridgeOutput ${testParamsTitle} should return ${titleSuffix}`,
-                    titleSuffix1    =  wantError ? "should fail" : "should pass",
-                    testTitle1      = `buildBridgeTokenTransaction ${testParamsTitle} ${titleSuffix1}`,
-                    testTitle2      = `buildApproveTransaction ${testParamsTitle} ${titleSuffix1}`;
+                    bridgeOutputTestTitle = `getEstimatedBridgeOutput ${testParamsTitle} should return ${titleSuffix}`,
+                    transactionTestTitle  = `buildBridgeTokenTransaction ${testParamsTitle} ${passFailSuffix}`,
+                    approveTestTitle      = `buildApproveTransaction ${testParamsTitle} ${passFailSuffix}`;
 
-                return [testTitle, testTitle1, testTitle2]
+                return [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle]
             }
 
             for (const tc of testCases) {
-                const [testTitle, testTitle1, testTitle2] = makeTestName(tc)
+                const [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc)
 
                 let amountTo: BigNumber;
 
-                it(testTitle, async function(this: Mocha.Context) {
+                it(bridgeOutputTestTitle, async function(this: Mocha.Context) {
                     this.timeout(DEFAULT_TEST_TIMEOUT)
 
                     let {args: { chainIdFrom, ...testArgs }, expected: {notZero, wantError}} = tc;
 
                     const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
 
-                    let prom: Promise<BigNumber> = Promise.resolve(bridgeInstance.estimateBridgeTokenOutput(testArgs)
-                        .then((res) => res.amountToReceive)
-                    )
+                    let prom: Promise<BigNumber> = bridgeInstance.estimateBridgeTokenOutput(testArgs).then(res => res.amountToReceive);
 
                     try {
                         amountTo = await prom;
@@ -485,7 +484,7 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                     }
                 })
 
-                it(testTitle2, async function(this: Mocha.Context) {
+                it(transactionTestTitle, async function(this: Mocha.Context) {
                     if (tc.expected.wantError) return
 
                     this.timeout(DEFAULT_TEST_TIMEOUT);
@@ -523,7 +522,7 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                 ];
 
 
-                it(testTitle1, async function(this: Mocha.Context) {
+                it(approveTestTitle, async function(this: Mocha.Context) {
                     if (tc.expected.wantError) return
 
                     this.timeout(DEFAULT_TEST_TIMEOUT);
