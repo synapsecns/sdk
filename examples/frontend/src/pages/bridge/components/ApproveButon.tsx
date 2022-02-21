@@ -1,13 +1,10 @@
 import {useMetaMask} from "metamask-react";
 import {useContext, useEffect, useState} from "react";
-import {BigNumber} from "ethers";
+import {BigNumber, ethers} from "ethers";
 import {
     MetamaskStatus,
-    sendTransaction,
     getSigner,
-    SendTransactionResponse,
     SetStateFunction,
-    TransactionStatus
 } from "../../../utils";
 import {NetworkMenuContext} from "../contexts/NetworkMenuContext";
 import {TokenMenuContext} from "../contexts/TokenMenuContext";
@@ -15,84 +12,21 @@ import {useSynapseBridge} from "../../../hooks";
 
 import {
     ButtonProps,
-    ActionButton, emptyOnClick,
+    ActionButton,
+    emptyOnClick,
 } from "./ActionButton";
 
-
-interface TxnResponseData {
-    response?: SendTransactionResponse,
-    status:    TransactionStatus,
-}
-
-function onClick({
-    setButtonProps,
-    setApproved,
-    setDisabled,
-    synapseBridge,
-    ethereum,
-   selectedTokenFrom,
-   amountFrom,
-}) {
-    return async () => {
-        setButtonProps({
-            text:     "Waiting for approval transaction...",
-        });
-        setDisabled(true);
-
-        try {
-            const txn = await synapseBridge.executeApproveTransaction({
-                token:  selectedTokenFrom,
-                // amount: amountFrom,
-            }, getSigner(ethereum));
-            // setTxnStatus({
-            //     response: txn,
-            //     status:   txn.error ? TransactionStatus.ERROR : TransactionStatus.COMPLETE,
-            // });
-
-            setApproved(!txn.error);
-            setButtonProps({
-                text: "waiting for transaction to confirm..."
-            });
-            setDisabled(true);
-
-            let confirmed = await txn.wait(1);
-
-            setButtonProps({
-                text:     confirmed.error ? `error: ${confirmed.error.message}` : "Approved!",
-            });
-            setDisabled(true);
-        } catch (e) {
-            // setTxnStatus({
-            //     response: {
-            //         error: (e instanceof Error ? e : new Error(e))
-            //     },
-            //     status: TransactionStatus.ERROR,
-            // });
-
-            setButtonProps({
-                text:     "Error sending approval transaction",
-            });
-            setDisabled(true);
-        }
-
-        return
-    }
-}
+import {useActionButtonOnClick} from "../hooks/useActionButtonOnClick";
 
 export default function ApproveButon(props: {amountFrom: BigNumber, approved: boolean, setApproved: SetStateFunction<boolean>}) {
     const {status, ethereum} = useMetaMask();
 
-    const {amountFrom, approved, setApproved} = props;
+    const {amountFrom, setApproved} = props;
 
     const {selectedNetworkFrom} = useContext(NetworkMenuContext);
     const {selectedTokenFrom}   = useContext(TokenMenuContext);
 
     const [synapseBridge] = useSynapseBridge({chainId: selectedNetworkFrom.chainId});
-
-    // const [txnStatus, setTxnStatus] = useState<TxnResponseData>({
-    //     response: null,
-    //     status:   TransactionStatus.NOT_SENT,
-    // });
 
     const [disabled, setDisabled] = useState<boolean>(true);
 
@@ -103,20 +37,19 @@ export default function ApproveButon(props: {amountFrom: BigNumber, approved: bo
         onClick:  emptyOnClick,
     });
 
+    const [executeTxn] = useActionButtonOnClick(setDisabled, setButtonProps);
+
     useEffect(() => {
         if (buttonProps.text === APPROVE_TEXT) {
             if (disabled && status === MetamaskStatus.CONNECTED) {
                 setDisabled(false);
                 setButtonProps({
                     text:    APPROVE_TEXT,
-                    onClick: onClick({
-                        setButtonProps,
-                        setDisabled,
-                        setApproved,
-                        synapseBridge,
-                        ethereum,
-                        amountFrom,
-                        selectedTokenFrom,
+                    onClick: executeTxn((): Promise<ethers.providers.TransactionResponse> => {
+                        return synapseBridge.executeApproveTransaction({
+                            token:  selectedTokenFrom,
+                            // amount: amountFrom,
+                        }, getSigner(ethereum));
                     })
                 });
             }
@@ -127,15 +60,12 @@ export default function ApproveButon(props: {amountFrom: BigNumber, approved: bo
         if (buttonProps.text === APPROVE_TEXT) {
             setButtonProps({
                 text: APPROVE_TEXT,
-                onClick: onClick({
-                    setButtonProps,
-                    setDisabled,
-                    setApproved,
-                    synapseBridge,
-                    ethereum,
-                    amountFrom,
-                    selectedTokenFrom,
-                }),
+                onClick: executeTxn((): Promise<ethers.providers.TransactionResponse> =>
+                    synapseBridge.executeApproveTransaction({
+                        token:  selectedTokenFrom,
+                        // amount: amountFrom,
+                    }, getSigner(ethereum))
+                ),
             });
         }
     }, [amountFrom, selectedTokenFrom])
