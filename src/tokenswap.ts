@@ -66,6 +66,8 @@ export namespace UnsupportedSwapErrors {
 }
 
 export namespace TokenSwap {
+    const POOL_CONFIG_INSTANCE = SynapseEntities.poolConfig();
+
     export interface SwapParams {
         chainId:       number,
         tokenFrom:     Token,
@@ -253,9 +255,8 @@ export namespace TokenSwap {
 
     async function swapContract(token: Token, chainId: number): Promise<SwapContract> {
         const
-            poolConfigInstance = SynapseEntities.poolConfig(),
             lpToken            = intermediateToken(token, chainId),
-            {poolAddress}      = await poolConfigInstance.getPoolConfig(lpToken.address(chainId), chainId);
+            {poolAddress}      = await POOL_CONFIG_INSTANCE.getPoolConfig(lpToken.address(chainId), chainId);
 
         return SwapFactory.connect(poolAddress, newProviderForNetwork(chainId))
     }
