@@ -246,10 +246,12 @@ export namespace Tokens {
         decimals:    18,
         addresses: {
             [ChainId.ETH]:       "0x1B84765dE8B7566e4cEAF4D0fD3c5aF52D3DdE4F",
+            [ChainId.CHRONOS]:   "0x396c9c192dd323995346632581BEF92a31AC623b",
             [ChainId.BSC]:       "0x23b891e5c62e0955ae2bd185990103928ab817b3",
             [ChainId.POLYGON]:   "0xb6c473756050de474286bed418b77aeac39b02af",
             [ChainId.FANTOM]:    "0xED2a7edd7413021d440b09D654f3b87712abAB66",
             [ChainId.BOBA]:      "0x6B4712AE9797C199edd44F897cA09BC57628a1CF",
+            [ChainId.METIS]:     "0xED2a7edd7413021d440b09D654f3b87712abAB66",
             [ChainId.ARBITRUM]:  "0x2913E812Cf0dcCA30FB28E6Cac3d2DCFF4497688",
             [ChainId.AVALANCHE]: "0xCFc37A6AB183dd4aED08C204D1c2773c0b1BDf46",
             [ChainId.AURORA]:    "0x07379565cD8B0CaE7c60Dc78e7f601b34AF2A21c",
