@@ -3,6 +3,9 @@ import {JsonRpcProvider, Provider} from "@ethersproject/providers";
 
 import {MiniRpcProvider} from "./minirpc";
 
+import type {ConnectorUpdate} from "@web3-react/types";
+import {AbstractConnector} from "@web3-react/abstract-connector";
+
 export interface ProviderConnector<T extends Provider | MiniRpcProvider> {
     provider:          (chainId: number) => T;
     providerWithUri:   (chainId: number, uri: string) => T;
@@ -83,13 +86,24 @@ export class RpcConnector extends AbstractProviderConnector<JsonRpcProvider> imp
     }
 }
 
-export class Web3Connector implements ProviderConnector<MiniRpcProvider> {
+export class Web3Connector extends AbstractConnector {
     readonly urls:      StringMap;
     readonly providers: ChainIdTypeMap<MiniRpcProvider>;
 
-    constructor(args: {urls: StringMap}) {
-        const {urls} = args;
+    currentChainId: number;
+
+    constructor(args: {
+        urls:           StringMap,
+        defaultChainId: number
+    }) {
+        const {urls, defaultChainId} = args;
+
+        super({
+            supportedChainIds: Object.keys(urls).map(k => Number(k))
+        });
+
         this.urls = urls;
+        this.currentChainId = defaultChainId || Number(Object.keys(urls)[0]);
 
         this.providers = Object.keys(urls).reduce((acc, chainId) => {
             const cid = Number(chainId);
@@ -98,29 +112,31 @@ export class Web3Connector implements ProviderConnector<MiniRpcProvider> {
         }, {});
     }
 
-    provider(chainId: number): MiniRpcProvider {
-        return this.providers[chainId]
+    get provider(): MiniRpcProvider {
+        return this.providers[this.currentChainId]
     }
 
-    providerWithUri(chainId: number, uri: string): MiniRpcProvider {
-        return new MiniRpcProvider(chainId, uri);
+    async getProvider(): Promise<any> {
+        return this.providers[this.currentChainId]
     }
 
-    /**
-     * Re-initializes the Provider instance for a given chain ID using the passed URI.
-     * This operation is permanent for the lifetime of whatever is using the RpcConnector.
-     * @param chainId
-     * @param uri
-     */
-    setProviderUri(chainId: number, uri: string) {
-        if (chainId in this.providers) {
-            delete this.providers[chainId];
+    async getChainId(): Promise<number | string> {
+        return this.currentChainId
+    }
+
+    async getAccount(): Promise<null | string> {
+        return null
+    }
+
+    async activate(): Promise<ConnectorUpdate> {
+        return {
+            provider: this.providers[this.currentChainId],
+            chainId:  this.currentChainId,
+            account:  null,
         }
-
-        this.providers[chainId] = new MiniRpcProvider(chainId, uri);
     }
 
-    supportedChainIds(): number[] {
-        return Object.keys(this.urls).map(cid => Number(cid))
+    deactivate(): void {
+        return
     }
 }
