@@ -1,5 +1,6 @@
 import "../helpers/chaisetup";
 
+import {step} from "mocha-steps";
 import {expect} from "chai";
 
 import {
@@ -13,6 +14,10 @@ import {
     Token,
     Tokens
 } from "../../src";
+
+
+import {setJsonRpcUriForNetwork} from "../../src/common/utils";
+import {rpcProviderForNetwork} from "../../src/internal/rpcproviders";
 
 import {expectBoolean, expectIncludes, expectLength, wrapExpect,} from "../helpers";
 
@@ -42,6 +47,41 @@ describe("Basic tests", function(this: Mocha.Suite) {
             `supportedNetworks ${testSuffix}`,
             wrapExpect(expectLength(supportedNetworks, numChains))
         )
+    })
+
+    describe("setJsonRpcUriForNetwork", function(this: Mocha.Suite) {
+        function getURI(chainId: number): string {
+            return rpcProviderForNetwork(chainId).connection.url
+        }
+
+        interface TestCase {
+            chainId:   number,
+            newRpcUri: string,
+        }
+
+        const testCases: TestCase[] = [
+            {chainId: ChainId.BSC, newRpcUri: "https://bsc-dataseed1.binance.org/"},
+            {chainId: ChainId.BSC, newRpcUri: "https://bsc-dataseed1.ninicoin.io/"},
+        ];
+
+
+        for (const tc of testCases) {
+            describe(`${Networks.networkName(tc.chainId)} - ${tc.newRpcUri}`, function(this: Mocha.Suite) {
+                const
+                    oldRpcUri:       string = getURI(tc.chainId),
+                    testNewUriTitle: string = "- set new URI",
+                    testOldUriTitle: string = "- reset to old URI";
+
+                const testFn = (rpcUri: string): Mocha.Func => function(this: Mocha.Context) {
+                    setJsonRpcUriForNetwork(tc.chainId, rpcUri);
+                    expect(getURI(tc.chainId)).to.equal(rpcUri);
+                };
+
+                step(testNewUriTitle, testFn(tc.newRpcUri))
+
+                step(testOldUriTitle, testFn(oldRpcUri))
+            })
+        }
     })
 
     describe("Check swappableTokens", function(this: Mocha.Suite) {

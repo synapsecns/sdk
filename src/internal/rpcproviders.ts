@@ -44,13 +44,13 @@ const CHAIN_RPC_URIS: StringMap = {
 
 const LOADED_CHAIN_RPC_URIS: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, rpcUriForChainId(cid)]))
 
-const PROVIDERS: RpcConnector = new RpcConnector({urls: LOADED_CHAIN_RPC_URIS});
+const RPC_CONNECTORS: RpcConnector = new RpcConnector({urls: LOADED_CHAIN_RPC_URIS});
 
 /**
  * @param chainId chain id of the network for which to return a provider
  */
 export function rpcProviderForNetwork(chainId: number): Provider {
-    return PROVIDERS.provider(chainId)
+    return RPC_CONNECTORS.provider(chainId)
 }
 
 /**
@@ -69,6 +69,10 @@ function checkEnv(chainId: number): string|undefined {
     return envKey in process.env ? process.env[envKey] : undefined
 }
 
+export function setRpcUriForNetwork(chainId: number, uri: string) {
+    RPC_CONNECTORS.setProviderUri(chainId, uri);
+}
+
 /**
  * Used solely for tests, initRpcConnectors() basically just makes sure on-import initialization
  * of Rpc connections occurs before tests run.
@@ -76,3 +80,4 @@ function checkEnv(chainId: number): string|undefined {
 export function initRpcConnectors() {
     //
 }
+
