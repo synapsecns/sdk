@@ -3,6 +3,7 @@ import "./chaisetup";
 import {expect} from "chai";
 
 import _ from "lodash";
+import {Zero} from "@ethersproject/constants";
 import {Wallet} from "@ethersproject/wallet";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 

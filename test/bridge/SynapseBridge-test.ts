@@ -23,18 +23,15 @@ import {ERC20} from "../../src/bridge/erc20";
 import {newProviderForNetwork} from "../../src/internal/rpcproviders";
 
 import {JsonRpcProvider} from "@ethersproject/providers";
-
-import {Wallet} from "@ethersproject/wallet";
-import {formatUnits, parseEther, parseUnits} from "@ethersproject/units";
+import {Wallet}           from "@ethersproject/wallet";
+import {BigNumber}        from "@ethersproject/bignumber";
 import {MaxUint256, Zero} from "@ethersproject/constants";
-import {BigNumber} from "@ethersproject/bignumber";
+import {formatUnits, parseEther, parseUnits} from "@ethersproject/units";
 
 import {
     DEFAULT_TEST_TIMEOUT,
     SHORT_TEST_TIMEOUT,
     EXECUTORS_TEST_TIMEOUT,
-    wrapExpect,
-    makeTimeout,
     makeWalletSignerWithProvider,
     getActualWei,
     getTestAmount,
@@ -42,7 +39,6 @@ import {
     expectEqual,
     expectFulfilled,
     expectPromiseResolve,
-    expectGt,
     expectBnEqual,
     expectZero,
     expectNotZero,
@@ -103,7 +99,7 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                     }})(),
                     testTitle: string = `Should return ${expected} for Chain ID ${network}`;
 
-                it(`Should return ${expected} for Chain ID ${network}`, async function(this: Context) {
+                it(testTitle, async function(this: Mocha.Context) {
                     this.timeout(SHORT_TEST_TIMEOUT);
 
                     try {
