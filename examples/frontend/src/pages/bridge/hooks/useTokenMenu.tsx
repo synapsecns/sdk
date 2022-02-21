@@ -152,26 +152,6 @@ export function useDestinationTokenMenu() {
         }
     }, [selected, selectedTokenTo]);
 
-    // useEffect(() => {
-    //     if (!isNullOrUndefined(selected) && !selectedTokenTo.isEqual(selected.token)) {
-    //         setSelected(dropdownItems.find(t => t.token.isEqual(selectedTokenTo)));
-    //     }
-    // }, [selected, selectedTokenTo]);
-
-    // const [menuProps, setMenuProps] = useState({
-    //     selected,
-    //     setSelected,
-    //     dropdownItems,
-    //     direction: BridgeDirections.TO
-    // });
-    //
-    // useEffect(() => {
-    //     if (!_.isEqual(menuProps.dropdownItems, dropdownItems)) {
-    //         let newProps = {...menuProps, selected, dropdownItems}
-    //         setMenuProps(newProps);
-    //     }
-    // }, [dropdownItems, menuProps])
-
     const menuProps = {
         selected,
         setSelected,

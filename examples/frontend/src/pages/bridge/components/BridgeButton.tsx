@@ -4,8 +4,9 @@ import {BigNumber} from "ethers";
 import {
     MetamaskStatus,
     sendTransaction,
+    getSigner,
     SendTransactionResponse,
-    TransactionStatus
+    TransactionStatus, valueWei
 } from "../../../utils";
 import {NetworkMenuContext} from "../contexts/NetworkMenuContext";
 import {TokenMenuContext} from "../contexts/TokenMenuContext";
@@ -25,6 +26,7 @@ interface TxnResponseData {
 function onClick({
     setButtonProps,
     setDisabled,
+    selectedNetworkFrom,
     selectedNetworkTo,
     selectedTokenFrom,
     selectedTokenTo,
@@ -40,16 +42,16 @@ function onClick({
         setDisabled(true);
 
         try {
-            const populated = await synapseBridge.buildBridgeTokenTransaction({
+            console.log(amountFrom);
+
+            const txn = await synapseBridge.executeBridgeTokenTransaction({
                 tokenFrom:  selectedTokenFrom,
                 tokenTo:    selectedTokenTo,
-                amountFrom,
+                amountFrom: valueWei(amountFrom, selectedTokenFrom.decimals(selectedNetworkFrom.chainId)),
                 amountTo,
                 chainIdTo:   selectedNetworkTo.chainId,
                 addressTo,
-            });
-
-            const txn = await sendTransaction(populated, ethereum);
+            }, getSigner(ethereum));
             // setTxnStatus({
             //     response: txn,
             //     status:   txn.error ? TransactionStatus.ERROR : TransactionStatus.COMPLETE,
@@ -116,6 +118,7 @@ export default function BridgeButton(props: {approved: boolean, amountFrom: BigN
                         selectedTokenFrom,
                         amountFrom,
                         amountTo,
+                        selectedNetworkFrom,
                         selectedNetworkTo,
                         selectedTokenTo,
                         addressTo: account,
@@ -137,6 +140,7 @@ export default function BridgeButton(props: {approved: boolean, amountFrom: BigN
                     selectedTokenFrom,
                     amountFrom,
                     amountTo,
+                    selectedNetworkFrom,
                     selectedNetworkTo,
                     selectedTokenTo,
                     addressTo: account,

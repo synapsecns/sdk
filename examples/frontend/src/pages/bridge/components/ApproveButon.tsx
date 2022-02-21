@@ -4,6 +4,7 @@ import {BigNumber} from "ethers";
 import {
     MetamaskStatus,
     sendTransaction,
+    getSigner,
     SendTransactionResponse,
     SetStateFunction,
     TransactionStatus
@@ -39,23 +40,25 @@ function onClick({
         setDisabled(true);
 
         try {
-            const populatedTxn = await synapseBridge.buildApproveTransaction({
+            const txn = await synapseBridge.executeApproveTransaction({
                 token:  selectedTokenFrom,
-                amount: amountFrom,
-            });
-
-            console.log(ethereum);
-
-            const txn = await sendTransaction(populatedTxn, ethereum);
+                // amount: amountFrom,
+            }, getSigner(ethereum));
             // setTxnStatus({
             //     response: txn,
             //     status:   txn.error ? TransactionStatus.ERROR : TransactionStatus.COMPLETE,
             // });
 
             setApproved(!txn.error);
+            setButtonProps({
+                text: "waiting for transaction to confirm..."
+            });
+            setDisabled(true);
+
+            let confirmed = await txn.wait(1);
 
             setButtonProps({
-                text:     txn.error ? `error: ${txn.error.message}` : "Approved!",
+                text:     confirmed.error ? `error: ${confirmed.error.message}` : "Approved!",
             });
             setDisabled(true);
         } catch (e) {

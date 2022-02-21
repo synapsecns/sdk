@@ -14,7 +14,7 @@ import {useContext, useEffect, useState} from "react";
 import {NetworkMenuContext} from "./contexts/NetworkMenuContext";
 import {useMetaMask} from "metamask-react";
 
-export const AMOUNTS_FROM_OPTIONS: AmountDropdownItem[] = [50, 75, 100, 500, 1000].map((n) => {
+export const AMOUNTS_FROM_OPTIONS: AmountDropdownItem[] = [5, 10, 50, 75, 100, 500, 1000].map((n) => {
     let amount = BigNumber.from(n);
 
     return {

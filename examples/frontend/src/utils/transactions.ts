@@ -1,7 +1,7 @@
 import {DeferredPopulatedTransaction} from "./types";
 import {ethers} from "ethers";
 
-function getSigner(ethereum: any) {
+export function getSigner(ethereum: any) {
     return (new ethers.providers.Web3Provider(ethereum)).getSigner()
 }
 

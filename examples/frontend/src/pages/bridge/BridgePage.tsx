@@ -43,17 +43,7 @@ function BridgePageContent(props: {className?: string}) {
     //     console.log({selectedNetworkFrom});
     // }, [selectedNetworkFrom])
 
-    const [amountFrom, setAmountFrom] = useState(AMOUNTS_FROM_OPTIONS[0]);
-
-    // useEffect(() => {
-    //     if (selectedChainFrom.chainId === selectedChainTo.chainId) {
-    //         // disable the network on the other side?
-    //     }
-    // }, [selectedChainFrom, selectedChainTo]);
-
-    // useEffect(() => {
-    //     console.log(`amountFrom changed to ${amountFrom.amount}`);
-    // }, [amountFrom])
+    const [amountFrom, setAmountFrom] = useState(AMOUNTS_FROM_OPTIONS[3]);
 
     const [approved, setApproved] = useState<boolean>(true);
     const [amountOut, setAmountOut] = useState<BigNumber>(BigNumber.from(0));
