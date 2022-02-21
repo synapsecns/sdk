@@ -16,7 +16,7 @@ import {PopulatedTransaction} from "@ethersproject/contracts";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
 export namespace UnsupportedSwapErrors {
-    interface Tok {symbol: string}
+    interface _Token {symbol: string}
 
     export enum UnsupportedSwapErrorKind {
         UnsupportedToken,
@@ -32,19 +32,19 @@ export namespace UnsupportedSwapErrors {
         reason:    string,
     }
 
-    export type UnsupportedSwapErrorFunc = (t: Tok, netName: string) => UnsupportedSwapErrors.UnsupportedSwapError;
+    export type UnsupportedSwapErrorFunc = (t: _Token, netName: string) => UnsupportedSwapErrors.UnsupportedSwapError;
 
-    export const tokenNotSupported = (t: Tok, netName: string): UnsupportedSwapError => ({
+    export const tokenNotSupported = (t: _Token, netName: string): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedToken,
         reason:    `Token ${t.symbol} not supported on network ${netName}`,
     })
 
-    export const tokenNotSupportedNetFrom = (t: Tok, netName: string): UnsupportedSwapError => ({
+    export const tokenNotSupportedNetFrom = (t: _Token, netName: string): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetFrom,
         reason:    `Token ${t.symbol} not supported on 'from' network ${netName}`,
     })
 
-    export const tokenNotSupportedNetTo = (t: Tok, netName: string): UnsupportedSwapError => ({
+    export const tokenNotSupportedNetTo = (t: _Token, netName: string): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetTo,
         reason:    `Token ${t.symbol} not supported on 'to' network ${netName}`,
     })
