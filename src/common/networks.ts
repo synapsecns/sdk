@@ -106,7 +106,13 @@ export namespace Networks {
         name:          "Optimism",
         chainId:       ChainId.OPTIMISM,
         chainCurrency: "ETH"
-    })
+    });
+
+    export const CHRONOS = new Network({
+        name:          "Cronos",
+        chainId:       ChainId.CHRONOS,
+        chainCurrency: "CRO"
+    });
 
     export const BSC = new Network({
         name:          "Binance Smart Chain",
@@ -131,6 +137,12 @@ export namespace Networks {
        chainId:       ChainId.BOBA,
        chainCurrency: "ETH",
     });
+
+    export const METIS = new Network({
+        name:          "Metis",
+        chainId:       ChainId.METIS,
+        chainCurrency: "Metis",
+    })
 
     export const MOONBEAM = new Network({
         name:          "Moonbeam",
@@ -171,10 +183,12 @@ export namespace Networks {
     const CHAINID_NETWORK_MAP: ChainIdTypeMap<Network> = {
         [ChainId.ETH]:        ETH,
         [ChainId.OPTIMISM]:   OPTIMISM,
+        [ChainId.CHRONOS]:    CHRONOS,
         [ChainId.BSC]:        BSC,
         [ChainId.POLYGON]:    POLYGON,
         [ChainId.FANTOM]:     FANTOM,
         [ChainId.BOBA]:       BOBA,
+        [ChainId.METIS]:      METIS,
         [ChainId.MOONBEAM]:   MOONBEAM,
         [ChainId.MOONRIVER]:  MOONRIVER,
         [ChainId.ARBITRUM]:   ARBITRUM,
