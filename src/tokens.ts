@@ -223,10 +223,12 @@ export namespace Tokens {
         addresses: {
             [ChainId.ETH]:       "0x0f2d719407fdbeff09d87557abb7232601fd9f29",
             [ChainId.OPTIMISM]:  "0x5A5fFf6F753d7C11A56A52FE47a177a87e431655",
+            [ChainId.CHRONOS]:   "0xFD0F80899983b8D46152aa1717D76cba71a31616",
             [ChainId.BSC]:       "0xa4080f1778e69467e905b8d6f72f6e441f9e9484",
             [ChainId.POLYGON]:   "0xf8f9efc0db77d8881500bb06ff5d6abc3070e695",
             [ChainId.FANTOM]:    "0xE55e19Fb4F2D85af758950957714292DAC1e25B2",
             [ChainId.BOBA]:      "0xb554A55358fF0382Fb21F0a478C3546d1106Be8c",
+            [ChainId.METIS]:     "0xE55e19Fb4F2D85af758950957714292DAC1e25B2",
             [ChainId.MOONBEAM]:  "0xF44938b0125A6662f9536281aD2CD6c499F22004",
             [ChainId.MOONRIVER]: "0xd80d8688b02B3FD3afb81cDb124F188BB5aD0445",
             [ChainId.ARBITRUM]:  "0x080f6aed32fc474dd5717105dba5ea57268f46eb",
