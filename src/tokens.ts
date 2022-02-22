@@ -223,7 +223,7 @@ export namespace Tokens {
         addresses: {
             [ChainId.ETH]:       "0x0f2d719407fdbeff09d87557abb7232601fd9f29",
             [ChainId.OPTIMISM]:  "0x5A5fFf6F753d7C11A56A52FE47a177a87e431655",
-            [ChainId.CHRONOS]:   "0xFD0F80899983b8D46152aa1717D76cba71a31616",
+            [ChainId.CRONOS]:   "0xFD0F80899983b8D46152aa1717D76cba71a31616",
             [ChainId.BSC]:       "0xa4080f1778e69467e905b8d6f72f6e441f9e9484",
             [ChainId.POLYGON]:   "0xf8f9efc0db77d8881500bb06ff5d6abc3070e695",
             [ChainId.FANTOM]:    "0xE55e19Fb4F2D85af758950957714292DAC1e25B2",
@@ -248,7 +248,7 @@ export namespace Tokens {
         decimals:    18,
         addresses: {
             [ChainId.ETH]:       "0x1B84765dE8B7566e4cEAF4D0fD3c5aF52D3DdE4F",
-            [ChainId.CHRONOS]:   "0x396c9c192dd323995346632581BEF92a31AC623b",
+            [ChainId.CRONOS]:   "0x396c9c192dd323995346632581BEF92a31AC623b",
             [ChainId.BSC]:       "0x23b891e5c62e0955ae2bd185990103928ab817b3",
             [ChainId.POLYGON]:   "0xb6c473756050de474286bed418b77aeac39b02af",
             [ChainId.FANTOM]:    "0xED2a7edd7413021d440b09D654f3b87712abAB66",
@@ -317,7 +317,7 @@ export namespace Tokens {
         addresses: {
             [ChainId.ETH]:       '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f',
             [ChainId.OPTIMISM]:  '0x0b5740c6b4a97f90eF2F0220651Cca420B868FfB',
-            [ChainId.CHRONOS]:   '0xbB0A63A6CA2071c6C4bcAC11a1A317b20E3E999C',
+            [ChainId.CRONOS]:   '0xbB0A63A6CA2071c6C4bcAC11a1A317b20E3E999C',
             [ChainId.BSC]:       '0x88918495892BAF4536611E38E75D771Dc6Ec0863',
             [ChainId.POLYGON]:   '0xd8cA34fd379d9ca3C6Ee3b3905678320F5b45195',
             [ChainId.FANTOM]:    '0x91fa20244Fb509e8289CA630E5db3E9166233FDc',

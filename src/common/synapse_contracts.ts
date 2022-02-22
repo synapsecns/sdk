@@ -58,7 +58,7 @@ export namespace SynapseContracts {
         bridge_zap: "0x9CD619c50562a38edBdC3451ade7B58CaA71Ab32",
     });
 
-    export const Chronos = new SynapseContract({
+    export const Cronos = new SynapseContract({
         bridge:     "0xE27BFf97CE92C3e1Ff7AA9f86781FDd6D48F5eE9",
     });
 
@@ -119,10 +119,12 @@ export namespace SynapseContracts {
     const chainIdContractsMap: ChainIdTypeMap<SynapseContract> = {
         [ChainId.ETH]:       Ethereum,
         [ChainId.OPTIMISM]:  Optimism,
+        [ChainId.CRONOS]:    Cronos,
         [ChainId.BSC]:       BSC,
         [ChainId.POLYGON]:   Polygon,
         [ChainId.FANTOM]:    Fantom,
         [ChainId.BOBA]:      Boba,
+        [ChainId.METIS]:     Metis,
         [ChainId.MOONBEAM]:  Moonbeam,
         [ChainId.MOONRIVER]: Moonriver,
         [ChainId.ARBITRUM]:  Arbitrum,

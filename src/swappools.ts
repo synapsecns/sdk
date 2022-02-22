@@ -434,7 +434,7 @@ export namespace SwapPools {
             null,
             OPTIMISM_ETH_SWAP_TOKEN.poolTokens,
         ),
-        [ChainId.CHRONOS]: makeTokenPoolsMap(
+        [ChainId.CRONOS]: makeTokenPoolsMap(
             [Tokens.NUSD], null,
             SYN_Pool,
             GOHM_Pool,
@@ -541,7 +541,7 @@ export namespace SwapPools {
             OPTIMISM_ETH_SWAP_TOKEN,
             SYN_Pool,
         ),
-        [ChainId.CHRONOS]: makeSwapTypeTokenPool(
+        [ChainId.CRONOS]: makeSwapTypeTokenPool(
             {poolTokens: [Tokens.NUSD], swapType: SwapType.USD},
             null,
             SYN_Pool,

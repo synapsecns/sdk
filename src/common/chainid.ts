@@ -1,7 +1,7 @@
 export enum ChainId {
     ETH          = 1,
     OPTIMISM     = 10,
-    CHRONOS      = 25,
+    CRONOS       = 25,
     BSC          = 56,
     POLYGON      = 137,
     FANTOM       = 250,
@@ -16,7 +16,7 @@ export enum ChainId {
 }
 
 export const supportedChainIds = (): number[] => [
-    ChainId.ETH,       ChainId.OPTIMISM,  ChainId.CHRONOS,
+    ChainId.ETH,       ChainId.OPTIMISM,  ChainId.CRONOS,
     ChainId.BSC,       ChainId.POLYGON,   ChainId.FANTOM,
     ChainId.BOBA,      ChainId.METIS,     ChainId.MOONBEAM,
     ChainId.MOONRIVER, ChainId.ARBITRUM,  ChainId.AVALANCHE,

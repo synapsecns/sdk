@@ -28,7 +28,7 @@ export function contractAddressFor(chainId: number, key: string): string {
 const CHAINID_CONTRACTS_MAP: {[c: number]: SynapseContracts.SynapseContract} = {
     [ChainId.ETH]:       SynapseContracts.Ethereum,
     [ChainId.OPTIMISM]:  SynapseContracts.Optimism,
-    [ChainId.CHRONOS]:   SynapseContracts.Chronos,
+    [ChainId.CRONOS]:   SynapseContracts.Cronos,
     [ChainId.BSC]:       SynapseContracts.BSC,
     [ChainId.POLYGON]:   SynapseContracts.Polygon,
     [ChainId.FANTOM]:    SynapseContracts.Fantom,

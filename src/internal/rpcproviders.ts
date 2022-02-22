@@ -7,7 +7,7 @@ interface RpcProviderMap {[c: number]: JsonRpcProvider}
 const
     ETH_RPC_URI_ENV:       string = "ETH_RPC_URI",
     OPTIMISM_RPC_URI_ENV:  string = "OPTIMISM_RPC_URI",
-    CHRONOS_RPC_URI_ENV:   string = "CHRONOS_RPC_URI",
+    CRONOS_RPC_URI_ENV:    string = "CRONOS_RPC_URI",
     BSC_RPC_URI_ENV:       string = "BSC_RPC_URI",
     POLYGON_RPC_URI_ENV:   string = "POLYGON_RPC_URI",
     FANTOM_RPC_URI_ENV:    string = "FANTOM_RPC_URI",
@@ -24,7 +24,7 @@ const
 const ENV_KEY_MAP: {[c: number]: string} = {
     [ChainId.ETH]:       ETH_RPC_URI_ENV,
     [ChainId.OPTIMISM]:  OPTIMISM_RPC_URI_ENV,
-    [ChainId.CHRONOS]:   CHRONOS_RPC_URI_ENV,
+    [ChainId.CRONOS]:    CRONOS_RPC_URI_ENV,
     [ChainId.BSC]:       BSC_RPC_URI_ENV,
     [ChainId.POLYGON]:   POLYGON_RPC_URI_ENV,
     [ChainId.FANTOM]:    FANTOM_RPC_URI_ENV,
@@ -41,7 +41,7 @@ const ENV_KEY_MAP: {[c: number]: string} = {
 const CHAIN_RPC_URIS: {[c: number]: string} = {
     [ChainId.ETH]:       "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     [ChainId.OPTIMISM]:  "https://mainnet.optimism.io",
-    [ChainId.CHRONOS]:   "https://evm-cronos.crypto.org",
+    [ChainId.CRONOS]:    "https://evm-cronos.crypto.org",
     [ChainId.BSC]:       "https://bsc-dataseed1.binance.org/",
     [ChainId.POLYGON]:   "https://polygon-rpc.com/",
     [ChainId.FANTOM]:    "https://rpc.ftm.tools/",

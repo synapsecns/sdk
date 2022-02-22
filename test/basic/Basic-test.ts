@@ -125,7 +125,7 @@ describe("Basic tests", function(this: Mocha.Suite) {
                 {chainId: ChainId.AVALANCHE,    token: Tokens.AVWETH,       want: true},
                 {chainId: ChainId.AVALANCHE,    token: Tokens.WAVAX,        want: true},
                 {chainId: ChainId.MOONRIVER,    token: Tokens.WMOVR,        want: true},
-                {chainId: ChainId.CHRONOS,      token: Tokens.GOHM,         want: true},
+                {chainId: ChainId.CRONOS,      token: Tokens.GOHM,         want: true},
                 {chainId: ChainId.METIS,        token: Tokens.SYN,          want: true},
             ];
 

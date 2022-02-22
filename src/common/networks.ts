@@ -108,9 +108,9 @@ export namespace Networks {
         chainCurrency: "ETH"
     });
 
-    export const CHRONOS = new Network({
+    export const CRONOS = new Network({
         name:          "Cronos",
-        chainId:       ChainId.CHRONOS,
+        chainId:       ChainId.CRONOS,
         chainCurrency: "CRO"
     });
 
@@ -183,7 +183,7 @@ export namespace Networks {
     const CHAINID_NETWORK_MAP: ChainIdTypeMap<Network> = {
         [ChainId.ETH]:        ETH,
         [ChainId.OPTIMISM]:   OPTIMISM,
-        [ChainId.CHRONOS]:    CHRONOS,
+        [ChainId.CRONOS]:     CRONOS,
         [ChainId.BSC]:        BSC,
         [ChainId.POLYGON]:    POLYGON,
         [ChainId.FANTOM]:     FANTOM,
