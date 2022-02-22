@@ -1,8 +1,10 @@
+import type {Provider} from "@ethersproject/providers";
 import {JsonRpcProvider} from "@ethersproject/providers";
 
 import {ChainId, supportedChainIds} from "../common/chainid";
+import type {ChainIdTypeMap, AddressMap} from "../common/types";
 
-interface RpcProviderMap {[c: number]: JsonRpcProvider}
+type RpcProviderMap = ChainIdTypeMap<Provider>;
 
 const
     ETH_RPC_URI_ENV:       string = "ETH_RPC_URI",
@@ -21,7 +23,7 @@ const
     HARMONY_RPC_URI_ENV:   string = "HARMONY_RPC_URI";
 
 
-const ENV_KEY_MAP: {[c: number]: string} = {
+const ENV_KEY_MAP: ChainIdTypeMap<string> = {
     [ChainId.ETH]:       ETH_RPC_URI_ENV,
     [ChainId.OPTIMISM]:  OPTIMISM_RPC_URI_ENV,
     [ChainId.CRONOS]:    CRONOS_RPC_URI_ENV,
@@ -38,7 +40,7 @@ const ENV_KEY_MAP: {[c: number]: string} = {
     [ChainId.HARMONY]:   HARMONY_RPC_URI_ENV,
 }
 
-const CHAIN_RPC_URIS: {[c: number]: string} = {
+const CHAIN_RPC_URIS: ChainIdTypeMap<string> = {
     [ChainId.ETH]:       "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     [ChainId.OPTIMISM]:  "https://mainnet.optimism.io",
     [ChainId.CRONOS]:    "https://evm-cronos.crypto.org",
@@ -65,7 +67,7 @@ const PROVIDERS: RpcProviderMap = ((): RpcProviderMap => {
     return m
 })()
 
-export function newProviderForNetwork(chainId: number): JsonRpcProvider {
+export function newProviderForNetwork(chainId: number): Provider {
     return PROVIDERS[chainId] ?? null
 }
 
@@ -81,4 +83,12 @@ function checkEnv(chainId: number): string|undefined {
     }
 
     return undefined
+}
+
+/**
+ * Used solely for tests, initRpcConnectors() basically just makes sure on-import initialization
+ * of Rpc connections occurs before tests run.
+ */
+export function initRpcConnectors() {
+    //
 }

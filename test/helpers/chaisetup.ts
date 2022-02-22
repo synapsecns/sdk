@@ -1,8 +1,12 @@
+import {initRpcConnectors} from "../../src/internal/rpcproviders";
+
 import {waffleChai} from "@ethereum-waffle/chai"
 import chaiAsPromised from "chai-as-promised";
 import chaiThings from "chai-things";
 
 import chai from "chai";
+
+initRpcConnectors()
 
 chai.should();
 chai.use(chaiThings);
