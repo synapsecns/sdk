@@ -1,13 +1,13 @@
 import {Tokens} from "./tokens";
 
-import {ChainId} from "./common/chainid";
-import {Networks} from "./common/networks";
+import {ChainId, supportedChainIds} from "./common/chainid";
 
 import type {AddressMap, DecimalsMap} from "./common/types";
 
+import type {IBaseToken, Token} from "./token";
 import {BaseToken} from "./token";
-import type {Token, IBaseToken} from "./token";
 
+import type {ID} from "./internal/entity";
 import {SwapType} from "./internal/swaptype";
 
 
@@ -138,6 +138,10 @@ export namespace SwapPools {
             this.poolTokens = args.poolTokens;
         }
 
+        get id(): ID {
+            return this.baseToken.id
+        }
+
         get name(): string {
            return this.baseToken.name
         }
@@ -152,10 +156,6 @@ export namespace SwapPools {
 
         get swapType(): SwapType {
             return this.baseToken.swapType
-        }
-
-        get hash(): symbol {
-            return this.baseToken.hash
         }
 
         address(chainId: number): string|null {
@@ -178,7 +178,13 @@ export namespace SwapPools {
         private readonly swapEthAddresses?: AddressMap;
 
         constructor(args: ETHSwapTokenArgs) {
-            let {swapEthAddresses, nativeTokens, depositTokens, ...constructorArgs} = args;
+            let {
+                swapEthAddresses,
+                nativeTokens,
+                depositTokens,
+                ...constructorArgs
+            } = args;
+
             super(constructorArgs);
 
             if (args.swapEthAddresses) {
@@ -194,11 +200,9 @@ export namespace SwapPools {
         }
 
         get poolTokensForBridgeSwaps(): Token[] {
-            if (this.depositTokens?.length > 0) {
-                return moveFirstToLast(this.depositTokens)
-            }
-
-            return moveFirstToLast(this.poolTokens);
+            return this.depositTokens?.length > 0
+                ? moveFirstToLast(this.depositTokens)
+                : super.poolTokensForBridgeSwaps
         }
     }
 
@@ -430,6 +434,11 @@ export namespace SwapPools {
             null,
             OPTIMISM_ETH_SWAP_TOKEN.poolTokens,
         ),
+        [ChainId.CRONOS]: makeTokenPoolsMap(
+            [Tokens.NUSD], null,
+            SYN_Pool,
+            GOHM_Pool,
+        ),
         [ChainId.BSC]: makeTokenPoolsMap(
             BSC_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
             null,
@@ -455,6 +464,11 @@ export namespace SwapPools {
         [ChainId.BOBA]: makeTokenPoolsMap(
             BOBA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
             BOBA_ETH_SWAP_TOKEN.poolTokens,
+        ),
+        [ChainId.METIS]: makeTokenPoolsMap(
+            [Tokens.NUSD], null,
+            SYN_Pool,
+            GOHM_Pool,
         ),
         [ChainId.MOONBEAM]: makeTokenPoolsMap(
             null,
@@ -527,6 +541,12 @@ export namespace SwapPools {
             OPTIMISM_ETH_SWAP_TOKEN,
             SYN_Pool,
         ),
+        [ChainId.CRONOS]: makeSwapTypeTokenPool(
+            {poolTokens: [Tokens.NUSD], swapType: SwapType.USD},
+            null,
+            SYN_Pool,
+            GOHM_Pool,
+        ),
         [ChainId.BSC]: makeSwapTypeTokenPool(
             BSC_POOL_SWAP_TOKEN,
             null,
@@ -556,6 +576,12 @@ export namespace SwapPools {
             BOBA_POOL_SWAP_TOKEN,
             BOBA_ETH_SWAP_TOKEN,
             SYN_Pool,
+        ),
+        [ChainId.METIS]: makeSwapTypeTokenPool(
+            {poolTokens: [Tokens.NUSD], swapType: SwapType.USD},
+            null,
+            SYN_Pool,
+            GOHM_Pool,
         ),
         [ChainId.MOONBEAM]: makeSwapTypeTokenPool(
             null, null,
@@ -684,7 +710,7 @@ function filterGrps(chainAGrps: string[], chainBGrpsMap: SwapPools.SwapGroupToke
 function swapGroupsLoop(chainIdA: number, swapGrps: string[]): NetworkSwappableTokensMap {
     let res: NetworkSwappableTokensMap = {}
 
-    ChainId.supportedChainIds().forEach((chainId: number) => {
+    supportedChainIds().forEach((chainId: number) => {
         if (chainIdA === chainId) {
             return
         }
@@ -694,12 +720,7 @@ function swapGroupsLoop(chainIdA: number, swapGrps: string[]): NetworkSwappableT
 
     return res
 }
-/**
- * @deprecated Use {@link networkSwapTokensMap} instead.
- */
-export function swappableTokens(chainIdA: number, chainIdB?: number): NetworkSwappableTokensMap {
-    return networkSwapTokensMap(chainIdA, chainIdB)
-}
+
 
 /**
  * Returns a map of swappable tokens for two given networks; or, if a second chainid isn't passed,
@@ -722,12 +743,7 @@ export function networkSwapTokensMap(chainIdA: number, chainIdB?: number): Netwo
     return res
 }
 
-/**
- * @deprecated Use {@link allNetworksSwapTokensMap} instead.
- */
-export function swappableTokensAllNetworks(): AllNetworksSwappableTokensMap {
-    return allNetworksSwapTokensMap()
-}
+
 
 /**
  * Returns map of all swappable tokens between all supported networks.
@@ -736,7 +752,7 @@ export function swappableTokensAllNetworks(): AllNetworksSwappableTokensMap {
 export function allNetworksSwapTokensMap(): AllNetworksSwappableTokensMap {
     let res: AllNetworksSwappableTokensMap = {};
 
-    ChainId.supportedChainIds().forEach((chainIdA: number) => {
+    supportedChainIds().forEach((chainIdA: number) => {
         const swapGrpsA: string[] = SwapPools.swapGroupsForNetwork(chainIdA);
 
         res[chainIdA] = swapGroupsLoop(chainIdA, swapGrpsA);
@@ -744,3 +760,16 @@ export function allNetworksSwapTokensMap(): AllNetworksSwappableTokensMap {
 
     return res
 }
+
+/**
+ * @deprecated Use {@link networkSwapTokensMap} instead.
+ */
+export const swappableTokens = (
+    chainIdA:  number,
+    chainIdB?: number,
+): NetworkSwappableTokensMap => networkSwapTokensMap(chainIdA, chainIdB)
+
+/**
+ * @deprecated Use {@link allNetworksSwapTokensMap} instead.
+ */
+export const swappableTokensAllNetworks = (): AllNetworksSwappableTokensMap => allNetworksSwapTokensMap()

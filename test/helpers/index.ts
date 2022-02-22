@@ -1,16 +1,14 @@
 import "./chaisetup";
 
-import _ from "lodash";
-
 import {expect} from "chai";
 
+import _ from "lodash";
+import {Zero} from "@ethersproject/constants";
 import {Wallet} from "@ethersproject/wallet";
-import {JsonRpcProvider} from "@ethersproject/providers";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
-import {Token, ChainId} from "../../src";
+import {Token} from "../../src";
 import {newProviderForNetwork} from "../../src/internal/rpcproviders";
-
 
 const TEN_BN: BigNumber = BigNumber.from(10);
 
@@ -19,99 +17,89 @@ const testAmounts: string[] = [
     "669", "555",
 ];
 
-export const getTestAmount = (t: Token, c: number, amt?: BigNumberish): BigNumber => t.valueToWei(amt ?? _.shuffle(testAmounts)[0], c)
+export const
+    valueIfUndefined = <T>(data: T, fallback: T) => typeof data === "undefined" ? fallback : data,
+    makeTimeout = (seconds: number): number => seconds * 1000,
+    doneWithError = (
+        e:    any,
+        done: Mocha.Done
+    ) => done(e instanceof Error ? e : new Error(e)),
+    getActualWei = (
+        n:        BigNumber,
+        decimals: number
+    ): BigNumber => n.mul(TEN_BN.pow(18 - decimals)),
+    getTestAmount = (
+        t:    Token,
+        c:    number,
+        amt?: BigNumberish
+    ): BigNumber => t.valueToWei(amt ?? _.shuffle(testAmounts)[0], c),
+    makeWalletSignerWithProvider = (
+        chainId: number,
+        privKey: string
+    ): Wallet => new Wallet(privKey, newProviderForNetwork(chainId));
 
-export function makeWalletSignerWithProvider(chainId: number, privKey: string): Wallet {
-    const provider = newProviderForNetwork(chainId);
-
-    return new Wallet(privKey, provider);
-}
-
-export const getActualWei = (n: BigNumber, decimals: number): BigNumber => n.mul(TEN_BN.pow(18 - decimals))
-
-export interface TestProvider {
-    chainId:  number,
-    provider: JsonRpcProvider,
-}
-
-const makeTestProvider = (chainId: number): TestProvider => ({ chainId, provider: newProviderForNetwork(chainId) })
 
 export const
-    PROVIDER_ETHEREUM:  TestProvider = makeTestProvider(ChainId.ETH),
-    PROVIDER_OPTIMISM:  TestProvider = makeTestProvider(ChainId.OPTIMISM),
-    PROVIDER_BSC:       TestProvider = makeTestProvider(ChainId.BSC),
-    PROVIDER_FANTOM:    TestProvider = makeTestProvider(ChainId.FANTOM),
-    PROVIDER_BOBA:      TestProvider = makeTestProvider(ChainId.BOBA),
-    PROVIDER_MOONRIVER: TestProvider = makeTestProvider(ChainId.MOONRIVER),
-    PROVIDER_AVALANCHE: TestProvider = makeTestProvider(ChainId.AVALANCHE),
-    PROVIDER_AURORA:    TestProvider = makeTestProvider(ChainId.AURORA),
-    PROVIDER_HARMONY:   TestProvider = makeTestProvider(ChainId.HARMONY);
+    DEFAULT_TEST_TIMEOUT   = makeTimeout(10),
+    SHORT_TEST_TIMEOUT     = makeTimeout(4.5),
+    EXECUTORS_TEST_TIMEOUT = makeTimeout(180);
 
-export interface TestCase<T> {
-    chainId:       number,
-    provider:      JsonRpcProvider,
-    expected?:     T,
-    name?:         string,
-    args?:         any | any[]
+const
+    expectTo             = (data: any): Chai.Assertion => expect(data).to,
+    expectToNot          = (data: any): Chai.Assertion => expectTo(data).not,
+    expectToBe           = (data: any): Chai.Assertion => expectTo(data).be,
+    expectToNotBe        = (data: any): Chai.Assertion => expectToNot(data).be,
+    expectToEventuallyBe = (data: Promise<any>): Chai.PromisedAssertion => expectTo(data).eventually.be;
+
+const
+    toOrNotTo     = (data: any, wantTo: boolean): Chai.Assertion => wantTo ? expectTo(data)   : expectToNot(data),
+    toBeOrNotToBe = (data: any, wantBe: boolean): Chai.Assertion => wantBe ? expectToBe(data) : expectToNotBe(data);
+
+export const
+    expectFulfilled      = (data: Promise<any>): Chai.PromisedAssertion => expectToEventuallyBe(data).fulfilled,
+    expectRejected       = (data: Promise<any>): Chai.PromisedAssertion => expectToEventuallyBe(data).rejected,
+    expectPromiseResolve = (
+        data: Promise<any>,
+        wantResolve: boolean
+    ): Chai.PromisedAssertion => wantResolve ? expectFulfilled(data) : expectRejected(data);
+
+export const
+    expectBoolean   = (data: boolean, want:      boolean):             Chai.Assertion => expectToBe(data)[want ? "true" : "false"],
+    expectNull      = (data: any,     wantNull:  boolean):             Chai.Assertion => toBeOrNotToBe(data, wantNull).null,
+    expectUndefined = (data: any,     wantUndef: boolean):             Chai.Assertion => toBeOrNotToBe(data, wantUndef).undefined,
+    expectProperty  = (data: any,     want: string):                   Chai.Assertion => expectTo(data).have.property(want),
+    expectEqual     = (data: any,     want: any,     errMsg?: string): Chai.Assertion => expectTo(data).equal(want, errMsg),
+    expectLength    = (data: any[],   want: number,  errMsg?: string): Chai.Assertion => expectTo(data).have.a.lengthOf(want, errMsg),
+    expectIncludes  = (
+        data:         any,
+        check:        any,
+        wantIncludes: boolean,
+        errMsg?:      string
+    ): Chai.Assertion => toOrNotTo(data, wantIncludes).include(check, errMsg);
+
+export const
+    expectGt      = (data: BigNumber, want: BigNumberish): Chai.Assertion => expectToBe(data).gt(want),
+    expectGte     = (data: BigNumber, want: BigNumberish): Chai.Assertion => expectToBe(data).gte(want),
+    expectBnEqual = (data: BigNumber, want: BigNumberish): Chai.Assertion => expectTo(data).equal(want),
+    expectZero    = (data: BigNumber): Chai.Assertion => expectBnEqual(data, Zero),
+    expectGteZero = (data: BigNumber): Chai.Assertion => expectGte(data, Zero),
+    expectNotZero = (data: BigNumber): Chai.Assertion => expectGt(data, Zero);
+
+export function wrapExpect(expectFn: Chai.Assertion): Mocha.Func {
+    return function(this: Mocha.Context): void {
+        expect(expectFn);
+    }
 }
 
-export type TestFunction<Entity> = (entity: Entity, tc: TestCase<any>) => () => void;
-export type EntityFactory<Entity> = (n: number, provider: JsonRpcProvider) => Entity;
-
-export function runTestCases(
-    tests: TestCase<any>[],
-    entityFactory: EntityFactory<any>,
-    func: TestFunction<any>
-) {
-    tests.forEach((tc) => {
-        const
-            instance = entityFactory(tc.chainId, tc.provider),
-            title: string = tc.name || `should equal ${tc.expected.toString()} on chain id ${tc.chainId}`;
-
-        it(title, func(instance, tc));
-    })
-}
-
-export namespace ExpectBN {
-    const
-        awaitEq  = (check: BigNumberish) => (res: BigNumber) => res.eq(check),
-        awaitGt  = (check: BigNumberish) => (res: BigNumber) => res.gt(check),
-        awaitGte = (check: BigNumberish) => (res: BigNumber) => res.gte(check),
-        awaitLt  = (check: BigNumberish) => (res: BigNumber) => res.lt(check),
-        awaitLte = (check: BigNumberish) => (res: BigNumber) => res.lte(check);
-
-    export function eq(got: Promise<BigNumber>, check: BigNumberish) {
-        expect( got.then( awaitEq(check) ) )
-            .to.eventually.be.true;
-    }
-
-    export function neq(got: Promise<BigNumber>, check: BigNumberish) {
-        expect( got.then( awaitEq(check) ) )
-            .to.eventually.be.false;
-    }
-
-    export function notZero(got: Promise<BigNumber>) {
-        expect( got.then( awaitGt(0) ) )
-            .to.eventually.be.true;
-    }
-
-    export function gt(got: Promise<BigNumber>, check: BigNumberish) {
-        expect( got.then( awaitGt(check) ) )
-            .to.eventually.be.true;
-    }
-
-    export function gte(got: Promise<BigNumber>, check: BigNumberish) {
-        expect( got.then( awaitGte(check) ) )
-            .to.eventually.be.true;
-    }
-
-    export function lt(got: Promise<BigNumber>, check: BigNumberish) {
-        expect( got.then( awaitLt(check) ) )
-            .to.eventually.be.true;
-    }
-
-    export function lte(got: Promise<BigNumber>, check: BigNumberish) {
-        expect( got.then( awaitLte(check) ) )
-            .to.eventually.be.true;
+export async function wrapExpectAsync(expectFn: Chai.Assertion, prom: Promise<any>, wantResolve: boolean=true): Promise<void|any> {
+    try {
+        await prom;
+        expect(expectFn)
+        return
+    } catch (err) {
+        return (await (wantResolve
+            ? expectFulfilled(prom)
+            : expectRejected(prom)
+        ))
     }
 }

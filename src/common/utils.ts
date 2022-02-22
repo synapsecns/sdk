@@ -1,12 +1,14 @@
 import {ChainId} from "./chainid";
 import {SynapseContracts} from "./synapse_contracts";
 
-import {Signer} from "@ethersproject/abstract-signer";
-import {PopulatedTransaction, ContractTransaction} from "@ethersproject/contracts";
+import type {Signer} from "@ethersproject/abstract-signer";
 
+import type {
+    PopulatedTransaction,
+    ContractTransaction,
+} from "@ethersproject/contracts";
 
 export const rejectPromise = (e: any): Promise<never> => Promise.reject(e instanceof Error ? e : new Error(e))
-
 
 export const executePopulatedTransaction = (
     populatedTxn: Promise<PopulatedTransaction>,
@@ -18,7 +20,7 @@ export const executePopulatedTransaction = (
 
 
 export function contractAddressFor(chainId: number, key: string): string {
-    const { address } = contractsForChainId(chainId)[key];
+    const { address } = contractsForChainId(chainId)[key] || "";
     return address
 }
 
@@ -26,10 +28,12 @@ export function contractAddressFor(chainId: number, key: string): string {
 const CHAINID_CONTRACTS_MAP: {[c: number]: SynapseContracts.SynapseContract} = {
     [ChainId.ETH]:       SynapseContracts.Ethereum,
     [ChainId.OPTIMISM]:  SynapseContracts.Optimism,
+    [ChainId.CRONOS]:   SynapseContracts.Cronos,
     [ChainId.BSC]:       SynapseContracts.BSC,
     [ChainId.POLYGON]:   SynapseContracts.Polygon,
     [ChainId.FANTOM]:    SynapseContracts.Fantom,
     [ChainId.BOBA]:      SynapseContracts.Boba,
+    [ChainId.METIS]:     SynapseContracts.Metis,
     [ChainId.MOONBEAM]:  SynapseContracts.Moonbeam,
     [ChainId.MOONRIVER]: SynapseContracts.Moonriver,
     [ChainId.ARBITRUM]:  SynapseContracts.Arbitrum,

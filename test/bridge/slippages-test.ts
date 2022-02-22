@@ -1,7 +1,9 @@
+import "../helpers/chaisetup";
 import { BigNumber } from "@ethersproject/bignumber";
 import { expect } from "chai";
 
 import { Slippages } from "../../src";
+import {expectEqual} from "../helpers";
 
 describe("Slippages tests", function(this: Mocha.Suite) {
     interface TestCase {
@@ -12,7 +14,8 @@ describe("Slippages tests", function(this: Mocha.Suite) {
     }
 
     describe("_applySlippage", function(this: Mocha.Suite) {
-        const makeTitle = (tc: TestCase): string => `value of ${tc.value.toString()} with slippage of ${tc.slippage} should return ${tc.expected.toString()}`
+        const makeTitle = (tc: TestCase): string =>
+            `value of ${tc.value.toString()} with slippage of ${tc.slippage} should return ${tc.expected.toString()}`
 
         let testCases: TestCase[] = [
             {
@@ -36,7 +39,9 @@ describe("Slippages tests", function(this: Mocha.Suite) {
         ]
 
         testCases.forEach((tc: TestCase) => {
-            it(makeTitle(tc), () => expect(tc.func(tc.value, tc.slippage)._hex).to.equal(tc.expected._hex))
+            it(makeTitle(tc), function(this: Mocha.Context) {
+                expect(tc.func(tc.value, tc.slippage)._hex).to.equal(tc.expected._hex);
+            })
         })
     })
 
@@ -45,31 +50,33 @@ describe("Slippages tests", function(this: Mocha.Suite) {
         const ret = Slippages.addSlippage(BigNumber.from(value), Slippages.OneTenth);
         expect(ret._hex).to.equal(BigNumber.from(69489)._hex);
 
-        it("_applySlippage with add=true vs add=false", () => {
+        it("_applySlippage with add=true vs add=false", function(this: Mocha.Context) {
             const ret1 = Slippages._applySlippage(BigNumber.from(value), Slippages.OneTenth);
             expect(ret.sub(ret1)._hex).to.equal(BigNumber.from(0x8b)._hex);
         })
     })
 
     describe("formatSlippageToString", function(this: Mocha.Suite) {
-        it("Slippages.One should return 1.0", () =>
-            expect(Slippages.formatSlippageToString(Slippages.One)).to.equal("1.0")
-        )
-        
-        it("Slippages.OneTenth should return 0.1", () =>
-            expect(Slippages.formatSlippageToString(Slippages.OneTenth)).to.equal("0.1")
-        )
+        interface formatTestCase {
+            slippage:     string,
+            slippageName: string,
+            want:         string,
+        }
 
-        it("Slippages.TwoTenth should return 0.2", () =>
-            expect(Slippages.formatSlippageToString(Slippages.TwoTenth)).to.equal("0.2")
-        )
+        const testCases: formatTestCase[] = [
+            {slippage: Slippages.One,      slippageName: "Slippages.One",      want: "1.0"},
+            {slippage: Slippages.OneTenth, slippageName: "Slippages.OneTenth", want: "0.1"},
+            {slippage: Slippages.TwoTenth, slippageName: "Slippages.TwoTenth", want: "0.2"},
+            {slippage: Slippages.Quarter,  slippageName: "Slippages.Quarter",  want: "2.0"},
+            {slippage: "foo",              slippageName: "foo",                want: "N/A"},
+        ]
 
-        it("Slippages.Quarter should return 2.0", () =>
-            expect(Slippages.formatSlippageToString(Slippages.Quarter)).to.equal("2.0")
-        )
+        for (const tc of testCases) {
+            const testTitle: string = `${tc.slippageName} should return ${tc.want}`;
 
-        it("foo should return N/A", () =>
-            expect(Slippages.formatSlippageToString("foo")).to.equal("N/A")
-        )
+            it(testTitle, function(this: Mocha.Context) {
+                expectEqual(Slippages.formatSlippageToString(tc.slippage), tc.want);
+            })
+        }
     })
 })

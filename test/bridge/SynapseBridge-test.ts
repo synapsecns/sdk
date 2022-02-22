@@ -2,11 +2,6 @@ import "../helpers/chaisetup";
 
 import {expect} from "chai";
 
-import {
-    Context,
-    Done
-} from "mocha";
-
 import {step} from "mocha-steps";
 
 import _ from "lodash";
@@ -17,73 +12,76 @@ import {
     ChainId,
     Networks,
     Tokens,
-    Bridge
+    Bridge,
+    supportedChainIds,
 } from "../../src";
+
+import {contractAddressFor} from "../../src/common/utils";
+
+import {ERC20} from "../../src/bridge/erc20";
 
 import {newProviderForNetwork} from "../../src/internal/rpcproviders";
 
-import {TransactionResponse} from "@ethersproject/providers";
+import {JsonRpcProvider} from "@ethersproject/providers";
+import {Wallet}           from "@ethersproject/wallet";
+import {BigNumber}        from "@ethersproject/bignumber";
+import {MaxUint256, Zero} from "@ethersproject/constants";
+import {formatUnits, parseEther, parseUnits} from "@ethersproject/units";
+
 import {
+    DEFAULT_TEST_TIMEOUT,
+    SHORT_TEST_TIMEOUT,
+    EXECUTORS_TEST_TIMEOUT,
+    makeWalletSignerWithProvider,
+    getActualWei,
+    getTestAmount,
+    doneWithError,
+    expectEqual,
+    expectFulfilled,
+    expectPromiseResolve,
+    expectBnEqual,
+    expectZero,
+    expectNotZero, wrapExpectAsync, valueIfUndefined,
+} from "../helpers";
+
+import dotenv from "dotenv";
+
+import type {TransactionResponse} from "@ethersproject/providers";
+import type {
     PopulatedTransaction,
     ContractTransaction
 } from "@ethersproject/contracts";
 
-import {formatUnits, parseEther, parseUnits} from "@ethersproject/units";
-import {MaxUint256, Zero} from "@ethersproject/constants";
-import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
-
-import type {TestProvider} from "../helpers";
-
-import {
-    PROVIDER_BOBA,
-    PROVIDER_MOONRIVER,
-    PROVIDER_AURORA,
-    PROVIDER_HARMONY,
-    makeWalletSignerWithProvider,
-    getActualWei,
-    getTestAmount,
-} from "../helpers";
+import type {BigNumberish} from "@ethersproject/bignumber";
 
 
 // Completely clean privkey with low balances.
 const bridgeTestPrivkey: string = "53354287e3023f0629b7a5e187aa1ca3458c4b7ff9d66a6e3f4b2e821aafded7";
 
-function doneWithError(e: any, done: Done) {
-    done(e instanceof Error ? e : new Error(e));
-}
-
-const makeTimeout = (seconds: number): number => seconds * 1000;
-
-const
-    DEFAULT_TEST_TIMEOUT   = makeTimeout(10),
-    SHORT_TEST_TIMEOUT     = makeTimeout(4.5),
-    EXECUTORS_TEST_TIMEOUT = makeTimeout(180);
-
 
 describe("SynapseBridge", function(this: Mocha.Suite) {
+    const ALL_CHAIN_IDS = supportedChainIds();
+
     describe("read-only wrapper functions", function(this: Mocha.Suite) {
         describe(".bridgeVersion()", function(this: Mocha.Suite) {
             const expected = 6;
 
-            ChainId.supportedChainIds().forEach((network: number) => {
+            for (const network of ALL_CHAIN_IDS) {
                 const
-                    provider = newProviderForNetwork(network),
-                    bridgeInstance = new Bridge.SynapseBridge({ network, provider});
+                    provider          = newProviderForNetwork(network),
+                    bridgeInstance    = new Bridge.SynapseBridge({ network, provider}),
+                    testTitle: string = `Should return ${expected.toString()} on Chain ID ${network}`;
 
-                it(`Should return ${expected.toString()} on Chain ID ${network}`, function(this: Context, done: Done) {
-                    this.timeout(SHORT_TEST_TIMEOUT);
-
-                    const prom = Promise.resolve(bridgeInstance.bridgeVersion())
-                        .then((res) => res.toNumber())
-                        .catch((err: any) => doneWithError(err, done))
-
-                    expect(prom).to.eventually.equal(expected).notify(done);
+                it(testTitle, async function(this: Mocha.Context) {
+                    this.timeout(DEFAULT_TEST_TIMEOUT);
+                    let prom = bridgeInstance.bridgeVersion();
+                    return wrapExpectAsync(expectBnEqual(await prom, expected), prom)
                 })
-            })
+            }
         })
 
         describe(".WETH_ADDRESS", function(this: Mocha.Suite) {
-            ChainId.supportedChainIds().forEach((network: number) => {
+            for (const network of ALL_CHAIN_IDS) {
                 const
                     provider = newProviderForNetwork(network),
                     bridgeInstance = new Bridge.SynapseBridge({ network, provider }),
@@ -99,21 +97,21 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                                 return "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
                         default:
                             return "0x0000000000000000000000000000000000000000"
-                    }})();
+                    }})(),
+                    testTitle: string = `Should return ${expected} for Chain ID ${network}`;
 
-                it(`Should return ${expected} for Chain ID ${network}`, function(this: Context, done: Done) {
-                    this.timeout(SHORT_TEST_TIMEOUT);
-
-                    expect(bridgeInstance.WETH_ADDRESS())
-                        .to.eventually.equal(expected)
-                        .notify(done)
+                it(testTitle, async function(this: Mocha.Context) {
+                    this.timeout(DEFAULT_TEST_TIMEOUT);
+                    let prom = bridgeInstance.WETH_ADDRESS();
+                    return wrapExpectAsync(expectEqual(await prom, expected), prom)
                 })
-            })
+            }
         })
 
         describe(".getAllowanceForAddress", function(this: Mocha.Suite) {
             interface testCase {
-                provider:   TestProvider,
+                provider:   JsonRpcProvider,
+                chainId:    number,
                 address:    string,
                 token:      Token,
                 want:       BigNumber,
@@ -126,37 +124,27 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                 addr3: string = "0x89a2a295174d899c6d68dfc03535993ee15ff72e",
                 addr4: string = "0x39c46cFD4711d1B4D7141d87f057C89C9D2d7019",
                 addr5: string = "0xDF681Fe10B2fb7B5605107098EA3867187851DCe",
-                // addr6: string = "0x982693778347b2a1817d6b0d2812be1d52964266",
                 infiniteCheckAmt: BigNumber = MaxUint256.div(2);
 
-            const makeTestCase = (p: TestProvider, t: Token, a: string, n: BigNumberish): testCase => {
+            const makeTestCase = (c: number, t: Token, a: string, n: BigNumberish): testCase => {
                 return {
-                    provider:   p,
+                    provider:   newProviderForNetwork(c),
+                    chainId:    c,
                     token:      t,
                     address:    a,
                     want:       BigNumber.from(n),
                     isInfinite: MaxUint256.eq(n),
                 }
             }
-
-            let testCases: testCase[] = [
-                makeTestCase(PROVIDER_AURORA,    Tokens.DAI,  addr4, Zero),
-                makeTestCase(PROVIDER_BOBA,      Tokens.NUSD, addr3, Zero),
-                makeTestCase(PROVIDER_MOONRIVER, Tokens.SYN,  addr1, Zero),
-                makeTestCase(PROVIDER_HARMONY,   Tokens.NUSD, addr5, Zero),
-            ];
-
-            this.timeout(makeTimeout(10 * testCases.length));
-
-            testCases.forEach((tc: testCase) => {
+            function runTestCase(tc: testCase) {
                 const
-                    {provider: {chainId: network, provider}} = tc,
+                    {provider, chainId: network} = tc,
                     chainName: string = Networks.fromChainId(network).name,
                     wantNum: string = parseUnits(tc.want.toString(), tc.token.decimals(network)).toString(),
                     spendAllowanceTitle: string = `should have a spend allowance of ${tc.isInfinite ? "unlimited" : wantNum} wei`,
-                    title: string = `SynapseBridge on chain ${chainName} ${spendAllowanceTitle} for ${tc.token.name} holdings of ${tc.address}`;
+                    title:               string = `SynapseBridge on chain ${chainName} ${spendAllowanceTitle} for ${tc.token.name} holdings of ${tc.address}`;
 
-                it(title, function (this: Mocha.Context, done: Done) {
+                it(title, async function (this: Mocha.Context) {
                     this.timeout(DEFAULT_TEST_TIMEOUT);
 
                     let bridgeInstance = new Bridge.SynapseBridge({network, provider});
@@ -164,136 +152,201 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                     const
                         {address, token} = tc,
                         decimals = token.decimals(network),
-                        checkAmt: BigNumber = tc.isInfinite ? infiniteCheckAmt : tc.want,
-                        msg: string = tc.isInfinite ? "gte" : "equal";
+                        checkAmt: BigNumber = tc.isInfinite ? infiniteCheckAmt : tc.want;
 
-                    Promise.resolve(bridgeInstance.getAllowanceForAddress({address, token}))
-                        .then((res: BigNumber) => {
-                            const
-                                got = getActualWei(res, decimals),
-                                success: boolean = tc.isInfinite ? got.gte(infiniteCheckAmt) : got.eq(tc.want);
+                    let prom = Promise.resolve(bridgeInstance.getAllowanceForAddress({address, token})).then(res => getActualWei(res, decimals));
 
-                            expect(
-                                success,
-                                `expected ${got.toString()} to be ${msg} to ${checkAmt.toString()}`
-                            ).to.be.true;
-
-                            done();
-                        })
-                        .catch((err: any) => doneWithError(err, done))
+                    try {
+                        const res = await prom;
+                        return tc.isInfinite
+                            ? expect(res).to.be.gte(checkAmt)
+                            : expect(res).to.be.eq(checkAmt)
+                    } catch (err) {
+                        return (await expectFulfilled(prom))
+                    }
                 })
+            }
+
+            describe("- infinite approval", function(this: Mocha.Suite) {
+                const infiniteApprovalTestAddress: string = "0xcac129e42e4c224c2af58f7cefe9432c1e633947"
+
+                step("Ensure infinite approval test address has infinite approval", async function(this: Mocha.Context) {
+                    this.timeout(EXECUTORS_TEST_TIMEOUT);
+
+                    dotenv.config();
+
+                    const bscZapAddr: string = contractAddressFor(ChainId.BSC, "bridge_zap");
+                    const tokenParams = {tokenAddress: Tokens.BUSD.address(ChainId.BSC), chainId: ChainId.BSC};
+
+                    try {
+                        const allowance = await ERC20.allowanceOf(
+                            infiniteApprovalTestAddress,
+                            bscZapAddr,
+                            tokenParams
+                        );
+
+                        if (allowance.lte(infiniteCheckAmt)) {
+                            const testPrivKey: string = process.env.TEST_PRIVKEY_A;
+                            const wallet = new Wallet(testPrivKey, newProviderForNetwork(ChainId.BSC));
+                            let txn: ContractTransaction = (await ERC20.approve({spender: bscZapAddr}, tokenParams, wallet)) as ContractTransaction;
+                            await txn.wait(1);
+
+                            const newAllowance = await ERC20.allowanceOf(
+                                infiniteApprovalTestAddress,
+                                bscZapAddr,
+                                tokenParams
+                            );
+
+                            expect(newAllowance).to.be.gte(infiniteCheckAmt);
+                        }
+
+                        return
+                    } catch (err) {
+                        const e: Error = err instanceof Error ? err : new Error(err);
+                        expect(e.message).to.eq("");
+                    }
+                })
+
+                runTestCase(makeTestCase(
+                    ChainId.BSC,
+                    Tokens.BUSD,
+                    infiniteApprovalTestAddress,
+                    MaxUint256
+                ));
+            })
+
+            describe("- zero approval", function(this: Mocha.Suite) {
+                [
+                    makeTestCase(ChainId.AURORA,    Tokens.DAI,  addr4, Zero),
+                    makeTestCase(ChainId.BOBA,      Tokens.NUSD, addr3, Zero),
+                    makeTestCase(ChainId.MOONRIVER, Tokens.SYN,  addr1, Zero),
+                    makeTestCase(ChainId.HARMONY,   Tokens.NUSD, addr5, Zero),
+                ].forEach(runTestCase);
             })
         })
 
+        interface BridgeSwapTestArgs {
+            chainIdFrom: number,
+            chainIdTo:   number,
+            tokenFrom:   Token,
+            tokenTo:     Token,
+            amountFrom:  BigNumber,
+        }
+
+        interface BridgeSwapTestCase<T> {
+            args:     BridgeSwapTestArgs,
+            expected: T,
+        }
+
+        function makeBridgeSwapTestCase<T>(
+            chainIdFrom: number|Networks.Network,
+            tokenFrom:   Token,
+            chainIdTo:   number|Networks.Network,
+            tokenTo:     Token,
+            expected:    T,
+            amountFrom:  BigNumber=BigNumber.from(0)
+        ): BridgeSwapTestCase<T> {
+            const
+                c1 = chainIdFrom instanceof Networks.Network ? chainIdFrom.chainId : chainIdFrom,
+                c2 = chainIdTo   instanceof Networks.Network ? chainIdTo.chainId   : chainIdTo;
+
+            return {args: {chainIdFrom: c1, tokenFrom, chainIdTo: c2, tokenTo, amountFrom}, expected}
+        }
+
         describe("checkSwapSupported", function(this: Mocha.Suite) {
-            interface TestArgs {
-                chainIdFrom: number|Networks.Network,
-                chainIdTo:   number|Networks.Network,
-                tokenFrom:   Token,
-                tokenTo:     Token,
-            }
-
-            interface TestCase {
-                args:     TestArgs,
-                expected: boolean,
-            }
-
-            const makeTestCase = (chainIdFrom: number|Networks.Network, tokenFrom: Token, chainIdTo: number|Networks.Network, tokenTo: Token, expected: boolean): TestCase => {
-                return {args: {chainIdFrom, tokenFrom, chainIdTo, tokenTo}, expected}
-            }
+            type TestCase = BridgeSwapTestCase<boolean>
 
             let testCases: TestCase[] = [
-                makeTestCase(ChainId.ETH,       Tokens.DAI,    ChainId.BSC,       Tokens.USDC, true),
-                makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BSC,       Tokens.USDC, false),
-                makeTestCase(ChainId.ARBITRUM,  Tokens.WETH,   ChainId.ETH,       Tokens.ETH,  true),
-                makeTestCase(ChainId.ARBITRUM,  Tokens.WETH,   ChainId.AVALANCHE, Tokens.ETH,  true),
-                makeTestCase(ChainId.AVALANCHE, Tokens.SYN,    ChainId.BSC,       Tokens.SYN,  true),
-                makeTestCase(ChainId.POLYGON,   Tokens.MIM,    ChainId.BSC,       Tokens.USDT, false),
-                makeTestCase(ChainId.FANTOM,    Tokens.MIM,    ChainId.BSC,       Tokens.USDT, true),
-                makeTestCase(ChainId.BOBA,      Tokens.MIM,    ChainId.ETH,       Tokens.MIM,  false),
-                makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BOBA,      Tokens.NETH, false),
-                makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BOBA,      Tokens.ETH,  false),
-                makeTestCase(ChainId.BOBA,      Tokens.ETH,    ChainId.ETH,       Tokens.ETH,  false),
-                makeTestCase(ChainId.BOBA,      Tokens.ETH,    ChainId.ETH,       Tokens.NETH, false),
-                makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BOBA,      Tokens.USDT, false),
-                makeTestCase(ChainId.ETH,       Tokens.NETH,   ChainId.BOBA,      Tokens.USDC, false),
-                makeTestCase(ChainId.BOBA,      Tokens.ETH,    ChainId.ETH,       Tokens.USDT, false),
-                makeTestCase(ChainId.BOBA,      Tokens.NETH,   ChainId.ETH,       Tokens.USDC, false),
-                makeTestCase(ChainId.BOBA,      Tokens.USDC,   ChainId.ETH,       Tokens.USDT, true),
-                makeTestCase(ChainId.ETH,       Tokens.USDT,   ChainId.ETH,       Tokens.USDC, true),
-                makeTestCase(ChainId.BOBA,      Tokens.SYN,    ChainId.ETH,       Tokens.SYN,  true),
-                makeTestCase(ChainId.ETH,       Tokens.SYN,    ChainId.BOBA,      Tokens.SYN,  true),
-                makeTestCase(ChainId.BOBA,      Tokens.SYN,    ChainId.ETH,       Tokens.NUSD, false),
-                makeTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.BOBA,      Tokens.NUSD, true),
-                makeTestCase(ChainId.ETH,       Tokens.SYN,    ChainId.MOONRIVER, Tokens.SYN,  true),
-                makeTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.MOONRIVER, Tokens.FRAX, false),
-                makeTestCase(ChainId.MOONRIVER, Tokens.FRAX,   ChainId.ETH,       Tokens.FRAX, true),
-                makeTestCase(ChainId.ETH,       Tokens.FRAX,   ChainId.MOONRIVER, Tokens.FRAX, true),
-                makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.OPTIMISM,  Tokens.NETH, true),
-                makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.OPTIMISM,  Tokens.ETH,  true),
-                makeTestCase(ChainId.OPTIMISM,  Tokens.ETH,    ChainId.ETH,       Tokens.ETH,  true),
-                makeTestCase(ChainId.OPTIMISM,  Tokens.ETH,    ChainId.ETH,       Tokens.NETH, true),
-                makeTestCase(ChainId.AURORA,    Tokens.USDT,   ChainId.BSC,       Tokens.USDC, true),
-                makeTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.AURORA,    Tokens.USDC, false),
-                makeTestCase(ChainId.ETH,       Tokens.NETH,   ChainId.AURORA,    Tokens.USDC, false),
-                makeTestCase(Networks.AVALANCHE,Tokens.WETH_E, ChainId.AURORA,    Tokens.USDC, false),
-                makeTestCase(ChainId.ETH,       Tokens.WETH,   ChainId.AVALANCHE, Tokens.WETH_E,true),
-                makeTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.AVALANCHE, Tokens.NUSD,true),
-                makeTestCase(ChainId.ETH,       Tokens.WETH,   ChainId.HARMONY,   Tokens.ONE_ETH,true),
-                makeTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.ETH,       Tokens.WETH,true),
-                makeTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.AVALANCHE, Tokens.WETH_E,true),
-                makeTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.OPTIMISM,  Tokens.WETH,true),
-                makeTestCase(ChainId.OPTIMISM,  Tokens.WETH,   ChainId.HARMONY,   Tokens.ONE_ETH,true),
-                makeTestCase(ChainId.AVALANCHE, Tokens.AVWETH, ChainId.AURORA,    Tokens.USDC, false),
-                makeTestCase(Networks.AVALANCHE,Tokens.AVWETH, ChainId.ETH,       Tokens.WETH, true),
-                makeTestCase(ChainId.HARMONY,   Tokens.AVWETH, ChainId.ETH,       Tokens.WETH,false),
-                makeTestCase(ChainId.BSC,       Tokens.HIGH,   ChainId.ETH,       Tokens.HIGH, true),
-                makeTestCase(ChainId.BSC,       Tokens.JUMP,   ChainId.FANTOM,    Tokens.JUMP, true),
-                makeTestCase(ChainId.BSC,       Tokens.DOG,    ChainId.POLYGON,   Tokens.DOG, true),
-                makeTestCase(ChainId.FANTOM,    Tokens.MIM,    ChainId.POLYGON,   Tokens.DAI, true),
-                makeTestCase(ChainId.POLYGON,   Tokens.NFD,    ChainId.AVALANCHE, Tokens.NFD, true),
-                makeTestCase(ChainId.OPTIMISM,  Tokens.WETH_E, ChainId.AVALANCHE, Tokens.WETH_E,false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.DAI,    ChainId.BSC,       Tokens.USDC,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BSC,       Tokens.USDC,   false),
+                makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.WETH,   ChainId.ETH,       Tokens.ETH,    true),
+                makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.WETH,   ChainId.AVALANCHE, Tokens.ETH,    true),
+                makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.SYN,    ChainId.BSC,       Tokens.SYN,    true),
+                makeBridgeSwapTestCase(ChainId.POLYGON,   Tokens.MIM,    ChainId.BSC,       Tokens.USDT,   false),
+                makeBridgeSwapTestCase(ChainId.FANTOM,    Tokens.MIM,    ChainId.BSC,       Tokens.USDT,   true),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.MIM,    ChainId.ETH,       Tokens.MIM,    false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BOBA,      Tokens.NETH,   false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BOBA,      Tokens.ETH,    false),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.ETH,    ChainId.ETH,       Tokens.ETH,    false),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.ETH,    ChainId.ETH,       Tokens.NETH,   false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BOBA,      Tokens.USDT,   false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.NETH,   ChainId.BOBA,      Tokens.USDC,   false),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.ETH,    ChainId.ETH,       Tokens.USDT,   false),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.NETH,   ChainId.ETH,       Tokens.USDC,   false),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.USDC,   ChainId.ETH,       Tokens.USDT,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.USDT,   ChainId.ETH,       Tokens.USDC,   true),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.SYN,    ChainId.ETH,       Tokens.SYN,    true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.SYN,    ChainId.BOBA,      Tokens.SYN,    true),
+                makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.SYN,    ChainId.ETH,       Tokens.NUSD,   false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.BOBA,      Tokens.NUSD,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.SYN,    ChainId.MOONRIVER, Tokens.SYN,    true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.MOONRIVER, Tokens.FRAX,   false),
+                makeBridgeSwapTestCase(ChainId.MOONRIVER, Tokens.FRAX,   ChainId.ETH,       Tokens.FRAX,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.FRAX,   ChainId.MOONRIVER, Tokens.FRAX,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.OPTIMISM,  Tokens.NETH,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.OPTIMISM,  Tokens.ETH,    true),
+                makeBridgeSwapTestCase(ChainId.OPTIMISM,  Tokens.ETH,    ChainId.ETH,       Tokens.ETH,    true),
+                makeBridgeSwapTestCase(ChainId.OPTIMISM,  Tokens.ETH,    ChainId.ETH,       Tokens.NETH,   true),
+                makeBridgeSwapTestCase(ChainId.AURORA,    Tokens.USDT,   ChainId.BSC,       Tokens.USDC,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.AURORA,    Tokens.USDC,   false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.NETH,   ChainId.AURORA,    Tokens.USDC,   false),
+                makeBridgeSwapTestCase(Networks.AVALANCHE,Tokens.WETH_E, ChainId.AURORA,    Tokens.USDC,   false),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.WETH,   ChainId.AVALANCHE, Tokens.WETH_E, true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.NUSD,   ChainId.AVALANCHE, Tokens.NUSD,   true),
+                makeBridgeSwapTestCase(ChainId.ETH,       Tokens.WETH,   ChainId.HARMONY,   Tokens.ONE_ETH,true),
+                makeBridgeSwapTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.ETH,       Tokens.WETH,   true),
+                makeBridgeSwapTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.AVALANCHE, Tokens.WETH_E, true),
+                makeBridgeSwapTestCase(ChainId.HARMONY,   Tokens.ONE_ETH,ChainId.OPTIMISM,  Tokens.WETH,   true),
+                makeBridgeSwapTestCase(ChainId.OPTIMISM,  Tokens.WETH,   ChainId.HARMONY,   Tokens.ONE_ETH,true),
+                makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.AVWETH, ChainId.AURORA,    Tokens.USDC,   false),
+                makeBridgeSwapTestCase(Networks.AVALANCHE,Tokens.AVWETH, ChainId.ETH,       Tokens.WETH,   true),
+                makeBridgeSwapTestCase(ChainId.HARMONY,   Tokens.AVWETH, ChainId.ETH,       Tokens.WETH,   false),
+                makeBridgeSwapTestCase(ChainId.BSC,       Tokens.HIGH,   ChainId.ETH,       Tokens.HIGH,   true),
+                makeBridgeSwapTestCase(ChainId.BSC,       Tokens.JUMP,   ChainId.FANTOM,    Tokens.JUMP,   true),
+                makeBridgeSwapTestCase(ChainId.BSC,       Tokens.DOG,    ChainId.POLYGON,   Tokens.DOG,    true),
+                makeBridgeSwapTestCase(ChainId.FANTOM,    Tokens.MIM,    ChainId.POLYGON,   Tokens.DAI,    true),
+                makeBridgeSwapTestCase(ChainId.POLYGON,   Tokens.NFD,    ChainId.AVALANCHE, Tokens.NFD,    true),
+                makeBridgeSwapTestCase(ChainId.OPTIMISM,  Tokens.WETH_E, ChainId.AVALANCHE, Tokens.WETH_E, false),
+                makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.ETH,    ChainId.AVALANCHE, Tokens.WETH_E, true),
+                makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.WETH,   ChainId.AVALANCHE, Tokens.WETH_E, true),
+                makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.WETH_E, ChainId.ARBITRUM,  Tokens.ETH,    true),
+                makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.WETH_E, ChainId.ARBITRUM,  Tokens.WETH,   true),
             ];
 
-            testCases.forEach(({ args, expected }) => {
+            for (const tc of testCases) {
+                const {args, expected} = tc;
+
                 const {
                     tokenFrom: { symbol: tokenFromSymbol },
-                    tokenTo: { symbol: tokenToSymbol},
+                    tokenTo:   { symbol: tokenToSymbol},
                     chainIdFrom,
                     chainIdTo
                 } = args;
 
                 const
-                    netNameFrom = chainIdFrom instanceof Networks.Network ? chainIdFrom.name : Networks.fromChainId(chainIdFrom).name,
-                    netNameTo   = chainIdTo instanceof Networks.Network ? chainIdTo.name : Networks.fromChainId(chainIdTo).name
+                    netNameFrom = Networks.fromChainId(chainIdFrom).name,
+                    netNameTo   = Networks.fromChainId(chainIdTo).name;
 
                 const testTitle = `checkSwapSupported with params ${tokenFromSymbol} on ${netNameFrom} to ${tokenToSymbol} on ${netNameTo} should return ${expected}`
 
-                it(testTitle, function() {
+                it(testTitle, function(this: Mocha.Context) {
                     let { chainIdFrom, ...testArgs } = args;
                     const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
 
-                    let chainIdTo = testArgs.chainIdTo instanceof Networks.Network ? testArgs.chainIdTo.chainId : testArgs.chainIdTo;
-
                     const [swapAllowed, errReason] = bridgeInstance.swapSupported({ ...testArgs, chainIdTo });
-                    expect(swapAllowed).to.equal(expected, errReason);
+                    expectEqual(swapAllowed, expected, errReason);
                 })
-            })
+            }
         })
 
         describe("getEstimatedBridgeOutput", function(this: Mocha.Suite) {
-            interface TestCase {
-                args: {
-                    chainIdFrom: number,
-                    chainIdTo:   number,
-                    tokenFrom:   Token,
-                    tokenTo:     Token,
-                    amountFrom:  BigNumber,
-                },
+            interface Expected {
                 notZero:   boolean,
                 wantError: boolean,
                 noAddrTo:  boolean,
             }
+
+            type TestCase = BridgeSwapTestCase<Expected>
 
             const makeTestCase = (
                 t1: Token, t2: Token,
@@ -302,24 +355,20 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                 notZero?:  boolean,
                 wantErr?:  boolean,
                 noAddrTo?: boolean,
-            ): TestCase =>
-                ({
-                    args: {
-                        tokenFrom:   t1,
-                        chainIdFrom: c1,
-                        tokenTo:     t2,
-                        chainIdTo:   c2,
-                        amountFrom:  getTestAmount(t1, c1, amt),
-                    },
-                    notZero:   notZero  ?? true,
-                    wantError: wantErr  ?? false,
-                    noAddrTo:  noAddrTo ?? false,
-                })
+            ): TestCase => {
+                const expected: Expected = {
+                    notZero:   valueIfUndefined(notZero,  true),
+                    wantError: valueIfUndefined(wantErr,  false),
+                    noAddrTo:  valueIfUndefined(noAddrTo, false),
+                };
+
+                return makeBridgeSwapTestCase(c1, t1, c2, t2, expected, getTestAmount(t1, c1, amt))
+            }
 
             let testCases: TestCase[] = [
                 makeTestCase(Tokens.DAI,     Tokens.USDC,    ChainId.ETH,       ChainId.BSC, "500"),
                 makeTestCase(Tokens.DAI,     Tokens.USDC,    ChainId.ETH,       ChainId.BSC, "50"),
-                makeTestCase(Tokens.DAI,     Tokens.USDC,    ChainId.ETH,       ChainId.BSC, "1", false),
+                makeTestCase(Tokens.DAI,     Tokens.USDC,    ChainId.ETH,       ChainId.BSC, "1",   false),
                 makeTestCase(Tokens.NETH,    Tokens.ETH,     ChainId.BOBA,      ChainId.ETH, "555", false, true),
                 makeTestCase(Tokens.NETH,    Tokens.NETH,    ChainId.BOBA,      ChainId.ETH, "555", false, true),
                 makeTestCase(Tokens.USDC,    Tokens.NUSD,    ChainId.BOBA,      ChainId.BSC, "20"),
@@ -377,11 +426,13 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                 makeTestCase(Tokens.WETH,    Tokens.FTM_ETH, ChainId.ETH,       ChainId.FANTOM),
                 makeTestCase(Tokens.NUSD,    Tokens.DAI,     ChainId.AVALANCHE, ChainId.POLYGON, undefined, true, false, true),
                 makeTestCase(Tokens.WETH,    Tokens.FTM_ETH, ChainId.ETH,       ChainId.FANTOM,  undefined, true, false, true),
+                makeTestCase(Tokens.ETH,     Tokens.WETH_E,  ChainId.ARBITRUM,  ChainId.AVALANCHE),
+                makeTestCase(Tokens.WETH,    Tokens.WETH_E,  ChainId.ARBITRUM,  ChainId.AVALANCHE),
+                makeTestCase(Tokens.WETH_E,  Tokens.ETH,     ChainId.AVALANCHE, ChainId.ARBITRUM),
+                makeTestCase(Tokens.WETH_E,  Tokens.WETH,    ChainId.AVALANCHE, ChainId.ARBITRUM),
             ];
 
-            const netName = (c: number): string => Networks.fromChainId(c).name
-
-            const makeTestName = (tc: TestCase): [string, string, string] => {
+            function makeTestName(tc: TestCase): [string, string, string] {
                 let {
                     args: {
                         amountFrom,
@@ -391,87 +442,78 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                         chainIdFrom: chainFrom,
                         chainIdTo:   chainTo,
                     },
-                    notZero,
-                    wantError
+                    expected: {
+                        notZero,
+                        wantError
+                    }
                 } = tc;
 
                 const
                     amt             = formatUnits(amountFrom, tokenFrom.decimals(chainFrom)),
-                    netFrom         = netName(chainFrom),
-                    netTo           = netName(chainTo),
+                    netFrom         = Networks.networkName(chainFrom),
+                    netTo           = Networks.networkName(chainTo),
                     titleSuffix     = notZero ? "a value greater than zero" : "a value === zero",
+                    passFailSuffix  =  wantError ? "should fail" : "should pass",
                     testParamsTitle = `with params ${amt} ${tokFrom} on ${netFrom} to ${tokTo} on ${netTo}`,
-                    testTitle       = `getEstimatedBridgeOutput ${testParamsTitle} should return ${titleSuffix}`,
-                    titleSuffix1    =  wantError ? "should fail" : "should pass",
-                    testTitle1      = `buildBridgeTokenTransaction ${testParamsTitle} ${titleSuffix1}`,
-                    testTitle2      = `buildApproveTransaction ${testParamsTitle} ${titleSuffix1}`;
+                    bridgeOutputTestTitle = `getEstimatedBridgeOutput ${testParamsTitle} should return ${titleSuffix}`,
+                    transactionTestTitle  = `buildBridgeTokenTransaction ${testParamsTitle} ${passFailSuffix}`,
+                    approveTestTitle      = `buildApproveTransaction ${testParamsTitle} ${passFailSuffix}`;
 
-                return [testTitle, testTitle1, testTitle2]
+                return [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle]
             }
 
-            testCases.forEach((tc: TestCase) => {
-                this.timeout(DEFAULT_TEST_TIMEOUT);
-
-                const [testTitle, testTitle1, testTitle2] = makeTestName(tc)
+            for (const tc of testCases) {
+                const [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc)
 
                 let amountTo: BigNumber;
 
-                it(testTitle, function(done: Done) {
-                    let { args: { chainIdFrom, ...testArgs }, notZero, wantError } = tc;
+                it(bridgeOutputTestTitle, async function(this: Mocha.Context) {
+                    this.timeout(DEFAULT_TEST_TIMEOUT)
+
+                    let {args: { chainIdFrom, ...testArgs }, expected: {notZero, wantError}} = tc;
+
                     const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
 
-                    let prom: Promise<boolean> = Promise.resolve(bridgeInstance.estimateBridgeTokenOutput(testArgs)
-                        .then((res) => {
-                            amountTo = res.amountToReceive;
+                    let prom: Promise<BigNumber> = bridgeInstance.estimateBridgeTokenOutput(testArgs).then(res => res.amountToReceive);
 
-                            return res
-                        })
-                    ).then((res): boolean => {
-                        let {amountToReceive, bridgeFee} = res;
-
-
-                        return notZero
-                            ? amountToReceive.gt(Zero)
-                            : amountToReceive.eq(Zero)
-                    })
-
-                    wantError
-                        ? expect(prom).to.eventually.be.rejected.notify(done)
-                        : expect(prom).to.eventually.be.true.notify(done)
+                    try {
+                        amountTo = await prom;
+                        return (notZero ? expectNotZero : expectZero)(amountTo)
+                    } catch (e) {
+                        return (await expectPromiseResolve(prom, !wantError))
+                    }
                 })
 
-                it(testTitle2, function(this: Context, done: Done) {
-                    this.timeout(10*1000);
+                it(transactionTestTitle, async function(this: Mocha.Context) {
+                    if (tc.expected.wantError) return
 
-                    let { args: { chainIdFrom, tokenFrom, amountFrom }, wantError } = tc;
+                    this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                    if (!wantError) {
-                        const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
+                    let {
+                        args: {
+                            chainIdFrom,
+                            tokenFrom,
+                            amountFrom,
+                        },
+                    } = tc;
 
-                        switch (true) {
-                            case tokenFrom.isEqual(Tokens.ETH):
-                                tokenFrom = Tokens.WETH;
-                                break;
-                            case tokenFrom.isEqual(Tokens.AVAX):
-                                tokenFrom = Tokens.WAVAX;
-                                break;
-                            case tokenFrom.isEqual(Tokens.MOVR):
-                                tokenFrom = Tokens.WMOVR;
-                                break;
-                        }
+                    const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
 
-                        let prom = Promise.resolve(
-                            bridgeInstance.buildApproveTransaction({
-                                token:  tokenFrom,
-                                amount: amountFrom
-                            })
-                        )
-
-                        expect(prom).to.eventually.be.fulfilled.notify(done);
-                        return
+                    switch (true) {
+                        case tokenFrom.isEqual(Tokens.ETH):
+                            tokenFrom = Tokens.WETH;
+                            break;
+                        case tokenFrom.isEqual(Tokens.AVAX):
+                            tokenFrom = Tokens.WAVAX;
+                            break;
+                        case tokenFrom.isEqual(Tokens.MOVR):
+                            tokenFrom = Tokens.WMOVR;
+                            break;
                     }
 
-                    done();
+                    return (await expectFulfilled(
+                        bridgeInstance.buildApproveTransaction({token:  tokenFrom, amount: amountFrom})
+                    ))
                 })
 
                 const undefEmptyArr = [
@@ -479,51 +521,35 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
                     undefined, "", "", undefined, undefined, ""
                 ];
 
-                it(testTitle1, function(this: Context, done: Done) {
-                    this.timeout(10*1000);
 
-                    let { args: { chainIdFrom }, args, wantError, noAddrTo } = tc;
+                it(approveTestTitle, async function(this: Mocha.Context) {
+                    if (tc.expected.wantError) return
 
-                    if (!wantError) {
-                        const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
-                        let addressTo: string;
+                    this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                        noAddrTo
-                            ? addressTo = _.shuffle(undefEmptyArr)[0]
-                            : addressTo = makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey).address
+                    let {args: { chainIdFrom }, args, expected: {noAddrTo}} = tc;
 
-                        
-                        let prom = Promise.resolve(
-                            bridgeInstance.buildBridgeTokenTransaction({
-                                ...args, amountTo, addressTo
-                            })
-                        )
+                    const
+                        bridgeInstance    = new Bridge.SynapseBridge({ network: chainIdFrom }),
+                        addressTo: string = noAddrTo
+                        ? _.shuffle(undefEmptyArr)[0]
+                        : makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey).address;
 
-                        noAddrTo
-                            ? expect(prom).to.eventually.be.rejected.notify(done)
-                            : expect(prom).to.eventually.be.fulfilled.notify(done);
-                        return
-                    }
 
-                    done();
+                    return (await expectPromiseResolve(
+                        bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo}),
+                        !noAddrTo
+                    ))
                 })
-            })
+            }
         })
     })
 })
 
-function buildTransaction(
-    prom: Promise<PopulatedTransaction>,
-    done: Done
-) {
-    Promise.resolve(prom)
-        .then(() => done())
-        .catch((err: any) => doneWithError(err, done))
-}
 
 function executeTransaction(
     prom: Promise<TransactionResponse|ContractTransaction>,
-    done: Done
+    done: Mocha.Done
 ) {
     Promise.resolve(prom)
         .then((txn: TransactionResponse|ContractTransaction) => {
@@ -536,7 +562,7 @@ describe("SynapseBridge token bridge tests", async function(this: Mocha.Suite) {
     const
         tokenFrom      = Tokens.ETH,
         tokenTo        = Tokens.WETH_E,
-        chainIdFrom    = ChainId.ETH,
+        chainIdFrom    = ChainId.ARBITRUM,
         chainIdTo      = ChainId.AVALANCHE,
         amountFrom     = parseEther("420.696969"),
         bridgeArgs     = {tokenFrom, tokenTo, chainIdFrom, chainIdTo, amountFrom},
@@ -548,7 +574,9 @@ describe("SynapseBridge token bridge tests", async function(this: Mocha.Suite) {
         outputEstimate: Bridge.BridgeOutputEstimate,
         doBridgeArgs: Bridge.BridgeTransactionParams;
 
-    async function getBridgeEstimate(this: Mocha.Context, done: Done) {
+    async function getBridgeEstimate(this: Mocha.Context, done: Mocha.Done) {
+        this.timeout(DEFAULT_TEST_TIMEOUT);
+
         bridgeInstance.estimateBridgeTokenOutput(bridgeArgs)
             .then((res) => {
                 if (res.amountToReceive.gt(Zero)) {
@@ -576,37 +604,32 @@ describe("SynapseBridge token bridge tests", async function(this: Mocha.Suite) {
 
         step("should return an output estimate greater than zero", getBridgeEstimate);
 
-        step("approval transaction should be populated successfully", function(this: Context, done: Done) {
+        step("approval transaction should be populated successfully", async function(this: Mocha.Context) {
+            if (tokenFrom.isEqual(Tokens.ETH)) return
+
             this.timeout(DEFAULT_TEST_TIMEOUT);
 
-            if (tokenFrom.isEqual(Tokens.ETH)) {
-                done();
-                return
-            }
-
-            buildTransaction(
-                bridgeInstance.buildApproveTransaction({ token: tokenFrom }),
-                done
-            )
+            return (await expectFulfilled(
+                bridgeInstance.buildApproveTransaction({token: tokenFrom}).then((txn) => approvalTxn = txn)
+            ))
         })
 
-        step("bridge transaction should be populated successfully", function(this: Context, done: Done) {
+        step("bridge transaction should be populated successfully", async function(this: Mocha.Context) {
             this.timeout(DEFAULT_TEST_TIMEOUT);
 
-            buildTransaction(
-                bridgeInstance.buildBridgeTokenTransaction(doBridgeArgs),
-                done
-            )
+            return (await expectFulfilled(
+                bridgeInstance.buildBridgeTokenTransaction(doBridgeArgs).then((txn) => bridgeTxn = txn)
+            ))
         })
 
         describe.skip("send transactions", function(this: Mocha.Suite) {
-            step("approval transaction should be sent successfully", function(this: Context, done: Done) {
-                this.timeout(EXECUTORS_TEST_TIMEOUT);
-
+            step("approval transaction should be sent successfully", function(this: Mocha.Context, done: Mocha.Done) {
                 if (tokenFrom.isEqual(Tokens.ETH)) {
                     done();
                     return
                 }
+
+                this.timeout(EXECUTORS_TEST_TIMEOUT);
 
                 executeTransaction(
                     wallet.sendTransaction(approvalTxn),
@@ -614,13 +637,13 @@ describe("SynapseBridge token bridge tests", async function(this: Mocha.Suite) {
                 );
             })
 
-            step("token bridge transaction should be sent successfully", function(this: Context, done: Done) {
-                this.timeout(EXECUTORS_TEST_TIMEOUT);
-
+            step("token bridge transaction should be sent successfully", function(this: Mocha.Context, done: Mocha.Done) {
                 if (tokenFrom.isEqual(Tokens.ETH)) {
                     done();
                     return
                 }
+
+                this.timeout(EXECUTORS_TEST_TIMEOUT);
 
                 executeTransaction(
                     wallet.sendTransaction(bridgeTxn),
@@ -630,11 +653,11 @@ describe("SynapseBridge token bridge tests", async function(this: Mocha.Suite) {
         })
     })
 
-    describe.skip("magic executors", function(this: Mocha.Suite) {
+    describe("magic executors", function(this: Mocha.Suite) {
         step("should return an output estimate greater than zero", getBridgeEstimate);
 
         describe.skip("send transactions", function(this: Mocha.Suite) {
-            step("erc20 approval transaction should execute successfully", function(this: Context, done: Done) {
+            step("erc20 approval transaction should execute successfully", function(this: Mocha.Context, done: Mocha.Done) {
                 this.timeout(EXECUTORS_TEST_TIMEOUT);
 
                 executeTransaction(
@@ -643,7 +666,7 @@ describe("SynapseBridge token bridge tests", async function(this: Mocha.Suite) {
                 );
             })
 
-            step("token bridge transaction should execute successfully", function(this: Context, done: Done) {
+            step("token bridge transaction should execute successfully", function(this: Mocha.Context, done: Mocha.Done) {
                 this.timeout(EXECUTORS_TEST_TIMEOUT);
 
                 executeTransaction(
@@ -653,10 +676,10 @@ describe("SynapseBridge token bridge tests", async function(this: Mocha.Suite) {
             })
         })
 
-        describe.skip("SynapseBridge bridge transaction", function(this: Mocha.Suite) {
-            this.timeout(EXECUTORS_TEST_TIMEOUT);
-
-
-        })
+        // describe.skip("SynapseBridge bridge transaction", function(this: Mocha.Suite) {
+        //     this.timeout(EXECUTORS_TEST_TIMEOUT);
+        //
+        //
+        // })
     })
 })

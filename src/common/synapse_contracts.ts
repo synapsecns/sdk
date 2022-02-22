@@ -1,4 +1,8 @@
 import {ABIs} from "../abis/index";
+
+import {ChainId} from "./chainid";
+import type {ChainIdTypeMap} from "./types";
+
 import {ContractInterface} from "@ethersproject/contracts";
 
 
@@ -10,20 +14,36 @@ export namespace SynapseContracts {
 
     export class SynapseContract {
         readonly bridge:      abiAndAddress;
-        readonly bridge_zap:  abiAndAddress;
+        readonly bridge_zap?: abiAndAddress;
 
         constructor(args: {
             bridge:         string,
-            bridge_zap:     string,
+            bridge_zap?:    string,
             isEthMainnet?:  boolean
         }) {
             let { bridge, bridge_zap, isEthMainnet=false } = args;
 
             this.bridge     = { address: bridge, abi: ABIs.SynapseBridge };
             this.bridge_zap = {
-                address: bridge_zap,
+                address: bridge_zap || "",
                 abi: isEthMainnet ? ABIs.L1BridgeZap : ABIs.L2BridgeZap,
             };
+        }
+
+        get bridge_address(): string {
+            return this.bridge.address
+        }
+
+        get bridge_abi(): ContractInterface {
+            return this.bridge.abi
+        }
+
+        get bridge_zap_address(): string {
+            return this.bridge_zap.address
+        }
+
+        get bridge_zap_abi(): ContractInterface {
+            return this.bridge_zap.abi
         }
     }
 
@@ -36,7 +56,11 @@ export namespace SynapseContracts {
     export const Optimism = new SynapseContract({
         bridge:     "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
         bridge_zap: "0x9CD619c50562a38edBdC3451ade7B58CaA71Ab32",
-    })
+    });
+
+    export const Cronos = new SynapseContract({
+        bridge:     "0xE27BFf97CE92C3e1Ff7AA9f86781FDd6D48F5eE9",
+    });
 
     export const BSC = new SynapseContract({
         bridge:     "0xd123f70AE324d34A9E76b67a27bf77593bA8749f",
@@ -56,6 +80,10 @@ export namespace SynapseContracts {
     export const Boba = new SynapseContract({
         bridge:     "0x432036208d2717394d2614d6697c46DF3Ed69540",
         bridge_zap: "0x64B4097bCCD27D49BC2A081984C39C3EeC427a2d",
+    });
+
+    export const Metis = new SynapseContract({
+        bridge:    "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
     });
 
     export const Moonbeam = new SynapseContract(({
@@ -87,4 +115,25 @@ export namespace SynapseContracts {
         bridge:     "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
         bridge_zap: "0xB729B5bAD4B42f3bDd4A3518a1Cc00178cb5920a",
     });
+
+    const chainIdContractsMap: ChainIdTypeMap<SynapseContract> = {
+        [ChainId.ETH]:       Ethereum,
+        [ChainId.OPTIMISM]:  Optimism,
+        [ChainId.CRONOS]:    Cronos,
+        [ChainId.BSC]:       BSC,
+        [ChainId.POLYGON]:   Polygon,
+        [ChainId.FANTOM]:    Fantom,
+        [ChainId.BOBA]:      Boba,
+        [ChainId.METIS]:     Metis,
+        [ChainId.MOONBEAM]:  Moonbeam,
+        [ChainId.MOONRIVER]: Moonriver,
+        [ChainId.ARBITRUM]:  Arbitrum,
+        [ChainId.AVALANCHE]: Avalanche,
+        [ChainId.AURORA]:    Aurora,
+        [ChainId.HARMONY]:   Harmony,
+    }
+
+    export function contractsForChainId(chainId: number): SynapseContract {
+        return chainIdContractsMap[chainId]
+    }
 }
