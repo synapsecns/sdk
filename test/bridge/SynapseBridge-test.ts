@@ -575,6 +575,8 @@ describe("SynapseBridge token bridge tests", async function(this: Mocha.Suite) {
         doBridgeArgs: Bridge.BridgeTransactionParams;
 
     async function getBridgeEstimate(this: Mocha.Context, done: Mocha.Done) {
+        this.timeout(DEFAULT_TEST_TIMEOUT);
+
         bridgeInstance.estimateBridgeTokenOutput(bridgeArgs)
             .then((res) => {
                 if (res.amountToReceive.gt(Zero)) {
