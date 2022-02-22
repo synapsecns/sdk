@@ -12,12 +12,11 @@ import {
 import {
     DEFAULT_TEST_TIMEOUT,
     EXECUTORS_TEST_TIMEOUT,
+    bridgeTestPrivkey,
     doneWithError,
     expectFulfilled,
     makeWalletSignerWithProvider,
 } from "../helpers";
-
-import {bridgeTestPrivkey} from "./bridge_test_utils";
 
 import type {TransactionResponse} from "@ethersproject/providers";
 

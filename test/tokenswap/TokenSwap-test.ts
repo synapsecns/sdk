@@ -5,18 +5,19 @@ import {step} from "mocha-steps";
 import {Zero} from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
 
+import type {Token} from "../../src";
+
 import {
     ChainId,
     Networks,
-    Token,
     Tokens,
     TokenSwap,
     supportedChainIds,
 } from "../../src";
 
 import {
-    wrapExpect,
     DEFAULT_TEST_TIMEOUT,
+    wrapExpect,
     getTestAmount,
     expectRejected,
     expectFulfilled,

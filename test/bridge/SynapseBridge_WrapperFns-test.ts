@@ -28,16 +28,15 @@ import {
     wrapExpectAsync
 } from "../helpers";
 
-
 import type {Provider} from "@ethersproject/providers";
 import type {ContractTransaction} from "@ethersproject/contracts";
 
 
 import {Wallet} from "@ethersproject/wallet";
-import {
-    BigNumber,
-    BigNumberish
-} from "@ethersproject/bignumber";
+
+import {BigNumber} from "@ethersproject/bignumber";
+import type {BigNumberish} from "@ethersproject/bignumber";
+
 import {
     Zero,
     MaxUint256,

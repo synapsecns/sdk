@@ -28,6 +28,3 @@ export function makeBridgeSwapTestCase<T>(
 
     return {args: {chainIdFrom: c1, tokenFrom, chainIdTo: c2, tokenTo, amountFrom}, expected}
 }
-
-// Completely clean privkey with low balances.
-export const bridgeTestPrivkey: string = "53354287e3023f0629b7a5e187aa1ca3458c4b7ff9d66a6e3f4b2e821aafded7";

@@ -13,6 +13,7 @@ import {
 
 import {
     DEFAULT_TEST_TIMEOUT,
+    bridgeTestPrivkey,
     makeWalletSignerWithProvider,
     getTestAmount,
     expectEqual,
@@ -23,10 +24,7 @@ import {
     valueIfUndefined,
 } from "../helpers";
 
-import {
-    bridgeTestPrivkey,
-    makeBridgeSwapTestCase,
-} from "./bridge_test_utils";
+import {makeBridgeSwapTestCase} from "./bridge_test_utils";
 
 import type {BridgeSwapTestCase} from "./bridge_test_utils";
 
