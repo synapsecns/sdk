@@ -20,7 +20,7 @@ export const executePopulatedTransaction = (
 
 
 export function contractAddressFor(chainId: number, key: string): string {
-    const { address } = contractsForChainId(chainId)[key];
+    const { address } = contractsForChainId(chainId)[key] || "";
     return address
 }
 
@@ -28,10 +28,12 @@ export function contractAddressFor(chainId: number, key: string): string {
 const CHAINID_CONTRACTS_MAP: {[c: number]: SynapseContracts.SynapseContract} = {
     [ChainId.ETH]:       SynapseContracts.Ethereum,
     [ChainId.OPTIMISM]:  SynapseContracts.Optimism,
+    [ChainId.CRONOS]:   SynapseContracts.Cronos,
     [ChainId.BSC]:       SynapseContracts.BSC,
     [ChainId.POLYGON]:   SynapseContracts.Polygon,
     [ChainId.FANTOM]:    SynapseContracts.Fantom,
     [ChainId.BOBA]:      SynapseContracts.Boba,
+    [ChainId.METIS]:     SynapseContracts.Metis,
     [ChainId.MOONBEAM]:  SynapseContracts.Moonbeam,
     [ChainId.MOONRIVER]: SynapseContracts.Moonriver,
     [ChainId.ARBITRUM]:  SynapseContracts.Arbitrum,

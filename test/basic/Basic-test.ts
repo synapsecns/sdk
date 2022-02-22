@@ -14,12 +14,7 @@ import {
     Tokens
 } from "../../src";
 
-import {
-    wrapExpect,
-    expectLength,
-    expectIncludes,
-    expectBoolean,
-} from "../helpers";
+import {expectBoolean, expectIncludes, expectLength, wrapExpect,} from "../helpers";
 
 interface _tc {
     want: boolean,
@@ -30,7 +25,7 @@ const makeWantString = (tc: _tc, suffix: string="include"): string => `should${t
 
 
 describe("Basic tests", function(this: Mocha.Suite) {
-    const numChains: number = 12;
+    const numChains: number = 14;
 
     describe("Check networks", function(this: Mocha.Suite) {
         const
@@ -130,6 +125,8 @@ describe("Basic tests", function(this: Mocha.Suite) {
                 {chainId: ChainId.AVALANCHE,    token: Tokens.AVWETH,       want: true},
                 {chainId: ChainId.AVALANCHE,    token: Tokens.WAVAX,        want: true},
                 {chainId: ChainId.MOONRIVER,    token: Tokens.WMOVR,        want: true},
+                {chainId: ChainId.CRONOS,      token: Tokens.GOHM,         want: true},
+                {chainId: ChainId.METIS,        token: Tokens.SYN,          want: true},
             ];
 
             for (const tc of testCases) {
