@@ -1,6 +1,5 @@
 import "../helpers/chaisetup";
 
-import {step} from "mocha-steps";
 import {expect} from "chai";
 
 import {
@@ -15,12 +14,8 @@ import {
     Tokens
 } from "../../src";
 
-import {JsonRpcProvider, Web3Provider} from "@ethersproject/providers";
 
-import {setJsonRpcUriForNetwork} from "../../src/common/utils";
-import {rpcProviderForNetwork} from "../../src/internal/rpcproviders";
-
-import {expectBoolean, expectIncludes, expectLength, wrapExpect,} from "../helpers";
+import {expectBoolean, expectIncludes, expectLength, wrapExpect} from "../helpers";
 
 interface _tc {
     want: boolean,
