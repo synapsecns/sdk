@@ -274,6 +274,34 @@ const ABI = {
     {
       "inputs": [
         {
+          "internalType": "bytes32",
+          "name": "to",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "contract IERC20",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "redeemv2",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "to",
           "type": "address"
@@ -437,6 +465,14 @@ const ABI = {
           "token": "ERC20 compatible token to redeem into the bridge"
         }
       },
+      "redeemv2(bytes32,uint256,address,uint256)": {
+        "params": {
+          "amount": "Amount in native token decimals to transfer cross-chain pre-fees*",
+          "chainId": "which chain to bridge assets onto",
+          "to": "address on other chain to bridge assets to",
+          "token": "ERC20 compatible token to redeem into the bridge"
+        }
+      },
       "zapAndDeposit(address,uint256,address,uint256[],uint256,uint256)": {
         "params": {
           "chainId": "which chain to bridge assets onto",
@@ -489,6 +525,9 @@ const ABI = {
       },
       "redeem(address,uint256,address,uint256)": {
         "notice": "Wraps SynapseBridge redeem() function"
+      },
+      "redeemv2(bytes32,uint256,address,uint256)": {
+        "notice": "Wraps SynapseBridge redeemv2() function"
       },
       "zapAndDeposit(address,uint256,address,uint256[],uint256,uint256)": {
         "notice": "Combines adding liquidity to the given Swap, and calls deposit() on the bridge using that LP token"
