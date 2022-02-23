@@ -143,6 +143,18 @@ describe("Basic tests", function(this: Mocha.Suite) {
             }
         })
     })
+
+    describe("Test Networks.networkSupportsToken()", function(this: Mocha.Suite) {
+        it("BSC should support gOHM", function(this: Mocha.Context) {
+            expect(Networks.networkSupportsToken(ChainId.BSC, Tokens.GOHM)).to.be.true;
+            expect(Networks.networkSupportsToken(Networks.BSC, Tokens.GOHM)).to.be.true;
+        })
+
+        it("ETH should not support MIM", function(this: Mocha.Context) {
+            expect(Networks.networkSupportsToken(ChainId.ETH, Tokens.MIM)).to.be.false;
+            expect(Networks.networkSupportsToken(Networks.ETH, Tokens.MIM)).to.be.false;
+        })
+    })
 })
 
 describe("SwapPools", function(this: Mocha.Suite) {
