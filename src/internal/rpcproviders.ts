@@ -5,7 +5,7 @@ import type {Provider} from "@ethersproject/providers";
 import {ChainId, supportedChainIds} from "../common/chainid";
 import type {StringMap} from "../common/types";
 
-import {RpcConnector} from "./rpcconnector";
+import {Web3RpcConnector, JsonRpcConnector} from "./rpcconnector";
 
 const ENV_KEY_MAP: StringMap = {
     [ChainId.ETH]:       "ETH_RPC_URI",
@@ -43,13 +43,21 @@ const CHAIN_RPC_URIS: StringMap = {
 
 const LOADED_CHAIN_RPC_URIS: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, rpcUriForChainId(cid)]))
 
-const RPC_CONNECTORS: RpcConnector = new RpcConnector({urls: LOADED_CHAIN_RPC_URIS});
+const
+    RPC_CONNECTOR:      JsonRpcConnector = new JsonRpcConnector({urls: LOADED_CHAIN_RPC_URIS}),
+    WEB3_RPC_CONNECTOR: Web3RpcConnector = new Web3RpcConnector({urls: LOADED_CHAIN_RPC_URIS});
+
+const DEFAULT_CONNECTOR = RPC_CONNECTOR;
 
 /**
  * @param chainId chain id of the network for which to return a provider
  */
 export function rpcProviderForNetwork(chainId: number): Provider {
-    return RPC_CONNECTORS.provider(chainId)
+    return DEFAULT_CONNECTOR.provider(chainId)
+}
+
+export function web3ProviderForNetwork(chainId: number): Provider {
+    return WEB3_RPC_CONNECTOR.provider(chainId)
 }
 
 /**
@@ -69,7 +77,7 @@ function checkEnv(chainId: number): string|undefined {
 }
 
 export function setRpcUriForNetwork(chainId: number, uri: string) {
-    RPC_CONNECTORS.setProviderUri(chainId, uri);
+    DEFAULT_CONNECTOR.setProviderUri(chainId, uri);
 }
 
 /**
