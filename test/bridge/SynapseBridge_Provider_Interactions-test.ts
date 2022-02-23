@@ -15,7 +15,7 @@ import {
     EXECUTORS_TEST_TIMEOUT,
     bridgeTestPrivkey,
     expectFulfilled,
-    makeWalletSignerWithProvider, expectNotZero, expectRejected,
+    makeWalletSignerWithProvider, expectNotZero, expectRejected, expectPromiseResolve, wrapExpect,
 } from "../helpers";
 
 import type {TransactionResponse} from "@ethersproject/providers";
@@ -30,6 +30,7 @@ import {Wallet}     from "@ethersproject/wallet";
 
 import {rejectPromise} from "@common/utils";
 import type {BridgeSwapTestCase} from "./bridge_test_utils";
+import {expect} from "chai";
 
 function executeTransaction(
     prom: Promise<TransactionResponse|ContractTransaction>
@@ -62,39 +63,53 @@ async function buildWalletArgs(chainId: number): Promise<WalletArgs> {
 }
 
 describe("SynapseBridge - Provider Interactions tests", async function(this: Mocha.Suite) {
-    type TestCase = BridgeSwapTestCase<boolean>;
+    interface TestOpts {
+        executeSuccess: boolean,
+        canBridge:      boolean,
+    }
+
+    type TestCase = BridgeSwapTestCase<TestOpts>;
 
     const testCases: TestCase[] = [
         {
             args: {
-                tokenFrom:   Tokens.ETH,
-                tokenTo:     Tokens.WETH_E,
+                tokenFrom: Tokens.ETH,
+                tokenTo: Tokens.WETH_E,
                 chainIdFrom: ChainId.ARBITRUM,
-                chainIdTo:   ChainId.AVALANCHE,
-                amountFrom:  parseEther("420.696969"),
+                chainIdTo: ChainId.AVALANCHE,
+                amountFrom: parseEther("420.696969"),
             },
-            expected: false, // whether we desire success
+            expected: {
+                executeSuccess: false,
+                canBridge:      false,
+            }
         },
         {
             args: {
-                tokenFrom:   Tokens.ETH,
-                tokenTo:     Tokens.NETH,
+                tokenFrom: Tokens.ETH,
+                tokenTo: Tokens.NETH,
                 chainIdFrom: ChainId.ETH,
-                chainIdTo:   ChainId.OPTIMISM,
-                amountFrom:  parseEther("420.696969"),
+                chainIdTo: ChainId.OPTIMISM,
+                amountFrom: parseEther("420.696969"),
             },
-            expected: false, // whether we desire success
+            expected: {
+                executeSuccess: false,
+                canBridge:      false,
+            }
         },
         {
             args: {
-                tokenFrom:   Tokens.BUSD,
-                tokenTo:     Tokens.MIM,
+                tokenFrom: Tokens.BUSD,
+                tokenTo: Tokens.MIM,
                 chainIdFrom: ChainId.BSC,
-                chainIdTo:   ChainId.FANTOM,
-                amountFrom:  parseEther("666"),
+                chainIdTo: ChainId.FANTOM,
+                amountFrom: parseEther("666"),
             },
-            expected: false, // whether we desire success
-        }
+            expected: {
+                executeSuccess: false,
+                canBridge:      false,
+            }
+        },
     ];
 
     const getBridgeEstimate = async (
@@ -156,7 +171,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
 
                     let execProm = executeTransaction(prom);
 
-                    return (await (tc.expected
+                    return (await (tc.expected.executeSuccess
                             ? expectFulfilled(execProm)
                             : expectRejected(execProm)
                         ))
@@ -183,6 +198,21 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 return
             })
 
+            describe("Test checkCanBridge()", function(this: Mocha.Suite) {
+                const canBridgeTestTitle: string = `should${tc.expected.canBridge ? "" : " not"} be able to bridge`;
+
+                it(canBridgeTestTitle, async function(this: Mocha.Context) {
+                    let prom = bridgeInstance.checkCanBridge({
+                        token: tc.args.tokenFrom,
+                        signer: wallet,
+                        amount: tc.args.amountFrom,
+                    }).then(([canBridge]) => canBridge)
+
+                    expect(prom).to.eventually.not.be.rejected;
+                    return expect(await prom).to.eq(tc.expected.canBridge);
+                })
+            })
+
             describe("test using transaction builders", function(this: Mocha.Suite) {
                 let
                     approvalTxn:     PopulatedTransaction,
@@ -207,8 +237,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                         this.timeout(DEFAULT_TEST_TIMEOUT);
 
                         return (await expectFulfilled(
-                            bridgeInstance
-                                .buildBridgeTokenTransaction(doBridgeArgs)
+                            bridgeInstance.buildBridgeTokenTransaction(doBridgeArgs)
                                 .then((txn) => bridgeTxn = txn)
                         ))
                     })
@@ -245,7 +274,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                     }
                 );
 
-                step(
+                it(
                     bridgeTxnTestTitle,
                     async function(this: Mocha.Context) {
                         return await executeTxnFunc(

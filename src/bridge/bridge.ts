@@ -48,7 +48,7 @@ import type {
  * and most importantly, executing Bridge transactions.
  */
 export namespace Bridge {
-    type CanBridgeResult = [boolean, Error];
+    type CanBridgeResult = [boolean, Error|string];
     export type CheckCanBridgeResult = [boolean, BigNumber];
 
     export interface BridgeOutputEstimate {
@@ -220,8 +220,9 @@ export namespace Bridge {
                 : this.buildL2BridgeTxn(args, tokenArgs);
 
             return newTxn
-                .then((txn) => GasUtils.populateGasParams(this.chainId, txn, "bridge"))
-                .catch(rejectPromise)
+                .then(txn =>
+                    GasUtils.populateGasParams(this.chainId, txn, "bridge")
+                )
         }
 
         /**
@@ -244,15 +245,9 @@ export namespace Bridge {
 
             args.addressTo = addressTo ?? signerAddress
 
-            const
-                isGasTokenTransfer: boolean = (this.network.chainCurrency === args.tokenFrom.symbol) && BridgeUtils.chainSupportsGasToken(this.chainId),
-                checkArgs = {signer, token: tokenFrom, amount: amountFrom};
+            const checkArgs = {signer, token: tokenFrom, amount: amountFrom};
 
-            return Promise.resolve(
-                isGasTokenTransfer
-                    ? this.checkGasTokenBalance(checkArgs)
-                    : this.checkCanBridge(checkArgs)
-            )
+            return this.checkCanBridge(checkArgs)
                 .then(canBridgeRes => {
                     const [canBridge, err] = canBridgeRes;
 
@@ -333,8 +328,10 @@ export namespace Bridge {
                 [needsApprove, allowance] = approveRes,
                 allowanceEth: string = formatUnits(allowance, token.decimals(this.chainId)).toString();
 
+            const errStr: string = `Spend allowance of Bridge too low for token ${token.symbol}; current allowance for Bridge is ${allowanceEth}`;
+
             return needsApprove
-                ? [false, new Error(`Spend allowance of Bridge too low for token ${token.symbol}; current allowance for Bridge is ${allowanceEth}`)] as CanBridgeResult
+                ? ([false, errStr] as CanBridgeResult)
                 : hasBalanceRes
         }
 
@@ -347,7 +344,6 @@ export namespace Bridge {
 
             return ERC20.allowanceOf(address, spender, {tokenAddress, chainId: this.chainId})
                 .then(allowance => [allowance.lt(amount), allowance] as CheckCanBridgeResult)
-                .catch(rejectPromise)
         }
 
         private async resolveBalanceFunc(
@@ -392,16 +388,22 @@ export namespace Bridge {
             )
         }
 
-        private async checkCanBridge(args: {signer: Signer, amount: BigNumberish, token: Token}): Promise<CanBridgeResult> {
+        async checkCanBridge(args: {signer: Signer, amount: BigNumberish, token: Token}): Promise<CanBridgeResult> {
             const {token, signer} = args;
             const signerAddress: string = await signer.getAddress();
             const checkArgs = {...args, address: signerAddress};
 
-            let hasBalanceRes: Promise<CanBridgeResult> = this.checkERC20Balance(checkArgs);
+            const isGasTokenTransfer: boolean = (this.network.chainCurrency === token.symbol) && BridgeUtils.chainSupportsGasToken(this.chainId);
 
-            return this.checkNeedsApprove(checkArgs)
-                .then(approveRes => this.resolveApproveFunc(approveRes, hasBalanceRes, token))
-                .catch(rejectPromise)
+            let hasBalanceRes: Promise<CanBridgeResult> = isGasTokenTransfer
+                ? this.checkGasTokenBalance(checkArgs)
+                : this.checkERC20Balance(checkArgs);
+
+            return isGasTokenTransfer
+                ? hasBalanceRes
+                : this.checkNeedsApprove(checkArgs)
+                    .then(approveRes => this.resolveApproveFunc(approveRes, hasBalanceRes, token))
+                    .catch(rejectPromise)
         }
 
         private buildERC20ApproveArgs(args: {
