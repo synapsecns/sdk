@@ -431,6 +431,7 @@ export namespace SwapPools {
             DOG_Pool,
             JUMP_Pool,
             NFD_Pool,
+            GOHM_Pool,
         ),
         [ChainId.POLYGON]: makeTokenPoolsMap(
             POLYGON_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
@@ -536,6 +537,7 @@ export namespace SwapPools {
             DOG_Pool,
             JUMP_Pool,
             NFD_Pool,
+            GOHM_Pool,
         ),
         [ChainId.POLYGON]: makeSwapTypeTokenPool(
             POLYGON_POOL_SWAP_TOKEN,
