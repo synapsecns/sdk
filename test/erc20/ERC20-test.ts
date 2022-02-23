@@ -11,7 +11,6 @@ import {ERC20} from "../../src/bridge/erc20";
 
 import {
     DEFAULT_TEST_TIMEOUT,
-    wrapExpect,
     getTestAmount,
     makeWalletSignerWithProvider,
     expectFulfilled,

@@ -7,7 +7,7 @@ import {Zero} from "@ethersproject/constants";
 import {Wallet} from "@ethersproject/wallet";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
-import {Token} from "../../src";
+import type {Token} from "../../src";
 import {newProviderForNetwork} from "../../src/internal/rpcproviders";
 
 const TEN_BN: BigNumber = BigNumber.from(10);

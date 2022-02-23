@@ -1,7 +1,5 @@
 import "../helpers/chaisetup";
 
-import {expect} from "chai";
-
 import {step} from "mocha-steps";
 
 import {Zero} from "@ethersproject/constants";
