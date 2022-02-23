@@ -10,7 +10,7 @@ import {ChainId, supportedChainIds} from "./common/chainid";
 import {Networks} from "./common/networks";
 
 import {SwapType} from "./internal/swaptype";
-import {newProviderForNetwork} from "./internal/rpcproviders";
+import {rpcProviderForNetwork} from "./internal/rpcproviders";
 
 import {PopulatedTransaction} from "@ethersproject/contracts";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
@@ -261,26 +261,25 @@ export namespace TokenSwap {
     }
 
     async function swapContract(token: Token, chainId: number): Promise<SwapContract> {
-        const
-            lpToken            = intermediateToken(token, chainId),
-            {poolAddress}      = await POOL_CONFIG_INSTANCE.getPoolConfig(lpToken.address(chainId), chainId);
+        const lpToken = intermediateToken(token, chainId);
 
-        return SwapFactory.connect(poolAddress, newProviderForNetwork(chainId))
+        return POOL_CONFIG_INSTANCE.getPoolConfig(lpToken.address(chainId), chainId)
+            .then(({poolAddress}) => SwapFactory.connect(poolAddress, rpcProviderForNetwork(chainId)))
+            .catch(rejectPromise)
     }
 
     export async function swapSetup(tokenFrom: Token, tokenTo: Token, chainId: number): Promise<SwapSetup> {
-        const
-            swapInstance = await swapContract(tokenFrom, chainId),
-            [tokenIndexFrom, tokenIndexTo] = await Promise.all([
+        const swapInstance = await swapContract(tokenFrom, chainId);
+
+        return Promise.all([
                 swapInstance.getTokenIndex(tokenFrom.address(chainId)),
                 swapInstance.getTokenIndex(tokenTo.address(chainId)),
-            ]);
-
-        return {
+        ]).then(([tokenIndexFrom, tokenIndexTo]) => ({
             swapInstance,
             tokenIndexFrom,
             tokenIndexTo,
-        }
+        })).catch(rejectPromise)
+
     }
 
     function intermediateToken(token: Token, chainId: number): Token {

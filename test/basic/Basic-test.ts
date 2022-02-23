@@ -1,5 +1,6 @@
 import "../helpers/chaisetup";
 
+import {step} from "mocha-steps";
 import {expect} from "chai";
 
 import {
@@ -14,12 +15,12 @@ import {
     Tokens
 } from "../../src";
 
-import {
-    wrapExpect,
-    expectLength,
-    expectIncludes,
-    expectBoolean,
-} from "../helpers";
+import {JsonRpcProvider, Web3Provider} from "@ethersproject/providers";
+
+import {setJsonRpcUriForNetwork} from "../../src/common/utils";
+import {rpcProviderForNetwork} from "../../src/internal/rpcproviders";
+
+import {expectBoolean, expectIncludes, expectLength, wrapExpect,} from "../helpers";
 
 interface _tc {
     want: boolean,
@@ -30,7 +31,7 @@ const makeWantString = (tc: _tc, suffix: string="include"): string => `should${t
 
 
 describe("Basic tests", function(this: Mocha.Suite) {
-    const numChains: number = 12;
+    const numChains: number = 14;
 
     describe("Check networks", function(this: Mocha.Suite) {
         const
@@ -48,6 +49,45 @@ describe("Basic tests", function(this: Mocha.Suite) {
             wrapExpect(expectLength(supportedNetworks, numChains))
         )
     })
+
+    // describe.skip("setJsonRpcUriForNetwork", function(this: Mocha.Suite) {
+    //     function getURI(chainId: number): string {
+    //         return (rpcProviderForNetwork(chainId) as Web3Provider).connection.url
+    //     }
+    //
+    //     interface TestCase {
+    //         chainId:   number,
+    //         newRpcUri: string,
+    //     }
+    //
+    //     const testCases: TestCase[] = [
+    //         {chainId: ChainId.BSC, newRpcUri: "https://bsc-dataseed1.binance.org/"},
+    //         {chainId: ChainId.BSC, newRpcUri: "https://bsc-dataseed1.ninicoin.io/"},
+    //     ];
+    //
+    //
+    //     for (const tc of testCases) {
+    //         describe(`${Networks.networkName(tc.chainId)} - ${tc.newRpcUri}`, function(this: Mocha.Suite) {
+    //             const
+    //                 oldRpcUri:       string = getURI(tc.chainId),
+    //                 testNewUriTitle: string = "- set new URI",
+    //                 testOldUriTitle: string = "- reset to old URI";
+    //
+    //             const testFn = (rpcUri: string): Mocha.Func => function(this: Mocha.Context) {
+    //                 setJsonRpcUriForNetwork(tc.chainId, rpcUri);
+    //                 let checkUri = getURI(tc.chainId);
+    //
+    //                 const wantRpcUri: string = (new URL(rpcUri)).host;
+    //
+    //                 expect(checkUri).to.equal(wantRpcUri);
+    //             };
+    //
+    //             step(testNewUriTitle, testFn(tc.newRpcUri))
+    //
+    //             step(testOldUriTitle, testFn(oldRpcUri))
+    //         })
+    //     }
+    // })
 
     describe("Check swappableTokens", function(this: Mocha.Suite) {
         interface TestCase {
@@ -130,6 +170,8 @@ describe("Basic tests", function(this: Mocha.Suite) {
                 {chainId: ChainId.AVALANCHE,    token: Tokens.AVWETH,       want: true},
                 {chainId: ChainId.AVALANCHE,    token: Tokens.WAVAX,        want: true},
                 {chainId: ChainId.MOONRIVER,    token: Tokens.WMOVR,        want: true},
+                {chainId: ChainId.CRONOS,      token: Tokens.GOHM,         want: true},
+                {chainId: ChainId.METIS,        token: Tokens.SYN,          want: true},
             ];
 
             for (const tc of testCases) {

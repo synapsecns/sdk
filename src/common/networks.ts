@@ -106,7 +106,13 @@ export namespace Networks {
         name:          "Optimism",
         chainId:       ChainId.OPTIMISM,
         chainCurrency: "ETH"
-    })
+    });
+
+    export const CRONOS = new Network({
+        name:          "Cronos",
+        chainId:       ChainId.CRONOS,
+        chainCurrency: "CRO"
+    });
 
     export const BSC = new Network({
         name:          "Binance Smart Chain",
@@ -131,6 +137,12 @@ export namespace Networks {
        chainId:       ChainId.BOBA,
        chainCurrency: "ETH",
     });
+
+    export const METIS = new Network({
+        name:          "Metis",
+        chainId:       ChainId.METIS,
+        chainCurrency: "Metis",
+    })
 
     export const MOONBEAM = new Network({
         name:          "Moonbeam",
@@ -171,10 +183,12 @@ export namespace Networks {
     const CHAINID_NETWORK_MAP: ChainIdTypeMap<Network> = {
         [ChainId.ETH]:        ETH,
         [ChainId.OPTIMISM]:   OPTIMISM,
+        [ChainId.CRONOS]:     CRONOS,
         [ChainId.BSC]:        BSC,
         [ChainId.POLYGON]:    POLYGON,
         [ChainId.FANTOM]:     FANTOM,
         [ChainId.BOBA]:       BOBA,
+        [ChainId.METIS]:      METIS,
         [ChainId.MOONBEAM]:   MOONBEAM,
         [ChainId.MOONRIVER]:  MOONRIVER,
         [ChainId.ARBITRUM]:   ARBITRUM,
@@ -192,9 +206,11 @@ export namespace Networks {
      * @param {Network | number} network Either a {@link Network} instance, or the Chain ID of a supported network.
      * @param {Token} token A {@link Token} object.
      */
-    export function networkSupportsToken(network: Network | number, token: Token): boolean {
-        return (network instanceof Network ? network : fromChainId(network)).supportsToken(token)
-    }
+    export const networkSupportsToken = (network: Network | number, token: Token): boolean =>
+        (network instanceof Network
+            ? network
+            : fromChainId(network)
+        ).supportsToken(token)
 
     export const supportedNetworks = (): Network[] => Object.values(CHAINID_NETWORK_MAP)
 }

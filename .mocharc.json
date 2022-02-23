@@ -6,6 +6,8 @@
   "node-option": ["experimental-specifier-resolution=node", "loader=ts-node/esm"],
   "extensions":  ["ts"],
   "recursive": true,
+  "parallel": true,
+  "jobs": 6,
   "spec": [
     "./test/basic/*-test.ts",
     "./test/entities/*-test.ts",

@@ -8,8 +8,8 @@ import {
 } from "../common/utils";
 
 import type {ID} from "../internal/entity";
-import {SwapType} from "../internal/swaptype";
-import {newProviderForNetwork} from "../internal/rpcproviders";
+import {SwapType}              from "../internal/swaptype";
+import {rpcProviderForNetwork} from "../internal/rpcproviders";
 
 import type {
     GenericZapBridgeContract,
@@ -24,6 +24,8 @@ import {SynapseEntities} from "../entities";
 
 import type {Token} from "../token";
 import {BaseToken, WrappedToken} from "../token";
+
+import type {ChainIdTypeMap} from "../common/types";
 
 import {BridgeUtils} from "./bridgeutils";
 import {GasUtils} from "./gasutils";
@@ -94,6 +96,12 @@ export namespace Bridge {
         tokenIndexTo:    number,
     }
 
+    interface CheckCanBridgeParams {
+        address: string,
+        token:   Token,
+        amount:  BigNumberish,
+    }
+
     /**
      * SynapseBridge is a wrapper around any Synapse Bridge contract which exists on chains supported by the Synapse Protocol.
      */
@@ -115,7 +123,7 @@ export namespace Bridge {
         private readonly bridgeConfigInstance = SynapseEntities.bridgeConfig();
         private readonly zapBridgeInstance = SynapseEntities.l1BridgeZap({
             chainId: ChainId.ETH,
-            signerOrProvider: newProviderForNetwork(ChainId.ETH),
+            signerOrProvider: rpcProviderForNetwork(ChainId.ETH),
         });
 
         readonly requiredConfirmations: number;
@@ -128,7 +136,7 @@ export namespace Bridge {
 
             this.network = network instanceof Networks.Network ? network : Networks.fromChainId(network);
             this.chainId = this.network.chainId;
-            this.provider = provider ?? newProviderForNetwork(this.chainId);
+            this.provider = provider ?? rpcProviderForNetwork(this.chainId);
 
             this.requiredConfirmations = getRequiredConfirmationsForBridge(this.network);
 
@@ -181,13 +189,9 @@ export namespace Bridge {
          * bridge fee, so the bridge fee is entirely for user-facing purposes. Do not use it for calculations.
          */
         async estimateBridgeTokenOutput(args: BridgeParams): Promise<BridgeOutputEstimate> {
-            try {
-                await this.checkSwapSupported(args);
-            } catch (e) {
-                return rejectPromise(e);
-            }
-
-            return this.calculateBridgeRate(args)
+            return this.checkSwapSupported(args)
+                .then(() => this.calculateBridgeRate(args))
+                .catch(rejectPromise)
         }
 
         /**
@@ -317,16 +321,14 @@ export namespace Bridge {
             return ERC20.allowanceOf(address, this.zapBridgeAddress, {tokenAddress, chainId: this.chainId})
         }
 
-        private async checkNeedsApprove(args: {
-            address: string,
-            token:   Token | string,
-            amount?: BigNumberish,
-        }): Promise<CheckCanBridgeResult> {
-            let {amount} = args;
-            amount = amount ?? MAX_APPROVAL_AMOUNT.sub(1);
 
-            const {address} = args;
-            const [{spender}, tokenAddress] = this.buildERC20ApproveArgs(args);
+
+        private async checkNeedsApprove({
+            address,
+            token,
+            amount=MAX_APPROVAL_AMOUNT.sub(1)
+        }: CheckCanBridgeParams): Promise<CheckCanBridgeResult> {
+            const [{spender}, tokenAddress] = this.buildERC20ApproveArgs({token, amount});
 
             return ERC20.allowanceOf(address, spender, {tokenAddress, chainId: this.chainId})
                 .then((allowance: BigNumber) => {
@@ -336,14 +338,9 @@ export namespace Bridge {
                 .catch(rejectPromise)
         }
 
-        private async checkHasBalance(args: {
-            address: string,
-            token:   Token | string,
-            amount:  BigNumberish,
-        }): Promise<CheckCanBridgeResult> {
+        private async checkHasBalance({address, amount, token}: CheckCanBridgeParams): Promise<CheckCanBridgeResult> {
             const
-                {address, amount} = args,
-                [, tokenAddress] = this.buildERC20ApproveArgs(args);
+                [, tokenAddress] = this.buildERC20ApproveArgs({token, amount});
 
             return ERC20.balanceOf(address, {tokenAddress, chainId: this.chainId})
                 .then((balance: BigNumber) => {
@@ -353,11 +350,7 @@ export namespace Bridge {
                 .catch(rejectPromise)
         }
 
-        private async checkCanBridge(args: {
-            address: string,
-            token:   Token,
-            amount:  BigNumberish,
-        }): Promise<CanBridgeResult> {
+        private async checkCanBridge(args: CheckCanBridgeParams): Promise<CanBridgeResult> {
             const {token} = args;
 
             const hasBalanceRes = this.checkHasBalance(args)
@@ -419,7 +412,7 @@ export namespace Bridge {
         private async calculateBridgeRate(args: BridgeParams): Promise<BridgeOutputEstimate> {
             let {chainIdTo, amountFrom} = args;
 
-            const toChainZapParams = {chainId: chainIdTo, signerOrProvider: newProviderForNetwork(chainIdTo)};
+            const toChainZapParams = {chainId: chainIdTo, signerOrProvider: rpcProviderForNetwork(chainIdTo)};
             const toChainZap: GenericZapBridgeContract = SynapseEntities.zapBridge(toChainZapParams);
 
             const {
@@ -645,8 +638,6 @@ export namespace Bridge {
                 easyDeposits:   ID[] = [],
                 easyRedeems:    ID[] = [Tokens.SYN.id, Tokens.HIGH.id, Tokens.DOG.id, Tokens.FRAX.id],
                 easyDepositETH: ID[] = [];
-
-            if (args.tokenFrom.isEqual(Tokens.NUSD)) easyRedeems.push(Tokens.NUSD.id);
 
             if (args.tokenFrom.isEqual(Tokens.NUSD)) easyRedeems.push(Tokens.NUSD.id);
 
@@ -905,7 +896,7 @@ export namespace Bridge {
         }
     }
 
-    const REQUIRED_CONFS = {
+    const REQUIRED_CONFS: ChainIdTypeMap<number> = {
         [ChainId.ETH]:       7,
         [ChainId.OPTIMISM]:  1,
         [ChainId.BSC]:       14,

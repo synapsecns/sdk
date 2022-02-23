@@ -2,12 +2,12 @@ import {Tokens} from "./tokens";
 
 import {ChainId, supportedChainIds} from "./common/chainid";
 
-import type {AddressMap, DecimalsMap} from "./common/types";
+import type {AddressMap, ChainIdTypeMap, DecimalsMap} from "./common/types";
 
+import type {IBaseToken, Token} from "./token";
 import {BaseToken} from "./token";
-import type {Token, IBaseToken} from "./token";
 
-import type {ID}  from "./internal/entity";
+import type {ID} from "./internal/entity";
 import {SwapType} from "./internal/swaptype";
 
 
@@ -53,7 +53,7 @@ export namespace SwapPools {
         swapEthAddresses?: AddressMap,
     }
 
-    function makeSwapToken(args: {
+    const makeSwapToken = (args: {
         chainId:      number,
         netName:      string,
         address:      string,
@@ -61,14 +61,12 @@ export namespace SwapPools {
         poolId:       number,
         poolTokens:   Token[],
         notLP?:       boolean
-    }): SwapToken {
-        args.notLP = args.notLP ?? false;
-
-        return new SwapToken({
+    }): SwapToken =>
+        new SwapToken({
             addresses: {[args.chainId]: args.address},
             decimals:  18,
             name:      "Synapse nUSD LP Token" + (args.netName != "BSC" ? ` ${args.netName}` : ""),
-            symbol:    args.notLP ? "nUSD" : "nUSD-LP",
+            symbol:    (args.notLP ?? false) ? "nUSD" : "nUSD-LP",
             poolName:  `${args.netName} Stableswap Pool `,
             poolId:    args.poolId,
             poolType:  SwapType.USD,
@@ -77,9 +75,8 @@ export namespace SwapPools {
             },
             poolTokens: args.poolTokens,
         })
-    }
 
-    function makeETHSwapToken(args: {
+    const makeETHSwapToken = (args: {
         chainId:         number,
         netName:         string,
         address:         string,
@@ -90,8 +87,8 @@ export namespace SwapPools {
         poolTokens:      Token[],
         nativeTokens?:   Token[],
         depositTokens?:  Token[],
-    }): ETHSwapToken {
-        return new ETHSwapToken({
+    }): ETHSwapToken =>
+        new ETHSwapToken({
             addresses: {[args.chainId]: args.address},
             decimals:  18,
             name:      `Synapse ${args.poolName ?? "ETH"} LP Token ${args.netName}`,
@@ -109,7 +106,6 @@ export namespace SwapPools {
             nativeTokens:  args.nativeTokens,
             depositTokens: args.depositTokens,
         })
-    }
 
     export class SwapToken implements SwapPoolToken {
         readonly baseToken: BaseToken;
@@ -394,17 +390,10 @@ export namespace SwapPools {
         WMOVR_Pool   = makeSingleTokenPool(Tokens.WMOVR,  SwapType.MOVR);
 
     const makeTokenPoolsMap = (usdSwapTokens?: Token[], ethSwapTokens?: Token[], ...pools: LPToken[]): SwapGroupTokenMap => {
-        let m: SwapGroupTokenMap = {
-            [SwapType.SYN]: SYN_Pool.poolTokens,
-        };
+        let m: SwapGroupTokenMap = {[SwapType.SYN]: SYN_Pool.poolTokens};
 
-        if (usdSwapTokens) {
-            m[SwapType.USD] = usdSwapTokens;
-        }
-
-        if (ethSwapTokens) {
-            m[SwapType.ETH] = ethSwapTokens;
-        }
+        if (usdSwapTokens) m[SwapType.USD] = usdSwapTokens;
+        if (ethSwapTokens) m[SwapType.ETH] = ethSwapTokens;
 
         for (const p of pools) {
             m[p.swapType] = p.poolTokens
@@ -413,13 +402,9 @@ export namespace SwapPools {
         return m
     }
 
-    export interface SwapGroupTokenMap {
-        [grp: string]: Token[]
-    }
+    export interface SwapGroupTokenMap {[grp: string]: Token[]}
 
-    export interface BridgeTokensBySwapGroupMap {
-        [c: number]: SwapGroupTokenMap
-    }
+    export interface BridgeTokensBySwapGroupMap {[c: number]: SwapGroupTokenMap}
 
     export const bridgeSwappableTokensByType: BridgeTokensBySwapGroupMap = {
         [ChainId.ETH]: makeTokenPoolsMap(
@@ -433,6 +418,11 @@ export namespace SwapPools {
         [ChainId.OPTIMISM]: makeTokenPoolsMap(
             null,
             OPTIMISM_ETH_SWAP_TOKEN.poolTokens,
+        ),
+        [ChainId.CRONOS]: makeTokenPoolsMap(
+            [Tokens.NUSD], null,
+            SYN_Pool,
+            GOHM_Pool,
         ),
         [ChainId.BSC]: makeTokenPoolsMap(
             BSC_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
@@ -459,6 +449,11 @@ export namespace SwapPools {
         [ChainId.BOBA]: makeTokenPoolsMap(
             BOBA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
             BOBA_ETH_SWAP_TOKEN.poolTokens,
+        ),
+        [ChainId.METIS]: makeTokenPoolsMap(
+            [Tokens.NUSD], null,
+            SYN_Pool,
+            GOHM_Pool,
         ),
         [ChainId.MOONBEAM]: makeTokenPoolsMap(
             null,
@@ -502,13 +497,9 @@ export namespace SwapPools {
     function makeSwapTypeTokenPool(poolSwapToken?: LPToken, ethSwapToken?: LPToken, ...pools: LPToken[]): SwapTypePoolTokens {
         let m: SwapTypePoolTokens = {};
 
-        if (poolSwapToken) {
-            m[SwapType.USD] = poolSwapToken;
-        }
+        if (poolSwapToken) m[SwapType.USD] = poolSwapToken
 
-        if (ethSwapToken) {
-            m[SwapType.ETH] = ethSwapToken
-        }
+        if (ethSwapToken) m[SwapType.ETH] = ethSwapToken
 
         pools.forEach((s) => m = {...m, [s.swapType]: {poolTokens: s.poolTokens}})
 
@@ -530,6 +521,12 @@ export namespace SwapPools {
             null,
             OPTIMISM_ETH_SWAP_TOKEN,
             SYN_Pool,
+        ),
+        [ChainId.CRONOS]: makeSwapTypeTokenPool(
+            {poolTokens: [Tokens.NUSD], swapType: SwapType.USD},
+            null,
+            SYN_Pool,
+            GOHM_Pool,
         ),
         [ChainId.BSC]: makeSwapTypeTokenPool(
             BSC_POOL_SWAP_TOKEN,
@@ -560,6 +557,12 @@ export namespace SwapPools {
             BOBA_POOL_SWAP_TOKEN,
             BOBA_ETH_SWAP_TOKEN,
             SYN_Pool,
+        ),
+        [ChainId.METIS]: makeSwapTypeTokenPool(
+            {poolTokens: [Tokens.NUSD], swapType: SwapType.USD},
+            null,
+            SYN_Pool,
+            GOHM_Pool,
         ),
         [ChainId.MOONBEAM]: makeSwapTypeTokenPool(
             null, null,
@@ -665,13 +668,8 @@ export namespace SwapPools {
     }
 }
 
-export interface NetworkSwappableTokensMap {
-    [c: number]: Token[]
-}
-
-export interface AllNetworksSwappableTokensMap {
-    [c: number]: NetworkSwappableTokensMap
-}
+export type NetworkSwappableTokensMap     = ChainIdTypeMap<Token[]>;
+export type AllNetworksSwappableTokensMap = ChainIdTypeMap<NetworkSwappableTokensMap>;
 
 function filterGrps(chainAGrps: string[], chainBGrpsMap: SwapPools.SwapGroupTokenMap): Token[] {
     let tokens: Token[] = [];

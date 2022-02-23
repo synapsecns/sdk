@@ -5,10 +5,11 @@ import {expect} from "chai";
 import _ from "lodash";
 import {Zero} from "@ethersproject/constants";
 import {Wallet} from "@ethersproject/wallet";
-import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+import {BigNumber} from "@ethersproject/bignumber";
+import type {BigNumberish} from "@ethersproject/bignumber";
 
-import {Token} from "../../src";
-import {newProviderForNetwork} from "../../src/internal/rpcproviders";
+import type {Token} from "../../src";
+import {rpcProviderForNetwork} from "../../src/internal/rpcproviders";
 
 const TEN_BN: BigNumber = BigNumber.from(10);
 
@@ -16,6 +17,9 @@ const testAmounts: string[] = [
     "420", "1337", "31337",
     "669", "555",
 ];
+
+// Completely clean privkey with low balances.
+export const bridgeTestPrivkey: string = "53354287e3023f0629b7a5e187aa1ca3458c4b7ff9d66a6e3f4b2e821aafded7";
 
 export const
     valueIfUndefined = <T>(data: T, fallback: T) => typeof data === "undefined" ? fallback : data,
@@ -36,7 +40,7 @@ export const
     makeWalletSignerWithProvider = (
         chainId: number,
         privKey: string
-    ): Wallet => new Wallet(privKey, newProviderForNetwork(chainId));
+    ): Wallet => new Wallet(privKey, rpcProviderForNetwork(chainId));
 
 
 export const

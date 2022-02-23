@@ -14,7 +14,7 @@ import {
     ERC20Contract,
 } from "../contracts";
 
-import {newProviderForNetwork} from "../internal/rpcproviders";
+import {rpcProviderForNetwork} from "../internal/rpcproviders";
 
 import {
     executePopulatedTransaction,
@@ -47,34 +47,27 @@ export namespace ERC20 {
             this.address = args.tokenAddress;
             this.chainId = args.chainId;
 
-            this.provider = newProviderForNetwork(this.chainId);
+            this.provider = rpcProviderForNetwork(this.chainId);
             this.instance = ERC20Factory.connect(this.address, this.provider);
         }
 
         approve = async (
             args:    ApproveArgs,
             signer:  Signer,
-            dryRun?: boolean
-        ): Promise<boolean|ContractTransaction> => {
-            dryRun = dryRun ?? false;
-
-            return dryRun
+            dryRun:  boolean=false
+        ): Promise<boolean|ContractTransaction> =>
+            dryRun
                 ? this.instance.callStatic.approve(
                     args.spender,
                     args.amount ?? MAX_APPROVAL_AMOUNT,
                     {from: signer.getAddress()}
                 )
                 : executePopulatedTransaction(this.buildApproveTransaction(args), signer)
-        }
 
-        buildApproveTransaction = async (args: ApproveArgs): Promise<PopulatedTransaction> => {
-            let {spender, amount} = args;
-            amount = amount ?? MAX_APPROVAL_AMOUNT;
-
-            return this.instance.populateTransaction.approve(spender, amount)
+        buildApproveTransaction = async ({spender, amount=MAX_APPROVAL_AMOUNT}: ApproveArgs): Promise<PopulatedTransaction> =>
+            this.instance.populateTransaction.approve(spender, amount)
                 .then((txn) => GasUtils.populateGasParams(this.chainId, txn, "approve"))
                 .catch(rejectPromise)
-        }
 
         balanceOf = async (
             address: string

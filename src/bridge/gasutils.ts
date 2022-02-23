@@ -39,12 +39,14 @@ export namespace GasUtils {
         },
     }
 
-    export function makeGasParams(chainId: number): GasParams {
-        return CHAIN_GAS_PARAMS[chainId] ?? {};
-    }
+    export const makeGasParams = (chainId: number): GasParams => CHAIN_GAS_PARAMS[chainId] ?? {};
 
-    export function populateGasParams(chainId: number, txn: PopulatedTransaction|Promise<PopulatedTransaction>, gasLimitKind: string): Promise<PopulatedTransaction> {
-        return Promise.resolve(txn)
+    export const populateGasParams = (
+        chainId: number,
+        txn: PopulatedTransaction|Promise<PopulatedTransaction>,
+        gasLimitKind: string
+    ): Promise<PopulatedTransaction> =>
+        Promise.resolve(txn)
             .then((tx: PopulatedTransaction): PopulatedTransaction => {
                 let {maxPriorityFee, gasPrice, approveGasLimit, bridgeGasLimit} = makeGasParams(chainId);
 
@@ -63,5 +65,4 @@ export namespace GasUtils {
 
                 return tx
             })
-    }
 }
