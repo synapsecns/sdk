@@ -73,11 +73,11 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
     const testCases: TestCase[] = [
         {
             args: {
-                tokenFrom: Tokens.ETH,
-                tokenTo: Tokens.WETH_E,
+                tokenFrom:   Tokens.ETH,
+                tokenTo:     Tokens.WETH_E,
                 chainIdFrom: ChainId.ARBITRUM,
-                chainIdTo: ChainId.AVALANCHE,
-                amountFrom: parseEther("420.696969"),
+                chainIdTo:   ChainId.AVALANCHE,
+                amountFrom:  parseEther("420.696969"),
             },
             expected: {
                 executeSuccess: false,
@@ -86,11 +86,11 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
         },
         {
             args: {
-                tokenFrom: Tokens.ETH,
-                tokenTo: Tokens.NETH,
+                tokenFrom:   Tokens.ETH,
+                tokenTo:     Tokens.NETH,
                 chainIdFrom: ChainId.ETH,
-                chainIdTo: ChainId.OPTIMISM,
-                amountFrom: parseEther("420.696969"),
+                chainIdTo:   ChainId.OPTIMISM,
+                amountFrom:  parseEther("420.696969"),
             },
             expected: {
                 executeSuccess: false,
@@ -99,11 +99,11 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
         },
         {
             args: {
-                tokenFrom: Tokens.BUSD,
-                tokenTo: Tokens.MIM,
+                tokenFrom:   Tokens.BUSD,
+                tokenTo:     Tokens.MIM,
                 chainIdFrom: ChainId.BSC,
-                chainIdTo: ChainId.FANTOM,
-                amountFrom: parseEther("666"),
+                chainIdTo:   ChainId.FANTOM,
+                amountFrom:  parseEther("666"),
             },
             expected: {
                 executeSuccess: false,
