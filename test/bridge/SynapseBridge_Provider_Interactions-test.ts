@@ -29,6 +29,7 @@ import type {
 import {parseEther} from "@ethersproject/units";
 import {BigNumber}  from "@ethersproject/bignumber";
 import {Wallet} from "@ethersproject/wallet";
+import {rejectPromise} from "../../src/common/utils";
 
 function executeTransaction(
     prom: Promise<TransactionResponse|ContractTransaction>
@@ -97,14 +98,14 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
         }
     ];
 
-    async function getBridgeEstimate(
+    const getBridgeEstimate = async (
         tc: TestCase,
         {
             address,
             bridgeInstance,
         }: WalletArgs
-    ): Promise<EstimateOutputs> {
-        return bridgeInstance.estimateBridgeTokenOutput(tc)
+    ): Promise<EstimateOutputs> =>
+        bridgeInstance.estimateBridgeTokenOutput(tc)
             .then(res =>
                 ({
                     outputEstimate: res,
@@ -115,7 +116,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                     }
                 })
             )
-    }
+            .catch(rejectPromise)
 
     for (const tc of testCases) {
         const
