@@ -42,7 +42,7 @@ export namespace SynapseEntities {
         bridgeConfigAddress: string = "0x7fd806049608b7d04076b8187dd773343e0589e6",
         poolConfigAddress:   string = "0xB34C67DB5F0Fd8D3D4238FD0A1cBbfD50a72e177";
 
-    interface NewEntityParams {
+    export interface NewEntityParams {
         chainId:           number;
         signerOrProvider?: SignerOrProvider;
     }
