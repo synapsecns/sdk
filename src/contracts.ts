@@ -7,7 +7,7 @@ import type {
     BridgeConfig as BridgeConfigContract,
     PoolConfig as PoolConfigContract,
     ERC20 as ERC20Contract
-} from "./internal/gen/index";
+} from "@internal/gen/index";
 
 type GenericZapBridgeContract = L1BridgeZapContract | L2BridgeZapContract;
 
@@ -32,4 +32,4 @@ export {
     BridgeConfig__factory as BridgeConfigFactory,
     PoolConfig__factory as PoolConfigFactory,
     ERC20__factory as ERC20Factory
-} from "./internal/gen/index";
+} from "@internal/gen/index";

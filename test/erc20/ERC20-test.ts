@@ -3,10 +3,10 @@ import "../helpers/chaisetup";
 import {
     Tokens,
     ChainId,
-} from "../../src";
+} from "@sdk";
 
-import {ERC20} from "../../src/bridge/erc20";
-import {SynapseContracts} from "../../src/common/synapse_contracts";
+import {ERC20} from "@bridge/erc20";
+import {SynapseContracts} from "@common/synapse_contracts";
 
 import {
     DEFAULT_TEST_TIMEOUT,

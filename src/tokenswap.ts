@@ -1,18 +1,18 @@
-import {Token} from "./token";
-import {Tokens} from "./tokens";
-import {SwapPools} from "./swappools";
-import {rejectPromise} from "./common/utils";
+import type {Token}    from "@token";
+import {Tokens}        from "@tokens";
+import {SwapPools}     from "@swappools";
+import {rejectPromise} from "@common/utils";
 
-import {SynapseEntities} from "./entities";
-import {SwapContract, SwapFactory} from "./contracts";
+import {SynapseEntities}           from "@entities";
+import {SwapContract, SwapFactory} from "@contracts";
 
-import {ChainId, supportedChainIds} from "./common/chainid";
-import {Networks} from "./common/networks";
+import {Networks}                   from "@networks";
+import {ChainId, supportedChainIds} from "@chainid";
 
-import {SwapType} from "./internal/swaptype";
-import {rpcProviderForNetwork} from "./internal/rpcproviders";
+import {SwapType}              from "@internal/swaptype";
+import {rpcProviderForNetwork} from "@internal/rpcproviders";
 
-import {PopulatedTransaction} from "@ethersproject/contracts";
+import {PopulatedTransaction}    from "@ethersproject/contracts";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
 export namespace UnsupportedSwapErrors {

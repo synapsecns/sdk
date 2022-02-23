@@ -1,17 +1,15 @@
-import {ChainId} from "./chainid";
-
-import {Tokens} from "../tokens";
-import {SwapPools} from "../swappools";
-
+import type {Token} from "@token";
+import {ChainId}    from "@chainid";
+import {Tokens}     from "@tokens";
+import {SwapPools}  from "@swappools";
 
 import type {
     ID,
     Entity,
-} from "../internal/entity";
+} from "@internal/entity";
 
-import {BridgeUtils} from "../bridge/bridgeutils";
+import {BridgeUtils} from "@bridge/bridgeutils";
 
-import type {Token} from "../token";
 import type {ChainIdTypeMap} from "./types";
 
 export namespace Networks {

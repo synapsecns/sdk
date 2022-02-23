@@ -1,9 +1,9 @@
 import {parseUnits} from "@ethersproject/units";
 
-import type {AddressMap, DecimalsMap} from "./common/types";
+import type {AddressMap, DecimalsMap} from "@common/types";
 
-import type {ID, Entity}    from "./internal/entity";
-import type {SwapType} from "./internal/swaptype";
+import type {ID, Entity} from "@internal/entity";
+import type {SwapType}   from "@internal/swaptype";
 
 import {
     BigNumber,

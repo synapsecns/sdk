@@ -8,8 +8,9 @@ import {Wallet} from "@ethersproject/wallet";
 import {BigNumber} from "@ethersproject/bignumber";
 import type {BigNumberish} from "@ethersproject/bignumber";
 
-import type {Token} from "../../src";
-import {rpcProviderForNetwork} from "../../src/internal/rpcproviders";
+
+import type {Token} from "@token";
+import {rpcProviderForNetwork} from "@internal/rpcproviders";
 
 const TEN_BN: BigNumber = BigNumber.from(10);
 

@@ -3,6 +3,24 @@
     "rootDirs": [
       "src"
     ],
+    "baseUrl": ".",
+    "paths": {
+      "@sdk":         ["./src/index"],
+      "@abis":        ["./src/abis/index"],
+      "@bridge":      ["./src/bridge"],
+      "@bridge/*":    ["./src/bridge/*"],
+      "@common/*":    ["./src/common/*"],
+      "@entities":    ["./src/entities"],
+      "@contracts":   ["./src/contracts"],
+      "@contracts/*": ["./src/contracts/*"],
+      "@chainid":     ["./src/common/chainid"],
+      "@networks":    ["./src/common/networks"],
+      "@internal/*":  ["./src/internal/*"],
+      "@swappools":   ["./src/swappools"],
+      "@token":       ["./src/token"],
+      "@tokens":      ["./src/tokens"],
+      "@tokenswap":   ["./src/tokenswap"]
+    },
     "target": "ESNext",
     "module": "ESNext",
     "outDir": "dist",
@@ -10,7 +28,6 @@
     "esModuleInterop":   true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "baseUrl": "./src",
     "allowJs": true,
     "checkJs": true,
     "declaration": true,
@@ -20,10 +37,14 @@
       "node",
       "chai",
       "mocha",
-      "expect",
+      "expect"
     ],
     "isolatedModules": true,
     "skipLibCheck": true,
+    "plugins": [
+      // Transform paths in output .js files
+      { "transform": "typescript-transform-paths" }
+    ]
   },
   "ts-node": {
     "files": true,
@@ -33,8 +54,7 @@
   ],
   "exclude": [
     "node_modules",
-//    "test",
     "dist",
-    "**/*-test.ts"
+    "test"
   ]
 }

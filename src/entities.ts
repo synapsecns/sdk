@@ -15,10 +15,11 @@ import {
     PoolConfigFactory,
 } from "./contracts";
 
-import type {SignerOrProvider} from "./common/types";
-import {contractAddressFor} from "./common/utils";
-import {ChainId} from "./common/chainid";
-import {rpcProviderForNetwork} from "./internal/rpcproviders";
+import {ChainId} from "@chainid";
+import {contractAddressFor} from "@common/utils";
+import {rpcProviderForNetwork} from "@internal/rpcproviders";
+
+import type {SignerOrProvider} from "@common/types";
 
 
 export const newSynapseBridgeInstance = (params: {
