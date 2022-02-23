@@ -14,7 +14,7 @@ import {
     ERC20Contract,
 } from "../contracts";
 
-import {newProviderForNetwork} from "../internal/rpcproviders";
+import {rpcProviderForNetwork} from "../internal/rpcproviders";
 
 import {
     executePopulatedTransaction,
@@ -47,7 +47,7 @@ export namespace ERC20 {
             this.address = args.tokenAddress;
             this.chainId = args.chainId;
 
-            this.provider = newProviderForNetwork(this.chainId);
+            this.provider = rpcProviderForNetwork(this.chainId);
             this.instance = ERC20Factory.connect(this.address, this.provider);
         }
 

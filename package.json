@@ -48,9 +48,11 @@
     "@ethersproject/providers": "^5.5.0",
     "@ethersproject/units": "^5.5.0",
     "@ethersproject/wallet": "^5.5.0",
+    "@web3-react/abstract-connector": "^6.0.7",
     "dotenv": "^10.0.0",
     "ethers": "^5.5.1",
     "lodash": "^4.17.21",
+    "node-fetch": "^3.2.0",
     "utility-types": "^3.10.0"
   },
   "devDependencies": {

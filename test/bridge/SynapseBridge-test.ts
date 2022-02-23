@@ -16,11 +16,9 @@ import {
     supportedChainIds,
 } from "../../src";
 
-import {contractAddressFor} from "../../src/common/utils";
-
 import {ERC20} from "../../src/bridge/erc20";
-
-import {newProviderForNetwork} from "../../src/internal/rpcproviders";
+import {contractAddressFor} from "../../src/common/utils";
+import {rpcProviderForNetwork} from "../../src/internal/rpcproviders";
 
 import type {Provider}    from "@ethersproject/providers";
 import {Wallet}           from "@ethersproject/wallet";
@@ -71,9 +69,9 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
 
             for (const network of ALL_CHAIN_IDS) {
                 const
-                    provider          = newProviderForNetwork(network),
-                    bridgeInstance    = new Bridge.SynapseBridge({ network, provider}),
-                    testTitle: string = `Should return ${expected.toString()} on Chain ID ${network}`;
+                    testTitle: string = `Should return ${expected.toString()} on Chain ID ${network}`,
+                    provider          = rpcProviderForNetwork(network),
+                    bridgeInstance    = new Bridge.SynapseBridge({ network, provider});
 
                 it(testTitle, async function(this: Mocha.Context) {
                     this.timeout(DEFAULT_TEST_TIMEOUT);
@@ -86,7 +84,7 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
         describe(".WETH_ADDRESS", function(this: Mocha.Suite) {
             for (const network of ALL_CHAIN_IDS) {
                 const
-                    provider = newProviderForNetwork(network),
+                    provider = rpcProviderForNetwork(network),
                     bridgeInstance = new Bridge.SynapseBridge({ network, provider }),
                     expected: string = ((): string => {
                         switch (network) {
@@ -131,7 +129,7 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
 
             const makeTestCase = (c: number, t: Token, a: string, n: BigNumberish): testCase => {
                 return {
-                    provider:   newProviderForNetwork(c),
+                    provider:   rpcProviderForNetwork(c),
                     chainId:    c,
                     token:      t,
                     address:    a,
@@ -190,7 +188,7 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
 
                         if (allowance.lte(infiniteCheckAmt)) {
                             const testPrivKey: string = process.env.TEST_PRIVKEY_A;
-                            const wallet = new Wallet(testPrivKey, newProviderForNetwork(ChainId.BSC));
+                            const wallet = new Wallet(testPrivKey, rpcProviderForNetwork(ChainId.BSC));
                             let txn: ContractTransaction = (await ERC20.approve({spender: bscZapAddr}, tokenParams, wallet)) as ContractTransaction;
                             await txn.wait(1);
 
