@@ -1,8 +1,10 @@
+import _ from "lodash";
+
 import type {Provider} from "@ethersproject/providers";
 import {JsonRpcProvider} from "@ethersproject/providers";
 
 import {ChainId, supportedChainIds} from "../common/chainid";
-import type {ChainIdTypeMap, AddressMap} from "../common/types";
+import type {ChainIdTypeMap} from "../common/types";
 
 type RpcProviderMap = ChainIdTypeMap<Provider>;
 
@@ -57,15 +59,7 @@ const CHAIN_RPC_URIS: ChainIdTypeMap<string> = {
     [ChainId.HARMONY]:   "https://api.harmony.one/",
 }
 
-const PROVIDERS: RpcProviderMap = ((): RpcProviderMap => {
-    let m: RpcProviderMap = {};
-
-    supportedChainIds().map((c) => {
-        m[c] = new JsonRpcProvider(rpcUriForChainId(c));
-    })
-
-    return m
-})()
+const PROVIDERS: RpcProviderMap = _.fromPairs(supportedChainIds().map(c => [c, new JsonRpcProvider(rpcUriForChainId(c))]));
 
 export function newProviderForNetwork(chainId: number): Provider {
     return PROVIDERS[chainId] ?? null

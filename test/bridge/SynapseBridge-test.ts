@@ -22,15 +22,18 @@ import {ERC20} from "../../src/bridge/erc20";
 
 import {newProviderForNetwork} from "../../src/internal/rpcproviders";
 
-import {JsonRpcProvider} from "@ethersproject/providers";
+import type {Provider}    from "@ethersproject/providers";
 import {Wallet}           from "@ethersproject/wallet";
 import {BigNumber}        from "@ethersproject/bignumber";
 import {MaxUint256, Zero} from "@ethersproject/constants";
-import {formatUnits, parseEther, parseUnits} from "@ethersproject/units";
+import {
+    formatUnits,
+    parseEther,
+    parseUnits
+} from "@ethersproject/units";
 
 import {
     DEFAULT_TEST_TIMEOUT,
-    SHORT_TEST_TIMEOUT,
     EXECUTORS_TEST_TIMEOUT,
     makeWalletSignerWithProvider,
     getActualWei,
@@ -110,7 +113,7 @@ describe("SynapseBridge", function(this: Mocha.Suite) {
 
         describe(".getAllowanceForAddress", function(this: Mocha.Suite) {
             interface testCase {
-                provider:   JsonRpcProvider,
+                provider:   Provider,
                 chainId:    number,
                 address:    string,
                 token:      Token,
