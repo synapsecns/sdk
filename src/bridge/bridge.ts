@@ -181,13 +181,9 @@ export namespace Bridge {
          * bridge fee, so the bridge fee is entirely for user-facing purposes. Do not use it for calculations.
          */
         async estimateBridgeTokenOutput(args: BridgeParams): Promise<BridgeOutputEstimate> {
-            try {
-                await this.checkSwapSupported(args);
-            } catch (e) {
-                return rejectPromise(e);
-            }
-
-            return this.calculateBridgeRate(args)
+            return this.checkSwapSupported(args)
+                .then(() => this.calculateBridgeRate(args))
+                .catch(rejectPromise)
         }
 
         /**
