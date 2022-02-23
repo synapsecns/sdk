@@ -244,11 +244,15 @@ export namespace Bridge {
 
             args.addressTo = addressTo ?? signerAddress
 
-            return this.checkCanBridge({
-                signer,
-                token:  tokenFrom,
-                amount: amountFrom,
-            })
+            const
+                isGasTokenTransfer: boolean = this.network.chainCurrency === args.tokenFrom.symbol,
+                checkArgs = {signer, token: tokenFrom, amount: amountFrom};
+
+            return Promise.resolve(
+                isGasTokenTransfer
+                    ? this.checkGasTokenBalance(checkArgs)
+                    : this.checkCanBridge(checkArgs)
+            )
                 .then(canBridgeRes => {
                     const [canBridge, err] = canBridgeRes;
 
@@ -257,7 +261,6 @@ export namespace Bridge {
                     }
 
                     let txnProm = this.buildBridgeTokenTransaction(args);
-
                     return executePopulatedTransaction(txnProm, signer)
                 })
                 .catch(rejectPromise)
@@ -394,17 +397,11 @@ export namespace Bridge {
             const signerAddress: string = await signer.getAddress();
             const checkArgs = {...args, address: signerAddress};
 
-            const isGasTokenTransfer: boolean = token.isEqual(Tokens.ETH) && BridgeUtils.chainSupportsGasToken(this.chainId);
+            let hasBalanceRes: Promise<CanBridgeResult> = this.checkERC20Balance(checkArgs);
 
-            let hasBalanceRes: Promise<CanBridgeResult> = isGasTokenTransfer
-                ? this.checkGasTokenBalance(args)
-                : this.checkERC20Balance(checkArgs)
-
-            return isGasTokenTransfer
-                ? this.checkNeedsApprove(checkArgs)
-                    .then(approveRes => this.resolveApproveFunc(approveRes, hasBalanceRes, token))
-                    .catch(rejectPromise)
-                : hasBalanceRes
+            return this.checkNeedsApprove(checkArgs)
+                .then(approveRes => this.resolveApproveFunc(approveRes, hasBalanceRes, token))
+                .catch(rejectPromise)
         }
 
         private buildERC20ApproveArgs(args: {
