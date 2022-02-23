@@ -84,9 +84,9 @@ function checkEnv(chainId: number): string|undefined {
     return envKey in process.env ? process.env[envKey] : undefined
 }
 
-export function setRpcUriForNetwork(chainId: number, uri: string) {
-    DEFAULT_CONNECTOR.setProviderUri(chainId, uri);
-}
+// export function setRpcUriForNetwork(chainId: number, uri: string) {
+//     DEFAULT_CONNECTOR.setProviderUri(chainId, uri);
+// }
 
 /**
  * Used solely for tests, initRpcConnectors() basically just makes sure on-import initialization
