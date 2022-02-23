@@ -66,45 +66,8 @@ interface TestCase {
     chainIdFrom:     number,
     chainIdTo:       number,
     amountFrom:      BigNumber,
-    testExecution:   boolean,
     executeSucceeds: boolean,
 }
-
-const getBridgeEstimate = async (
-    tc: TestCase,
-    {
-        address,
-        bridgeInstance,
-    }: WalletArgs
-): Promise<EstimateOutputs> =>
-    bridgeInstance.estimateBridgeTokenOutput(tc)
-        .then(res =>
-            ({
-                outputEstimate: res,
-                bridgeArgs: {
-                    ...tc,
-                    amountTo:  res.amountToReceive,
-                    addressTo: address,
-                }
-            })
-        )
-
-const testExecuteTxnStep = (
-    tc:       TestCase,
-    txnProm:  Promise<TransactionResponse|ContractTransaction>,
-    approval: boolean=false
-): Mocha.AsyncFunc =>
-    async function(this: Mocha.Context) {
-        if (approval && tc.tokenFrom.isEqual(Tokens.ETH)) return
-
-        this.timeout(EXECUTORS_TEST_TIMEOUT);
-
-        let execProm = executeTransaction(txnProm);
-
-        return tc.executeSucceeds
-            ? (await expectFulfilled(execProm))
-            : (await expectRejected(execProm))
-    }
 
 describe("SynapseBridge - Provider Interactions tests", async function(this: Mocha.Suite) {
     const testCases: TestCase[] = [
@@ -114,7 +77,6 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
             chainIdFrom:     ChainId.ARBITRUM,
             chainIdTo:       ChainId.AVALANCHE,
             amountFrom:      parseEther("420.696969"),
-            testExecution:   false,
             executeSucceeds: false,
         },
         {
@@ -123,7 +85,6 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
             chainIdFrom:     ChainId.ETH,
             chainIdTo:       ChainId.OPTIMISM,
             amountFrom:      parseEther("420.696969"),
-            testExecution:   true,
             executeSucceeds: false,
         },
         {
@@ -132,15 +93,47 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
             chainIdFrom:     ChainId.BSC,
             chainIdTo:       ChainId.FANTOM,
             amountFrom:      parseEther("666"),
-            testExecution:   true,
             executeSucceeds: false,
         }
     ];
+
+    async function getBridgeEstimate(
+        tc: TestCase,
+        {
+            address,
+            bridgeInstance,
+        }: WalletArgs
+    ): Promise<EstimateOutputs> {
+        return bridgeInstance.estimateBridgeTokenOutput(tc)
+            .then(res =>
+                ({
+                    outputEstimate: res,
+                    bridgeArgs: {
+                        ...tc,
+                        amountTo: res.amountToReceive,
+                        addressTo: address,
+                    }
+                })
+            )
+    }
+
+    function testExecuteTxnStep(
+        tc:       TestCase,
+        txnProm:  Promise<TransactionResponse|ContractTransaction>,
+        approval: boolean=false
+    ): Mocha.AsyncFunc {
+        return
+    }
 
     for (const tc of testCases) {
         const
             describeTitle:       string = `Test ${tc.tokenFrom.symbol} on ${Networks.networkName(tc.chainIdFrom)} to ${tc.tokenTo.symbol} on ${Networks.networkName(tc.chainIdTo)}`,
             executionTestSuffix: string = `should ${tc.executeSucceeds ? "execute succesfully" : "fail"}`;
+
+        const
+            executeTxnTestTitle = (txnKind: string): string => `${txnKind} transaction ${executionTestSuffix}`,
+            approvalTxnTestTitle: string = executeTxnTestTitle("ERC20.Approve"),
+            bridgeTxnTestTitle:   string = executeTxnTestTitle("SynapseBridge token bridge");
 
         describe(describeTitle, function(this: Mocha.Suite) {
             let
@@ -178,18 +171,6 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 return
             })
 
-            const executeApprovalTxnStep = async (prom: Promise<TransactionResponse|ContractTransaction>) =>
-                step(
-                    `erc20 approval transaction ${executionTestSuffix}`,
-                    testExecuteTxnStep(tc, prom, true)
-                )
-
-            const executeBridgeTxnStep = async (prom: Promise<TransactionResponse|ContractTransaction>) =>
-                step(
-                    `token bridge transaction transaction ${executionTestSuffix}`,
-                    testExecuteTxnStep(tc, prom)
-                )
-
             describe("test using transaction builders", function(this: Mocha.Suite) {
                 let
                     approvalTxn:     PopulatedTransaction,
@@ -216,18 +197,56 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                     ))
                 })
 
-                if (tc.testExecution) {
-                    executeApprovalTxnStep(wallet.sendTransaction(approvalTxn));
-                    executeBridgeTxnStep(wallet.sendTransaction(bridgeTxn));
-                }
+                step(approvalTxnTestTitle, async function (this: Mocha.Context) {
+                    if (tc.tokenFrom.isEqual(Tokens.ETH)) return
+
+                    this.timeout(EXECUTORS_TEST_TIMEOUT);
+
+                    let execProm = executeTransaction(wallet.sendTransaction(approvalTxn));
+
+                    return (await (tc.executeSucceeds
+                            ? expectFulfilled(execProm)
+                            : expectRejected(execProm)
+                    ))
+                })
+
+                step(bridgeTxnTestTitle, async function(this: Mocha.Context) {
+                    this.timeout(EXECUTORS_TEST_TIMEOUT);
+
+                    let execProm = executeTransaction(wallet.sendTransaction(bridgeTxn));
+
+                    return (await (tc.executeSucceeds
+                            ? expectFulfilled(execProm)
+                            : expectRejected(execProm)
+                    ))
+                })
             })
 
-            if (tc.testExecution) {
-                describe("Test Magic Executors", function(this: Mocha.Suite) {
-                    executeApprovalTxnStep(bridgeInstance.executeApproveTransaction({token: tc.tokenFrom}, wallet));
-                    executeBridgeTxnStep(bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet));
+            describe("Test Magic Executors", function(this: Mocha.Suite) {
+                step(approvalTxnTestTitle, async function(this: Mocha.Context) {
+                    if (tc.tokenFrom.isEqual(Tokens.ETH)) return
+
+                    this.timeout(EXECUTORS_TEST_TIMEOUT);
+
+                    let execProm = executeTransaction(bridgeInstance.executeApproveTransaction({token: tc.tokenFrom}, wallet));
+
+                    return (await (tc.executeSucceeds
+                            ? expectFulfilled(execProm)
+                            : expectRejected(execProm)
+                    ))
                 })
-            }
+
+                step(bridgeTxnTestTitle, async function(this: Mocha.Context) {
+                    this.timeout(EXECUTORS_TEST_TIMEOUT);
+
+                    let execProm = executeTransaction(bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet));
+
+                    return (await (tc.executeSucceeds
+                            ? expectFulfilled(execProm)
+                            : expectRejected(execProm)
+                    ))
+                })
+            })
         })
     }
 })
