@@ -245,11 +245,11 @@ export namespace Bridge {
             args.addressTo = addressTo ?? signerAddress
 
             return this.checkCanBridge({
-                address: signerAddress,
-                token: tokenFrom,
+                signer,
+                token:  tokenFrom,
                 amount: amountFrom,
             })
-                .then((canBridgeRes: CanBridgeResult) => {
+                .then(canBridgeRes => {
                     const [canBridge, err] = canBridgeRes;
 
                     if (!canBridge) {
@@ -321,6 +321,20 @@ export namespace Bridge {
             return ERC20.allowanceOf(address, this.zapBridgeAddress, {tokenAddress, chainId: this.chainId})
         }
 
+        private async resolveApproveFunc(
+            approveRes:    CheckCanBridgeResult,
+            hasBalanceRes: Promise<CanBridgeResult>,
+            token:         Token
+        ): Promise<CanBridgeResult> {
+            const
+                [needsApprove, allowance] = approveRes,
+                allowanceEth: string = formatUnits(allowance, token.decimals(this.chainId)).toString();
+
+            return needsApprove
+                ? [false, new Error(`Spend allowance of Bridge too low for token ${token.symbol}; current allowance for Bridge is ${allowanceEth}`)] as CanBridgeResult
+                : hasBalanceRes
+        }
+
         private async checkNeedsApprove({
             address,
             token,
@@ -329,54 +343,68 @@ export namespace Bridge {
             const [{spender}, tokenAddress] = this.buildERC20ApproveArgs({token, amount});
 
             return ERC20.allowanceOf(address, spender, {tokenAddress, chainId: this.chainId})
-                .then((allowance: BigNumber) => {
-                    const res: CheckCanBridgeResult = [allowance.lt(amount), allowance];
-                    return res
+                .then(allowance => [allowance.lt(amount), allowance] as CheckCanBridgeResult)
+                .catch(rejectPromise)
+        }
+
+        private async resolveBalanceFunc(
+            prom:   Promise<BigNumber>,
+            amount: BigNumberish,
+            token:  Token
+        ): Promise<CanBridgeResult> {
+            return Promise.resolve(prom)
+                .then(balance => {
+                    const
+                        hasBalance         = balance.gte(amount),
+                        balanceEth: string = formatUnits(balance, token.decimals(this.chainId)).toString();
+
+                    return (
+                        hasBalance
+                            ? [true, null]
+                            : [false, new Error(`Balance of token ${token.symbol} is too low; current balance is ${balanceEth}`)]
+                    ) as CanBridgeResult
                 })
                 .catch(rejectPromise)
         }
 
-        private async checkHasBalance({address, amount, token}: CheckCanBridgeParams): Promise<CheckCanBridgeResult> {
+        private async checkGasTokenBalance(args: {signer: Signer, amount:BigNumberish, token: Token}): Promise<CanBridgeResult> {
+            const {signer, amount, token} = args;
+
+            return this.resolveBalanceFunc(
+                signer.getBalance(),
+                amount,
+                token
+            )
+        }
+
+        private async checkERC20Balance(args: CheckCanBridgeParams): Promise<CanBridgeResult> {
             const
-                [, tokenAddress] = this.buildERC20ApproveArgs({token, amount});
+                {address, amount, token} = args,
+                [, tokenAddress] = this.buildERC20ApproveArgs(args);
 
-            return ERC20.balanceOf(address, {tokenAddress, chainId: this.chainId})
-                .then((balance: BigNumber) => {
-                    const res: CheckCanBridgeResult = [balance.gte(amount), balance];
-                    return res
-                })
-                .catch(rejectPromise)
+            return this.resolveBalanceFunc(
+                ERC20.balanceOf(address, {tokenAddress, chainId: this.chainId}),
+                amount,
+                token
+            )
         }
 
-        private async checkCanBridge(args: CheckCanBridgeParams): Promise<CanBridgeResult> {
-            const {token} = args;
+        private async checkCanBridge(args: {signer: Signer, amount: BigNumberish, token: Token}): Promise<CanBridgeResult> {
+            const {token, signer} = args;
+            const signerAddress: string = await signer.getAddress();
+            const checkArgs = {...args, address: signerAddress};
 
-            const hasBalanceRes = this.checkHasBalance(args)
-                .then((balanceRes) => {
-                    const [hasBalance, balance] = balanceRes;
-                    if (!hasBalance) {
-                        let balanceEth: string = formatUnits(balance, token.decimals(this.chainId)).toString();
-                        let ret: CanBridgeResult = [false, new Error(`Balance of token ${token.symbol} is too low; current balance is ${balanceEth}`)];
-                        return ret
-                    }
+            const isGasTokenTransfer: boolean = token.isEqual(Tokens.ETH) && BridgeUtils.chainSupportsGasToken(this.chainId);
 
-                    let ret: CanBridgeResult = [true, null];
-                    return ret
-                })
-                .catch(rejectPromise)
+            let hasBalanceRes: Promise<CanBridgeResult> = isGasTokenTransfer
+                ? this.checkGasTokenBalance(args)
+                : this.checkERC20Balance(checkArgs)
 
-            return this.checkNeedsApprove(args)
-                .then((approveRes) => {
-                    const [needsApprove, allowance] = approveRes;
-                    if (needsApprove) {
-                        let allowanceEth: string = formatUnits(allowance, token.decimals(this.chainId)).toString();
-                        let ret: CanBridgeResult = [false, new Error(`Spend allowance of Bridge too low for token ${token.symbol}; current allowance for Bridge is ${allowanceEth}`)];
-                        return ret
-                    }
-
-                    return hasBalanceRes
-                })
-                .catch(rejectPromise)
+            return isGasTokenTransfer
+                ? this.checkNeedsApprove(checkArgs)
+                    .then(approveRes => this.resolveApproveFunc(approveRes, hasBalanceRes, token))
+                    .catch(rejectPromise)
+                : hasBalanceRes
         }
 
         private buildERC20ApproveArgs(args: {
