@@ -431,11 +431,12 @@ export namespace Bridge {
                 amountFrom.mul(bigNumTen.pow(18-tokenFrom.decimals(this.chainId)))
             ).then((res: [BigNumber]) => res[0] ?? null).catch(rejectPromise);
 
-            const checkEthy = (c: number, t: Token): boolean => BridgeUtils.isL2ETHChain(c) && t.swapType === SwapType.ETH
+            const checkEthy = (c1: number, c2: number, t: Token): boolean =>
+                c1 === ChainId.ETH && BridgeUtils.isL2ETHChain(c2) && t.swapType === SwapType.ETH
 
             const
-                ethToEth:   boolean = this.chainId === ChainId.ETH && checkEthy(chainIdTo,    tokenTo),
-                ethFromEth: boolean = chainIdTo    === ChainId.ETH && checkEthy(this.chainId, tokenFrom);
+                ethToEth:   boolean = checkEthy(this.chainId, chainIdTo,    tokenTo),
+                ethFromEth: boolean = checkEthy(chainIdTo,    this.chainId, tokenFrom);
 
             let amountToReceive_from: BigNumber;
             switch (true) {
