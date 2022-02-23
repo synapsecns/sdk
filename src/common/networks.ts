@@ -206,9 +206,11 @@ export namespace Networks {
      * @param {Network | number} network Either a {@link Network} instance, or the Chain ID of a supported network.
      * @param {Token} token A {@link Token} object.
      */
-    export function networkSupportsToken(network: Network | number, token: Token): boolean {
-        return (network instanceof Network ? network : fromChainId(network)).supportsToken(token)
-    }
+    export const networkSupportsToken = (network: Network | number, token: Token): boolean =>
+        (network instanceof Network
+            ? network
+            : fromChainId(network)
+        ).supportsToken(token)
 
     export const supportedNetworks = (): Network[] => Object.values(CHAINID_NETWORK_MAP)
 }
