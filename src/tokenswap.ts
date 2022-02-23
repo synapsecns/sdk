@@ -151,13 +151,12 @@ export namespace TokenSwap {
             return rejectPromise(reasonNotSupported)
         }
 
-        const {swapData} = args;
-        const {swapInstance, tokenIndexFrom, tokenIndexTo} = swapData 
-            ? swapData 
-            : await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
-        
-        return swapInstance.calculateSwap(tokenIndexFrom, tokenIndexTo, args.amountIn)
-            .then((res): EstimatedSwapRate => ({amountOut: res}))
+        return resolveSwapData(args)
+            .then(({swapInstance, tokenIndexFrom, tokenIndexTo}) =>
+                swapInstance.calculateSwap(tokenIndexFrom, tokenIndexTo, args.amountIn)
+                    .then((res): EstimatedSwapRate => ({amountOut: res}))
+            )
+            .catch(rejectPromise)
     }
 
     export async function buildSwapTokensTransaction(args: SwapTokensParams): Promise<PopulatedTransaction> {
@@ -166,24 +165,35 @@ export namespace TokenSwap {
             return rejectPromise(reasonNotSupported)
         }
 
+        return resolveSwapData(args)
+            .then(populateSwapTransaction(args))
+            .catch(rejectPromise)
+    }
+
+    async function resolveSwapData(args: SwapTokensParams|SwapParams): Promise<SwapSetup> {
         const {swapData} = args;
-        const {swapInstance, tokenIndexFrom, tokenIndexTo} = swapData 
-            ? swapData 
-            : await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
+        return Promise.resolve(swapData ? swapData : await swapSetup(args.tokenFrom, args.tokenTo, args.chainId))
+    }
 
-        let {deadline} = args;
-        deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
+    function populateSwapTransaction(args: SwapTokensParams): (swapSetup: SwapSetup) => Promise<PopulatedTransaction> {
+        return (swapSetup: SwapSetup): Promise<PopulatedTransaction> => {
+            let {deadline} = args;
+            const {swapInstance, tokenIndexFrom, tokenIndexTo} = swapSetup;
 
-        const overrides: any = args.tokenFrom.isEqual(Tokens.ETH) ? {value:args.amountIn} : {};
+            deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
 
-        return swapInstance.populateTransaction.swap(
-            tokenIndexFrom,
-            tokenIndexTo,
-            args.amountIn,
-            args.minAmountOut,
-            deadline,
-            overrides
-        )
+            const overrides: any = args.tokenFrom.isEqual(Tokens.ETH) ? {value:args.amountIn} : {};
+
+            return swapInstance.populateTransaction.swap(
+                tokenIndexFrom,
+                tokenIndexTo,
+                args.amountIn,
+                args.minAmountOut,
+                deadline,
+                overrides
+            )
+        }
+
     }
 
     export function intermediateTokens(chainId: number, token: Token): IntermediateSwapTokens {
