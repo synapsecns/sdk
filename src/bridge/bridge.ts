@@ -321,8 +321,6 @@ export namespace Bridge {
             return ERC20.allowanceOf(address, this.zapBridgeAddress, {tokenAddress, chainId: this.chainId})
         }
 
-
-
         private async checkNeedsApprove({
             address,
             token,
@@ -425,11 +423,14 @@ export namespace Bridge {
             let {intermediateToken, bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
 
             const bigNumTen = BigNumber.from(10);
+
             const bridgeFeeRequest = this.bridgeConfigInstance.functions["calculateSwapFee(address,uint256,uint256)"](
                 bridgeConfigIntermediateToken.address(chainIdTo),
                 chainIdTo,
                 amountFrom.mul(bigNumTen.pow(18-tokenFrom.decimals(this.chainId)))
-            ).then((res: [BigNumber]) => res[0] ?? null).catch(rejectPromise);
+            )
+                .then((res: [BigNumber]) => res[0] ?? null)
+                .catch(rejectPromise);
 
             const checkEthy = (c1: number, c2: number, t: Token): boolean =>
                 c1 === ChainId.ETH && BridgeUtils.isL2ETHChain(c2) && t.swapType === SwapType.ETH
@@ -438,23 +439,23 @@ export namespace Bridge {
                 ethToEth:   boolean = checkEthy(this.chainId, chainIdTo,    tokenTo),
                 ethFromEth: boolean = checkEthy(chainIdTo,    this.chainId, tokenFrom);
 
-            let amountToReceive_from: BigNumber;
+            let amountToReceive_from_prom: Promise<BigNumber>;
             switch (true) {
                 case amountFrom.eq(Zero):
-                    amountToReceive_from = Zero;
+                    amountToReceive_from_prom = Promise.resolve(Zero);
                     break;
                 case ethToEth:
                 case Tokens.isMintBurnToken(tokenFrom):
                 case tokenFrom.isWrappedToken:
-                    amountToReceive_from = amountFrom;
+                    amountToReceive_from_prom = Promise.resolve(amountFrom);
                     break;
                 case this.chainId === ChainId.ETH:
                     let liquidityAmounts = fromChainTokens.map((t) => tokenFrom.isEqual(t) ? amountFrom : Zero);
-                    amountToReceive_from = await this.zapBridgeInstance.calculateTokenAmount(liquidityAmounts, true);
+                    amountToReceive_from_prom = this.zapBridgeInstance.calculateTokenAmount(liquidityAmounts, true);
 
                     break;
                 default:
-                    amountToReceive_from = await BridgeUtils.calculateSwapL2Zap(
+                    amountToReceive_from_prom = BridgeUtils.calculateSwapL2Zap(
                         this.networkZapBridgeInstance,
                         intermediateToken.address(this.chainId),
                         tokenIndexFrom,
@@ -463,33 +464,39 @@ export namespace Bridge {
                     );
             }
 
+            let amountToReceive_from = await amountToReceive_from_prom;
+
             let bridgeFee: BigNumber;
             try {
                 bridgeFee = await bridgeFeeRequest;
+                if (bridgeFee === null) {
+                    console.error("calculateSwapFee returned null");
+                    return rejectPromise("calculateSwapFee returned null")
+                }
             } catch (e) {
                 console.error(`Error in bridge fee request: ${e}`);
-                return null
+                return rejectPromise(e)
             }
 
             amountToReceive_from = BridgeUtils.subBigNumSafe(amountToReceive_from, bridgeFee);
 
-            let amountToReceive_to: BigNumber;
+            let amountToReceive_to_prom: Promise<BigNumber>;
             switch (true) {
                 case amountToReceive_from.isZero():
-                    amountToReceive_to = Zero;
+                    amountToReceive_to_prom = Promise.resolve(Zero);
                     break;
                 case ethFromEth:
                 case Tokens.isMintBurnToken(tokenTo):
                 case tokenTo.isWrappedToken:
-                    amountToReceive_to = amountToReceive_from;
+                    amountToReceive_to_prom = Promise.resolve(amountToReceive_from);
                     break;
                 case chainIdTo === ChainId.ETH:
-                    amountToReceive_to = await (toChainZap as L1BridgeZapContract)
+                    amountToReceive_to_prom = (toChainZap as L1BridgeZapContract)
                         .calculateRemoveLiquidityOneToken(amountToReceive_from, tokenIndexTo);
 
                     break;
                 default:
-                    amountToReceive_to = await BridgeUtils.calculateSwapL2Zap(
+                    amountToReceive_to_prom = BridgeUtils.calculateSwapL2Zap(
                         toChainZap,
                         intermediateToken.address(chainIdTo),
                         0,
@@ -498,7 +505,12 @@ export namespace Bridge {
                     );
             }
 
-            let amountToReceive = amountToReceive_to;
+            let amountToReceive: BigNumber;
+            try {
+                amountToReceive = await Promise.resolve(amountToReceive_to_prom)
+            } catch (err) {
+                return rejectPromise(err)
+            }
 
             return {amountToReceive, bridgeFee}
         }
