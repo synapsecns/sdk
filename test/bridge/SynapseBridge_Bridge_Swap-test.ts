@@ -2,14 +2,14 @@ import "../helpers/chaisetup";
 
 import _ from "lodash";
 
-import type {Token} from "../../src";
+import type {Token} from "@token";
 
 import {
     ChainId,
     Networks,
     Tokens,
     Bridge,
-} from "../../src";
+} from "@sdk";
 
 import {
     DEFAULT_TEST_TIMEOUT,

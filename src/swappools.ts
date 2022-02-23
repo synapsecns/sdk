@@ -1,13 +1,13 @@
 import {Tokens} from "@tokens";
 
-import {ChainId, supportedChainIds} from "@common/chainid";
+import {ChainId, supportedChainIds} from "@chainid";
 
 import type {AddressMap, DecimalsMap, ChainIdTypeMap} from "@common/types";
 
-import {BaseToken} from "@token";
+import {BaseToken}              from "@token";
 import type {IBaseToken, Token} from "@token";
 
-import type {ID} from "@internal/entity";
+import type {ID}  from "@internal/entity";
 import {SwapType} from "@internal/swaptype";
 
 

@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import {expect} from "chai";
 import {step} from "mocha-steps";
 
-import type {Token} from "../../src";
+import type {Token} from "@token";
 
 import {
     Tokens,
@@ -14,9 +14,9 @@ import {
     supportedChainIds,
 } from "../../src";
 
-import {ERC20}                 from "../../src/bridge/erc20";
-import {contractAddressFor}    from "../../src/common/utils";
-import {rpcProviderForNetwork} from "../../src/internal/rpcproviders";
+import {ERC20}                 from "@bridge/erc20";
+import {contractAddressFor}    from "@common/utils";
+import {rpcProviderForNetwork} from "@internal/rpcproviders";
 
 import {
     DEFAULT_TEST_TIMEOUT,

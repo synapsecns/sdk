@@ -7,7 +7,7 @@ import {
     Bridge,
     ChainId,
     Tokens,
-} from "../../src";
+} from "@sdk";
 
 import {
     DEFAULT_TEST_TIMEOUT,

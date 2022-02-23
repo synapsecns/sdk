@@ -1,4 +1,6 @@
-import {Networks, Token} from "../../src";
+import type {Token} from "@token";
+import {Networks}   from "@networks";
+
 import {BigNumber} from "@ethersproject/bignumber";
 
 export interface BridgeSwapTestArgs {

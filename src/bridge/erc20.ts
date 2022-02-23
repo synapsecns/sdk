@@ -12,7 +12,7 @@ import type {
 import {
     ERC20Factory,
     ERC20Contract,
-} from "../contracts";
+} from "@contracts";
 
 import {rpcProviderForNetwork} from "@internal/rpcproviders";
 

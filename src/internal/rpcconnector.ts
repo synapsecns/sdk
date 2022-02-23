@@ -1,4 +1,4 @@
-import type {ChainIdTypeMap, StringMap} from "../common/types";
+import type {ChainIdTypeMap, StringMap} from "@common/types";
 
 import type {Provider} from "@ethersproject/providers";
 import {JsonRpcProvider, Web3Provider} from "@ethersproject/providers";

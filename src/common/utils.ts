@@ -1,8 +1,6 @@
 import {ChainId}          from "@chainid";
 import {SynapseContracts} from "./synapse_contracts";
 
-import type {JsonRpcProvider} from "@ethersproject/providers";
-
 import type {Signer} from "@ethersproject/abstract-signer";
 
 import type {
