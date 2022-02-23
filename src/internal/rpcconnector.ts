@@ -1,12 +1,11 @@
 import type {ChainIdTypeMap, StringMap} from "../common/types";
-import {JsonRpcProvider, Provider} from "@ethersproject/providers";
+
+import type {Provider} from "@ethersproject/providers";
+import {JsonRpcProvider, Web3Provider} from "@ethersproject/providers";
 
 import {MiniRpcProvider} from "./minirpc";
 
-import type {ConnectorUpdate} from "@web3-react/types";
-import {AbstractConnector} from "@web3-react/abstract-connector";
-
-export interface ProviderConnector<T extends Provider | MiniRpcProvider> {
+export interface ProviderConnector<T extends Provider> {
     provider:          (chainId: number) => T;
     providerWithUri:   (chainId: number, uri: string) => T;
     setProviderUri:    (chainId: number, uri: string) => void;
@@ -27,7 +26,7 @@ class AbstractProviderConnector<T extends Provider> implements ProviderConnector
         this.newProviderFn = newProvider;
         this.providers = Object.keys(urls).reduce((acc, chainId) => {
             const cid = Number(chainId);
-            acc[cid] = newProvider(urls[cid]);
+            acc[cid]  = newProvider(urls[cid]);
             return acc
         }, {});
     }
@@ -59,7 +58,7 @@ class AbstractProviderConnector<T extends Provider> implements ProviderConnector
     }
 }
 
-export class RpcConnector extends AbstractProviderConnector<JsonRpcProvider> implements ProviderConnector<JsonRpcProvider> {
+export class JsonRpcConnector extends AbstractProviderConnector<JsonRpcProvider> implements ProviderConnector<JsonRpcProvider> {
     constructor(args: {urls: StringMap}) {
         super({
             ...args,
@@ -86,57 +85,39 @@ export class RpcConnector extends AbstractProviderConnector<JsonRpcProvider> imp
     }
 }
 
-export class Web3Connector extends AbstractConnector {
-    readonly urls:      StringMap;
-    readonly providers: ChainIdTypeMap<MiniRpcProvider>;
-
-    currentChainId: number;
-
-    constructor(args: {
-        urls:           StringMap,
-        defaultChainId: number
-    }) {
-        const {urls, defaultChainId} = args;
+export class Web3RpcConnector extends AbstractProviderConnector<Web3Provider> implements ProviderConnector<Web3Provider> {
+    constructor(args: {urls: StringMap}) {
+        let invertedUrlsMap = Object.keys(args.urls).reduce((acc, chainId) => {
+            const cid = Number(chainId);
+            const url = args.urls[cid];
+            acc[url] = cid;
+            return acc
+        }, {})
 
         super({
-            supportedChainIds: Object.keys(urls).map(k => Number(k))
+            ...args,
+            newProvider: (uri: string) => {
+                const provider = new MiniRpcProvider(invertedUrlsMap[uri], uri);
+                return new Web3Provider(provider)
+            }
         });
-
-        this.urls = urls;
-        this.currentChainId = defaultChainId || Number(Object.keys(urls)[0]);
-
-        this.providers = Object.keys(urls).reduce((acc, chainId) => {
-            const cid = Number(chainId);
-            acc[cid] = new MiniRpcProvider(cid, urls[cid]);
-            return acc
-        }, {});
     }
 
-    get provider(): MiniRpcProvider {
-        return this.providers[this.currentChainId]
-    }
-
-    async getProvider(): Promise<any> {
-        return this.providers[this.currentChainId]
-    }
-
-    async getChainId(): Promise<number | string> {
-        return this.currentChainId
-    }
-
-    async getAccount(): Promise<null | string> {
-        return null
-    }
-
-    async activate(): Promise<ConnectorUpdate> {
-        return {
-            provider: this.providers[this.currentChainId],
-            chainId:  this.currentChainId,
-            account:  null,
+    /**
+     * Returns a potentially new {@link Web3Provider} instance for the given chain ID
+     * using the passed uri for the connection.
+     * If the passed uri is the same as the uri for a pre-existing JsonRpcProvider instance,
+     * said instance is returned rather than instantiating a brand new one.
+     * @param chainId
+     * @param uri
+     * @override
+     */
+    providerWithUri(chainId: number, uri: string): Web3Provider {
+        const _existing = this.providers[chainId];
+        if (_existing?.connection.url === uri) {
+            return _existing
         }
-    }
 
-    deactivate(): void {
-        return
+        return super.providerWithUri(chainId, uri)
     }
 }
