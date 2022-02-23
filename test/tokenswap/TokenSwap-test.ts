@@ -4,6 +4,7 @@ import {step} from "mocha-steps";
 
 import {Zero} from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
+import {Contract} from "ethers";
 
 import type {Token} from "../../src";
 
@@ -62,7 +63,8 @@ describe("TokenSwap tests", function(this: Mocha.Suite) {
                 tokTo: string       = tc.tokenTo.symbol,
                 testTitle: string   = `for ${tokFrom} => ${tokTo} on ${Networks.networkName(tc.chainId)} ${titleSuffix}`,
                 testTitle1: string  = `calculateSwapRate ${testTitle}`,
-                testTitle2: string  = `buildSwapTokensTransaction ${testTitle}`;
+                testTitle2: string  = `buildSwapTokensTransaction ${testTitle}`,
+                testTitle3: string  = `swapSetup ${testTitle}`;
 
             let amountOut: BigNumber;
 
@@ -97,6 +99,20 @@ describe("TokenSwap tests", function(this: Mocha.Suite) {
                 return (await expectFulfilled(
                     TokenSwap.buildSwapTokensTransaction(args)
                 ))
+            })
+
+            step(testTitle3, async function(this: Mocha.Context) {
+                this.timeout(DEFAULT_TEST_TIMEOUT);
+
+                let prom = TokenSwap.swapSetup(
+                    tc.tokenFrom, 
+                    tc.tokenTo, 
+                    tc.chainId,
+                )
+
+                return tc.wantError
+                    ? await expectRejected(prom)
+                    : expectProperty(await prom, "swapInstance").that.is.instanceof(Contract)
             })
         }
     })
