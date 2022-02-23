@@ -245,7 +245,7 @@ export namespace Bridge {
             args.addressTo = addressTo ?? signerAddress
 
             const
-                isGasTokenTransfer: boolean = this.network.chainCurrency === args.tokenFrom.symbol,
+                isGasTokenTransfer: boolean = (this.network.chainCurrency === args.tokenFrom.symbol) && BridgeUtils.chainSupportsGasToken(this.chainId),
                 checkArgs = {signer, token: tokenFrom, amount: amountFrom};
 
             return Promise.resolve(
