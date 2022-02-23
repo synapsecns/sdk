@@ -40,7 +40,7 @@ function executeTransaction(
         .catch((err: any) => doneWithError(err, done))
 }
 
-describe("SynapseBridge - Provider Interactions tests", async function(this: Mocha.Suite) {
+describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Suite) {
     const
         tokenFrom      = Tokens.ETH,
         tokenTo        = Tokens.WETH_E,
@@ -49,7 +49,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
         amountFrom     = parseEther("420.696969"),
         bridgeArgs     = {tokenFrom, tokenTo, chainIdFrom, chainIdTo, amountFrom},
         wallet         = makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey),
-        addressTo      = await wallet.getAddress(),
+        addressTo      = wallet.address,
         bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
 
     let
