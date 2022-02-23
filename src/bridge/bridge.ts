@@ -25,6 +25,8 @@ import {SynapseEntities} from "../entities";
 import type {Token} from "../token";
 import {BaseToken, WrappedToken} from "../token";
 
+import type {ChainIdTypeMap} from "../common/types";
+
 import {BridgeUtils} from "./bridgeutils";
 import {GasUtils} from "./gasutils";
 import {ERC20, MAX_APPROVAL_AMOUNT} from "./erc20";
@@ -894,7 +896,7 @@ export namespace Bridge {
         }
     }
 
-    const REQUIRED_CONFS = {
+    const REQUIRED_CONFS: ChainIdTypeMap<number> = {
         [ChainId.ETH]:       7,
         [ChainId.OPTIMISM]:  1,
         [ChainId.BSC]:       14,
