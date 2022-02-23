@@ -1,3 +1,7 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
 import _ from "lodash";
 
 import type {Provider} from "@ethersproject/providers";
@@ -45,7 +49,7 @@ const LOADED_CHAIN_RPC_URIS: StringMap = _.fromPairs(supportedChainIds().map(cid
 
 const
     RPC_CONNECTOR:      JsonRpcConnector = new JsonRpcConnector({urls: LOADED_CHAIN_RPC_URIS}),
-    WEB3_RPC_CONNECTOR: Web3RpcConnector = new Web3RpcConnector({urls: LOADED_CHAIN_RPC_URIS});
+    WEB3_RPC_CONNECTOR: Web3RpcConnector = new Web3RpcConnector({urls: LOADED_CHAIN_RPC_URIS, batchWaitTimeMs: 65});
 
 const DEFAULT_CONNECTOR = WEB3_RPC_CONNECTOR;
 

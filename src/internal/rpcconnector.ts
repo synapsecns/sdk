@@ -86,7 +86,7 @@ export class JsonRpcConnector extends AbstractProviderConnector<JsonRpcProvider>
 }
 
 export class Web3RpcConnector extends AbstractProviderConnector<Web3Provider> implements ProviderConnector<Web3Provider> {
-    constructor(args: {urls: StringMap}) {
+    constructor(args: {urls: StringMap, batchWaitTimeMs?: number}) {
         let invertedUrlsMap = Object.keys(args.urls).reduce((acc, chainId) => {
             const cid = Number(chainId);
             const url = args.urls[cid];
@@ -97,7 +97,7 @@ export class Web3RpcConnector extends AbstractProviderConnector<Web3Provider> im
         super({
             ...args,
             newProvider: (uri: string) => {
-                const provider = new MiniRpcProvider(invertedUrlsMap[uri], uri);
+                const provider = new MiniRpcProvider(invertedUrlsMap[uri], uri, args.batchWaitTimeMs);
                 return new Web3Provider(provider)
             }
         });
