@@ -2,7 +2,7 @@ import "../helpers/chaisetup";
 
 import {step} from "mocha-steps";
 
-import type {Token} from "../../src";
+import type {Token} from "@token";
 
 import {
     Bridge,
@@ -115,14 +115,6 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                     }
                 })
             )
-    }
-
-    function testExecuteTxnStep(
-        tc:       TestCase,
-        txnProm:  Promise<TransactionResponse|ContractTransaction>,
-        approval: boolean=false
-    ): Mocha.AsyncFunc {
-        return
     }
 
     for (const tc of testCases) {
