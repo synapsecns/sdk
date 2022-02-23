@@ -94,6 +94,12 @@ export namespace Bridge {
         tokenIndexTo:    number,
     }
 
+    interface CheckCanBridgeParams {
+        address: string,
+        token:   Token,
+        amount:  BigNumberish,
+    }
+
     /**
      * SynapseBridge is a wrapper around any Synapse Bridge contract which exists on chains supported by the Synapse Protocol.
      */
@@ -313,16 +319,14 @@ export namespace Bridge {
             return ERC20.allowanceOf(address, this.zapBridgeAddress, {tokenAddress, chainId: this.chainId})
         }
 
-        private async checkNeedsApprove(args: {
-            address: string,
-            token:   Token | string,
-            amount?: BigNumberish,
-        }): Promise<CheckCanBridgeResult> {
-            let {amount} = args;
-            amount = amount ?? MAX_APPROVAL_AMOUNT.sub(1);
 
-            const {address} = args;
-            const [{spender}, tokenAddress] = this.buildERC20ApproveArgs(args);
+
+        private async checkNeedsApprove({
+            address,
+            token,
+            amount=MAX_APPROVAL_AMOUNT.sub(1)
+        }: CheckCanBridgeParams): Promise<CheckCanBridgeResult> {
+            const [{spender}, tokenAddress] = this.buildERC20ApproveArgs({token, amount});
 
             return ERC20.allowanceOf(address, spender, {tokenAddress, chainId: this.chainId})
                 .then((allowance: BigNumber) => {
@@ -332,14 +336,9 @@ export namespace Bridge {
                 .catch(rejectPromise)
         }
 
-        private async checkHasBalance(args: {
-            address: string,
-            token:   Token | string,
-            amount:  BigNumberish,
-        }): Promise<CheckCanBridgeResult> {
+        private async checkHasBalance({address, amount, token}: CheckCanBridgeParams): Promise<CheckCanBridgeResult> {
             const
-                {address, amount} = args,
-                [, tokenAddress] = this.buildERC20ApproveArgs(args);
+                [, tokenAddress] = this.buildERC20ApproveArgs({token, amount});
 
             return ERC20.balanceOf(address, {tokenAddress, chainId: this.chainId})
                 .then((balance: BigNumber) => {
@@ -349,11 +348,7 @@ export namespace Bridge {
                 .catch(rejectPromise)
         }
 
-        private async checkCanBridge(args: {
-            address: string,
-            token:   Token,
-            amount:  BigNumberish,
-        }): Promise<CanBridgeResult> {
+        private async checkCanBridge(args: CheckCanBridgeParams): Promise<CanBridgeResult> {
             const {token} = args;
 
             const hasBalanceRes = this.checkHasBalance(args)
@@ -641,8 +636,6 @@ export namespace Bridge {
                 easyDeposits:   ID[] = [],
                 easyRedeems:    ID[] = [Tokens.SYN.id, Tokens.HIGH.id, Tokens.DOG.id, Tokens.FRAX.id],
                 easyDepositETH: ID[] = [];
-
-            if (args.tokenFrom.isEqual(Tokens.NUSD)) easyRedeems.push(Tokens.NUSD.id);
 
             if (args.tokenFrom.isEqual(Tokens.NUSD)) easyRedeems.push(Tokens.NUSD.id);
 
