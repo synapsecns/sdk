@@ -5,6 +5,7 @@ import type {
     SynapseERC20 as SynapseERC20Contract,
     SwapFlashLoan as SwapContract,
     BridgeConfig as BridgeConfigContract,
+    BridgeConfigV3 as BridgeConfigV3Contract,
     PoolConfig as PoolConfigContract,
     ERC20 as ERC20Contract
 } from "@internal/gen/index";
@@ -18,6 +19,7 @@ export type {
     SynapseERC20Contract,
     SwapContract,
     BridgeConfigContract,
+    BridgeConfigV3Contract,
     PoolConfigContract,
     GenericZapBridgeContract,
     ERC20Contract
@@ -30,6 +32,7 @@ export {
     SynapseERC20__factory as SynapseERC20Factory,
     SwapFlashLoan__factory as SwapFactory,
     BridgeConfig__factory as BridgeConfigFactory,
+    BridgeConfigV3__factory as BridgeConfigV3Factory,
     PoolConfig__factory as PoolConfigFactory,
     ERC20__factory as ERC20Factory
 } from "@internal/gen/index";

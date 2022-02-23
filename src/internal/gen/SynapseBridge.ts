@@ -44,6 +44,7 @@ export interface SynapseBridgeInterface extends utils.Interface {
     "redeem(address,uint256,address,uint256)": FunctionFragment;
     "redeemAndRemove(address,uint256,address,uint256,uint8,uint256,uint256)": FunctionFragment;
     "redeemAndSwap(address,uint256,address,uint256,uint8,uint8,uint256,uint256)": FunctionFragment;
+    "redeemV2(bytes32,uint256,address,uint256)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "setChainGasAmount(uint256)": FunctionFragment;
@@ -183,6 +184,10 @@ export interface SynapseBridgeInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "redeemV2",
+    values: [BytesLike, BigNumberish, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceRole",
     values: [BytesLike, string]
   ): string;
@@ -295,6 +300,7 @@ export interface SynapseBridgeInterface extends utils.Interface {
     functionFragment: "redeemAndSwap",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "redeemV2", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
@@ -335,6 +341,7 @@ export interface SynapseBridgeInterface extends utils.Interface {
     "TokenRedeem(address,uint256,address,uint256)": EventFragment;
     "TokenRedeemAndRemove(address,uint256,address,uint256,uint8,uint256,uint256)": EventFragment;
     "TokenRedeemAndSwap(address,uint256,address,uint256,uint8,uint8,uint256,uint256)": EventFragment;
+    "TokenRedeemV2(bytes32,uint256,address,uint256)": EventFragment;
     "TokenWithdraw(address,address,uint256,uint256,bytes32)": EventFragment;
     "TokenWithdrawAndRemove(address,address,uint256,uint256,uint8,uint256,uint256,bool,bytes32)": EventFragment;
     "Unpaused(address)": EventFragment;
@@ -351,6 +358,7 @@ export interface SynapseBridgeInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "TokenRedeem"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenRedeemAndRemove"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenRedeemAndSwap"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokenRedeemV2"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenWithdraw"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenWithdrawAndRemove"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
@@ -488,6 +496,13 @@ export type TokenRedeemAndSwapEvent = TypedEvent<
 
 export type TokenRedeemAndSwapEventFilter =
   TypedEventFilter<TokenRedeemAndSwapEvent>;
+
+export type TokenRedeemV2Event = TypedEvent<
+  [string, BigNumber, string, BigNumber],
+  { to: string; chainId: BigNumber; token: string; amount: BigNumber }
+>;
+
+export type TokenRedeemV2EventFilter = TypedEventFilter<TokenRedeemV2Event>;
 
 export type TokenWithdrawEvent = TypedEvent<
   [string, string, BigNumber, BigNumber, string],
@@ -782,6 +797,21 @@ export interface SynapseBridge extends BaseContract {
       tokenIndexTo: BigNumberish,
       minDy: BigNumberish,
       deadline: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    /**
+     * Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which underlying chain to bridge assets onto
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
+    redeemV2(
+      to: BytesLike,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1094,6 +1124,21 @@ export interface SynapseBridge extends BaseContract {
   ): Promise<ContractTransaction>;
 
   /**
+   * Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain
+   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+   * @param chainId which underlying chain to bridge assets onto
+   * @param to address on other chain to redeem underlying assets to
+   * @param token ERC20 compatible token to deposit into the bridge
+   */
+  redeemV2(
+    to: BytesLike,
+    chainId: BigNumberish,
+    token: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  /**
    * Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.
    */
   renounceRole(
@@ -1395,6 +1440,21 @@ export interface SynapseBridge extends BaseContract {
     ): Promise<void>;
 
     /**
+     * Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which underlying chain to bridge assets onto
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
+    redeemV2(
+      to: BytesLike,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    /**
      * Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.
      */
     renounceRole(
@@ -1643,6 +1703,19 @@ export interface SynapseBridge extends BaseContract {
       minDy?: null,
       deadline?: null
     ): TokenRedeemAndSwapEventFilter;
+
+    "TokenRedeemV2(bytes32,uint256,address,uint256)"(
+      to?: BytesLike | null,
+      chainId?: null,
+      token?: null,
+      amount?: null
+    ): TokenRedeemV2EventFilter;
+    TokenRedeemV2(
+      to?: BytesLike | null,
+      chainId?: null,
+      token?: null,
+      amount?: null
+    ): TokenRedeemV2EventFilter;
 
     "TokenWithdraw(address,address,uint256,uint256,bytes32)"(
       to?: string | null,
@@ -1910,6 +1983,21 @@ export interface SynapseBridge extends BaseContract {
       tokenIndexTo: BigNumberish,
       minDy: BigNumberish,
       deadline: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    /**
+     * Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which underlying chain to bridge assets onto
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
+    redeemV2(
+      to: BytesLike,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2227,6 +2315,21 @@ export interface SynapseBridge extends BaseContract {
       tokenIndexTo: BigNumberish,
       minDy: BigNumberish,
       deadline: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    /**
+     * Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which underlying chain to bridge assets onto
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
+    redeemV2(
+      to: BytesLike,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

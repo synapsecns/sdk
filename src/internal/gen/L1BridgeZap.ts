@@ -30,6 +30,7 @@ export interface L1BridgeZapInterface extends utils.Interface {
     "depositETH(address,uint256,uint256)": FunctionFragment;
     "depositETHAndSwap(address,uint256,uint256,uint8,uint8,uint256,uint256)": FunctionFragment;
     "redeem(address,uint256,address,uint256)": FunctionFragment;
+    "redeemv2(bytes32,uint256,address,uint256)": FunctionFragment;
     "zapAndDeposit(address,uint256,address,uint256[],uint256,uint256)": FunctionFragment;
     "zapAndDepositAndSwap(address,uint256,address,uint256[],uint256,uint256,uint8,uint8,uint256,uint256)": FunctionFragment;
   };
@@ -88,6 +89,10 @@ export interface L1BridgeZapInterface extends utils.Interface {
     values: [string, BigNumberish, string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "redeemv2",
+    values: [BytesLike, BigNumberish, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "zapAndDeposit",
     values: [
       string,
@@ -138,6 +143,7 @@ export interface L1BridgeZapInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "redeemv2", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "zapAndDeposit",
     data: BytesLike
@@ -289,6 +295,21 @@ export interface L1BridgeZap extends BaseContract {
      */
     redeem(
       to: string,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    /**
+     * Wraps SynapseBridge redeemv2() function
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     * @param token ERC20 compatible token to redeem into the bridge
+     */
+    redeemv2(
+      to: BytesLike,
       chainId: BigNumberish,
       token: string,
       amount: BigNumberish,
@@ -457,6 +478,21 @@ export interface L1BridgeZap extends BaseContract {
   ): Promise<ContractTransaction>;
 
   /**
+   * Wraps SynapseBridge redeemv2() function
+   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+   * @param chainId which chain to bridge assets onto
+   * @param to address on other chain to bridge assets to
+   * @param token ERC20 compatible token to redeem into the bridge
+   */
+  redeemv2(
+    to: BytesLike,
+    chainId: BigNumberish,
+    token: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  /**
    * Combines adding liquidity to the given Swap, and calls deposit() on the bridge using that LP token
    * @param chainId which chain to bridge assets onto
    * @param deadline latest timestamp to accept this transaction*
@@ -611,6 +647,21 @@ export interface L1BridgeZap extends BaseContract {
      */
     redeem(
       to: string,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    /**
+     * Wraps SynapseBridge redeemv2() function
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     * @param token ERC20 compatible token to redeem into the bridge
+     */
+    redeemv2(
+      to: BytesLike,
       chainId: BigNumberish,
       token: string,
       amount: BigNumberish,
@@ -785,6 +836,21 @@ export interface L1BridgeZap extends BaseContract {
     ): Promise<BigNumber>;
 
     /**
+     * Wraps SynapseBridge redeemv2() function
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     * @param token ERC20 compatible token to redeem into the bridge
+     */
+    redeemv2(
+      to: BytesLike,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    /**
      * Combines adding liquidity to the given Swap, and calls deposit() on the bridge using that LP token
      * @param chainId which chain to bridge assets onto
      * @param deadline latest timestamp to accept this transaction*
@@ -943,6 +1009,21 @@ export interface L1BridgeZap extends BaseContract {
      */
     redeem(
       to: string,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    /**
+     * Wraps SynapseBridge redeemv2() function
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     * @param token ERC20 compatible token to redeem into the bridge
+     */
+    redeemv2(
+      to: BytesLike,
       chainId: BigNumberish,
       token: string,
       amount: BigNumberish,

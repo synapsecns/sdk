@@ -418,6 +418,37 @@ const ABI = {
       "inputs": [
         {
           "indexed": true,
+          "internalType": "bytes32",
+          "name": "to",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "contract IERC20",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "TokenRedeemV2",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
           "internalType": "address",
           "name": "to",
           "type": "address"
@@ -1074,6 +1105,34 @@ const ABI = {
       "inputs": [
         {
           "internalType": "bytes32",
+          "name": "to",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "contract ERC20Burnable",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "redeemV2",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
           "name": "role",
           "type": "bytes32"
         },
@@ -1358,6 +1417,14 @@ const ABI = {
           "tokenIndexTo": "the token the user wants to swap to"
         }
       },
+      "redeemV2(bytes32,uint256,address,uint256)": {
+        "params": {
+          "amount": "Amount in native token decimals to transfer cross-chain pre-fees*",
+          "chainId": "which underlying chain to bridge assets onto",
+          "to": "address on other chain to redeem underlying assets to",
+          "token": "ERC20 compatible token to deposit into the bridge"
+        }
+      },
       "renounceRole(bytes32,address)": {
         "details": "Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`."
       },
@@ -1418,6 +1485,9 @@ const ABI = {
       },
       "redeemAndSwap(address,uint256,address,uint256,uint8,uint8,uint256,uint256)": {
         "notice": "Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g \"swap\" out of the LP token)"
+      },
+      "redeemV2(bytes32,uint256,address,uint256)": {
+        "notice": "Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain"
       },
       "withdraw(address,address,uint256,uint256,bytes32)": {
         "notice": "Function to be called by the node group to withdraw the underlying assets from the contract"

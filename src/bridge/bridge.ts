@@ -120,7 +120,7 @@ export namespace Bridge {
 
         private readonly zapBridgeAddress: string;
 
-        private readonly bridgeConfigInstance = SynapseEntities.bridgeConfig();
+        private readonly bridgeConfigInstance = SynapseEntities.bridgeConfigV3();
         private readonly zapBridgeInstance = SynapseEntities.l1BridgeZap({
             chainId: ChainId.ETH,
             signerOrProvider: rpcProviderForNetwork(ChainId.ETH),
@@ -425,11 +425,11 @@ export namespace Bridge {
             let {intermediateToken, bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
 
             const bigNumTen = BigNumber.from(10);
-            const bridgeFeeRequest = this.bridgeConfigInstance.calculateSwapFee(
+            const bridgeFeeRequest = this.bridgeConfigInstance.functions["calculateSwapFee(address,uint256,uint256)"](
                 bridgeConfigIntermediateToken.address(chainIdTo),
                 chainIdTo,
                 amountFrom.mul(bigNumTen.pow(18-tokenFrom.decimals(this.chainId)))
-            );
+            ).then((res: [BigNumber]) => res[0] ?? null).catch(rejectPromise);
 
             const checkEthy = (c: number, t: Token): boolean => BridgeUtils.isL2ETHChain(c) && t.swapType === SwapType.ETH
 

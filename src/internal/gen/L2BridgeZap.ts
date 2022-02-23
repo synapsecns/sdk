@@ -28,6 +28,7 @@ export interface L2BridgeZapInterface extends utils.Interface {
     "redeem(address,uint256,address,uint256)": FunctionFragment;
     "redeemAndRemove(address,uint256,address,uint256,uint8,uint256,uint256)": FunctionFragment;
     "redeemAndSwap(address,uint256,address,uint256,uint8,uint8,uint256,uint256)": FunctionFragment;
+    "redeemv2(bytes32,uint256,address,uint256)": FunctionFragment;
     "swapAndRedeem(address,uint256,address,uint8,uint8,uint256,uint256,uint256)": FunctionFragment;
     "swapAndRedeemAndRemove(address,uint256,address,uint8,uint8,uint256,uint256,uint256,uint8,uint256,uint256)": FunctionFragment;
     "swapAndRedeemAndSwap(address,uint256,address,uint8,uint8,uint256,uint256,uint256,uint8,uint8,uint256,uint256)": FunctionFragment;
@@ -81,6 +82,10 @@ export interface L2BridgeZapInterface extends utils.Interface {
       BigNumberish,
       BigNumberish
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "redeemv2",
+    values: [BytesLike, BigNumberish, string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "swapAndRedeem",
@@ -183,6 +188,7 @@ export interface L2BridgeZapInterface extends utils.Interface {
     functionFragment: "redeemAndSwap",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "redeemv2", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "swapAndRedeem",
     data: BytesLike
@@ -340,6 +346,21 @@ export interface L2BridgeZap extends BaseContract {
       tokenIndexTo: BigNumberish,
       minDy: BigNumberish,
       deadline: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    /**
+     * Wraps SynapseBridge redeemv2() function
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     * @param token ERC20 compatible token to redeem into the bridge
+     */
+    redeemv2(
+      to: BytesLike,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -526,6 +547,21 @@ export interface L2BridgeZap extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  /**
+   * Wraps SynapseBridge redeemv2() function
+   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+   * @param chainId which chain to bridge assets onto
+   * @param to address on other chain to bridge assets to
+   * @param token ERC20 compatible token to redeem into the bridge
+   */
+  redeemv2(
+    to: BytesLike,
+    chainId: BigNumberish,
+    token: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   swapAndRedeem(
     to: string,
     chainId: BigNumberish,
@@ -706,6 +742,21 @@ export interface L2BridgeZap extends BaseContract {
       tokenIndexTo: BigNumberish,
       minDy: BigNumberish,
       deadline: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    /**
+     * Wraps SynapseBridge redeemv2() function
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     * @param token ERC20 compatible token to redeem into the bridge
+     */
+    redeemv2(
+      to: BytesLike,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -895,6 +946,21 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    /**
+     * Wraps SynapseBridge redeemv2() function
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     * @param token ERC20 compatible token to redeem into the bridge
+     */
+    redeemv2(
+      to: BytesLike,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     swapAndRedeem(
       to: string,
       chainId: BigNumberish,
@@ -1076,6 +1142,21 @@ export interface L2BridgeZap extends BaseContract {
       tokenIndexTo: BigNumberish,
       minDy: BigNumberish,
       deadline: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    /**
+     * Wraps SynapseBridge redeemv2() function
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     * @param token ERC20 compatible token to redeem into the bridge
+     */
+    redeemv2(
+      to: BytesLike,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
