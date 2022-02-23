@@ -449,4 +449,13 @@ export namespace Tokens {
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
+
+    export const AllTokens: Token[] = [
+        DAI, BUSD, USDC, USDT, UST,
+        ETH, NETH, WETH, WETHBEAM, WETH_E,
+        AVWETH, ONE_ETH, FTM_ETH, SYN, NUSD,
+        AVAX, WAVAX, MOVR, WMOVR, GOHM,
+        MIM, HIGH, JUMP, DOG, NFD,
+        FRAX, SYN_FRAX, SOLAR, GMX,
+    ];
 }

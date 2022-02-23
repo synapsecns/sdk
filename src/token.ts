@@ -12,20 +12,21 @@ import {
 
 
 export interface IBaseToken extends Entity {
-    readonly name:      string,
-    readonly symbol:    string,
-    readonly addresses: AddressMap,
-    readonly swapType:  SwapType,
-    address:  (chainId: number) => string | null
-    decimals: (chainId: number) => number | null
+    readonly name:      string;
+    readonly symbol:    string;
+    readonly addresses: AddressMap;
+    readonly swapType:  SwapType;
+    address:  (chainId: number) => string | null;
+    decimals: (chainId: number) => number | null;
 }
 
 export interface Token extends IBaseToken {
-    isWrappedToken:   boolean,
-    underlyingToken?: Token,
-    isEqual:          (other: Token) => boolean,
-    valueToWei:       (amt: BigNumberish, chainId: number) => BigNumber,
-    wrapperAddress:   (chainId: number) => string | null
+    isWrappedToken:   boolean;
+    underlyingToken?: Token;
+    isEqual:          (other: Token) => boolean;
+    canSwap:          (other: Token) => boolean;
+    valueToWei:       (amt: BigNumberish, chainId: number) => BigNumber;
+    wrapperAddress:   (chainId: number) => string | null;
 }
 
 export interface BaseTokenArgs {
@@ -54,7 +55,6 @@ export class BaseToken implements Token {
     readonly isETH:     boolean;
 
     private readonly wrapperAddresses: AddressMap = {};
-
 
     protected readonly _decimals: DecimalsMap = {};
 
@@ -92,6 +92,10 @@ export class BaseToken implements Token {
         this.id = Symbol(this.symbol);
     }
 
+    get isWrappedToken(): boolean {
+        return false
+    }
+
     /**
      * Returns the address of this token on a given network, or null if
      * the token does not exist on the passed network.
@@ -122,8 +126,8 @@ export class BaseToken implements Token {
         return parseUnits(etherStr, this.decimals(chainId))
     }
 
-    get isWrappedToken(): boolean {
-        return false
+    canSwap(other: Token): boolean {
+        return this.swapType === other.swapType
     }
 }
 

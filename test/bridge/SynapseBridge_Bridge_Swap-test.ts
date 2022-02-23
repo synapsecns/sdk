@@ -30,6 +30,7 @@ import type {BridgeSwapTestCase} from "./bridge_test_utils";
 
 import {formatUnits} from "@ethersproject/units";
 import {BigNumber}   from "@ethersproject/bignumber";
+import {tokenSwitch} from "../../src/internal/utils";
 
 
 describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
@@ -279,14 +280,14 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
 
                 const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
 
-                switch (true) {
-                    case tokenFrom.isEqual(Tokens.ETH):
+                switch (tokenSwitch(tokenFrom)) {
+                    case Tokens.ETH:
                         tokenFrom = Tokens.WETH;
                         break;
-                    case tokenFrom.isEqual(Tokens.AVAX):
+                    case Tokens.AVAX:
                         tokenFrom = Tokens.WAVAX;
                         break;
-                    case tokenFrom.isEqual(Tokens.MOVR):
+                    case Tokens.MOVR:
                         tokenFrom = Tokens.WMOVR;
                         break;
                 }

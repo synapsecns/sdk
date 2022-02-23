@@ -10,6 +10,8 @@ import {
 import type {ID}               from "@internal/entity";
 import {SwapType}              from "@internal/swaptype";
 import {rpcProviderForNetwork} from "@internal/rpcproviders";
+import {tokenSwitch}           from "@internal/utils";
+
 
 import type {
     GenericZapBridgeContract,
@@ -612,8 +614,8 @@ export namespace Bridge {
                 minToSwapDestFromOriginMediumSlippage,
             } = BridgeUtils.getSlippages(amountFrom, amountTo);
 
-            switch (args.tokenTo.id) {
-                case Tokens.NUSD.id:
+            switch (tokenSwitch(args.tokenTo)) {
+                case Tokens.NUSD:
                     if (!args.tokenFrom.isEqual(Tokens.NUSD)) {
                         const liquidityAmounts = tokenArgs
                             .fromChainTokens
@@ -744,8 +746,8 @@ export namespace Bridge {
                         BridgeUtils.makeOverrides(amountFrom, withValueOverride),
                     )
 
-            switch (args.tokenTo.id) {
-                case Tokens.NUSD.id:
+            switch (tokenSwitch(args.tokenTo)) {
+                case Tokens.NUSD:
                     return zapBridge
                         .populateTransaction
                         .swapAndRedeem(
@@ -756,7 +758,7 @@ export namespace Bridge {
                             minToSwapOriginHighSlippage,
                             transactionDeadline
                         )
-                case Tokens.GMX.id:
+                case Tokens.GMX:
                     let params = BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.GMX);
                     switch (this.chainId) {
                         case ChainId.ARBITRUM:
@@ -831,30 +833,32 @@ export namespace Bridge {
                                     )
                         }
                     } else {
-                        switch (true) {
-                            case args.tokenFrom.isEqual(Tokens.NUSD):
+                        switch (tokenSwitch(args.tokenFrom)) {
+                            case Tokens.NUSD:
                                 return easyRedeemAndSwap(Tokens.NUSD)
-                            case args.tokenFrom.isEqual(Tokens.NETH):
+                            case Tokens.NETH:
                                 return easyRedeemAndSwap(Tokens.NETH)
-                            case args.tokenFrom.swapType === SwapType.ETH:
-                                return BridgeUtils.isETHLikeToken(args.tokenFrom)
-                                    ? easySwapAndRedeemAndSwap(Tokens.NETH, false)
-                                    : zapBridge
-                                        .populateTransaction
-                                        .swapETHAndRedeemAndSwap(
-                                            ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.NETH),
-                                            tokenArgs.tokenIndexFrom,
-                                            0,
-                                            amountFrom,
-                                            minToSwapOriginHighSlippage,
-                                            transactionDeadline,
-                                            0,
-                                            tokenArgs.tokenIndexTo,
-                                            minToSwapDestFromOriginHighSlippage,
-                                            bridgeTransactionDeadline,
-                                            {value: amountFrom}
-                                        )
                             default:
+                                if (args.tokenFrom.swapType === SwapType.ETH) {
+                                    return BridgeUtils.isETHLikeToken(args.tokenFrom)
+                                        ? easySwapAndRedeemAndSwap(Tokens.NETH, false)
+                                        : zapBridge
+                                            .populateTransaction
+                                            .swapETHAndRedeemAndSwap(
+                                                ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.NETH),
+                                                tokenArgs.tokenIndexFrom,
+                                                0,
+                                                amountFrom,
+                                                minToSwapOriginHighSlippage,
+                                                transactionDeadline,
+                                                0,
+                                                tokenArgs.tokenIndexTo,
+                                                minToSwapDestFromOriginHighSlippage,
+                                                bridgeTransactionDeadline,
+                                                {value: amountFrom}
+                                            )
+                                }
+
                                 return easySwapAndRedeemAndSwap(Tokens.NUSD, false)
                         }
                     }
@@ -899,15 +903,17 @@ export namespace Bridge {
 
             const findSymbol = (tokA: Token, tokB: Token): boolean => {
                 let compareTok: Token = tokB;
-                switch (true) {
-                    case tokB.isEqual(Tokens.WETH_E):
+                switch (tokenSwitch(tokB)) {
+                    case Tokens.WETH_E:
                         compareTok = Tokens.AVWETH;
                         break;
-                    case tokB.isEqual(Tokens.WETH):
+                    case Tokens.WETH:
                         compareTok = Tokens.WETH;
                         break;
-                    case tokB.isWrappedToken:
-                        compareTok = tokB.underlyingToken;
+                    default:
+                        if (tokB.isWrappedToken) {
+                            compareTok = tokB.underlyingToken;
+                        }
                         break;
                 }
 

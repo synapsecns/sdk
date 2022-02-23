@@ -12,8 +12,9 @@ import {ChainId, supportedChainIds} from "@chainid";
 import {SwapType}              from "@internal/swaptype";
 import {rpcProviderForNetwork} from "@internal/rpcproviders";
 
-import {PopulatedTransaction}    from "@ethersproject/contracts";
-import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+import {BigNumber}                 from "@ethersproject/bignumber";
+import type {BigNumberish}         from "@ethersproject/bignumber";
+import type {PopulatedTransaction} from "@ethersproject/contracts";
 
 export namespace UnsupportedSwapErrors {
     interface _Token {symbol: string}
