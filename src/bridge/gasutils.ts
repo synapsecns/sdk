@@ -1,5 +1,5 @@
-import {ChainId} from "../common/chainid";
-import type {ChainIdTypeMap} from "../common/types";
+import {ChainId} from "@chainid";
+import type {ChainIdTypeMap} from "@common/types";
 
 import {parseUnits} from "@ethersproject/units";
 import {BigNumber} from "@ethersproject/bignumber";

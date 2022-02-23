@@ -6,15 +6,14 @@ import {Zero} from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
 import {Contract} from "ethers";
 
-import type {Token} from "../../src";
-
+import type {Token} from "@token";
 import {
     ChainId,
     Networks,
     Tokens,
     TokenSwap,
     supportedChainIds,
-} from "../../src";
+} from "@sdk";
 
 import {
     DEFAULT_TEST_TIMEOUT,

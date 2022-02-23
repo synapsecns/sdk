@@ -1,34 +1,34 @@
-import {ChainId} from "../common/chainid";
-import {Networks} from "../common/networks";
+import {ChainId}  from "@chainid";
+import {Networks} from "@networks";
 
 import {
     contractAddressFor,
     executePopulatedTransaction,
     rejectPromise,
-} from "../common/utils";
+} from "@common/utils";
 
-import type {ID} from "../internal/entity";
-import {SwapType}              from "../internal/swaptype";
-import {rpcProviderForNetwork} from "../internal/rpcproviders";
+import type {ID}               from "@internal/entity";
+import {SwapType}              from "@internal/swaptype";
+import {rpcProviderForNetwork} from "@internal/rpcproviders";
 
 import type {
     GenericZapBridgeContract,
     L1BridgeZapContract,
     SynapseBridgeContract,
-} from "../contracts";
+} from "@contracts";
 
-import {Tokens} from "../tokens";
-import {TokenSwap} from "../tokenswap";
-import {SwapPools} from "../swappools";
-import {SynapseEntities} from "../entities";
+import {Tokens}          from "@tokens";
+import {TokenSwap}       from "@tokenswap";
+import {SwapPools}       from "@swappools";
+import {SynapseEntities} from "@entities";
 
-import type {Token} from "../token";
-import {BaseToken, WrappedToken} from "../token";
+import type {Token}              from "@token";
+import {BaseToken, WrappedToken} from "@token";
 
-import type {ChainIdTypeMap} from "../common/types";
+import type {ChainIdTypeMap} from "@common/types";
 
-import {BridgeUtils} from "./bridgeutils";
-import {GasUtils} from "./gasutils";
+import {GasUtils}                   from "./gasutils";
+import {BridgeUtils}                from "./bridgeutils";
 import {ERC20, MAX_APPROVAL_AMOUNT} from "./erc20";
 
 import {Zero}                    from "@ethersproject/constants";

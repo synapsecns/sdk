@@ -5,10 +5,11 @@ import {
     expectNull
 } from "../helpers";
 
-import {SynapseContracts} from "../../src/common/synapse_contracts";
-import {rpcProviderForNetwork} from "../../src/internal/rpcproviders";
 
-import type {SignerOrProvider} from "../../src/common/types";
+import {SynapseContracts}      from "@common/synapse_contracts";
+import {rpcProviderForNetwork} from "@internal/rpcproviders";
+
+import type {SignerOrProvider} from "@common/types";
 
 import {
     ChainId,
@@ -19,7 +20,7 @@ import {
     synapseBridge,
     l1BridgeZap,
     l2BridgeZap,
-} from "../../src";
+} from "@sdk";
 
 import type {BaseContract} from "@ethersproject/contracts";
 

@@ -1,8 +1,8 @@
-import {Tokens} from "../tokens";
+import {Tokens} from "@tokens";
 import {Slippages} from "./slippages";
-import {ChainId} from "../common/chainid";
+import {ChainId} from "@chainid";
 
-import type {Token} from "../token";
+import type {Token} from "@token";
 import type {GenericZapBridgeContract, L2BridgeZapContract} from "../contracts";
 
 import {BigNumber} from "@ethersproject/bignumber";

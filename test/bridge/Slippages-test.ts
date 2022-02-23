@@ -1,13 +1,12 @@
 import "../helpers/chaisetup";
 
-import {expect} from "chai";
+import { expect } from "chai";
 
-import {Slippages} from "../../src";
+import { Slippages } from "@sdk";
 
 import {expectEqual} from "../helpers";
 
-import {BigNumber} from "@ethersproject/bignumber";
-
+import { BigNumber } from "@ethersproject/bignumber";
 
 describe("Slippages tests", function(this: Mocha.Suite) {
     interface TestCase {

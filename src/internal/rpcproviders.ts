@@ -6,8 +6,8 @@ import _ from "lodash";
 
 import type {Provider} from "@ethersproject/providers";
 
-import {ChainId, supportedChainIds} from "../common/chainid";
-import type {StringMap} from "../common/types";
+import {ChainId, supportedChainIds} from "@chainid";
+import type {StringMap} from "@common/types";
 
 import {Web3RpcConnector, JsonRpcConnector} from "./rpcconnector";
 

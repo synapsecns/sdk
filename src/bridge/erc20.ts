@@ -14,12 +14,12 @@ import {
     ERC20Contract,
 } from "../contracts";
 
-import {rpcProviderForNetwork} from "../internal/rpcproviders";
+import {rpcProviderForNetwork} from "@internal/rpcproviders";
 
 import {
     executePopulatedTransaction,
     rejectPromise,
-} from "../common/utils";
+} from "@common/utils";
 
 import {GasUtils} from "./gasutils";
 

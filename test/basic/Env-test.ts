@@ -2,13 +2,15 @@ import "../helpers/chaisetup";
 import path from "path";
 
 import dotenv from "dotenv";
-import {ChainId} from "../../src";
 import * as fs from "fs";
 
 import {
     wrapExpect,
     expectEqual,
 } from "../helpers";
+
+import {ChainId} from "@chainid";
+
 
 const
     BASE_ENV_PATH: string = path.resolve(path.join("./", ".env")),

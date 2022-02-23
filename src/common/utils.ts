@@ -1,4 +1,4 @@
-import {ChainId} from "./chainid";
+import {ChainId}          from "@chainid";
 import {SynapseContracts} from "./synapse_contracts";
 
 import type {JsonRpcProvider} from "@ethersproject/providers";

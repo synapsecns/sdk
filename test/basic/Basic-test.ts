@@ -12,7 +12,7 @@ import {
     SwapPools,
     Token,
     Tokens
-} from "../../src";
+} from "@sdk";
 
 
 import {expectBoolean, expectIncludes, expectLength, wrapExpect} from "../helpers";
