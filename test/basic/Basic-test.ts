@@ -15,6 +15,7 @@ import {
     Tokens
 } from "../../src";
 
+import {JsonRpcProvider} from "@ethersproject/providers";
 
 import {setJsonRpcUriForNetwork} from "../../src/common/utils";
 import {rpcProviderForNetwork} from "../../src/internal/rpcproviders";
@@ -51,7 +52,7 @@ describe("Basic tests", function(this: Mocha.Suite) {
 
     describe("setJsonRpcUriForNetwork", function(this: Mocha.Suite) {
         function getURI(chainId: number): string {
-            return rpcProviderForNetwork(chainId).connection.url
+            return (rpcProviderForNetwork(chainId) as JsonRpcProvider).connection.url
         }
 
         interface TestCase {

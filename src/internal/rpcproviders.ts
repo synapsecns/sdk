@@ -1,7 +1,6 @@
 import _ from "lodash";
 
 import type {Provider} from "@ethersproject/providers";
-import {JsonRpcProvider} from "@ethersproject/providers";
 
 import {ChainId, supportedChainIds} from "../common/chainid";
 import type {StringMap} from "../common/types";
