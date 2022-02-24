@@ -68,12 +68,6 @@ export function web3ProviderForNetwork(chainId: number): Provider {
     return WEB3_RPC_CONNECTOR.provider(chainId)
 }
 
-/**
- * @deprecated use {@link rpcProviderForNetwork}
- * @param chainId chain id of the network for which to return a provider
- */
-export const newProviderForNetwork = rpcProviderForNetwork
-
 export function rpcUriForChainId(chainId: number): string {
     return checkEnv(chainId) ?? CHAIN_RPC_URIS[chainId]
 }
@@ -83,10 +77,6 @@ function checkEnv(chainId: number): string|undefined {
 
     return envKey in process.env ? process.env[envKey] : undefined
 }
-
-// export function setRpcUriForNetwork(chainId: number, uri: string) {
-//     DEFAULT_CONNECTOR.setProviderUri(chainId, uri);
-// }
 
 /**
  * Used solely for tests, initRpcConnectors() basically just makes sure on-import initialization
