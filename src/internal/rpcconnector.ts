@@ -6,8 +6,8 @@ import {JsonRpcProvider, Web3Provider} from "@ethersproject/providers";
 import {MiniRpcProvider} from "./minirpc";
 
 export interface ProviderConnector<T extends Provider> {
-    provider:          (chainId: number) => T;
-    supportedChainIds: () => number[];
+    provider:            (chainId: number) => T;
+    supportedChainIds:   () => number[];
 }
 
 class AbstractProviderConnector<T extends Provider> implements ProviderConnector<T> {
@@ -22,6 +22,7 @@ class AbstractProviderConnector<T extends Provider> implements ProviderConnector
         const {urls, newProvider} = args;
         this.urls = urls;
         this.newProviderFn = newProvider;
+
         this.providers = Object.keys(urls).reduce((acc, chainId) => {
             const cid = Number(chainId);
             acc[cid]  = newProvider(urls[cid]);
@@ -60,19 +61,23 @@ export class Web3RpcConnector
     implements ProviderConnector<Web3Provider>
 {
     constructor(args: RpcConnectorArgs) {
-        let invertedUrlsMap = Object.keys(args.urls).reduce((acc, chainId) => {
+        const {batchWaitTimeMs=50} = args;
+
+        const _invertedUrlsMap = Object.keys(args.urls).reduce((acc, chainId) => {
             const cid = Number(chainId);
             const url = args.urls[cid];
             acc[url] = cid;
             return acc
-        }, {})
+        }, {});
+
+        const _newProviderFn = (uri: string): Web3Provider => {
+            const provider = new MiniRpcProvider(_invertedUrlsMap[uri], uri, batchWaitTimeMs);
+            return new Web3Provider(provider)
+        }
 
         super({
             ...args,
-            newProvider: (uri: string) => {
-                const provider = new MiniRpcProvider(invertedUrlsMap[uri], uri, args.batchWaitTimeMs);
-                return new Web3Provider(provider)
-            }
-        });
+            newProvider: _newProviderFn
+        })
     }
 }
