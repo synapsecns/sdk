@@ -124,45 +124,59 @@ export class MiniRpcProvider implements ExternalProvider {
                     } else if ("result" in result) {
                         resolve(result.result)
                     } else {
-                        reject(new RequestError(`Received unexpected JSON-RPC response to ${method} request.`, -32000, result))
+                        reject(new RequestError(
+                            `Received unexpected JSON-RPC response to ${method} request.`,
+                            -32000,
+                            result
+                        ))
                     }
                 }
             }
         }
     }
 
-    private fetchBatch(batch: MiniRpcBatchItem[]): Promise<Response> {
-        return fetch(this.url, {
+    private fetchBatch = (batch: MiniRpcBatchItem[]): Promise<Response> =>
+        fetch(this.url, {
             method: "POST",
             headers: {
                 "content-type": "application/json",
                 "accept":       "application/json"
             },
             body: JSON.stringify(batch.map(item => item.request))
-        })
-    }
+        });
+
+    private rejectBatchItem = (reason: any): ((item: MiniRpcBatchItem) => void) =>
+        ({reject}) => reject(reason instanceof Error ? reason : new Error(reason));
+
+    private rejectBatch = (batch: MiniRpcBatchItem[], reason: any): void =>
+        batch.forEach(this.rejectBatchItem(reason));
 
     async clearBatch() {
-        const batch = this.batch;
+        const currentBatch = this.batch;
         this.batch = [];
         this.batchTimeoutId = null;
 
-        const rejectBatchItem = (reason: any): (item: MiniRpcBatchItem) => void =>
-            ({reject}) => reject(reason instanceof Error ? reason : new Error(reason));
-
         const handleRpcResponse = (response: Response): Response => {
             if (!response.ok) {
-                batch.forEach(rejectBatchItem(`${response.status}: ${response.statusText}`))
+                this.rejectBatch(currentBatch, new RequestError(
+                    response.statusText,
+                    response.status,
+                    null
+                ));
                 return null
             }
 
             return response
         }
 
-        const rpcResponse: Promise<Response> = this.fetchBatch(batch)
+        const rpcResponse: Promise<Response> = this.fetchBatch(currentBatch)
             .then(handleRpcResponse)
             .catch(error => {
-                batch.forEach(rejectBatchItem(`Failed to send batch call: ${error}`));
+                this.rejectBatch(
+                    currentBatch,
+                    `Failed to send batch call: ${error}`
+                );
+
                 return null
             })
 
@@ -171,9 +185,13 @@ export class MiniRpcProvider implements ExternalProvider {
         Promise.resolve(
             rpcResponse.then(loadJsonResponse).then(d => d)
                 .catch(error => {
-                    batch.forEach(rejectBatchItem("Failed to parse JSON response"));
+                    this.rejectBatch(
+                        currentBatch,
+                        `Failed to parse JSON response, error: ${error}`
+                    );
+
                     return null
                 })
-        ).then(this.handleJsonResponse(batch)).catch(e => {})
+        ).then(this.handleJsonResponse(currentBatch)).catch(e => {})
     }
 }
