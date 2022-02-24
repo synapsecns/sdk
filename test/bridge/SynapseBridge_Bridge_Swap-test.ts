@@ -217,6 +217,7 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             makeTestCase(Tokens.WETH,    Tokens.WETH_E,  ChainId.ARBITRUM,  ChainId.AVALANCHE),
             makeTestCase(Tokens.WETH_E,  Tokens.ETH,     ChainId.AVALANCHE, ChainId.ARBITRUM),
             makeTestCase(Tokens.WETH_E,  Tokens.WETH,    ChainId.AVALANCHE, ChainId.ARBITRUM),
+            makeTestCase(Tokens.USDC,    Tokens.DAI,     ChainId.BSC,       ChainId.ETH,     "2500"),
         ];
 
         function makeTestName(tc: TestCase): [string, string, string] {
