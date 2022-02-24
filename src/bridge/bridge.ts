@@ -449,12 +449,15 @@ export namespace Bridge {
 
             let {intermediateToken, bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
 
-            const bigNumTen = BigNumber.from(10);
+            const
+                intermediateTokenAddr = bridgeConfigIntermediateToken.address(chainIdTo),
+                multiplier            = BigNumber.from(10).pow(18-tokenFrom.decimals(this.chainId)),
+                feeRequestAmountFrom  = amountFrom.mul(multiplier);
 
             const bridgeFeeRequest: Promise<BigNumber> = this.bridgeConfigInstance["calculateSwapFee(string,uint256,uint256)"](
-                bridgeConfigIntermediateToken.address(chainIdTo),
+                intermediateTokenAddr,
                 chainIdTo,
-                amountFrom.mul(bigNumTen.pow(18-tokenFrom.decimals(this.chainId)))
+                feeRequestAmountFrom
             );
 
             const checkEthy = (c1: number, c2: number, t: Token): boolean =>
