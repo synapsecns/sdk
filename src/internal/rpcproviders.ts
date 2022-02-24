@@ -45,21 +45,25 @@ const CHAIN_RPC_URIS: StringMap = {
     [ChainId.HARMONY]:   "https://api.harmony.one/",
 }
 
+const RPC_BATCH_WAIT_TIME_MS = Number(process.env["RPC_BATCH_WAIT_TIME_MS"]) || 60;
+
+console.log(RPC_BATCH_WAIT_TIME_MS);
+
 const
     LOADED_CHAIN_RPC_URIS: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, rpcUriForChainId(cid)])),
-    RPC_CONNECTOR_ARGS               = {urls: LOADED_CHAIN_RPC_URIS, batchWaitTimeMs: 60};
+    RPC_CONNECTOR_ARGS               = {urls: LOADED_CHAIN_RPC_URIS, batchWaitTimeMs: RPC_BATCH_WAIT_TIME_MS};
 
 const
     JSONRPC_CONNECTOR:  JsonRpcConnector = new JsonRpcConnector(RPC_CONNECTOR_ARGS),
     WEB3_RPC_CONNECTOR: Web3RpcConnector = new Web3RpcConnector(RPC_CONNECTOR_ARGS);
 
-const DEFAULT_CONNECTOR = WEB3_RPC_CONNECTOR;
+const DEFAULT_RPC_CONNECTOR = WEB3_RPC_CONNECTOR;
 
 /**
  * @param chainId chain id of the network for which to return a provider
  */
 export function rpcProviderForNetwork(chainId: number): Provider {
-    return DEFAULT_CONNECTOR.provider(chainId)
+    return DEFAULT_RPC_CONNECTOR.provider(chainId)
 }
 
 export function jsonRpcProviderForNetwork(chainId: number): Provider {
