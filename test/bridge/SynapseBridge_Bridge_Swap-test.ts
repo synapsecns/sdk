@@ -32,6 +32,7 @@ import type {BridgeSwapTestCase} from "./bridge_test_utils";
 
 import {formatUnits} from "@ethersproject/units";
 import {BigNumber}   from "@ethersproject/bignumber";
+import {Zero} from "@ethersproject/constants";
 
 
 describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
@@ -182,6 +183,10 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             makeTestCase(Tokens.USDC,    Tokens.NUSD,    ChainId.BSC,       ChainId.AURORA,    "69"),
             makeTestCase(Tokens.USDC,    Tokens.NUSD,    ChainId.AURORA,    ChainId.ETH,       "69", false),
             makeTestCase(Tokens.USDC,    Tokens.NUSD,    ChainId.AURORA,    ChainId.ETH,       "31337"),
+            makeTestCase(Tokens.USDC,    Tokens.USDC,    ChainId.AURORA,    ChainId.AVALANCHE, "0", false),
+            makeTestCase(Tokens.USDC,    Tokens.NUSD,    ChainId.BSC,       ChainId.AURORA,    "0", false),
+            makeTestCase(Tokens.USDC,    Tokens.NUSD,    ChainId.AURORA,    ChainId.ETH,       "0", false),
+            makeTestCase(Tokens.USDC,    Tokens.NUSD,    ChainId.AURORA,    ChainId.ETH,       "0", false),
             makeTestCase(Tokens.USDC,    Tokens.NUSD,    ChainId.ETH,       ChainId.AURORA),
             makeTestCase(Tokens.WETH,    Tokens.WETH_E,  ChainId.ETH,       ChainId.AVALANCHE),
             makeTestCase(Tokens.NUSD,    Tokens.NUSD,    ChainId.ETH,       ChainId.AVALANCHE),
