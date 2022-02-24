@@ -20,28 +20,23 @@ const testAmounts: string[] = [
 ];
 
 // Completely clean privkey with low balances.
-export const bridgeTestPrivkey: string = "53354287e3023f0629b7a5e187aa1ca3458c4b7ff9d66a6e3f4b2e821aafded7";
+export const bridgeTestPrivkey1: string = "53354287e3023f0629b7a5e187aa1ca3458c4b7ff9d66a6e3f4b2e821aafded7";
 
 export const
-    valueIfUndefined = <T>(data: T, fallback: T) => typeof data === "undefined" ? fallback : data,
-    makeTimeout = (seconds: number): number => seconds * 1000,
-    doneWithError = (
-        e:    any,
-        done: Mocha.Done
-    ) => done(e instanceof Error ? e : new Error(e)),
-    getActualWei = (
-        n:        BigNumber,
-        decimals: number
-    ): BigNumber => n.mul(TEN_BN.pow(18 - decimals)),
-    getTestAmount = (
-        t:    Token,
-        c:    number,
-        amt?: BigNumberish
-    ): BigNumber => t.valueToWei(amt ?? _.shuffle(testAmounts)[0], c),
-    makeWalletSignerWithProvider = (
-        chainId: number,
-        privKey: string
-    ): Wallet => new Wallet(privKey, rpcProviderForNetwork(chainId));
+    makeTimeout      = (seconds: number): number => seconds * 1000,
+    valueIfUndefined = <T>(data: T, fallback: T): T => typeof data === "undefined" ? fallback : data,
+    getActualWei     = (n: BigNumber, decimals: number): BigNumber => n.mul(TEN_BN.pow(18 - decimals));
+
+export const getTestAmount = (
+    t: Token,
+    c: number,
+    amt?: BigNumberish
+): BigNumber => t.valueToWei(amt ?? _.shuffle(testAmounts)[0], c);
+
+export const makeWalletSignerWithProvider = (
+    chainId: number,
+    privKey: string
+): Wallet => new Wallet(privKey, rpcProviderForNetwork(chainId));
 
 
 export const

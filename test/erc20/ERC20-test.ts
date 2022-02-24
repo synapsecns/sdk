@@ -10,7 +10,7 @@ import {SynapseContracts} from "@common/synapse_contracts";
 
 import {
     DEFAULT_TEST_TIMEOUT,
-    bridgeTestPrivkey,
+    bridgeTestPrivkey1,
     getTestAmount,
     makeWalletSignerWithProvider,
     expectFulfilled,
@@ -58,7 +58,7 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
         for (const tc of testCases) {
             let {chainId, address: spender, amount} = tc;
 
-            const wallet = makeWalletSignerWithProvider(chainId, bridgeTestPrivkey)
+            const wallet = makeWalletSignerWithProvider(chainId, bridgeTestPrivkey1)
             const args: ERC20.ApproveArgs = {spender, amount};
 
             it("should build a transaction successfully", async function(this: Mocha.Context) {

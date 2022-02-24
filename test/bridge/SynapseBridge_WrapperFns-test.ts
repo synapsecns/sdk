@@ -12,7 +12,7 @@ import {
     ChainId,
     Networks,
     supportedChainIds,
-} from "../../src";
+} from "@sdk";
 
 import {ERC20}                 from "@bridge/erc20";
 import {contractAddressFor}    from "@common/utils";
@@ -28,9 +28,10 @@ import {
     wrapExpectAsync
 } from "../helpers";
 
+import {infiniteApprovalsPrivkey} from "./bridge_test_utils";
+
 import type {Provider} from "@ethersproject/providers";
 import type {ContractTransaction} from "@ethersproject/contracts";
-
 
 import {Wallet} from "@ethersproject/wallet";
 
@@ -125,7 +126,9 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
             const
                 {provider, chainId: network} = tc,
                 chainName: string = Networks.fromChainId(network).name,
-                wantNum: string = parseUnits(tc.want.toString(), tc.token.decimals(network)).toString(),
+                wantNum:   string = parseUnits(tc.want.toString(), tc.token.decimals(network)).toString();
+
+            const
                 spendAllowanceTitle: string = `should have a spend allowance of ${tc.isInfinite ? "unlimited" : wantNum} wei`,
                 title:               string = `SynapseBridge on chain ${chainName} ${spendAllowanceTitle} for ${tc.token.name} holdings of ${tc.address}`;
 
@@ -139,7 +142,9 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                     decimals = token.decimals(network),
                     checkAmt: BigNumber = tc.isInfinite ? infiniteCheckAmt : tc.want;
 
-                let prom = Promise.resolve(bridgeInstance.getAllowanceForAddress({address, token})).then(res => getActualWei(res, decimals));
+                let prom = bridgeInstance
+                    .getAllowanceForAddress({address, token})
+                    .then(res => getActualWei(res, decimals));
 
                 try {
                     const res = await prom;
@@ -153,8 +158,6 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
         }
 
         describe("- infinite approval", function(this: Mocha.Suite) {
-            const infiniteApprovalTestAddress: string = "0xcac129e42e4c224c2af58f7cefe9432c1e633947"
-
             step("Ensure infinite approval test address has infinite approval", async function(this: Mocha.Context) {
                 this.timeout(EXECUTORS_TEST_TIMEOUT);
 
@@ -165,19 +168,22 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
                 try {
                     const allowance = await ERC20.allowanceOf(
-                        infiniteApprovalTestAddress,
+                        infiniteApprovalsPrivkey.address,
                         bscZapAddr,
                         tokenParams
                     );
 
                     if (allowance.lte(infiniteCheckAmt)) {
-                        const testPrivKey: string = process.env.TEST_PRIVKEY_A;
-                        const wallet = new Wallet(testPrivKey, rpcProviderForNetwork(ChainId.BSC));
+                        const wallet = new Wallet(
+                            infiniteApprovalsPrivkey.privkey,
+                            rpcProviderForNetwork(ChainId.BSC)
+                        );
+
                         let txn: ContractTransaction = (await ERC20.approve({spender: bscZapAddr}, tokenParams, wallet)) as ContractTransaction;
                         await txn.wait(1);
 
                         const newAllowance = await ERC20.allowanceOf(
-                            infiniteApprovalTestAddress,
+                            infiniteApprovalsPrivkey.address,
                             bscZapAddr,
                             tokenParams
                         );
@@ -195,7 +201,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
             runTestCase(makeTestCase(
                 ChainId.BSC,
                 Tokens.BUSD,
-                infiniteApprovalTestAddress,
+                infiniteApprovalsPrivkey.address,
                 MaxUint256
             ));
         })

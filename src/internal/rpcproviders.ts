@@ -47,8 +47,6 @@ const CHAIN_RPC_URIS: StringMap = {
 
 const RPC_BATCH_WAIT_TIME_MS = Number(process.env["RPC_BATCH_WAIT_TIME_MS"]) || 60;
 
-console.log(RPC_BATCH_WAIT_TIME_MS);
-
 const
     LOADED_CHAIN_RPC_URIS: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, rpcUriForChainId(cid)])),
     RPC_CONNECTOR_ARGS               = {urls: LOADED_CHAIN_RPC_URIS, batchWaitTimeMs: RPC_BATCH_WAIT_TIME_MS};

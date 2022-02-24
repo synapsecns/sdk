@@ -11,9 +11,11 @@ import {
     Bridge,
 } from "@sdk";
 
+import {tokenSwitch} from "@internal/utils";
+
 import {
     DEFAULT_TEST_TIMEOUT,
-    bridgeTestPrivkey,
+    bridgeTestPrivkey1,
     makeWalletSignerWithProvider,
     getTestAmount,
     expectEqual,
@@ -30,7 +32,6 @@ import type {BridgeSwapTestCase} from "./bridge_test_utils";
 
 import {formatUnits} from "@ethersproject/units";
 import {BigNumber}   from "@ethersproject/bignumber";
-import {tokenSwitch} from "../../src/internal/utils";
 
 
 describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
@@ -232,13 +233,17 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             const
                 amt             = formatUnits(amountFrom, tokenFrom.decimals(chainFrom)),
                 netFrom         = Networks.networkName(chainFrom),
-                netTo           = Networks.networkName(chainTo),
-                titleSuffix     = notZero ? "a value greater than zero" : "a value === zero",
-                passFailSuffix  =  wantError ? "should fail" : "should pass",
-                testParamsTitle = `with params ${amt} ${tokFrom} on ${netFrom} to ${tokTo} on ${netTo}`,
-                bridgeOutputTestTitle = `getEstimatedBridgeOutput ${testParamsTitle} should return ${titleSuffix}`,
-                transactionTestTitle  = `buildBridgeTokenTransaction ${testParamsTitle} ${passFailSuffix}`,
-                approveTestTitle      = `buildApproveTransaction ${testParamsTitle} ${passFailSuffix}`;
+                netTo           = Networks.networkName(chainTo);
+
+            const
+                titleSuffix:     string = notZero ? "a value greater than zero" : "a value === zero",
+                passFailSuffix:  string =  wantError ? "should fail" : "should pass",
+                testParamsTitle: string = `with params ${amt} ${tokFrom} on ${netFrom} to ${tokTo} on ${netTo}`;
+
+            const
+                bridgeOutputTestTitle: string = `getEstimatedBridgeOutput ${testParamsTitle} should return ${titleSuffix}`,
+                transactionTestTitle:  string = `buildBridgeTokenTransaction ${testParamsTitle} ${passFailSuffix}`,
+                approveTestTitle:      string = `buildApproveTransaction ${testParamsTitle} ${passFailSuffix}`;
 
             return [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle]
         }
@@ -314,7 +319,7 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
                     bridgeInstance    = new Bridge.SynapseBridge({ network: chainIdFrom }),
                     addressTo: string = noAddrTo
                     ? _.shuffle(undefEmptyArr)[0]
-                    : makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey).address;
+                    : makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey1).address;
 
 
                 return (await expectPromiseResolve(
