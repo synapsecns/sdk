@@ -45,11 +45,13 @@ const CHAIN_RPC_URIS: StringMap = {
     [ChainId.HARMONY]:   "https://api.harmony.one/",
 }
 
-const LOADED_CHAIN_RPC_URIS: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, rpcUriForChainId(cid)]))
+const
+    LOADED_CHAIN_RPC_URIS: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, rpcUriForChainId(cid)])),
+    RPC_CONNECTOR_ARGS               = {urls: LOADED_CHAIN_RPC_URIS, batchWaitTimeMs: 60};
 
 const
-    RPC_CONNECTOR:      JsonRpcConnector = new JsonRpcConnector({urls: LOADED_CHAIN_RPC_URIS}),
-    WEB3_RPC_CONNECTOR: Web3RpcConnector = new Web3RpcConnector({urls: LOADED_CHAIN_RPC_URIS, batchWaitTimeMs: 65});
+    JSONRPC_CONNECTOR:  JsonRpcConnector = new JsonRpcConnector(RPC_CONNECTOR_ARGS),
+    WEB3_RPC_CONNECTOR: Web3RpcConnector = new Web3RpcConnector(RPC_CONNECTOR_ARGS);
 
 const DEFAULT_CONNECTOR = WEB3_RPC_CONNECTOR;
 
@@ -61,7 +63,7 @@ export function rpcProviderForNetwork(chainId: number): Provider {
 }
 
 export function jsonRpcProviderForNetwork(chainId: number): Provider {
-    return RPC_CONNECTOR.provider(chainId)
+    return JSONRPC_CONNECTOR.provider(chainId)
 }
 
 export function web3ProviderForNetwork(chainId: number): Provider {
@@ -69,13 +71,11 @@ export function web3ProviderForNetwork(chainId: number): Provider {
 }
 
 export function rpcUriForChainId(chainId: number): string {
-    return checkEnv(chainId) ?? CHAIN_RPC_URIS[chainId]
-}
+    const
+        rpcEnvKey: string           = ENV_KEY_MAP[chainId],
+        rpcEnvVal: string|undefined = rpcEnvKey in process.env ? process.env[rpcEnvKey] : undefined;
 
-function checkEnv(chainId: number): string|undefined {
-    const envKey: string = ENV_KEY_MAP[chainId];
-
-    return envKey in process.env ? process.env[envKey] : undefined
+    return rpcEnvVal ?? CHAIN_RPC_URIS[chainId]
 }
 
 /**
