@@ -14,7 +14,9 @@ export class RequestError extends Error {
     }
 }
 
-interface JsonRpcRequest {
+export type CallbackFunction = (error: any, response: any) => void;
+
+export interface JsonRpcRequest {
     method:  string,
     params?: Array<any>,
 }
@@ -38,16 +40,15 @@ export class MiniRpcProvider implements ExternalProvider {
     readonly parsedUrl:       URL;
     readonly host:            string;
     readonly path:            string;
-
     readonly batchWaitTimeMs: number;
 
-    private nextId:         number;
+    private _nextId:         number;
     private batchTimeoutId: NodeJS.Timeout;
     private batch:          MiniRpcBatchItem[];
 
     constructor(chainId: number, url: string, batchWaitTimeMs?: number) {
         this.isMetaMask = false;
-        this.nextId = 1;
+        this._nextId = 1;
         this.batchTimeoutId = null;
         this.batch = [];
 
@@ -69,7 +70,7 @@ export class MiniRpcProvider implements ExternalProvider {
         let promise: Promise<any> = new Promise((resolve, reject) => {
             let req = {
                 jsonrpc: '2.0',
-                id:      this._nextId(),
+                id:      this._nextId++,
                 method:  request.method,
                 params:  request.params,
             };
@@ -88,15 +89,81 @@ export class MiniRpcProvider implements ExternalProvider {
         return promise
     }
 
-    sendAsync(request: JsonRpcRequest, callback: (error: any, response: any) => void): void {
+    sendAsync(
+        request:  JsonRpcRequest,
+        callback: CallbackFunction
+    ): void {
         this.request(request)
             .then(result => callback(null, result))
             .catch(error => callback(error, null))
     }
 
-    private _nextId(): number {
-        this.nextId += 1;
-        return this.nextId;
+    async clearBatch() {
+        const currentBatch = this.batch;
+
+        this.batch = [];
+        this.batchTimeoutId = null;
+
+        const handleRpcResponse = (response: Response): Response => {
+            if (!response.ok) {
+                this.rejectBatch(currentBatch, new RequestError(
+                    response.statusText,
+                    response.status,
+                    null
+                ));
+                return null
+            }
+
+            return response
+        }
+
+        const rpcResponse: Promise<Response> = this.fetchBatch(currentBatch)
+            .then(handleRpcResponse)
+            .catch(error => {
+                this.rejectBatch(
+                    currentBatch,
+                    `Failed to send batch call: ${error}`
+                );
+
+                return null
+            })
+
+        const loadJsonResponse = (resp: Response): Promise<any> => resp === null ? null : resp.json()
+
+        const jsonResponseProm: Promise<any> = rpcResponse
+            .then(loadJsonResponse).then(d => d)
+            .catch(error => {
+                this.rejectBatch(
+                    currentBatch,
+                    `Failed to parse JSON response, error: ${error}`
+                );
+
+                return null
+            })
+
+        Promise.resolve(jsonResponseProm)
+            .then(this.handleJsonResponse(currentBatch))
+            .catch(e => {})
+    }
+
+    private fetchBatch(batch: MiniRpcBatchItem[]): Promise<Response> {
+        return fetch(this.url, {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+                "accept":       "application/json"
+            },
+            body: JSON.stringify(batch.map(item => item.request))
+        });
+    }
+
+    private rejectBatchItem(reason: any): (item: MiniRpcBatchItem) => void {
+        return ({reject}) => reject(reason instanceof Error ? reason : new Error(reason));
+    }
+
+    private rejectBatch(batch: MiniRpcBatchItem[], reason: any): void {
+        batch.forEach(this.rejectBatchItem(reason));
+        return
     }
 
     private handleJsonResponse(batch: MiniRpcBatchItem[]): (json: any) => void {
@@ -133,65 +200,5 @@ export class MiniRpcProvider implements ExternalProvider {
                 }
             }
         }
-    }
-
-    private fetchBatch = (batch: MiniRpcBatchItem[]): Promise<Response> =>
-        fetch(this.url, {
-            method: "POST",
-            headers: {
-                "content-type": "application/json",
-                "accept":       "application/json"
-            },
-            body: JSON.stringify(batch.map(item => item.request))
-        });
-
-    private rejectBatchItem = (reason: any): ((item: MiniRpcBatchItem) => void) =>
-        ({reject}) => reject(reason instanceof Error ? reason : new Error(reason));
-
-    private rejectBatch = (batch: MiniRpcBatchItem[], reason: any): void =>
-        batch.forEach(this.rejectBatchItem(reason));
-
-    async clearBatch() {
-        const currentBatch = this.batch;
-        this.batch = [];
-        this.batchTimeoutId = null;
-
-        const handleRpcResponse = (response: Response): Response => {
-            if (!response.ok) {
-                this.rejectBatch(currentBatch, new RequestError(
-                    response.statusText,
-                    response.status,
-                    null
-                ));
-                return null
-            }
-
-            return response
-        }
-
-        const rpcResponse: Promise<Response> = this.fetchBatch(currentBatch)
-            .then(handleRpcResponse)
-            .catch(error => {
-                this.rejectBatch(
-                    currentBatch,
-                    `Failed to send batch call: ${error}`
-                );
-
-                return null
-            })
-
-        const loadJsonResponse = (resp: Response): Promise<any> => resp === null ? null : resp.json()
-
-        Promise.resolve(
-            rpcResponse.then(loadJsonResponse).then(d => d)
-                .catch(error => {
-                    this.rejectBatch(
-                        currentBatch,
-                        `Failed to parse JSON response, error: ${error}`
-                    );
-
-                    return null
-                })
-        ).then(this.handleJsonResponse(currentBatch)).catch(e => {})
     }
 }
