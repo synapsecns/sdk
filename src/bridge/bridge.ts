@@ -451,13 +451,11 @@ export namespace Bridge {
 
             const bigNumTen = BigNumber.from(10);
 
-            const bridgeFeeRequest = this.bridgeConfigInstance.functions["calculateSwapFee(address,uint256,uint256)"](
+            const bridgeFeeRequest: Promise<BigNumber> = this.bridgeConfigInstance["calculateSwapFee(string,uint256,uint256)"](
                 bridgeConfigIntermediateToken.address(chainIdTo),
                 chainIdTo,
                 amountFrom.mul(bigNumTen.pow(18-tokenFrom.decimals(this.chainId)))
-            )
-                .then((res: [BigNumber]) => res[0] ?? null)
-                .catch(rejectPromise);
+            );
 
             const checkEthy = (c1: number, c2: number, t: Token): boolean =>
                 c1 === ChainId.ETH && BridgeUtils.isL2ETHChain(c2) && t.swapType === SwapType.ETH
