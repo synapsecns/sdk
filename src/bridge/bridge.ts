@@ -598,12 +598,18 @@ export namespace Bridge {
                 easyDeposits:   ID[] = [Tokens.HIGH.id, Tokens.DOG.id, Tokens.FRAX.id],
                 easyDepositETH: ID[] = [Tokens.NETH.id];
 
-            if (args.tokenFrom.isEqual(Tokens.NUSD)) easyDeposits.push(Tokens.NUSD.id);
+            // if (args.tokenFrom.isEqual(Tokens.NUSD)) easyDeposits.push(Tokens.NUSD.id);
 
             let {castArgs, isEasy, txn} = this.checkEasyArgs(args, zapBridge, easyDeposits, easyRedeems, easyDepositETH);
             if (isEasy && txn) {
                 return txn
             }
+
+            const liquidityAmounts = tokenArgs.fromChainTokens.map(t =>
+                    args.tokenFrom.isEqual(t)
+                        ? amountFrom
+                        : Zero
+            );
 
             const {
                 transactionDeadline,
@@ -616,21 +622,26 @@ export namespace Bridge {
 
             switch (tokenSwitch(args.tokenTo)) {
                 case Tokens.NUSD:
-                    if (!args.tokenFrom.isEqual(Tokens.NUSD)) {
-                        const liquidityAmounts = tokenArgs
-                            .fromChainTokens
-                            .map((t) => args.tokenFrom.isEqual(t) ? amountFrom : Zero);
+                    if (args.tokenFrom.isEqual(Tokens.NUSD)) {
+                        const bridgeDepositArgs = BridgeUtils.makeEasyParams(
+                            args as BridgeUtils.BridgeTxParams,
+                            this.chainId,
+                            args.tokenTo
+                        );
 
-                        return zapBridge.populateTransaction.zapAndDeposit(
-                            addressTo,
-                            chainIdTo,
-                            Tokens.NUSD.address(this.chainId),
-                            liquidityAmounts,
-                            minToSwapDest,
-                            transactionDeadline,
-                        )
+                        return zapBridge
+                            .populateTransaction
+                            .deposit(...bridgeDepositArgs)
                     }
-                    break;
+
+                    return zapBridge.populateTransaction.zapAndDeposit(
+                        addressTo,
+                        chainIdTo,
+                        Tokens.NUSD.address(this.chainId),
+                        liquidityAmounts,
+                        minToSwapDest,
+                        transactionDeadline,
+                    )
                 default:
                     if (BridgeUtils.isETHLikeToken(args.tokenTo) || args.tokenTo.isEqual(Tokens.WETH)) {
                         return zapBridge.populateTransaction.depositETHAndSwap(
@@ -641,11 +652,18 @@ export namespace Bridge {
                             bridgeTransactionDeadline,
                             {value: amountFrom}
                         )
+                    } else if (args.tokenFrom.isEqual(Tokens.NUSD)) {
+                        return zapBridge.populateTransaction.depositAndSwap(
+                            addressTo,
+                            chainIdTo,
+                            Tokens.NUSD.address(this.chainId),
+                            amountFrom,
+                            0,
+                            tokenArgs.tokenIndexTo,
+                            minToSwapDestFromOriginMediumSlippage,
+                            bridgeTransactionDeadline
+                        )
                     }
-
-                    const liquidityAmounts = tokenArgs
-                        .fromChainTokens
-                        .map((t) => args.tokenFrom.isEqual(t) ? amountFrom : Zero);
 
                     return zapBridge.populateTransaction.zapAndDepositAndSwap(
                         addressTo,
@@ -682,8 +700,6 @@ export namespace Bridge {
                 easyRedeems:    ID[] = [Tokens.SYN.id, Tokens.HIGH.id, Tokens.DOG.id, Tokens.FRAX.id],
                 easyDepositETH: ID[] = [];
 
-            if (args.tokenFrom.isEqual(Tokens.NUSD)) easyRedeems.push(Tokens.NUSD.id);
-
             BridgeUtils.DepositIfChainTokens.forEach((args) => {
                 let {chainId, tokens, depositEth, altChainId} = args;
 
@@ -705,7 +721,6 @@ export namespace Bridge {
             })
 
             let {castArgs, isEasy, txn} = this.checkEasyArgs(args, zapBridge, easyDeposits, easyRedeems, easyDepositETH);
-
             if (isEasy && txn) {
                 return txn
             }
@@ -748,6 +763,12 @@ export namespace Bridge {
 
             switch (tokenSwitch(args.tokenTo)) {
                 case Tokens.NUSD:
+                    if (args.tokenFrom.isEqual(Tokens.NUSD)) {
+                        return zapBridge
+                            .populateTransaction
+                            .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.NUSD))
+                    }
+
                     return zapBridge
                         .populateTransaction
                         .swapAndRedeem(
@@ -778,35 +799,34 @@ export namespace Bridge {
                     if (chainIdTo === ChainId.ETH) {
                         switch (true) {
                             case this.isL2ETHChain:
-                                switch (true) {
-                                    case args.tokenFrom.isEqual(Tokens.NETH):
-                                        return zapBridge
-                                            .populateTransaction
-                                            .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.NETH))
-                                    case BridgeUtils.isETHLikeToken(args.tokenFrom):
-                                        return zapBridge
-                                            .populateTransaction
-                                            .swapAndRedeem(
-                                                ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.NETH),
-                                                tokenArgs.tokenIndexFrom,
-                                                0,
-                                                amountFrom,
-                                                minToSwapOriginHighSlippage, // minToSwapOrigin, // minToSwapOriginHighSlippage,
-                                                transactionDeadline
-                                            )
-                                    default:
-                                        return zapBridge
-                                            .populateTransaction
-                                            .swapETHAndRedeem(
-                                                ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.NETH),
-                                                tokenArgs.tokenIndexFrom,
-                                                0,
-                                                amountFrom,
-                                                minToSwapOriginHighSlippage, // minToSwapOrigin, // minToSwapOriginHighSlippage,
-                                                transactionDeadline,
-                                                {value: amountFrom}
-                                            )
+                                if (args.tokenFrom.isEqual(Tokens.NETH)) {
+                                    return zapBridge
+                                        .populateTransaction
+                                        .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.NETH))
+                                } else if (BridgeUtils.isETHLikeToken(args.tokenFrom)) {
+                                    return zapBridge
+                                        .populateTransaction
+                                        .swapAndRedeem(
+                                            ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.NETH),
+                                            tokenArgs.tokenIndexFrom,
+                                            0,
+                                            amountFrom,
+                                            minToSwapOriginHighSlippage, // minToSwapOrigin, // minToSwapOriginHighSlippage,
+                                            transactionDeadline
+                                        )
                                 }
+
+                                return zapBridge
+                                    .populateTransaction
+                                    .swapETHAndRedeem(
+                                        ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.NETH),
+                                        tokenArgs.tokenIndexFrom,
+                                        0,
+                                        amountFrom,
+                                        minToSwapOriginHighSlippage, // minToSwapOrigin, // minToSwapOriginHighSlippage,
+                                        transactionDeadline,
+                                        {value: amountFrom}
+                                    )
                             case args.tokenFrom.isEqual(Tokens.NUSD):
                                 return zapBridge
                                     .populateTransaction
