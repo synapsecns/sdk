@@ -17,14 +17,11 @@ import type {BigNumberish}         from "@ethersproject/bignumber";
 import type {PopulatedTransaction} from "@ethersproject/contracts";
 
 export namespace UnsupportedSwapErrors {
-    interface _Token {symbol: string}
-
     export enum UnsupportedSwapErrorKind {
         UnsupportedToken,
         UnsupportedTokenNetFrom,
         UnsupportedTokenNetTo,
         NonmatchingSwapTypes,
-        ETHOnBoba,
     }
 
     export interface UnsupportedSwapError {
@@ -32,17 +29,17 @@ export namespace UnsupportedSwapErrors {
         reason:    string,
     }
 
-    export const tokenNotSupported = (t: _Token, netName: string): UnsupportedSwapError => ({
+    export const tokenNotSupported = (t: {symbol: string}, netName: string): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedToken,
         reason:    `Token ${t.symbol} not supported on network ${netName}`,
     });
 
-    export const tokenNotSupportedNetFrom = (t: _Token, netName: string): UnsupportedSwapError => ({
+    export const tokenNotSupportedNetFrom = (t: {symbol: string}, netName: string): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetFrom,
         reason:    `Token ${t.symbol} not supported on 'from' network ${netName}`,
     });
 
-    export const tokenNotSupportedNetTo = (t: _Token, netName: string): UnsupportedSwapError => ({
+    export const tokenNotSupportedNetTo = (t: {symbol: string}, netName: string): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetTo,
         reason:    `Token ${t.symbol} not supported on 'to' network ${netName}`,
     });
@@ -50,11 +47,6 @@ export namespace UnsupportedSwapErrors {
     export const nonMatchingSwapTypes = (): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.NonmatchingSwapTypes,
         reason:    "Token swap types don't match",
-    });
-
-    export const ethOnBoba = (): UnsupportedSwapError => ({
-        errorKind: UnsupportedSwapErrorKind.ETHOnBoba,
-        reason:    "Currently, the SDK only supports bridging Stablecoins to and from BOBA",
     });
 }
 
@@ -109,33 +101,12 @@ export namespace TokenSwap {
 
     export function swapSupported(args: SwapParams): SwapSupportedResult {
         const {tokenFrom, tokenTo, chainId} = args;
-
         return checkCanSwap(tokenFrom, tokenTo, chainId)
     }
 
     export function bridgeSwapSupported(args: BridgeSwapSupportedParams): SwapSupportedResult {
         const {tokenFrom, tokenTo, chainIdFrom, chainIdTo} = args;
-
-        // let
-        //     swapSupported: boolean = true,
-        //     reasonNotSupported: UnsupportedSwapErrors.UnsupportedSwapError;
-
         return checkCanSwap(tokenFrom, tokenTo, chainIdFrom, chainIdTo);
-        // if (!canSwap.swapSupported) {
-        //     return canSwap
-        // }
-
-        // const checkBoba = (c: number, t: Token): boolean => c === ChainId.BOBA && t.swapType === SwapType.ETH;
-        // const
-        //     isEthFromBoba = checkBoba(chainIdFrom, tokenFrom),
-        //     isEthToBoba   = checkBoba(chainIdTo,   tokenTo);
-        //
-        // if (isEthFromBoba || isEthToBoba) {
-        //     swapSupported = false;
-        //     reasonNotSupported = UnsupportedSwapErrors.ethOnBoba();
-        // }
-
-        // return {swapSupported, reasonNotSupported}
     }
 
     export async function calculateSwapRate(args: SwapParams): Promise<EstimatedSwapRate> {
