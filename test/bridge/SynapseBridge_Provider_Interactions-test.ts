@@ -63,7 +63,7 @@ async function buildWalletArgs(chainId: number, privkey: string=bridgeTestPrivke
     return {
         wallet,
         address:       (await wallet.getAddress()),
-        bridgeInstance: new Bridge.SynapseBridge({ network: chainId })
+        bridgeInstance: new Bridge.SynapseBridge({ network: Networks.fromChainId(chainId) })
     }
 }
 
