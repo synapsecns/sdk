@@ -1,10 +1,10 @@
-import "../helpers/chaisetup";
+import "@init";
 
 import dotenv from "dotenv";
 import {expect} from "chai";
 import {step} from "mocha-steps";
 
-import type {Token} from "@token";
+import type {Token} from "@sdk";
 
 import {
     Tokens,
@@ -14,9 +14,9 @@ import {
     supportedChainIds,
 } from "@sdk";
 
-import {ERC20}                 from "@bridge/erc20";
-import {contractAddressFor}    from "@common/utils";
-import {rpcProviderForNetwork} from "@internal/rpcproviders";
+import {ERC20}                 from "@sdk/bridge/erc20";
+import {contractAddressFor}    from "@sdk/common/utils";
+import {rpcProviderForNetwork} from "@sdk/internal/rpcproviders";
 
 import {
     DEFAULT_TEST_TIMEOUT,
@@ -26,7 +26,7 @@ import {
     expectFulfilled,
     getActualWei,
     wrapExpectAsync
-} from "../helpers";
+} from "@helpers";
 
 import {infiniteApprovalsPrivkey} from "./bridge_test_utils";
 

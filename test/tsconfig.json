@@ -1,0 +1,30 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "../",
+    "paths": {
+      "@abis":        ["./src/abis/index"],
+      "@bridge":      ["./src/bridge"],
+      "@bridge/*":    ["./src/bridge/*"],
+      "@common/*":    ["./src/common/*"],
+      "@entities":    ["./src/entities"],
+      "@contracts":   ["./src/contracts"],
+      "@contracts/*": ["./src/contracts/*"],
+      "@chainid":     ["./src/common/chainid"],
+      "@networks":    ["./src/common/networks"],
+      "@internal/*":  ["./src/internal/*"],
+      "@swappools":   ["./src/swappools"],
+      "@token":       ["./src/token"],
+      "@tokens":      ["./src/tokens"],
+      "@tokenswap":   ["./src/tokenswap"],
+      "@sdk":         ["./src/index"],
+      "@sdk/*":       ["./src/*"],
+      "@init":        ["./test/helpers/chaisetup"],
+      "@helpers":     ["./test/helpers/index"]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "test/**/*"
+  ]
+}

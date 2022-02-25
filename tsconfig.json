@@ -5,7 +5,6 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@sdk":         ["./src/index"],
       "@abis":        ["./src/abis/index"],
       "@bridge":      ["./src/bridge"],
       "@bridge/*":    ["./src/bridge/*"],

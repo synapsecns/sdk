@@ -1,4 +1,4 @@
-import "./chaisetup";
+import "@init";
 
 import {expect} from "chai";
 
@@ -9,8 +9,8 @@ import {BigNumber} from "@ethersproject/bignumber";
 import type {BigNumberish} from "@ethersproject/bignumber";
 
 
-import type {Token} from "@token";
-import {rpcProviderForNetwork} from "@internal/rpcproviders";
+import type {Token} from "@sdk";
+import {rpcProviderForNetwork} from "@sdk/internal/rpcproviders";
 
 const TEN_BN: BigNumber = BigNumber.from(10);
 

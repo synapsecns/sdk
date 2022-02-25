@@ -1,4 +1,4 @@
-import "../helpers/chaisetup";
+import "@init";
 
 import {expect} from "chai";
 
@@ -9,7 +9,6 @@ import {
     NetworkSwappableTokensMap,
     networkSwapTokensMap,
     supportedChainIds,
-    SwapPools,
     Token,
     Tokens
 } from "@sdk";
@@ -19,12 +18,12 @@ import {
     expectIncludes,
     expectLength,
     wrapExpect
-} from "../helpers";
+} from "@helpers";
 
 import {
     jsonRpcProviderForNetwork,
     web3ProviderForNetwork
-} from "@internal/rpcproviders";
+} from "@sdk/internal/rpcproviders";
 
 interface _tc {
     want: boolean,

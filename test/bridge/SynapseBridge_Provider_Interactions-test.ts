@@ -1,4 +1,4 @@
-import "../helpers/chaisetup";
+import "@init";
 
 import {expect} from "chai";
 import {step} from "mocha-steps";
@@ -10,7 +10,7 @@ import {
     Networks,
 } from "@sdk";
 
-import {rejectPromise} from "@common/utils";
+import {rejectPromise} from "@sdk/common/utils";
 
 import {
     DEFAULT_TEST_TIMEOUT,
@@ -20,7 +20,7 @@ import {
     expectRejected,
     expectFulfilled,
     makeWalletSignerWithProvider,
-} from "../helpers";
+} from "@helpers";
 
 import {bridgeInteractionsPrivkey} from "./bridge_test_utils";
 import type {BridgeSwapTestCase} from "./bridge_test_utils";
@@ -34,7 +34,7 @@ import type {
 
 import {Wallet}     from "@ethersproject/wallet";
 import {parseEther} from "@ethersproject/units";
-import {BigNumber} from "@ethersproject/bignumber";
+import {BigNumber}  from "@ethersproject/bignumber";
 
 function executeTransaction(
     prom: Promise<TransactionResponse|ContractTransaction>

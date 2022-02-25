@@ -1,4 +1,4 @@
-import "../helpers/chaisetup";
+import "@init";
 
 import {step} from "mocha-steps";
 
@@ -17,7 +17,7 @@ import {
     expectProperty,
     expectRejected,
     getTestAmount,
-} from "../helpers";
+} from "@helpers";
 
 import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";

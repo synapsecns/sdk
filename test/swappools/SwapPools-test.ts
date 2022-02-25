@@ -1,4 +1,4 @@
-import "../helpers/chaisetup";
+import "@init";
 
 
 import {
@@ -9,9 +9,9 @@ import {
 } from "@sdk";
 
 import type {Token}     from "@sdk";
-import type {StringMap} from "@common/types";
+import type {StringMap} from "@sdk/common/types";
 
-import {SwapType} from "@internal/swaptype";
+import {SwapType} from "@sdk/internal/swaptype";
 
 import {
     expectNull,
@@ -19,7 +19,7 @@ import {
     expectUndefined,
     expectIncludes,
     expectProperty, wrapExpect,
-} from "../helpers";
+} from "@helpers";
 
 describe("SwapPools Tests", function(this: Mocha.Suite) {
     describe("Pool tokens tests", function(this: Mocha.Suite) {
