@@ -209,9 +209,7 @@ export namespace SwapPools {
         Tokens.USDT,
     ]
 
-    const
-        USDDaiPool = USDPoolTokens(),
-        USDMIMPool = USDPoolTokens(Tokens.MIM);
+    const USDDaiPool = USDPoolTokens();
 
     const
         ETHTokensPool = (t: Token): Token[] => [Tokens.NETH, t],
@@ -263,7 +261,7 @@ export namespace SwapPools {
         netName:     "Fantom",
         poolId:       1,
         swapAddress: "0x2913E812Cf0dcCA30FB28E6Cac3d2DCFF4497688",
-        poolTokens:   USDMIMPool,
+        poolTokens:   USDPoolTokens(Tokens.MIM),
     });
 
     export const FANTOM_ETH_SWAP_TOKEN = makeETHSwapToken({
@@ -301,7 +299,7 @@ export namespace SwapPools {
         netName:     "Arbitrum",
         poolId:       2,
         swapAddress: "0x0Db3FE3B770c95A0B99D1Ed6F2627933466c0Dd8",
-        poolTokens:   USDMIMPool,
+        poolTokens:   USDDaiPool,
     });
 
     export const ARBITRUM_ETH_SWAP_TOKEN = makeETHSwapToken({
