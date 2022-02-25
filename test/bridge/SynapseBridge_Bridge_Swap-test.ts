@@ -92,6 +92,11 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.WETH,   ChainId.AVALANCHE, Tokens.WETH_E, true),
             makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.WETH_E, ChainId.ARBITRUM,  Tokens.ETH,    true),
             makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.WETH_E, ChainId.ARBITRUM,  Tokens.WETH,   true),
+            makeBridgeSwapTestCase(ChainId.OPTIMISM,  Tokens.GOHM,   ChainId.AURORA,    Tokens.GOHM,   false),
+            makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.GOHM,   ChainId.AVALANCHE, Tokens.GOHM,   true),
+            makeBridgeSwapTestCase(ChainId.HARMONY,   Tokens.GOHM,   ChainId.AVALANCHE, Tokens.GOHM,   true),
+            makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.GOHM,   ChainId.BSC,       Tokens.GOHM,   true),
+            makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.GOHM,   ChainId.HARMONY,   Tokens.GOHM,   true),
         ];
 
         for (const tc of testCases) {
@@ -175,8 +180,12 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             makeTestCase(Tokens.ETH,     Tokens.ETH,     ChainId.ARBITRUM,  ChainId.OPTIMISM),
             makeTestCase(Tokens.NETH,    Tokens.ETH,     ChainId.ARBITRUM,  ChainId.OPTIMISM),
             makeTestCase(Tokens.JUMP,    Tokens.JUMP,    ChainId.FANTOM,    ChainId.BSC),
-            makeTestCase(Tokens.GOHM,    Tokens.GOHM,    ChainId.AVALANCHE, ChainId.OPTIMISM,  "1", false, true),
+            makeTestCase(Tokens.GOHM,    Tokens.GOHM,    ChainId.AVALANCHE, ChainId.OPTIMISM,  "1"),
             makeTestCase(Tokens.GOHM,    Tokens.GOHM,    ChainId.ETH,       ChainId.AVALANCHE, "69"),
+            makeTestCase(Tokens.GOHM,    Tokens.GOHM,    ChainId.HARMONY,   ChainId.MOONBEAM),
+            makeTestCase(Tokens.GOHM,    Tokens.GOHM,    ChainId.HARMONY,   ChainId.MOONRIVER),
+            makeTestCase(Tokens.GOHM,    Tokens.GOHM,    ChainId.ETH,       ChainId.AVALANCHE),
+            makeTestCase(Tokens.GOHM,    Tokens.GOHM,    ChainId.CRONOS,    ChainId.AURORA,    undefined, false, true),
             makeTestCase(Tokens.USDC,    Tokens.USDC,    ChainId.AURORA,    ChainId.AVALANCHE, "69"),
             makeTestCase(Tokens.USDC,    Tokens.NUSD,    ChainId.BSC,       ChainId.AURORA,    "69"),
             makeTestCase(Tokens.USDC,    Tokens.NUSD,    ChainId.AURORA,    ChainId.ETH,       "69", false),
