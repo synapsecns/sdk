@@ -39,8 +39,6 @@ export {
     SwapPools,
     networkSwapTokensMap,
     allNetworksSwapTokensMap,
-    swappableTokens,
-    swappableTokensAllNetworks,
 } from "./swappools";
 
 export {TokenSwap, UnsupportedSwapErrors} from "./tokenswap";

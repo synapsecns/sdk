@@ -745,16 +745,3 @@ export function allNetworksSwapTokensMap(): AllNetworksSwappableTokensMap {
 
     return res
 }
-
-/**
- * @deprecated Use {@link networkSwapTokensMap} instead.
- */
-export const swappableTokens = (
-    chainIdA:  number,
-    chainIdB?: number,
-): NetworkSwappableTokensMap => networkSwapTokensMap(chainIdA, chainIdB)
-
-/**
- * @deprecated Use {@link allNetworksSwapTokensMap} instead.
- */
-export const swappableTokensAllNetworks = (): AllNetworksSwappableTokensMap => allNetworksSwapTokensMap()
