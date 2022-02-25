@@ -1,6 +1,4 @@
-import dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 import {initRpcConnectors} from "@sdk/internal/rpcproviders";
 

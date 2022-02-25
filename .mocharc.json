@@ -1,4 +1,7 @@
 {
+  "require": [
+    "./test/test_setup.ts"
+  ],
   "node-option": [
     "es-module-specifier-resolution=node",
     "loader=ts-node/esm"

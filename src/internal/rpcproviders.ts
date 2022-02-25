@@ -83,4 +83,3 @@ export function rpcUriForChainId(chainId: number): string {
 export function initRpcConnectors() {
     //
 }
-
