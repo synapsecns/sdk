@@ -1,7 +1,3 @@
-import dotenv from "dotenv";
-
-dotenv.config();
-
 import _ from "lodash";
 
 import type {Provider} from "@ethersproject/providers";
