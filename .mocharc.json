@@ -11,6 +11,7 @@
   "spec": [
     "./test/basic/*-test.ts",
     "./test/swappools/*-test.ts",
+    "./test/token/*-test.ts",
     "./test/entities/*-test.ts",
     "./test/erc20/*-test.ts",
     "./test/tokenswap/*-test.ts",
