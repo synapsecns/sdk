@@ -1,12 +1,7 @@
 {
   "compilerOptions": {
-    "rootDirs": [
-      "src"
-    ],
     "baseUrl": ".",
     "paths": {
-      "@sdk":         ["./src/index"],
-      "@sdk/*":       ["./src/*"],
       "@abis":        ["./src/abis"],
       "@abis/*":      ["./src/abis/*"],
       "@bridge":      ["./src/bridge"],
@@ -34,19 +29,9 @@
     "removeComments": false,
     "types": [
       "node",
-      "chai",
-      "mocha",
-      "expect"
     ],
     "isolatedModules": true,
     "skipLibCheck": true,
-    "plugins": [
-      { "transform": "typescript-transform-paths" } // Transform paths in output .js files
-    ]
-  },
-  "ts-node": {
-    "files": true,
-    "pretty": true
   },
   "include": [
     "src/**/*"

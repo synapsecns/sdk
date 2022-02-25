@@ -1,0 +1,38 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@sdk":         ["../src/index"],
+      "@sdk/*":       ["../src/*"],
+      "@abis":        ["../src/abis"],
+      "@abis/*":      ["../src/abis/*"],
+      "@bridge":      ["../src/bridge"],
+      "@bridge/*":    ["../src/bridge/*"],
+      "@common/*":    ["../src/common/*"],
+      "@entities":    ["../src/entities"],
+      "@contracts":   ["../src/contracts"],
+      "@contracts/*": ["../src/contracts/*"],
+      "@chainid":     ["../src/common/chainid"],
+      "@networks":    ["../src/common/networks"],
+      "@internal/*":  ["../src/internal/*"],
+      "@swappools":   ["../src/swappools"],
+      "@token":       ["../src/token"],
+      "@tokens":      ["../src/tokens"],
+      "@tokenswap":   ["../src/tokenswap"]
+    },
+    "types": [
+      "node",
+      "chai",
+      "mocha",
+      "expect"
+    ],
+    "plugins": [
+      { "transform": "typescript-transform-paths" } // Transform paths in output .js files
+    ],
+  },
+  "ts-node": {
+    "files": true,
+    "pretty": true,
+  },
+}
