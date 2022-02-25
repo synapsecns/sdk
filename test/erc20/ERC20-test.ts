@@ -5,8 +5,8 @@ import {
     ChainId,
 } from "@sdk";
 
-import {ERC20} from "@bridge/erc20";
-import {SynapseContracts} from "@common/synapse_contracts";
+import {ERC20}            from "@sdk/bridge/erc20";
+import {SynapseContracts} from "@sdk/common/synapse_contracts";
 
 import {
     DEFAULT_TEST_TIMEOUT,
@@ -20,7 +20,7 @@ import {
     expectNull,
 } from "../helpers";
 
-import type {BigNumberish}        from "@ethersproject/bignumber";
+import type {BigNumberish}         from "@ethersproject/bignumber";
 import type {PopulatedTransaction} from "@ethersproject/contracts";
 
 describe("ERC20 tests", function(this: Mocha.Suite) {

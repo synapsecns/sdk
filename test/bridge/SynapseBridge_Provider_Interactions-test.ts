@@ -10,7 +10,7 @@ import {
     Networks,
 } from "@sdk";
 
-import {rejectPromise} from "@common/utils";
+import {rejectPromise} from "@sdk/common/utils";
 
 import {
     DEFAULT_TEST_TIMEOUT,
@@ -23,7 +23,7 @@ import {
 } from "../helpers";
 
 import {bridgeInteractionsPrivkey} from "./bridge_test_utils";
-import type {BridgeSwapTestCase} from "./bridge_test_utils";
+import type {BridgeSwapTestCase}   from "./bridge_test_utils";
 
 import type {TransactionResponse} from "@ethersproject/providers";
 

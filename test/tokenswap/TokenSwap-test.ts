@@ -1,6 +1,5 @@
 import "../test_setup";
 
-import type {Token} from "@sdk";
 import {
     ChainId,
     Networks,
@@ -8,6 +7,8 @@ import {
     TokenSwap,
     supportedChainIds,
 } from "@sdk";
+
+import type {Token} from "@sdk";
 
 import {
     wrapExpect,

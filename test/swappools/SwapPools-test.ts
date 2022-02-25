@@ -8,8 +8,7 @@ import {
     Tokens,
 } from "@sdk";
 
-import type {Token}     from "@sdk";
-import type {StringMap} from "@common/types";
+import type {Token, StringMap} from "@sdk";
 
 import {SwapType} from "@internal/swaptype";
 

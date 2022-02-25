@@ -5,12 +5,6 @@ import {
     expectNull
 } from "../helpers";
 
-
-import {SynapseContracts}      from "@common/synapse_contracts";
-import {rpcProviderForNetwork} from "@internal/rpcproviders";
-
-import type {SignerOrProvider} from "@common/types";
-
 import {
     ChainId,
     Networks,
@@ -22,10 +16,13 @@ import {
     l2BridgeZap,
 } from "@sdk";
 
+import {SynapseEntities}       from "@sdk/entities";
+import {SynapseContracts}      from "@sdk/common/synapse_contracts";
+import {rpcProviderForNetwork} from "@sdk/internal/rpcproviders";
+import type {SignerOrProvider} from "@sdk/common/types";
+
 import type {BaseContract} from "@ethersproject/contracts";
-import {SynapseEntities} from "../../src/entities";
-import bridgeConfig = SynapseEntities.bridgeConfig;
-import bridgeConfigV3 = SynapseEntities.bridgeConfigV3;
+
 
 describe("Entities tests", function(this: Mocha.Suite) {
     enum EntityKind {
@@ -74,10 +71,10 @@ describe("Entities tests", function(this: Mocha.Suite) {
                 entityFn   = l2BridgeZap;
                 break;
             case EntityKind.BridgeConfig:
-                entityFn   = bridgeConfig;
+                entityFn   = SynapseEntities.bridgeConfig;
                 break;
             case EntityKind.BridgeConfigV3:
-                entityFn   = bridgeConfigV3;
+                entityFn   = SynapseEntities.bridgeConfigV3;
                 break;
         }
 

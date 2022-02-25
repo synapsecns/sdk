@@ -11,7 +11,7 @@ import type {BigNumberish} from "@ethersproject/bignumber";
 
 
 import type {Token} from "@sdk";
-import {rpcProviderForNetwork} from "@internal/rpcproviders";
+import {rpcProviderForNetwork} from "@sdk/internal/rpcproviders";
 
 const TEN_BN: BigNumber = BigNumber.from(10);
 

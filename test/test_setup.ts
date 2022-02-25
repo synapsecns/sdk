@@ -1,4 +1,4 @@
-import {initRpcConnectors} from "@internal/rpcproviders";
+import {initRpcConnectors} from "@sdk/internal/rpcproviders";
 
 import chai           from "chai";
 import {waffleChai}   from "@ethereum-waffle/chai"

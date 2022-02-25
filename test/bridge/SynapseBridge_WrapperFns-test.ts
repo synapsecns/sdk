@@ -1,10 +1,9 @@
 import "../test_setup";
 
 import dotenv from "dotenv";
-import {expect} from "chai";
-import {step} from "mocha-steps";
 
-import type {Token} from "@sdk";
+import {expect} from "chai";
+import {step}   from "mocha-steps";
 
 import {
     Tokens,
@@ -14,9 +13,11 @@ import {
     supportedChainIds,
 } from "@sdk";
 
-import {ERC20}                 from "@bridge/erc20";
-import {contractAddressFor}    from "@common/utils";
-import {rpcProviderForNetwork} from "@internal/rpcproviders";
+import type {Token} from "@sdk";
+
+import {ERC20}                 from "@sdk/bridge/erc20";
+import {contractAddressFor}    from "@sdk/common/utils";
+import {rpcProviderForNetwork} from "@sdk/internal/rpcproviders";
 
 import {
     DEFAULT_TEST_TIMEOUT,
@@ -30,13 +31,13 @@ import {
 
 import {infiniteApprovalsPrivkey} from "./bridge_test_utils";
 
-import type {Provider} from "@ethersproject/providers";
+import {Wallet}                   from "@ethersproject/wallet";
+import {BigNumber}                from "@ethersproject/bignumber";
+import type {Provider}            from "@ethersproject/providers";
+import type {BigNumberish}        from "@ethersproject/bignumber";
 import type {ContractTransaction} from "@ethersproject/contracts";
 
-import {Wallet} from "@ethersproject/wallet";
 
-import {BigNumber} from "@ethersproject/bignumber";
-import type {BigNumberish} from "@ethersproject/bignumber";
 
 import {
     Zero,

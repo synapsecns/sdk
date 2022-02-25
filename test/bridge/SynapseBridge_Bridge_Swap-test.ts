@@ -2,7 +2,6 @@ import "../test_setup";
 
 import _ from "lodash";
 
-import type {Token} from "@sdk";
 
 import {
     ChainId,
@@ -11,7 +10,8 @@ import {
     Bridge,
 } from "@sdk";
 
-import {tokenSwitch} from "@internal/utils";
+import type {Token}  from "@sdk";
+import {tokenSwitch} from "@sdk/internal/utils";
 
 import {
     DEFAULT_TEST_TIMEOUT,

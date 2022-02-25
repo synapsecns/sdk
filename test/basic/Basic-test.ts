@@ -24,7 +24,7 @@ import {
 import {
     jsonRpcProviderForNetwork,
     web3ProviderForNetwork
-} from "@internal/rpcproviders";
+} from "@sdk/internal/rpcproviders";
 
 interface _tc {
     want: boolean,
