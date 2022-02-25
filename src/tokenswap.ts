@@ -263,7 +263,7 @@ export namespace TokenSwap {
     }
 
     async function swapContract(token: Token, chainId: number): Promise<SwapContract> {
-        const lpToken = intermediateToken(token, chainId);
+        const lpToken = _intermediateToken(token, chainId);
 
         return POOL_CONFIG_INSTANCE.getPoolConfig(lpToken.address(chainId), chainId)
             .then(({poolAddress}) => SwapFactory.connect(poolAddress, rpcProviderForNetwork(chainId)))
@@ -281,13 +281,6 @@ export namespace TokenSwap {
             tokenIndexFrom,
             tokenIndexTo,
         })).catch(rejectPromise)
-
-    }
-
-    function intermediateToken(token: Token, chainId: number): Token {
-        const {intermediateToken, bridgeConfigIntermediateToken} = intermediateTokens(chainId, token);
-
-        return intermediateToken ?? bridgeConfigIntermediateToken
     }
 
     const mintBurnSwapTypes = [
@@ -295,6 +288,12 @@ export namespace TokenSwap {
         SwapType.NFD,  SwapType.OHM, SwapType.SOLAR,
         SwapType.GMX,
     ];
+
+    function _intermediateToken(token: Token, chainId: number): Token {
+        const {intermediateToken, bridgeConfigIntermediateToken} = intermediateTokens(chainId, token);
+
+        return intermediateToken ?? bridgeConfigIntermediateToken
+    }
 
     function checkCanSwap(tokenFrom: Token, tokenTo: Token, chainFrom: number, chainTo?: number): SwapSupportedResult {
         const
