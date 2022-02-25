@@ -7,12 +7,17 @@ import {
     Tokens,
 } from "@sdk";
 
+import type {ID} from "@internal/entity";
 import {SwapType} from "@internal/swaptype";
+
+import type {StringMap} from "@common/types";
 
 import {
     expectNull,
     expectEqual,
     expectUndefined,
+    expectIncludes,
+    expectProperty,
 } from "../helpers";
 
 describe("SwapPools Tests", function(this: Mocha.Suite) {
@@ -113,23 +118,37 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             `${wantVal === null ? "'null'" : "'"+wantVal+"'"} for Chain ID ${tc.chainId}`
 
         for (const tc of testCases) {
-            const poolName: string = tc.swapPool.poolName;
+            describe(`${tc.testName} Properties Tests`, function(this: Mocha.Suite) {
+                it(`property 'symbol' should equal ${tc.wantSymbol}`, function(this: Mocha.Context) {
+                    expectEqual(tc.swapPool.symbol, tc.wantSymbol);
+                })
 
-            it(`${tc.testName}: symbol should equal ${tc.wantSymbol}`, function(this: Mocha.Context) {
-                expectEqual(tc.swapPool.symbol, tc.wantSymbol);
+                it(`property 'swapType' should equal ${tc.wantSwapType}`, function(this: Mocha.Context) {
+                    expectEqual(tc.swapPool.swapType, tc.wantSwapType);
+                })
+
+                it(`function address() should return ${wantValStr(tc, tc.wantAddress)}`, function(this: Mocha.Context) {
+                    expectNull(tc.swapPool.address(tc.chainId), tc.wantAddress === null);
+                })
+
+                it(`function decimals() should return ${wantValStr(tc, tc.wantDecimals)}`, function(this: Mocha.Context) {
+                    expectNull(tc.swapPool.decimals(tc.chainId), tc.wantDecimals === null);
+                })
+
+                it(`property 'id' should return ${tc.wantSymbol}`, function(this: Mocha.Context) {
+                    expectEqual(tc.swapPool.id.description, tc.wantSymbol);
+                })
+
+                if (tc.wantAddress !== null) {
+                    it(`property 'addresses' should contain ${tc.wantAddress}`, function(this: Mocha.Context) {
+                        const addrsMap: StringMap = tc.swapPool.addresses;
+
+                        expectProperty(addrsMap, `${tc.chainId}`);
+                        expectEqual(addrsMap[tc.chainId], tc.wantAddress);
+                    })
+                }
             })
 
-            it(`${tc.testName}: swapType should equal ${tc.wantSwapType}`, function(this: Mocha.Context) {
-                expectEqual(tc.swapPool.swapType, tc.wantSwapType);
-            })
-
-            it(`${tc.testName}: address() should return ${wantValStr(tc, tc.wantAddress)}`, function(this: Mocha.Context) {
-                expectNull(tc.swapPool.address(tc.chainId), tc.wantAddress === null)
-            })
-
-            it(`${tc.testName}: decimals() should return ${wantValStr(tc, tc.wantDecimals)}`, function(this: Mocha.Context) {
-                expectNull(tc.swapPool.decimals(tc.chainId), tc.wantDecimals === null)
-            })
         }
     })
 })
