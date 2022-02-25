@@ -100,7 +100,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 execute:     false,
             },
             expected: {
-                executeSuccess: false,
+                executeSuccess: true,
                 canBridge:      true,
             }
         },
@@ -287,20 +287,20 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 }
             })
 
-            describe("Test Magic Executors", function(this: Mocha.Suite) {
-                step(
-                    approvalTxnTestTitle,
-                    async function(this: Mocha.Context) {
-                        return await executeTxnFunc(
-                            tc,
-                            bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet),
-                            true
-                        )(this)
-                    }
-                );
+            if (tc.args.execute) {
+                describe("Test Magic Executors", function(this: Mocha.Suite) {
+                    step(
+                        approvalTxnTestTitle,
+                        async function(this: Mocha.Context) {
+                            return await executeTxnFunc(
+                                tc,
+                                bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet),
+                                true
+                            )(this)
+                        }
+                    );
 
-                if (tc.args.execute) {
-                    it(
+                    step(
                         bridgeTxnTestTitle,
                         async function (this: Mocha.Context) {
                             return await executeTxnFunc(
@@ -309,8 +309,8 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                             )(this)
                         }
                     );
-                }
-            })
+                })
+            }
         })
     }
 })
