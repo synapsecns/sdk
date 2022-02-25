@@ -23,7 +23,7 @@ import {
     expectPromiseResolve,
     expectZero,
     expectNotZero,
-    valueIfUndefined,
+    valueIfUndefined, expectRejected,
 } from "../helpers";
 
 import {makeBridgeSwapTestCase}  from "./bridge_test_utils";
@@ -288,7 +288,7 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
                 }
             })
 
-            it(transactionTestTitle, async function(this: Mocha.Context) {
+            it(approveTestTitle, async function(this: Mocha.Context) {
                 if (tc.expected.wantError) return
 
                 this.timeout(DEFAULT_TEST_TIMEOUT);
@@ -315,9 +315,9 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
                         break;
                 }
 
-                return (await expectFulfilled(
-                    bridgeInstance.buildApproveTransaction({token:  tokenFrom, amount: amountFrom})
-                ))
+                let prom = bridgeInstance.buildApproveTransaction({token:  tokenFrom, amount: amountFrom});
+
+                return (await expectFulfilled(prom))
             })
 
             const undefEmptyArr = [
@@ -325,10 +325,7 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
                 undefined, "", "", undefined, undefined, ""
             ];
 
-
-            it(approveTestTitle, async function(this: Mocha.Context) {
-                if (tc.expected.wantError) return
-
+            it(transactionTestTitle, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
 
                 let {args: { chainIdFrom }, args, expected: {noAddrTo}} = tc;
@@ -339,10 +336,12 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
                     ? _.shuffle(undefEmptyArr)[0]
                     : makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey1).address;
 
+                let prom = bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo});
 
-                return (await expectPromiseResolve(
-                    bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo}),
-                    !noAddrTo
+                return (await (
+                    tc.expected.wantError
+                        ? expectRejected(prom)
+                        : expectPromiseResolve(prom, !noAddrTo)
                 ))
             })
         }
