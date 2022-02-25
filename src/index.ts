@@ -43,7 +43,7 @@ export {
 
 export {TokenSwap, UnsupportedSwapErrors} from "./tokenswap";
 
-import type {ChainIdTypeMap, AddressMap, DecimalsMap} from "./common/types";
+import type {ChainIdTypeMap, AddressMap, DecimalsMap, StringMap} from "./common/types";
 import type {Token} from "./token";
 import type {NetworkSwappableTokensMap} from "./swappools";
 import type {
@@ -64,6 +64,7 @@ export type {
     ChainIdTypeMap,
     AddressMap,
     DecimalsMap,
+    StringMap,
     NetworkSwappableTokensMap,
     SynapseBridgeContract,
     GenericZapBridgeContract,
