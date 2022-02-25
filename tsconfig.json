@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
       "@abis":        ["./src/abis"],
       "@abis/*":      ["./src/abis/*"],

@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
       "@sdk":         ["../src/index"],
       "@sdk/*":       ["../src/*"],
@@ -29,10 +29,19 @@
     ],
     "plugins": [
       { "transform": "typescript-transform-paths" } // Transform paths in output .js files
-    ],
+    ]
   },
+  "include": [
+    "../src/**/*",
+    "./**/*"
+  ],
+  "exclude": [
+    "**/node_modules/**/*",
+    "**/dist/**/*",
+    "**/examples/**/*"
+  ],
   "ts-node": {
     "files": true,
-    "pretty": true,
-  },
+    "pretty": true
+  }
 }
