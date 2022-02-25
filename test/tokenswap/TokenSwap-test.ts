@@ -86,8 +86,6 @@ describe("TokenSwap tests", function(this: Mocha.Suite) {
             })
 
             step(testTitle2, async function(this: Mocha.Context) {
-                if (tc.wantError) return
-
                 this.timeout(DEFAULT_TEST_TIMEOUT);
 
                 const args: TokenSwap.SwapTokensParams = {
@@ -95,8 +93,12 @@ describe("TokenSwap tests", function(this: Mocha.Suite) {
                     minAmountOut: amountOut,
                 };
 
-                return (await expectFulfilled(
-                    TokenSwap.buildSwapTokensTransaction(args)
+                let prom = TokenSwap.buildSwapTokensTransaction(args);
+
+                return (await (
+                    tc.wantError
+                        ? expectRejected(prom)
+                        : expectFulfilled(prom)
                 ))
             })
 
