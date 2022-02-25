@@ -1,3 +1,7 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
 import {initRpcConnectors} from "@sdk/internal/rpcproviders";
 
 import chai           from "chai";
