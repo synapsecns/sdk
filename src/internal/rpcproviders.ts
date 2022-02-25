@@ -38,7 +38,7 @@ const CHAIN_RPC_URIS: StringMap = {
     [ChainId.BOBA]:      "https://replica-oolong.boba.network/",
     [ChainId.METIS]:     "https://andromeda.metis.io/?owner=1088",
     [ChainId.MOONBEAM]:  "https://rpc.api.moonbeam.network",
-    [ChainId.MOONRIVER]: "https://moonriver.api.onfinality.io/public",
+    [ChainId.MOONRIVER]: "https://rpc.api.moonriver.moonbeam.network",
     [ChainId.ARBITRUM]:  "https://arb1.arbitrum.io/rpc",
     [ChainId.AVALANCHE]: "https://api.avax.network/ext/bc/C/rpc",
     [ChainId.AURORA]:    "https://mainnet.aurora.dev",
