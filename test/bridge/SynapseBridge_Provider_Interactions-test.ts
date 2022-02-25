@@ -96,7 +96,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 tokenTo:     Tokens.WETH_E,
                 chainIdFrom: ChainId.ARBITRUM,
                 chainIdTo:   ChainId.AVALANCHE,
-                amountFrom:  parseEther("0.05"),
+                amountFrom:  parseEther("0.0022"),
                 execute:     false,
             },
             expected: {
@@ -287,30 +287,30 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 }
             })
 
-            if (tc.args.execute) {
-                describe("Test Magic Executors", function(this: Mocha.Suite) {
-                    step(
-                        approvalTxnTestTitle,
-                        async function(this: Mocha.Context) {
-                            return await executeTxnFunc(
-                                tc,
-                                bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet),
-                                true
-                            )(this)
-                        }
-                    );
+            describe("Test Magic Executors", function(this: Mocha.Suite) {
+                step(
+                    approvalTxnTestTitle,
+                    async function(this: Mocha.Context) {
+                        return await executeTxnFunc(
+                            tc,
+                            bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet),
+                            true
+                        )(this)
+                    }
+                );
 
+                if (tc.args.execute) {
                     it(
                         bridgeTxnTestTitle,
-                        async function(this: Mocha.Context) {
+                        async function (this: Mocha.Context) {
                             return await executeTxnFunc(
                                 tc,
                                 bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet)
                             )(this)
                         }
                     );
-                })
-            }
+                }
+            })
         })
     }
 })
