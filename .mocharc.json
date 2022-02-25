@@ -1,13 +1,13 @@
 {
-  "require": [
-    "ts-node/register",
-    "mocha-steps"
+  "node-option": [
+    "es-module-specifier-resolution=node",
+    "loader=ts-node/esm"
   ],
-  "node-option": ["experimental-specifier-resolution=node", "loader=ts-node/esm"],
   "extensions":  ["ts"],
   "recursive": true,
   "parallel": true,
   "jobs": 6,
+  "retries": 3,
   "spec": [
     "./test/basic/*-test.ts",
     "./test/swappools/*-test.ts",
