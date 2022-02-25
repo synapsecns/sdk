@@ -42,7 +42,7 @@ export default function SourceGrid(props: SourceNetworkGridProps) {
     const {status, chainId} = useMetaMask();
 
     const [connectedNetwork,] = useState<Networks.Network>(
-        status === "connected" ? Networks.fromChainId(chainId) : null
+        status === "connected" ? Networks.fromChainId(BigNumber.from(chainId).toNumber()) : null
     );
 
     const {

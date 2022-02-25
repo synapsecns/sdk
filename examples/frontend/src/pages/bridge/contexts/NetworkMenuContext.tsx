@@ -5,6 +5,7 @@ import {Networks} from "@synapseprotocol/sdk";
 import {useMetaMask} from "metamask-react";
 
 import type {SetStateFunction} from "@utils";
+import {BigNumber} from "@ethersproject/bignumber";
 
 type Context = {
     selectedNetworkFrom:     Networks.Network,
@@ -27,7 +28,7 @@ export const NetworkMenuContextProvider = ({children}) => {
 
     useEffect(() => {
         if (status === "connected") {
-            setConnectedNetwork(Networks.fromChainId(chainId));
+            setConnectedNetwork(Networks.fromChainId(BigNumber.from(chainId).toNumber()));
         }
     }, [status, chainId])
 
