@@ -34,7 +34,7 @@ describe('Test ENV values', function(this: Mocha.Suite) {
 
         function loadTestEnv(): void {
             let envData = fs.readFileSync(TEST_ENV_PATH);
-            let parsedEnv = dotenv.parse(envData, {debug: true});
+            let parsedEnv = dotenv.parse(envData);
             for (const [k, v] of Object.entries(parsedEnv)) {
                 process.env[`${k}`] = `${v}`;
             }
