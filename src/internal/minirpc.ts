@@ -1,5 +1,8 @@
 import fetch, {Response} from "node-fetch";
 import type {ExternalProvider} from "@ethersproject/providers";
+import {rejectPromise} from "@common/utils";
+
+const JSONRPC_VERSION: string = "2.0";
 
 export class RequestError extends Error {
     readonly code: number;
@@ -13,8 +16,6 @@ export class RequestError extends Error {
         this.message = message // dafuq message
     }
 }
-
-export type CallbackFunction = (error: any, response: any) => void;
 
 export interface JsonRpcRequest {
     method:  string,
@@ -58,6 +59,7 @@ export class MiniRpcProvider implements ExternalProvider {
         this.parsedUrl = parsed;
         this.host = parsed.host;
         this.path = parsed.pathname;
+
         // how long to wait to batch calls
         this.batchWaitTimeMs = batchWaitTimeMs ?? 50;
     }
@@ -67,9 +69,9 @@ export class MiniRpcProvider implements ExternalProvider {
             return `0x${this.chainId.toString(16)}`
         }
 
-        let promise: Promise<any> = new Promise((resolve, reject) => {
+        let batchProm: Promise<any> = new Promise((resolve, reject) => {
             let req = {
-                jsonrpc: '2.0',
+                jsonrpc: JSONRPC_VERSION,
                 id:      this._nextId++,
                 method:  request.method,
                 params:  request.params,
@@ -86,16 +88,7 @@ export class MiniRpcProvider implements ExternalProvider {
 
         this.batchTimeoutId = this.batchTimeoutId ?? setTimeout(() => this.clearBatch(), this.batchWaitTimeMs);
 
-        return promise
-    }
-
-    sendAsync(
-        request:  JsonRpcRequest,
-        callback: CallbackFunction
-    ): void {
-        this.request(request)
-            .then(result => callback(null, result))
-            .catch(error => callback(error, null))
+        return batchProm
     }
 
     async clearBatch() {
@@ -106,32 +99,49 @@ export class MiniRpcProvider implements ExternalProvider {
 
         const handleRpcResponse = (response: Response): Response => {
             if (!response.ok) {
-                this.rejectBatch(currentBatch, new RequestError(
+                const err: RequestError = new RequestError(
                     response.statusText,
                     response.status,
                     null
-                ));
+                );
+
+                this.rejectBatch(currentBatch, err);
                 return null
             }
 
             return response
         }
 
-        const rpcResponse: Promise<Response> = this.fetchBatch(currentBatch)
+        const rpcResponseProm: Promise<Response> = this.fetchBatch(currentBatch)
             .then(handleRpcResponse)
             .catch(error => {
+                let errStr = `Failed to send batch call: ${error}`;
+
                 this.rejectBatch(
                     currentBatch,
-                    `Failed to send batch call: ${error}`
+                    errStr
                 );
 
-                return null
+                // console.error(errStr);
+
+                return null;
             })
 
         const loadJsonResponse = (resp: Response): Promise<any> => resp === null ? null : resp.json()
 
-        const jsonResponseProm: Promise<any> = rpcResponse
-            .then(loadJsonResponse).then(d => d)
+        let rpcResponse: Response;
+        try {
+            rpcResponse = await rpcResponseProm;
+            if (rpcResponse === null) {
+                return
+            }
+        } catch (e) {
+            // console.error(e);
+            return
+        }
+
+        const jsonResponseProm: Promise<any> = loadJsonResponse(rpcResponse)
+            .then(d => d)
             .catch(error => {
                 this.rejectBatch(
                     currentBatch,
@@ -191,11 +201,13 @@ export class MiniRpcProvider implements ExternalProvider {
                     } else if ("result" in result) {
                         resolve(result.result)
                     } else {
-                        reject(new RequestError(
+                        let err: RequestError = new RequestError(
                             `Received unexpected JSON-RPC response to ${method} request.`,
                             -32000,
                             result
-                        ))
+                        );
+
+                        reject(err);
                     }
                 }
             }
