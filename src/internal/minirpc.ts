@@ -1,6 +1,5 @@
-import fetch, {Response} from "node-fetch";
+import fetch, {Response} from "isomorphic-fetch";
 import type {ExternalProvider} from "@ethersproject/providers";
-import {rejectPromise} from "@common/utils";
 
 const JSONRPC_VERSION: string = "2.0";
 

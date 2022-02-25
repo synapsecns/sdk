@@ -6,7 +6,9 @@
     "baseUrl": ".",
     "paths": {
       "@sdk":         ["./src/index"],
-      "@abis":        ["./src/abis/index"],
+      "@sdk/*":       ["./src/*"],
+      "@abis":        ["./src/abis"],
+      "@abis/*":      ["./src/abis/*"],
       "@bridge":      ["./src/bridge"],
       "@bridge/*":    ["./src/bridge/*"],
       "@common/*":    ["./src/common/*"],
@@ -43,7 +45,8 @@
     ]
   },
   "ts-node": {
-    "pretty": true,
+    "files": true,
+    "pretty": true
   },
   "include": [
     "src/**/*"
@@ -51,6 +54,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    "test"
+    "test",
+    "examples"
   ]
 }
