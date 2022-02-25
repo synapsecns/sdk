@@ -418,6 +418,7 @@ export namespace SwapPools {
         [ChainId.OPTIMISM]: makeTokenPoolsMap(
             null,
             OPTIMISM_ETH_SWAP_TOKEN.poolTokens,
+            GOHM_Pool,
         ),
         [ChainId.CRONOS]: makeTokenPoolsMap(
             [Tokens.NUSD], null,
@@ -450,6 +451,7 @@ export namespace SwapPools {
         [ChainId.BOBA]: makeTokenPoolsMap(
             BOBA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
             BOBA_ETH_SWAP_TOKEN.poolTokens,
+            GOHM_Pool,
         ),
         [ChainId.METIS]: makeTokenPoolsMap(
             [Tokens.NUSD], null,
@@ -462,6 +464,7 @@ export namespace SwapPools {
             SOLAR_Pool,
             WAVAX_Pool,
             WMOVR_Pool,
+            GOHM_Pool,
         ),
         [ChainId.MOONRIVER]: makeTokenPoolsMap(
             null,
@@ -490,6 +493,7 @@ export namespace SwapPools {
             HARMONY_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
             HARMONY_ONEETH_TOKEN.poolTokensForBridgeSwaps,
             FRAX_Pool,
+            GOHM_Pool,
         ),
     }
 
@@ -522,6 +526,7 @@ export namespace SwapPools {
             null,
             OPTIMISM_ETH_SWAP_TOKEN,
             SYN_Pool,
+            GOHM_Pool,
         ),
         [ChainId.CRONOS]: makeSwapTypeTokenPool(
             {poolTokens: [Tokens.NUSD], swapType: SwapType.USD},
@@ -559,6 +564,7 @@ export namespace SwapPools {
             BOBA_POOL_SWAP_TOKEN,
             BOBA_ETH_SWAP_TOKEN,
             SYN_Pool,
+            GOHM_Pool,
         ),
         [ChainId.METIS]: makeSwapTypeTokenPool(
             {poolTokens: [Tokens.NUSD], swapType: SwapType.USD},
@@ -608,6 +614,7 @@ export namespace SwapPools {
             HARMONY_ONEETH_TOKEN,
             SYN_Pool,
             FRAX_Pool,
+            GOHM_Pool,
         )
     }
 
