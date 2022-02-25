@@ -116,26 +116,26 @@ export namespace TokenSwap {
     export function bridgeSwapSupported(args: BridgeSwapSupportedParams): SwapSupportedResult {
         const {tokenFrom, tokenTo, chainIdFrom, chainIdTo} = args;
 
-        let
-            swapSupported: boolean = true,
-            reasonNotSupported: UnsupportedSwapErrors.UnsupportedSwapError;
+        // let
+        //     swapSupported: boolean = true,
+        //     reasonNotSupported: UnsupportedSwapErrors.UnsupportedSwapError;
 
-        const canSwap = checkCanSwap(tokenFrom, tokenTo, chainIdFrom, chainIdTo);
-        if (!canSwap.swapSupported) {
-            return canSwap
-        }
+        return checkCanSwap(tokenFrom, tokenTo, chainIdFrom, chainIdTo);
+        // if (!canSwap.swapSupported) {
+        //     return canSwap
+        // }
 
-        const checkBoba = (c: number, t: Token): boolean => c === ChainId.BOBA && t.swapType === SwapType.ETH;
-        const
-            isEthFromBoba = checkBoba(chainIdFrom, tokenFrom),
-            isEthToBoba   = checkBoba(chainIdTo,   tokenTo);
+        // const checkBoba = (c: number, t: Token): boolean => c === ChainId.BOBA && t.swapType === SwapType.ETH;
+        // const
+        //     isEthFromBoba = checkBoba(chainIdFrom, tokenFrom),
+        //     isEthToBoba   = checkBoba(chainIdTo,   tokenTo);
+        //
+        // if (isEthFromBoba || isEthToBoba) {
+        //     swapSupported = false;
+        //     reasonNotSupported = UnsupportedSwapErrors.ethOnBoba();
+        // }
 
-        if (isEthFromBoba || isEthToBoba) {
-            swapSupported = false;
-            reasonNotSupported = UnsupportedSwapErrors.ethOnBoba();
-        }
-
-        return {swapSupported, reasonNotSupported}
+        // return {swapSupported, reasonNotSupported}
     }
 
     export async function calculateSwapRate(args: SwapParams): Promise<EstimatedSwapRate> {
