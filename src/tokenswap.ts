@@ -24,7 +24,6 @@ export namespace UnsupportedSwapErrors {
         UnsupportedTokenNetFrom,
         UnsupportedTokenNetTo,
         NonmatchingSwapTypes,
-        BobaToL1,
         ETHOnBoba,
     }
 
@@ -33,37 +32,30 @@ export namespace UnsupportedSwapErrors {
         reason:    string,
     }
 
-    export type UnsupportedSwapErrorFunc = (t: _Token, netName: string) => UnsupportedSwapErrors.UnsupportedSwapError;
-
     export const tokenNotSupported = (t: _Token, netName: string): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedToken,
         reason:    `Token ${t.symbol} not supported on network ${netName}`,
-    })
+    });
 
     export const tokenNotSupportedNetFrom = (t: _Token, netName: string): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetFrom,
         reason:    `Token ${t.symbol} not supported on 'from' network ${netName}`,
-    })
+    });
 
     export const tokenNotSupportedNetTo = (t: _Token, netName: string): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetTo,
         reason:    `Token ${t.symbol} not supported on 'to' network ${netName}`,
-    })
+    });
 
-    export const nonMatchingSwapTypes = (st1: string, st2: string): UnsupportedSwapError => ({
+    export const nonMatchingSwapTypes = (): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.NonmatchingSwapTypes,
         reason:    "Token swap types don't match",
-    })
+    });
 
     export const ethOnBoba = (): UnsupportedSwapError => ({
         errorKind: UnsupportedSwapErrorKind.ETHOnBoba,
         reason:    "Currently, the SDK only supports bridging Stablecoins to and from BOBA",
-    })
-
-    export const bobaToL1 = (): UnsupportedSwapError => ({
-        errorKind: UnsupportedSwapErrorKind.BobaToL1,
-        reason:    "Bridging ETH from Boba Mainnet to L1 not currently supported",
-    })
+    });
 }
 
 export namespace TokenSwap {
@@ -194,7 +186,6 @@ export namespace TokenSwap {
                 overrides
             )
         }
-
     }
 
     export function intermediateTokens(chainId: number, token: Token): IntermediateSwapTokens {
@@ -326,24 +317,23 @@ export namespace TokenSwap {
 
         if (tokenFrom.swapType !== tokenTo.swapType) {
             swapSupported = false;
-            reasonNotSupported = UnsupportedSwapErrors.nonMatchingSwapTypes(tokenFrom.swapType, tokenTo.swapType);
+            reasonNotSupported = UnsupportedSwapErrors.nonMatchingSwapTypes();
         }
 
         return {swapSupported, reasonNotSupported}
     }
 
-    function checkTokensSupported(tokenFrom: Token, tokenTo: Token, chainIdFrom: number, chainIdTo?: number): SwapSupportedResult {
-        const unsupportedFunc = (
-            chainId: number,
-            notSupportedErr: UnsupportedSwapErrors.UnsupportedSwapErrorFunc
-        ): UnsupportedSwapErrors.UnsupportedSwapErrorFunc => (typeof chainId !== "undefined"
-            ? notSupportedErr
-            : UnsupportedSwapErrors.tokenNotSupported
-        );
+    function checkTokensSupported(
+        tokenFrom:   Token,
+        tokenTo:     Token,
+        chainIdFrom: number,
+        chainIdTo?:  number
+    ): SwapSupportedResult {
+        const isSameNet: boolean = typeof chainIdTo === "undefined";
 
         const
-            unsupportedFromErr = unsupportedFunc(chainIdFrom, UnsupportedSwapErrors.tokenNotSupportedNetFrom),
-            unsupportedToErr   = unsupportedFunc(chainIdTo,   UnsupportedSwapErrors.tokenNotSupportedNetTo);
+            unsupportedFromErr = isSameNet ? UnsupportedSwapErrors.tokenNotSupported : UnsupportedSwapErrors.tokenNotSupportedNetFrom,
+            unsupportedToErr   = isSameNet ? UnsupportedSwapErrors.tokenNotSupported : UnsupportedSwapErrors.tokenNotSupportedNetTo;
 
         const
             netFrom = Networks.fromChainId(chainIdFrom),
