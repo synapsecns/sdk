@@ -854,7 +854,20 @@ export namespace Bridge {
                         } else {
                             if (args.tokenFrom.swapType === SwapType.ETH) {
                                 return BridgeUtils.isETHLikeToken(args.tokenFrom)
-                                    ? easySwapAndRedeemAndSwap(Tokens.NETH)
+                                    ? zapBridge
+                                        .populateTransaction
+                                        .swapAndRedeemAndSwap(
+                                            ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.NETH),
+                                            tokenArgs.tokenIndexFrom,
+                                            0,
+                                            args.amountFrom,
+                                            minToSwapOriginHighSlippage,
+                                            transactionDeadline,
+                                            0,
+                                            tokenArgs.tokenIndexTo,
+                                            minToSwapDestFromOriginHighSlippage,
+                                            bridgeTransactionDeadline
+                                        )
                                     : zapBridge
                                         .populateTransaction
                                         .swapETHAndRedeemAndSwap(
