@@ -252,37 +252,6 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 })
             })
 
-            let approvalNeeded: boolean;
-
-            step("check if approval is needed", async function(this: Mocha.Context) {
-                if (tc.args.tokenFrom.isEqual(Tokens.ETH)) {
-                    approvalNeeded = false;
-                    return
-                }
-
-                const spender: string = contractAddressFor(tc.args.chainIdFrom, "bridge_zap");
-
-                const tokenParams: ERC20.ERC20TokenParams = {
-                    tokenAddress: tc.args.tokenFrom.address(tc.args.chainIdFrom),
-                    chainId:      tc.args.chainIdFrom,
-                };
-
-                let allowanceProm = ERC20.allowanceOf(
-                    bridgeInteractionsPrivkey.address,
-                    spender,
-                    tokenParams
-                );
-
-                try {
-                    const allowance = await allowanceProm;
-                    approvalNeeded = allowance.lt(tc.args.amountFrom);
-
-                    return (await expectFulfilled(allowanceProm));
-                } catch (e) {
-                    return (await expectFulfilled(allowanceProm));
-                }
-            })
-
             describe("test using transaction builders", function(this: Mocha.Suite) {
                 let
                     approvalTxn:     PopulatedTransaction,
@@ -313,20 +282,16 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                     })
 
                 if (tc.args.execute) {
-                    // console.log(`approvalTxn: maxFeePerGas: ${approvalTxn.maxFeePerGas}, maxPriorityFee: ${approvalTxn.maxPriorityFeePerGas}`);
-                    // console.log(`bridgeTxn: maxFeePerGas: ${bridgeTxn.maxFeePerGas}, maxPriorityFee: ${bridgeTxn.maxPriorityFeePerGas}`);
-                    if (approvalNeeded) {
-                        step(
-                            approvalTxnTestTitle,
-                            async function(this: Mocha.Context) {
-                                return await executeTxnFunc(
-                                    tc,
-                                    wallet.sendTransaction(approvalTxn),
-                                    true
-                                )(this)
-                            }
-                        );
-                    }
+                    step(
+                        approvalTxnTestTitle,
+                        async function(this: Mocha.Context) {
+                            return await executeTxnFunc(
+                                tc,
+                                wallet.sendTransaction(approvalTxn),
+                                true
+                            )(this)
+                        }
+                    );
 
                     step(
                         bridgeTxnTestTitle,
@@ -341,18 +306,16 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
 
             if (tc.args.execute) {
                 describe("Test Magic Executors", function(this: Mocha.Suite) {
-                    if (approvalNeeded) {
-                        step(
-                            approvalTxnTestTitle,
-                            async function(this: Mocha.Context) {
-                                return await executeTxnFunc(
-                                    tc,
-                                    bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet),
-                                    true
-                                )(this)
-                            }
-                        );
-                    }
+                    step(
+                        approvalTxnTestTitle,
+                        async function(this: Mocha.Context) {
+                            return await executeTxnFunc(
+                                tc,
+                                bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet),
+                                true
+                            )(this)
+                        }
+                    );
 
                     step(
                         bridgeTxnTestTitle,
