@@ -142,6 +142,7 @@ describe("TokenSwap tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.ETH,       token: Tokens.USDT},
                     {chainId: ChainId.ETH,       token: Tokens.BUSD},
                     {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
+                    {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
                 ],
             },
             {
@@ -150,6 +151,7 @@ describe("TokenSwap tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.BSC,       token: Tokens.USDC},
                     {chainId: ChainId.AVALANCHE, token: Tokens.GOHM},
                     {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
+                    {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
                 ],
             },
             {
@@ -158,6 +160,7 @@ describe("TokenSwap tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.AVALANCHE, token: Tokens.FTM_ETH},
                     {chainId: ChainId.BSC,       token: Tokens.MIM},
                     {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
+                    {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
                 ],
             }
         ];
