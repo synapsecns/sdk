@@ -10,7 +10,9 @@ import {
     Networks,
 } from "@sdk";
 
-import {rejectPromise} from "@common/utils";
+import {contractAddressFor, rejectPromise} from "@common/utils";
+
+import {ERC20} from "@bridge/erc20";
 
 import {
     DEFAULT_TEST_TIMEOUT,
@@ -78,9 +80,9 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
     const testCases: TestCase[] = [
         {
             args: {
-                tokenFrom:   Tokens.ETH,
+                tokenFrom:   Tokens.ONE_ETH,
                 tokenTo:     Tokens.WETH_E,
-                chainIdFrom: ChainId.ARBITRUM,
+                chainIdFrom: ChainId.HARMONY,
                 chainIdTo:   ChainId.AVALANCHE,
                 amountFrom:  parseEther("420.696969"),
                 execute:     true,
@@ -96,7 +98,21 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 tokenTo:     Tokens.WETH_E,
                 chainIdFrom: ChainId.ARBITRUM,
                 chainIdTo:   ChainId.AVALANCHE,
-                amountFrom:  parseEther("0.0022"),
+                amountFrom:  parseEther("0.006"),
+                execute:     false,
+            },
+            expected: {
+                executeSuccess: true,
+                canBridge:      true,
+            }
+        },
+        {
+            args: {
+                tokenFrom:   Tokens.WETH_E,
+                tokenTo:     Tokens.ETH,
+                chainIdFrom: ChainId.AVALANCHE,
+                chainIdTo:   ChainId.ARBITRUM,
+                amountFrom:  parseEther("0.0051"),
                 execute:     false,
             },
             expected: {
@@ -120,9 +136,9 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
         },
         {
             args: {
-                tokenFrom:   Tokens.BUSD,
+                tokenFrom:   Tokens.NUSD,
                 tokenTo:     Tokens.MIM,
-                chainIdFrom: ChainId.BSC,
+                chainIdFrom: ChainId.HARMONY,
                 chainIdTo:   ChainId.FANTOM,
                 amountFrom:  parseEther("666"),
                 execute:     true,
@@ -236,6 +252,37 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 })
             })
 
+            let approvalNeeded: boolean;
+
+            step("check if approval is needed", async function(this: Mocha.Context) {
+                if (tc.args.tokenFrom.isEqual(Tokens.ETH)) {
+                    approvalNeeded = false;
+                    return
+                }
+
+                const spender: string = contractAddressFor(tc.args.chainIdFrom, "bridge_zap");
+
+                const tokenParams: ERC20.ERC20TokenParams = {
+                    tokenAddress: tc.args.tokenFrom.address(tc.args.chainIdFrom),
+                    chainId:      tc.args.chainIdFrom,
+                };
+
+                let allowanceProm = ERC20.allowanceOf(
+                    bridgeInteractionsPrivkey.address,
+                    spender,
+                    tokenParams
+                );
+
+                try {
+                    const allowance = await allowanceProm;
+                    approvalNeeded = allowance.lt(tc.args.amountFrom);
+
+                    return (await expectFulfilled(allowanceProm));
+                } catch (e) {
+                    return (await expectFulfilled(allowanceProm));
+                }
+            })
+
             describe("test using transaction builders", function(this: Mocha.Suite) {
                 let
                     approvalTxn:     PopulatedTransaction,
@@ -266,15 +313,20 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                     })
 
                 if (tc.args.execute) {
-                    step(
-                        approvalTxnTestTitle,
-                        async function(this: Mocha.Context) {
-                            return await executeTxnFunc(
-                                tc,
-                                wallet.sendTransaction(approvalTxn),
-                                true
-                            )(this)
-                        });
+                    // console.log(`approvalTxn: maxFeePerGas: ${approvalTxn.maxFeePerGas}, maxPriorityFee: ${approvalTxn.maxPriorityFeePerGas}`);
+                    // console.log(`bridgeTxn: maxFeePerGas: ${bridgeTxn.maxFeePerGas}, maxPriorityFee: ${bridgeTxn.maxPriorityFeePerGas}`);
+                    if (approvalNeeded) {
+                        step(
+                            approvalTxnTestTitle,
+                            async function(this: Mocha.Context) {
+                                return await executeTxnFunc(
+                                    tc,
+                                    wallet.sendTransaction(approvalTxn),
+                                    true
+                                )(this)
+                            }
+                        );
+                    }
 
                     step(
                         bridgeTxnTestTitle,
@@ -289,16 +341,18 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
 
             if (tc.args.execute) {
                 describe("Test Magic Executors", function(this: Mocha.Suite) {
-                    step(
-                        approvalTxnTestTitle,
-                        async function(this: Mocha.Context) {
-                            return await executeTxnFunc(
-                                tc,
-                                bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet),
-                                true
-                            )(this)
-                        }
-                    );
+                    if (approvalNeeded) {
+                        step(
+                            approvalTxnTestTitle,
+                            async function(this: Mocha.Context) {
+                                return await executeTxnFunc(
+                                    tc,
+                                    bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet),
+                                    true
+                                )(this)
+                            }
+                        );
+                    }
 
                     step(
                         bridgeTxnTestTitle,
