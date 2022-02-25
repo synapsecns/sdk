@@ -26,13 +26,11 @@ import {
     valueIfUndefined,
 } from "../helpers";
 
-import {makeBridgeSwapTestCase} from "./bridge_test_utils";
-
+import {makeBridgeSwapTestCase}  from "./bridge_test_utils";
 import type {BridgeSwapTestCase} from "./bridge_test_utils";
 
 import {formatUnits} from "@ethersproject/units";
 import {BigNumber}   from "@ethersproject/bignumber";
-import {Zero} from "@ethersproject/constants";
 
 
 describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
@@ -221,6 +219,8 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             makeTestCase(Tokens.NUSD,    Tokens.DAI,     ChainId.BSC,       ChainId.ETH,     "2500"),
             makeTestCase(Tokens.NUSD,    Tokens.USDC,    ChainId.ETH,       ChainId.BSC,     "2500"),
             makeTestCase(Tokens.NUSD,    Tokens.USDT,    ChainId.ETH,       ChainId.BSC,     "2500"),
+            makeTestCase(Tokens.NUSD,    Tokens.NUSD,    ChainId.BSC,       ChainId.POLYGON, "2500"),
+            makeTestCase(Tokens.NUSD,    Tokens.NUSD,    ChainId.POLYGON,   ChainId.BSC,     "2500"),
         ];
 
         function makeTestName(tc: TestCase): [string, string, string] {

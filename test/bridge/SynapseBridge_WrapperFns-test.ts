@@ -95,7 +95,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
     })
 
     describe(".getAllowanceForAddress", function(this: Mocha.Suite) {
-        interface testCase {
+        interface TestCase {
             provider:   Provider,
             chainId:    number,
             address:    string,
@@ -112,7 +112,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
             addr5: string = "0xDF681Fe10B2fb7B5605107098EA3867187851DCe",
             infiniteCheckAmt: BigNumber = MaxUint256.div(2);
 
-        const makeTestCase = (c: number, t: Token, a: string, n: BigNumberish): testCase => {
+        const makeTestCase = (c: number, t: Token, a: string, n: BigNumberish): TestCase => {
             return {
                 provider:   rpcProviderForNetwork(c),
                 chainId:    c,
@@ -122,7 +122,8 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 isInfinite: MaxUint256.eq(n),
             }
         }
-        function runTestCase(tc: testCase) {
+
+        function runTestCase(tc: TestCase) {
             const
                 {provider, chainId: network} = tc,
                 chainName: string = Networks.fromChainId(network).name,
@@ -179,7 +180,14 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                             rpcProviderForNetwork(ChainId.BSC)
                         );
 
-                        let txn: ContractTransaction = (await ERC20.approve({spender: bscZapAddr}, tokenParams, wallet)) as ContractTransaction;
+                        const approveArgs = {spender: bscZapAddr};
+
+                        let txn: ContractTransaction = (await ERC20.approve(
+                            approveArgs,
+                            tokenParams,
+                            wallet
+                        )) as ContractTransaction;
+
                         await txn.wait(1);
 
                         const newAllowance = await ERC20.allowanceOf(
