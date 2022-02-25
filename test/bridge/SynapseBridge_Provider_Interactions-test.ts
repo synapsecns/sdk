@@ -10,9 +10,7 @@ import {
     Networks,
 } from "@sdk";
 
-import {contractAddressFor, rejectPromise} from "@common/utils";
-
-import {ERC20} from "@bridge/erc20";
+import {rejectPromise} from "@common/utils";
 
 import {
     DEFAULT_TEST_TIMEOUT,
@@ -36,6 +34,7 @@ import type {
 
 import {Wallet}     from "@ethersproject/wallet";
 import {parseEther} from "@ethersproject/units";
+import {BigNumber} from "@ethersproject/bignumber";
 
 function executeTransaction(
     prom: Promise<TransactionResponse|ContractTransaction>
@@ -77,14 +76,30 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
 
     type TestCase = BridgeSwapTestCase<TestOpts>;
 
+    const executeFailAmt: BigNumber = parseEther("420.696969");
+
     const testCases: TestCase[] = [
         {
             args: {
-                tokenFrom:   Tokens.ONE_ETH,
-                tokenTo:     Tokens.WETH_E,
-                chainIdFrom: ChainId.HARMONY,
-                chainIdTo:   ChainId.AVALANCHE,
-                amountFrom:  parseEther("420.696969"),
+                tokenFrom:   Tokens.ETH,
+                tokenTo:     Tokens.WETH,
+                chainIdFrom: ChainId.OPTIMISM,
+                chainIdTo:   ChainId.ETH,
+                amountFrom:  executeFailAmt,
+                execute:     true,
+            },
+            expected: {
+                executeSuccess: false,
+                canBridge:      false,
+            }
+        },
+        {
+            args: {
+                tokenFrom:   Tokens.ETH,
+                tokenTo:     Tokens.WETH,
+                chainIdFrom: ChainId.BOBA,
+                chainIdTo:   ChainId.ETH,
+                amountFrom:  executeFailAmt,
                 execute:     true,
             },
             expected: {
@@ -126,7 +141,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 tokenTo:     Tokens.NETH,
                 chainIdFrom: ChainId.ETH,
                 chainIdTo:   ChainId.OPTIMISM,
-                amountFrom:  parseEther("420.696969"),
+                amountFrom:  executeFailAmt,
                 execute:     true,
             },
             expected: {
@@ -138,7 +153,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
             args: {
                 tokenFrom:   Tokens.NUSD,
                 tokenTo:     Tokens.MIM,
-                chainIdFrom: ChainId.HARMONY,
+                chainIdFrom: ChainId.POLYGON,
                 chainIdTo:   ChainId.FANTOM,
                 amountFrom:  parseEther("666"),
                 execute:     true,
