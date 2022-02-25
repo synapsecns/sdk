@@ -53,6 +53,7 @@ describe("TokenSwap tests", function(this: Mocha.Suite) {
             makeTestCase(ChainId.AVALANCHE,  Tokens.MIM,        Tokens.USDT, null, true),
             makeTestCase(ChainId.BSC,        Tokens.BUSD,       Tokens.USDT),
             makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.BUSD),
+            makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.DAI,  undefined,true),
         ]
 
         for (const tc of testCases) {
