@@ -574,7 +574,7 @@ export namespace Bridge {
                         .populateTransaction
                         .depositETH(
                             ...BridgeUtils.depositETHParams(castArgs),
-                            {value: args.amountFrom}
+                            BridgeUtils.makeOverrides(args.amountFrom, true)
                         );
                     break;
             }
@@ -647,7 +647,7 @@ export namespace Bridge {
                         tokenArgs.tokenIndexTo,
                         minToSwapDestFromOrigin, // minDy
                         bridgeTransactionDeadline,
-                        {value: amountFrom}
+                        BridgeUtils.makeOverrides(amountFrom, true)
                     )
                 } else if (args.tokenFrom.isEqual(Tokens.NUSD)) {
                     return zapBridge.populateTransaction.depositAndSwap(
@@ -741,7 +741,7 @@ export namespace Bridge {
                         transactionDeadline,
                     )
 
-            const easySwapAndRedeemAndSwap = (baseToken: BaseToken, withValueOverride: boolean): Promise<PopulatedTransaction> =>
+            const easySwapAndRedeemAndSwap = (baseToken: BaseToken): Promise<PopulatedTransaction> =>
                 zapBridge
                     .populateTransaction
                     .swapAndRedeemAndSwap(
@@ -755,7 +755,7 @@ export namespace Bridge {
                         tokenArgs.tokenIndexTo,
                         minToSwapDestFromOriginHighSlippage, // swapMinAmount
                         bridgeTransactionDeadline, // toSwapDeadline, // swapDeadline
-                        BridgeUtils.makeOverrides(amountFrom, withValueOverride),
+                        BridgeUtils.makeOverrides(amountFrom, false)
                     )
 
             switch (tokenSwitch(args.tokenTo)) {
@@ -818,7 +818,7 @@ export namespace Bridge {
                                         amountFrom,
                                         minToSwapOriginHighSlippage, // minToSwapOrigin, // minToSwapOriginHighSlippage,
                                         transactionDeadline,
-                                        {value: amountFrom}
+                                        BridgeUtils.makeOverrides(amountFrom, true)
                                     )
                             }
                         } else if (args.tokenFrom.isEqual(Tokens.NUSD)) {
@@ -854,7 +854,7 @@ export namespace Bridge {
                         } else {
                             if (args.tokenFrom.swapType === SwapType.ETH) {
                                 return BridgeUtils.isETHLikeToken(args.tokenFrom)
-                                    ? easySwapAndRedeemAndSwap(Tokens.NETH, false)
+                                    ? easySwapAndRedeemAndSwap(Tokens.NETH)
                                     : zapBridge
                                         .populateTransaction
                                         .swapETHAndRedeemAndSwap(
@@ -868,10 +868,10 @@ export namespace Bridge {
                                             tokenArgs.tokenIndexTo,
                                             minToSwapDestFromOriginHighSlippage,
                                             bridgeTransactionDeadline,
-                                            {value: amountFrom}
+                                            BridgeUtils.makeOverrides(amountFrom, true)
                                         )
                             } else {
-                                return easySwapAndRedeemAndSwap(Tokens.NUSD, false)
+                                return easySwapAndRedeemAndSwap(Tokens.NUSD)
                             }
                         }
                     }

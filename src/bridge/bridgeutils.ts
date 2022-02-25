@@ -139,9 +139,9 @@ export namespace BridgeUtils {
         [args.addressTo, args.chainIdTo, t.address(chainId), args.amountFrom]
 
     export const makeEasySubParams = (
-        args: BridgeTxParams,
+        args:    BridgeTxParams,
         chainId: number,
-        t: Token
+        t:       Token
     ): [string, number, string] => {
         let x = makeEasyParams(args, chainId, t);
         return [x[0], x[1], x[2]]
