@@ -1,5 +1,6 @@
 import "../helpers/chaisetup";
 
+
 import {
     ChainId,
     Networks,
@@ -7,20 +8,65 @@ import {
     Tokens,
 } from "@sdk";
 
-import type {ID} from "@internal/entity";
-import {SwapType} from "@internal/swaptype";
-
+import type {Token}     from "@sdk";
 import type {StringMap} from "@common/types";
+
+import {SwapType} from "@internal/swaptype";
 
 import {
     expectNull,
     expectEqual,
     expectUndefined,
     expectIncludes,
-    expectProperty,
+    expectProperty, wrapExpect,
 } from "../helpers";
 
 describe("SwapPools Tests", function(this: Mocha.Suite) {
+    describe("Pool tokens tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            chainId:   number,
+            swapToken: SwapPools.SwapPoolToken,
+            tokens:    {token: Token, want: boolean}[]
+        }
+
+        const makeWantString = (tc: {want: boolean}, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
+
+        const testCases: TestCase[] = [
+            {
+                chainId:       ChainId.BSC,
+                swapToken:     SwapPools.BSC_POOL_SWAP_TOKEN,
+                tokens: [
+                    {token: Tokens.NUSD, want: true},
+                    {token: Tokens.BUSD, want: true},
+                    {token: Tokens.USDC, want: true},
+                    {token: Tokens.USDT, want: true},
+                    {token: Tokens.DAI,  want: false},
+                    {token: Tokens.FRAX, want: false},
+                ],
+            }
+        ];
+
+        for (const tc of testCases) {
+            const
+                describeTitle: string = `test ${Networks.networkName(tc.chainId)} ${tc.swapToken.name.trimEnd()} pool tokens`,
+                poolSymbols: string[] = tc.swapToken.poolTokens.map((t: Token) => t.symbol);
+
+            describe(describeTitle, function(this: Mocha.Suite) {
+                for (const tok of tc.tokens) {
+                    const
+                        wantTok: boolean  = tok.want,
+                        tokSymbol: string = tok.token.symbol,
+                        testTitle: string = `pool symbols ${makeWantString(tok)} symbol ${tokSymbol}`;
+
+                    it(
+                        testTitle,
+                        wrapExpect(expectIncludes(poolSymbols, tokSymbol, wantTok))
+                    )
+                }
+            })
+        }
+    })
+
     describe("Test SwapPool getters for network", function(this: Mocha.Suite) {
         interface TestCase {
             chainId:            number,

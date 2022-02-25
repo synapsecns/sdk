@@ -181,50 +181,5 @@ describe("Basic tests", function(this: Mocha.Suite) {
 })
 
 describe("SwapPools", function(this: Mocha.Suite) {
-    describe("Pool tokens", function(this: Mocha.Suite) {
-        interface testCaseToken {
-            token: Token,
-            want:  boolean,
-        }
-        interface testCase {
-            chainId:   number,
-            swapToken: SwapPools.SwapPoolToken,
-            tokens:    testCaseToken[]
-        }
 
-        const testCases: testCase[] = [
-            {
-                chainId:       ChainId.BSC,
-                swapToken:     SwapPools.BSC_POOL_SWAP_TOKEN,
-                tokens: [
-                    {token: Tokens.NUSD, want: true},
-                    {token: Tokens.BUSD, want: true},
-                    {token: Tokens.USDC, want: true},
-                    {token: Tokens.USDT, want: true},
-                    {token: Tokens.DAI,  want: false},
-                    {token: Tokens.FRAX, want: false},
-                ],
-            }
-        ];
-
-        for (const tc of testCases) {
-            const
-                describeTitle: string = `test ${Networks.networkName(tc.chainId)} ${tc.swapToken.name.trimEnd()} pool tokens`,
-                poolSymbols: string[] = tc.swapToken.poolTokens.map((t: Token) => t.symbol);
-
-            describe(describeTitle, function(this: Mocha.Suite) {
-                for (const tok of tc.tokens) {
-                    const
-                        wantTok: boolean  = tok.want,
-                        tokSymbol: string = tok.token.symbol,
-                        testTitle: string = `pool symbols ${makeWantString(tok)} symbol ${tokSymbol}`;
-
-                    it(
-                        testTitle,
-                        wrapExpect(expectIncludes(poolSymbols, tokSymbol, wantTok))
-                    )
-                }
-            })
-        }
-    })
 })
