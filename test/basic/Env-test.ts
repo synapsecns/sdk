@@ -1,4 +1,4 @@
-import "@init";
+import "../helpers/chaisetup";
 import path from "path";
 
 import dotenv from "dotenv";
@@ -7,9 +7,9 @@ import * as fs from "fs";
 import {
     wrapExpect,
     expectEqual,
-} from "@helpers";
+} from "../helpers";
 
-import {ChainId} from "@sdk";
+import {ChainId} from "@chainid";
 
 
 const

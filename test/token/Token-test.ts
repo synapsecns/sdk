@@ -1,15 +1,8 @@
-import "@init";
-
-import type {Token}       from "@sdk";
+import type {Token} from "@sdk";
 import {ChainId, Tokens,} from "@sdk";
 
 import {BigNumber} from "@ethersproject/bignumber";
-import {
-    expectBnEqual,
-    expectBoolean,
-    expectNull,
-    wrapExpect
-} from "@helpers";
+import {expectBnEqual, expectBoolean, expectNull, wrapExpect} from "../helpers";
 
 describe("Token Tests", function(this: Mocha.Suite) {
     describe("valueToWei tests", function(this: Mocha.Suite) {

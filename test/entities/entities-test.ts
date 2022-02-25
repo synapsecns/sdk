@@ -1,15 +1,15 @@
-import "@init";
+import "../helpers/chaisetup";
 
 import {
     wrapExpect,
     expectNull
-} from "@helpers";
+} from "../helpers";
 
 
-import {SynapseContracts}      from "@sdk/common/synapse_contracts";
-import {rpcProviderForNetwork} from "@sdk/internal/rpcproviders";
+import {SynapseContracts}      from "@common/synapse_contracts";
+import {rpcProviderForNetwork} from "@internal/rpcproviders";
 
-import type {SignerOrProvider} from "@sdk/common/types";
+import type {SignerOrProvider} from "@common/types";
 
 import {
     ChainId,

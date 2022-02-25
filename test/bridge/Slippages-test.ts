@@ -1,10 +1,10 @@
-import "@init";
+import "../helpers/chaisetup";
 
 import { expect } from "chai";
 
 import { Slippages } from "@sdk";
 
-import {expectEqual} from "@helpers";
+import {expectEqual} from "../helpers";
 
 import { BigNumber } from "@ethersproject/bignumber";
 

@@ -1,8 +1,8 @@
-import "@init";
+import "../helpers/chaisetup";
 
 import _ from "lodash";
 
-import type {Token} from "@sdk";
+import type {Token} from "@token";
 
 import {
     ChainId,
@@ -11,7 +11,7 @@ import {
     Bridge,
 } from "@sdk";
 
-import {tokenSwitch} from "@sdk/internal/utils";
+import {tokenSwitch} from "@internal/utils";
 
 import {
     DEFAULT_TEST_TIMEOUT,
@@ -24,7 +24,7 @@ import {
     expectZero,
     expectNotZero,
     valueIfUndefined, expectRejected,
-} from "@helpers";
+} from "../helpers";
 
 import {makeBridgeSwapTestCase}  from "./bridge_test_utils";
 import type {BridgeSwapTestCase} from "./bridge_test_utils";
