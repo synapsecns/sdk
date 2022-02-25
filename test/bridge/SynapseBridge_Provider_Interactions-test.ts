@@ -1,4 +1,4 @@
-import "../helpers/chaisetup";
+import "../test_setup";
 
 import {expect} from "chai";
 import {step} from "mocha-steps";
@@ -34,7 +34,7 @@ import type {
 
 import {Wallet}     from "@ethersproject/wallet";
 import {parseEther} from "@ethersproject/units";
-import {BigNumber} from "@ethersproject/bignumber";
+import {BigNumber}  from "@ethersproject/bignumber";
 
 function executeTransaction(
     prom: Promise<TransactionResponse|ContractTransaction>

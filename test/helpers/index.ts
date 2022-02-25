@@ -1,15 +1,16 @@
-import "./chaisetup";
+import "../test_setup";
 
 import {expect} from "chai";
 
 import _ from "lodash";
-import {Zero} from "@ethersproject/constants";
-import {Wallet} from "@ethersproject/wallet";
-import {BigNumber} from "@ethersproject/bignumber";
+
+import {Zero}              from "@ethersproject/constants";
+import {Wallet}            from "@ethersproject/wallet";
+import {BigNumber}         from "@ethersproject/bignumber";
 import type {BigNumberish} from "@ethersproject/bignumber";
 
 
-import type {Token} from "@token";
+import type {Token} from "@sdk";
 import {rpcProviderForNetwork} from "@internal/rpcproviders";
 
 const TEN_BN: BigNumber = BigNumber.from(10);

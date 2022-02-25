@@ -1,6 +1,8 @@
-import "../helpers/chaisetup";
+import "../test_setup";
 
 import {expect} from "chai";
+
+import type {Token} from "@sdk";
 
 import {
     allNetworksSwapTokensMap,
@@ -9,8 +11,6 @@ import {
     NetworkSwappableTokensMap,
     networkSwapTokensMap,
     supportedChainIds,
-    SwapPools,
-    Token,
     Tokens
 } from "@sdk";
 

@@ -1,4 +1,4 @@
-import "../helpers/chaisetup";
+import "../test_setup";
 
 import {
     wrapExpect,

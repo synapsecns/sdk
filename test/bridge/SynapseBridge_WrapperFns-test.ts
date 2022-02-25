@@ -1,10 +1,10 @@
-import "../helpers/chaisetup";
+import "../test_setup";
 
 import dotenv from "dotenv";
 import {expect} from "chai";
 import {step} from "mocha-steps";
 
-import type {Token} from "@token";
+import type {Token} from "@sdk";
 
 import {
     Tokens,

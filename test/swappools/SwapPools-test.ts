@@ -1,4 +1,4 @@
-import "../helpers/chaisetup";
+import "../test_setup";
 
 
 import {
@@ -18,7 +18,8 @@ import {
     expectEqual,
     expectUndefined,
     expectIncludes,
-    expectProperty, wrapExpect,
+    expectProperty,
+    wrapExpect,
 } from "../helpers";
 
 describe("SwapPools Tests", function(this: Mocha.Suite) {

@@ -1,8 +1,8 @@
-import "../helpers/chaisetup";
+import "../test_setup";
 
 import _ from "lodash";
 
-import type {Token} from "@token";
+import type {Token} from "@sdk";
 
 import {
     ChainId,
