@@ -8,6 +8,7 @@ import type {PopulatedTransaction} from "@ethersproject/contracts";
 
 export namespace GasUtils {
     export interface GasParams {
+        maxFeePerGas?:    BigNumber,
         maxPriorityFee?:  BigNumber,
         gasPrice?:        BigNumber,
         bridgeGasLimit?:  BigNumber,
@@ -26,11 +27,12 @@ export namespace GasUtils {
             approveGasLimit: BigNumber.from(60000),
         },
         [ChainId.ARBITRUM]: {
-            gasPrice:       makeGwei("2.5"),
+            gasPrice:       makeGwei("1.5"),
             bridgeGasLimit: BigNumber.from(1500000),
         },
         [ChainId.AVALANCHE]: {
-            gasPrice:        makeGwei("150"),
+            maxFeePerGas:    makeGwei("80"),
+            maxPriorityFee:  makeGwei("3"),
             bridgeGasLimit:  BigNumber.from(800000),
             approveGasLimit: BigNumber.from(75000),
         },
@@ -48,10 +50,23 @@ export namespace GasUtils {
     ): Promise<PopulatedTransaction> =>
         Promise.resolve(txn)
             .then((tx: PopulatedTransaction): PopulatedTransaction => {
-                let {maxPriorityFee, gasPrice, approveGasLimit, bridgeGasLimit} = makeGasParams(chainId);
+                let {
+                    maxFeePerGas,
+                    maxPriorityFee,
+                    gasPrice,
+                    approveGasLimit,
+                    bridgeGasLimit
+                } = makeGasParams(chainId);
 
-                if (gasPrice)        tx.gasPrice             = gasPrice;
-                if (maxPriorityFee)  tx.maxPriorityFeePerGas = maxPriorityFee;
+                if (maxFeePerGas || gasPrice) {
+                    if (maxFeePerGas) {
+                        tx.maxFeePerGas = maxFeePerGas;
+                    } else if (gasPrice) {
+                        tx.gasPrice = gasPrice;
+                    }
+                }
+
+                if (maxPriorityFee) tx.maxPriorityFeePerGas = maxPriorityFee;
 
                 switch (gasLimitKind) {
                     case "bridge":
@@ -61,7 +76,6 @@ export namespace GasUtils {
                         if (approveGasLimit) tx.gasLimit = approveGasLimit;
                         break;
                 }
-
 
                 return tx
             })
