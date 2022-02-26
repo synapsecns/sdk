@@ -5,19 +5,32 @@ on:
     types:
       - opened
       - synchronize
-      - ready_for_review
-      - reopened
+    branches:
+      - master
+      - dev
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - '.nvmrc'
+      - '.gitignore'
+      - '.yarnclean'
+      - 'scripts/**'
+      - 'examples/**'
+      - 'tsconfig.build.json'
+
   push:
     branches:
       - master
       - dev
     paths-ignore:
-      - 'README.md'
-      - 'CONTRIBUTING.md'
+      - '**.md'
       - 'LICENSE'
+      - '.nvmrc'
       - '.gitignore'
+      - '.yarnclean'
       - 'scripts/**'
       - 'examples/**'
+      - 'tsconfig.build.json'
 
 jobs:
   test:
