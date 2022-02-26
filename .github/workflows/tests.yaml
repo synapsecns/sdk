@@ -33,19 +33,15 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install Node
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
 
-      - name: Yarn Install
-        run: yarn install
+      - run: yarn install
 
-      - name: Run Tests (Node v${{ matrix.node-version }}
+      - name: Run Tests (Node v${{ matrix.node-version }})
         run: yarn -s run test:coverage
         env:
           REPORTS_DIR: ${{ github.workspace }}/coverage
@@ -63,7 +59,7 @@ jobs:
         env:
           REPORTS_DIR: ${{ github.workspace }}/coverage
 
-      - name: Coveralls
+      - name: "Coveralls: process coverage report"
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -75,7 +71,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Finish processing parallel tests
+      - name: "Coveralls: process all coverage results"
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
