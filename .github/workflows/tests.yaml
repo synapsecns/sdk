@@ -45,7 +45,7 @@ jobs:
       - name: Yarn Install
         run: yarn install
 
-      - name: Run Tests
+      - name: Run Tests (Node v${{ matrix.node-version }}
         run: yarn -s run test:coverage
         env:
           REPORTS_DIR: ${{ github.workspace }}/coverage
@@ -58,7 +58,7 @@ jobs:
           BRIDGE_INTERACTIONS_PRIVKEY:         ${{ secrets.BRIDGE_INTERACTIONS_PRIVKEY }}
           BRIDGE_INTERACTIONS_PRIVKEY_ADDRESS: ${{ secrets.BRIDGE_INTERACTIONS_PRIVKEY_ADDRESS }}
 
-      - name: Coverage report
+      - name: Generate Coverage report
         run: yarn -s run coverage:report
         env:
           REPORTS_DIR: ${{ github.workspace }}/coverage
@@ -68,4 +68,15 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ${{ github.workspace }}/coverage/lcov.info
-          flag-name: node-v${{ matrix.node-version }}
+          flag-name:    node-v${{ matrix.node-version }}
+          parallel:     true
+
+  send-coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Finish processing parallel tests
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
