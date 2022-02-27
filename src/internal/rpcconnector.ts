@@ -40,8 +40,8 @@ class AbstractProviderConnector<T extends Provider> implements ProviderConnector
 }
 
 interface RpcConnectorArgs {
-    urls:             StringMap,
-    batchWaitTimeMs?: number,
+    urls:           StringMap,
+    batchInterval?: number,
 }
 
 export class JsonRpcConnector
@@ -61,7 +61,7 @@ export class Web3RpcConnector
     implements ProviderConnector<Web3Provider>
 {
     constructor(args: RpcConnectorArgs) {
-        const {batchWaitTimeMs=50} = args;
+        const {batchInterval=50} = args;
 
         const _invertedUrlsMap = Object.keys(args.urls).reduce((acc, chainId) => {
             const cid = Number(chainId);
@@ -71,7 +71,7 @@ export class Web3RpcConnector
         }, {});
 
         const _newProviderFn = (uri: string): Web3Provider => {
-            const provider = new MiniRpcProvider(_invertedUrlsMap[uri], uri, batchWaitTimeMs);
+            const provider = new MiniRpcProvider(_invertedUrlsMap[uri], uri, batchInterval);
             return new Web3Provider(provider)
         }
 

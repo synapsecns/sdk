@@ -21,12 +21,6 @@ import {
     wrapExpect
 } from "@tests/helpers";
 
-import {
-    jsonRpcProviderForNetwork,
-    web3ProviderForNetwork
-} from "@sdk/internal/rpcproviders";
-
-
 const makeWantString = (tc: {want: boolean}, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
 
 
@@ -48,20 +42,6 @@ describe("Basic tests", function(this: Mocha.Suite) {
             `supportedNetworks ${testSuffix}`,
             wrapExpect(expectLength(supportedNetworks, numChains))
         )
-    })
-
-    describe("Check rpc providers", function(this: Mocha.Suite) {
-        const testTitle: string = "should return the correct provider"
-
-        it(`jsonRpcProviderForNetwork ${testTitle}`, async function(this: Mocha.Context) {
-            const provider = jsonRpcProviderForNetwork(ChainId.BSC);
-            expect((await provider.getNetwork()).chainId).to.equal(ChainId.BSC);
-        })
-
-        it(`web3ProviderForNetwork ${testTitle}`, async function(this: Mocha.Context) {
-            const provider = web3ProviderForNetwork(ChainId.FANTOM);
-            expect((await provider.getNetwork()).chainId).to.equal(ChainId.FANTOM);
-        })
     })
 
     describe("Check swappableTokens", function(this: Mocha.Suite) {

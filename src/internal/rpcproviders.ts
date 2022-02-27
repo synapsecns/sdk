@@ -5,7 +5,7 @@ import type {Provider} from "@ethersproject/providers";
 import {ChainId, supportedChainIds} from "@chainid";
 import type {StringMap} from "@common/types";
 
-import {Web3RpcConnector, JsonRpcConnector} from "./rpcconnector";
+import {Web3RpcConnector} from "./rpcconnector";
 
 const ENV_KEY_MAP: StringMap = {
     [ChainId.ETH]:       "ETH_RPC_URI",
@@ -41,31 +41,20 @@ const CHAIN_RPC_URIS: StringMap = {
     [ChainId.HARMONY]:   "https://api.harmony.one/",
 }
 
-const RPC_BATCH_WAIT_TIME_MS = Number(process.env["RPC_BATCH_WAIT_TIME_MS"]) || 60;
+const CHAINID_URI_MAP: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, rpcUriForChainId(cid)]));
 
-const
-    LOADED_CHAIN_RPC_URIS: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, rpcUriForChainId(cid)])),
-    RPC_CONNECTOR_ARGS               = {urls: LOADED_CHAIN_RPC_URIS, batchWaitTimeMs: RPC_BATCH_WAIT_TIME_MS};
+const RPC_BATCH_INTERVAL = Number(process.env["RPC_BATCH_INTERVAL"]) || 60;
 
-const
-    JSONRPC_CONNECTOR:  JsonRpcConnector = new JsonRpcConnector(RPC_CONNECTOR_ARGS),
-    WEB3_RPC_CONNECTOR: Web3RpcConnector = new Web3RpcConnector(RPC_CONNECTOR_ARGS);
-
-const DEFAULT_RPC_CONNECTOR = WEB3_RPC_CONNECTOR;
+const RPC_CONNECTOR: Web3RpcConnector = new Web3RpcConnector({
+    urls:          CHAINID_URI_MAP,
+    batchInterval: RPC_BATCH_INTERVAL
+});
 
 /**
  * @param chainId chain id of the network for which to return a provider
  */
 export function rpcProviderForNetwork(chainId: number): Provider {
-    return DEFAULT_RPC_CONNECTOR.provider(chainId)
-}
-
-export function jsonRpcProviderForNetwork(chainId: number): Provider {
-    return JSONRPC_CONNECTOR.provider(chainId)
-}
-
-export function web3ProviderForNetwork(chainId: number): Provider {
-    return WEB3_RPC_CONNECTOR.provider(chainId)
+    return RPC_CONNECTOR.provider(chainId)
 }
 
 export function rpcUriForChainId(chainId: number): string {
@@ -80,6 +69,4 @@ export function rpcUriForChainId(chainId: number): string {
  * Used solely for tests, initRpcConnectors() basically just makes sure on-import initialization
  * of Rpc connections occurs before tests run.
  */
-export function initRpcConnectors() {
-    //
-}
+export function initRpcConnectors() {}
