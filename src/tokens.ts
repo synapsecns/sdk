@@ -10,14 +10,6 @@ import {ChainId} from "@chainid";
 import {SwapType} from "@internal/swaptype";
 
 export namespace Tokens {
-    const KEEP_THIS_HERE = new BaseToken({
-        name:      "",
-        symbol:    "",
-        decimals:  18,
-        addresses: {},
-        swapType:  SwapType.USD,
-    });
-
     // Stablecoins
 
     /**
