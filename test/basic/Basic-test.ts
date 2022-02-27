@@ -1,4 +1,4 @@
-import "../test_setup";
+import "@tests/setup";
 
 import {expect} from "chai";
 
@@ -19,19 +19,15 @@ import {
     expectIncludes,
     expectLength,
     wrapExpect
-} from "../helpers";
+} from "@tests/helpers";
 
 import {
     jsonRpcProviderForNetwork,
     web3ProviderForNetwork
 } from "@sdk/internal/rpcproviders";
 
-interface _tc {
-    want: boolean,
-}
 
-const makeWantString = (tc: _tc, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
-
+const makeWantString = (tc: {want: boolean}, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
 
 
 describe("Basic tests", function(this: Mocha.Suite) {

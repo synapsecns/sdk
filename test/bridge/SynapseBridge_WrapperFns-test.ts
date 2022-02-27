@@ -1,4 +1,4 @@
-import "../test_setup";
+import "@tests/setup";
 
 import dotenv from "dotenv";
 
@@ -27,7 +27,7 @@ import {
     expectFulfilled,
     getActualWei,
     wrapExpectAsync
-} from "../helpers";
+} from "@tests/helpers";
 
 import {infiniteApprovalsPrivkey} from "./bridge_test_utils";
 

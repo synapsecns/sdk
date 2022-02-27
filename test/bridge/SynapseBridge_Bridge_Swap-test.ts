@@ -1,4 +1,4 @@
-import "../test_setup";
+import "@tests/setup";
 
 import _ from "lodash";
 
@@ -24,7 +24,7 @@ import {
     expectZero,
     expectNotZero,
     valueIfUndefined, expectRejected,
-} from "../helpers";
+} from "@tests/helpers";
 
 import {makeBridgeSwapTestCase}  from "./bridge_test_utils";
 import type {BridgeSwapTestCase} from "./bridge_test_utils";

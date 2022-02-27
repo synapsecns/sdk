@@ -1,4 +1,4 @@
-import "../test_setup";
+import "@tests/setup";
 
 import {
     Tokens,
@@ -18,7 +18,7 @@ import {
     expectGteZero,
     expectNotZero,
     expectNull,
-} from "../helpers";
+} from "@tests/helpers";
 
 import type {BigNumberish}         from "@ethersproject/bignumber";
 import type {PopulatedTransaction} from "@ethersproject/contracts";

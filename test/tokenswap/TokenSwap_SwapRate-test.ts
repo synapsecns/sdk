@@ -1,4 +1,4 @@
-import "../test_setup";
+import "@tests/setup";
 
 import {step} from "mocha-steps";
 
@@ -17,7 +17,7 @@ import {
     expectProperty,
     expectRejected,
     getTestAmount,
-} from "../helpers";
+} from "@tests/helpers";
 
 import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";

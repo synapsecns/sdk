@@ -1,9 +1,9 @@
-import "../test_setup";
+import "@tests/setup";
 
 import {
     wrapExpect,
     expectNull
-} from "../helpers";
+} from "@tests/helpers";
 
 import {
     ChainId,

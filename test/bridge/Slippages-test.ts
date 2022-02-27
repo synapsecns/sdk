@@ -1,10 +1,10 @@
-import "../test_setup";
+import "@tests/setup";
 
 import {expect} from "chai";
 
 import {Slippages} from "@sdk";
 
-import {expectEqual} from "../helpers";
+import {expectEqual} from "@tests/helpers";
 
 import {BigNumber} from "@ethersproject/bignumber";
 

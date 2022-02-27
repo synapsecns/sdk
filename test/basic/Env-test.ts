@@ -1,16 +1,13 @@
-import "../test_setup";
+import "@tests/setup";
 
 import path from "path";
 
 import dotenv from "dotenv";
 import * as fs from "fs";
 
-import {
-    expectEqual,
-} from "../helpers";
+import {expectEqual} from "@tests/helpers";
 
 import {ChainId} from "@sdk";
-
 
 const
     BASE_ENV_PATH: string = path.resolve(path.join("./", ".env")),

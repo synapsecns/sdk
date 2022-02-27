@@ -1,4 +1,4 @@
-import "../test_setup";
+import "@tests/setup";
 
 import type {Token}      from "@sdk";
 import {ChainId, Tokens} from "@sdk";
@@ -8,7 +8,7 @@ import {
     expectBoolean,
     expectNull,
     wrapExpect,
-} from "../helpers";
+} from "@tests/helpers";
 
 import {BigNumber} from "@ethersproject/bignumber";
 

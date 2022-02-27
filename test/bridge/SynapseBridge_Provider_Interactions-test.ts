@@ -1,4 +1,4 @@
-import "../test_setup";
+import "@tests/setup";
 
 import {expect} from "chai";
 import {step} from "mocha-steps";
@@ -20,7 +20,7 @@ import {
     expectRejected,
     expectFulfilled,
     makeWalletSignerWithProvider,
-} from "../helpers";
+} from "@tests/helpers";
 
 import {bridgeInteractionsPrivkey} from "./bridge_test_utils";
 import type {BridgeSwapTestCase}   from "./bridge_test_utils";

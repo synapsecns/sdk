@@ -1,4 +1,4 @@
-import "../test_setup";
+import "@tests/setup";
 
 import {
     ChainId,
@@ -16,7 +16,7 @@ import {
     expectLength,
     expectUndefined,
     expectBoolean,
-} from "../helpers";
+} from "@tests/helpers";
 
 
 describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {

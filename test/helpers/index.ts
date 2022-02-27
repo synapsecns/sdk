@@ -1,4 +1,4 @@
-import "../test_setup";
+import "@tests/setup";
 
 import {expect} from "chai";
 
