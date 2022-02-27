@@ -1,12 +1,10 @@
 import type {
-    SynapseBridge as SynapseBridgeContract,
-    L1BridgeZap as L1BridgeZapContract,
-    L2BridgeZap as L2BridgeZapContract,
-    SynapseERC20 as SynapseERC20Contract,
-    SwapFlashLoan as SwapContract,
-    BridgeConfig as BridgeConfigContract,
+    SynapseBridge  as SynapseBridgeContract,
+    L1BridgeZap    as L1BridgeZapContract,
+    L2BridgeZap    as L2BridgeZapContract,
+    SynapseERC20   as SynapseERC20Contract,
+    SwapFlashLoan  as SwapContract,
     BridgeConfigV3 as BridgeConfigV3Contract,
-    PoolConfig as PoolConfigContract,
     ERC20 as ERC20Contract
 } from "@internal/gen/index";
 
@@ -18,9 +16,7 @@ export type {
     L2BridgeZapContract,
     SynapseERC20Contract,
     SwapContract,
-    BridgeConfigContract,
     BridgeConfigV3Contract,
-    PoolConfigContract,
     GenericZapBridgeContract,
     ERC20Contract
 }
@@ -31,8 +27,6 @@ export {
     L2BridgeZap__factory as L2BridgeZapFactory,
     SynapseERC20__factory as SynapseERC20Factory,
     SwapFlashLoan__factory as SwapFactory,
-    BridgeConfig__factory as BridgeConfigFactory,
     BridgeConfigV3__factory as BridgeConfigV3Factory,
-    PoolConfig__factory as PoolConfigFactory,
     ERC20__factory as ERC20Factory
 } from "@internal/gen/index";

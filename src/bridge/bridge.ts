@@ -17,6 +17,7 @@ import type {
     GenericZapBridgeContract,
     L1BridgeZapContract,
     SynapseBridgeContract,
+    BridgeConfigV3Contract
 } from "@contracts";
 
 import {Tokens}          from "@tokens";
@@ -122,8 +123,9 @@ export namespace Bridge {
 
         private readonly zapBridgeAddress: string;
 
-        private readonly bridgeConfigInstance = SynapseEntities.bridgeConfigV3();
-        private readonly zapBridgeInstance = SynapseEntities.l1BridgeZap({
+        private readonly bridgeConfigInstance: BridgeConfigV3Contract = SynapseEntities.bridgeConfigV3();
+
+        private readonly zapBridgeInstance: L1BridgeZapContract = SynapseEntities.l1BridgeZap({
             chainId: ChainId.ETH,
             signerOrProvider: rpcProviderForNetwork(ChainId.ETH),
         });

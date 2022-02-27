@@ -52,7 +52,7 @@ import type {
     L1BridgeZapContract,
     L2BridgeZapContract,
     SynapseERC20Contract,
-    BridgeConfigContract
+    BridgeConfigV3Contract
 } from "./contracts";
 
 type Network = Networks.Network;
@@ -71,6 +71,6 @@ export type {
     L1BridgeZapContract,
     L2BridgeZapContract,
     SynapseERC20Contract,
-    BridgeConfigContract,
+    BridgeConfigV3Contract,
     BridgeOutputEstimate,
 }

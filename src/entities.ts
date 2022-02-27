@@ -3,8 +3,6 @@ import type {
     L1BridgeZapContract,
     L2BridgeZapContract,
     GenericZapBridgeContract,
-    BridgeConfigContract,
-    PoolConfigContract,
     BridgeConfigV3Contract,
 } from "./contracts";
 
@@ -12,8 +10,6 @@ import {
     SynapseBridgeFactory,
     L1BridgeZapFactory,
     L2BridgeZapFactory,
-    BridgeConfigFactory,
-    PoolConfigFactory,
     BridgeConfigV3Factory,
 } from "./contracts";
 
@@ -41,10 +37,7 @@ export const newL2BridgeZapInstance = (params: {
 }): L2BridgeZapContract => L2BridgeZapFactory.connect(params.address, params.signerOrProvider);
 
 export namespace SynapseEntities {
-    const
-        bridgeConfigAddress:   string = "0x7fd806049608b7d04076b8187dd773343e0589e6",
-        bridgeConfigV3Address: string = "0x3ee02f08B801B1990AC844d8CD2F119BA6Fb9bcF",
-        poolConfigAddress:     string = "0xB34C67DB5F0Fd8D3D4238FD0A1cBbfD50a72e177";
+    const bridgeConfigV3Address: string = "0x3ee02f08B801B1990AC844d8CD2F119BA6Fb9bcF";
 
     export interface NewEntityParams {
         chainId:           number;
@@ -74,21 +67,9 @@ export namespace SynapseEntities {
             ? l1BridgeZap(params)
             : l2BridgeZap(params)
 
-    export const bridgeConfig = (): BridgeConfigContract =>
-        BridgeConfigFactory.connect(
-            bridgeConfigAddress,
-            rpcProviderForNetwork(ChainId.ETH)
-        )
-
     export const bridgeConfigV3 = (): BridgeConfigV3Contract =>
         BridgeConfigV3Factory.connect(
             bridgeConfigV3Address,
-            rpcProviderForNetwork(ChainId.ETH)
-        )
-
-    export const poolConfig = (): PoolConfigContract =>
-        PoolConfigFactory.connect(
-            poolConfigAddress,
             rpcProviderForNetwork(ChainId.ETH)
         )
 }

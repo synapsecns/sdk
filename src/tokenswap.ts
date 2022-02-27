@@ -4,7 +4,12 @@ import {SwapPools}     from "@swappools";
 import {rejectPromise} from "@common/utils";
 
 import {SynapseEntities}           from "@entities";
-import {SwapContract, SwapFactory} from "@contracts";
+import {
+    SwapContract,
+    SwapFactory,
+} from "@contracts";
+
+import type {BridgeConfigV3Contract} from "@contracts";
 
 import {Networks}                   from "@networks";
 import {ChainId, supportedChainIds} from "@chainid";
@@ -51,7 +56,7 @@ export namespace UnsupportedSwapErrors {
 }
 
 export namespace TokenSwap {
-    const POOL_CONFIG_INSTANCE = SynapseEntities.poolConfig();
+    const BRIDGE_CONFIG_INSTANCE: BridgeConfigV3Contract = SynapseEntities.bridgeConfigV3();
 
     export interface SwapParams {
         chainId:       number,
@@ -236,7 +241,7 @@ export namespace TokenSwap {
     async function swapContract(token: Token, chainId: number): Promise<SwapContract> {
         const lpToken = _intermediateToken(token, chainId);
 
-        return POOL_CONFIG_INSTANCE.getPoolConfig(lpToken.address(chainId), chainId)
+        return BRIDGE_CONFIG_INSTANCE.getPoolConfig(lpToken.address(chainId), chainId)
             .then(({poolAddress}) => SwapFactory.connect(poolAddress, rpcProviderForNetwork(chainId)))
             .catch(rejectPromise)
     }

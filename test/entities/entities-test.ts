@@ -29,7 +29,6 @@ describe("Entities tests", function(this: Mocha.Suite) {
         SynapseBridge  = "SynapseBridge",
         L1BridgeZap    = "L1BridgeZap",
         L2BridgeZap    = "L2BridgeZap",
-        BridgeConfig   = "BridgeConfig",
         BridgeConfigV3 = "BridgeConfigV3",
     }
 
@@ -70,9 +69,6 @@ describe("Entities tests", function(this: Mocha.Suite) {
                 instanceFn = newL2BridgeZapInstance;
                 entityFn   = l2BridgeZap;
                 break;
-            case EntityKind.BridgeConfig:
-                entityFn   = SynapseEntities.bridgeConfig;
-                break;
             case EntityKind.BridgeConfigV3:
                 entityFn   = SynapseEntities.bridgeConfigV3;
                 break;
@@ -88,7 +84,6 @@ describe("Entities tests", function(this: Mocha.Suite) {
         makeTestCase(ChainId.BSC,    EntityKind.L2BridgeZap),
         makeTestCase(ChainId.ETH,    EntityKind.SynapseBridge),
         makeTestCase(ChainId.ETH,    EntityKind.L1BridgeZap),
-        makeTestCase(ChainId.ETH,    EntityKind.BridgeConfig),
         makeTestCase(ChainId.ETH,    EntityKind.BridgeConfigV3),
     ];
 
