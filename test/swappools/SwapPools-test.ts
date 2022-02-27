@@ -5,11 +5,12 @@ import {
     Networks,
     SwapPools,
     Tokens,
-    type Token,
-    type StringMap
+    type Token
 } from "@sdk";
 
 import {SwapType} from "@internal/swaptype";
+
+import type {StringMap} from "@sdk/common/types";
 
 import {
     expectNull,
