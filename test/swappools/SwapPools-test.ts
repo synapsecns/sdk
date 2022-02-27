@@ -1,4 +1,4 @@
-import "../test_setup";
+import "@tests/setup";
 
 
 import {
@@ -19,7 +19,7 @@ import {
     expectIncludes,
     expectProperty,
     wrapExpect,
-} from "../helpers";
+} from "@tests/helpers";
 
 describe("SwapPools Tests", function(this: Mocha.Suite) {
     describe("Pool tokens tests", function(this: Mocha.Suite) {
