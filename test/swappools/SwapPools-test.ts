@@ -1,14 +1,13 @@
 import "@tests/setup";
 
-
 import {
     ChainId,
     Networks,
     SwapPools,
     Tokens,
+    type Token,
+    type StringMap
 } from "@sdk";
-
-import type {Token, StringMap} from "@sdk";
 
 import {SwapType} from "@internal/swaptype";
 

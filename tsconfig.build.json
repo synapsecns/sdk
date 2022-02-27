@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "stripInternal": true,
     "plugins": [
       {
         "transform": "@zoltu/typescript-transformer-append-js-extension/output/index.js",

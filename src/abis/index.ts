@@ -1,7 +1,7 @@
 import SynapseBridgeABI from "./SynapseBridge";
-import SynapseERC20ABI from "./SynapseERC20";
-import L2BridgeZapABI from "./L2BridgeZap";
-import L1BridgeZapABI from "./L1BridgeZap";
+import SynapseERC20ABI  from "./SynapseERC20";
+import L2BridgeZapABI   from "./L2BridgeZap";
+import L1BridgeZapABI   from "./L1BridgeZap";
 
 export namespace ABIs {
     export const

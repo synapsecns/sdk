@@ -4,11 +4,13 @@ import {expect} from "chai";
 
 import _ from "lodash";
 
-import {Zero}              from "@ethersproject/constants";
-import {Wallet}            from "@ethersproject/wallet";
-import {BigNumber}         from "@ethersproject/bignumber";
-import type {BigNumberish} from "@ethersproject/bignumber";
+import {Zero}   from "@ethersproject/constants";
+import {Wallet} from "@ethersproject/wallet";
 
+import {
+    BigNumber,
+    type BigNumberish
+} from "@ethersproject/bignumber";
 
 import type {Token} from "@sdk";
 import {rpcProviderForNetwork} from "@sdk/internal/rpcproviders";

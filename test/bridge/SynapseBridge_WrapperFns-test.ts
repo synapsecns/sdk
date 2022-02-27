@@ -11,9 +11,8 @@ import {
     ChainId,
     Networks,
     supportedChainIds,
+    type Token
 } from "@sdk";
-
-import type {Token} from "@sdk";
 
 import {ERC20}                 from "@sdk/bridge/erc20";
 import {contractAddressFor}    from "@sdk/common/utils";

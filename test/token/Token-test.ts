@@ -1,7 +1,10 @@
 import "@tests/setup";
 
-import type {Token}      from "@sdk";
-import {ChainId, Tokens} from "@sdk";
+import {
+    ChainId,
+    Tokens,
+    type Token
+} from "@sdk";
 
 import {
     expectBnEqual,

@@ -6,10 +6,9 @@ import {
     ChainId,
     Networks,
     Tokens,
-    TokenSwap
+    TokenSwap,
+    type Token
 } from "@sdk";
-
-import type {Token} from "@sdk";
 
 import {
     DEFAULT_TEST_TIMEOUT,

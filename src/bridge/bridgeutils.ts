@@ -3,10 +3,10 @@ import {Slippages} from "./slippages";
 import {ChainId} from "@chainid";
 
 import type {Token} from "@token";
-import type {GenericZapBridgeContract, L2BridgeZapContract} from "../contracts";
+import type {GenericZapBridgeContract, L2BridgeZapContract} from "@contracts";
 
+import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
-import {Zero} from "@ethersproject/constants";
 
 
 export namespace BridgeUtils {

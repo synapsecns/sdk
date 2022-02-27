@@ -2,7 +2,7 @@ import {Signer} from "@ethersproject/abstract-signer";
 import {Provider} from "@ethersproject/providers";
 import {
     BigNumber,
-    BigNumberish,
+    type BigNumberish,
 } from "@ethersproject/bignumber";
 import type {
     PopulatedTransaction,

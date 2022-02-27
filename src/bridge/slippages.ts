@@ -1,4 +1,4 @@
-import {BigNumber} from "@ethersproject/bignumber";
+import {BigNumber}   from "@ethersproject/bignumber";
 import {formatUnits} from "@ethersproject/units";
 
 export namespace Slippages {

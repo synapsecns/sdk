@@ -26,20 +26,25 @@ export {
     supportedNetworks
 } from "@common/networks";
 
-export {BaseToken, WrappedToken} from "@token";
+export {
+    type Token,
+    BaseToken,
+    WrappedToken
+} from "@token";
+
 export {Tokens} from "@tokens";
 
 export {
     SwapPools,
     networkSwapTokensMap,
     allNetworksSwapTokensMap,
+    type NetworkSwappableTokensMap
 } from "@swappools";
 
 export {TokenSwap, UnsupportedSwapErrors} from "@tokenswap";
 
 export type {ChainIdTypeMap, AddressMap, DecimalsMap, StringMap} from "@common/types";
-export type {Token} from "@token";
-export type {NetworkSwappableTokensMap} from "@swappools";
+
 export type {
     SynapseBridgeContract,
     GenericZapBridgeContract,

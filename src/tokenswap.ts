@@ -3,7 +3,7 @@ import {Tokens}        from "@tokens";
 import {SwapPools}     from "@swappools";
 import {rejectPromise} from "@common/utils";
 
-import {SynapseEntities}           from "@entities";
+import {SynapseEntities} from "@entities";
 import {
     SwapContract,
     SwapFactory,
@@ -17,8 +17,11 @@ import {ChainId, supportedChainIds} from "@chainid";
 import {SwapType}              from "@internal/swaptype";
 import {rpcProviderForNetwork} from "@internal/rpcproviders";
 
-import {BigNumber}                 from "@ethersproject/bignumber";
-import type {BigNumberish}         from "@ethersproject/bignumber";
+import {
+    BigNumber,
+    type BigNumberish
+} from "@ethersproject/bignumber";
+
 import type {PopulatedTransaction} from "@ethersproject/contracts";
 
 export namespace UnsupportedSwapErrors {

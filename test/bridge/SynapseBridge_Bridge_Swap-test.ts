@@ -8,9 +8,8 @@ import {
     Networks,
     Tokens,
     Bridge,
+    type Token
 } from "@sdk";
-
-import type {Token}  from "@sdk";
 import {tokenSwitch} from "@sdk/internal/utils";
 
 import {
@@ -26,8 +25,10 @@ import {
     valueIfUndefined, expectRejected,
 } from "@tests/helpers";
 
-import {makeBridgeSwapTestCase}  from "./bridge_test_utils";
-import type {BridgeSwapTestCase} from "./bridge_test_utils";
+import {
+    type BridgeSwapTestCase,
+    makeBridgeSwapTestCase
+}  from "./bridge_test_utils";
 
 import {formatUnits} from "@ethersproject/units";
 import {BigNumber}   from "@ethersproject/bignumber";

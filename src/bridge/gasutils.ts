@@ -2,7 +2,7 @@ import {ChainId} from "@chainid";
 import type {ChainIdTypeMap} from "@common/types";
 
 import {parseUnits} from "@ethersproject/units";
-import {BigNumber} from "@ethersproject/bignumber";
+import {BigNumber}  from "@ethersproject/bignumber";
 
 import type {PopulatedTransaction} from "@ethersproject/contracts";
 

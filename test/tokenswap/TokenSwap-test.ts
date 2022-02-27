@@ -6,9 +6,8 @@ import {
     Tokens,
     TokenSwap,
     supportedChainIds,
+    type Token
 } from "@sdk";
-
-import type {Token} from "@sdk";
 
 import {
     wrapExpect,

@@ -1,8 +1,5 @@
-import fetch from "isomorphic-fetch";
 import {fetchJson} from "@ethersproject/web";
 import type {ExternalProvider} from "@ethersproject/providers";
-
-const JSONRPC_VERSION: string = "2.0";
 
 export class RequestError extends Error {
     readonly code: number;
@@ -37,9 +34,9 @@ export class MiniRpcProvider implements ExternalProvider {
     readonly isMetaMask:      boolean = false;
     readonly chainId:         number;
 
-    readonly url:             string;
-    readonly host:            string;
-    readonly path:            string;
+    private _url:             string;
+    private _host:            string;
+    private _path:            string;
 
     protected _batchInterval: number;
 
@@ -51,9 +48,9 @@ export class MiniRpcProvider implements ExternalProvider {
         this.chainId = chainId;
 
         const parsed = new URL(url);
-        this.url  = parsed.toString();
-        this.host = parsed.host;
-        this.path = parsed.pathname;
+        this._url  = parsed.toString();
+        this._host = parsed.host;
+        this._path = parsed.pathname;
 
         // how long to wait to batch calls
         this._batchInterval = batchWaitTimeMs;
@@ -69,9 +66,32 @@ export class MiniRpcProvider implements ExternalProvider {
     /**
      * Sets the provider's interval for sending batch RPC calls.
      * @param interval amount of time in milliseconds the provider will wait between sending batch RPC calls
+     * @internal
      */
     set batchInterval(interval: number) {
         this._batchInterval = interval;
+    }
+
+    get url(): string {
+        return this._url
+    }
+
+    /**
+     * @internal
+     */
+    set url(newUrl: string | URL) {
+        const parsed = newUrl instanceof URL ? newUrl : new URL(newUrl);
+        this._host = parsed.host;
+        this._path = parsed.pathname;
+        this._url  = parsed.toString();
+    }
+
+    get host(): string {
+        return this._host
+    }
+
+    get path(): string {
+        return this._path
     }
 
     async request(request: RPCRequest): Promise<any> {
@@ -107,7 +127,7 @@ export class MiniRpcProvider implements ExternalProvider {
         return prom
     }
 
-    async _processBatch() {
+    private async _processBatch() {
         const currentBatch = this._pendingBatch;
 
         this._pendingBatch    = null;
@@ -115,7 +135,7 @@ export class MiniRpcProvider implements ExternalProvider {
 
         const requests: JsonRPCRequest[] = currentBatch.map(req => req.request);
 
-        return fetchJson(this.url, JSON.stringify(requests))
+        return fetchJson(this._url, JSON.stringify(requests))
             .then(result =>
                 currentBatch.forEach((req, idx) => {
                     const payload = result[idx];

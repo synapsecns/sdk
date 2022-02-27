@@ -1,5 +1,3 @@
-import {parseUnits} from "@ethersproject/units";
-
 import type {AddressMap, DecimalsMap} from "@common/types";
 
 import type {ID, Entity} from "@internal/entity";
@@ -9,6 +7,8 @@ import {
     BigNumber,
     BigNumberish,
 } from "@ethersproject/bignumber";
+
+import {parseUnits} from "@ethersproject/units";
 
 
 export interface IBaseToken extends Entity {

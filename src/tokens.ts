@@ -1,6 +1,5 @@
-import type {Token} from "@token";
-
 import {
+    type Token,
     BaseToken,
     WrappedToken,
 } from "@token";

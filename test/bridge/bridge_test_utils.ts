@@ -1,7 +1,9 @@
 import dotenv from "dotenv";
 
-import type {Token} from "@sdk";
-import {Networks}   from "@sdk";
+import {
+    Networks,
+    type Token
+} from "@sdk";
 
 import {BigNumber} from "@ethersproject/bignumber";
 

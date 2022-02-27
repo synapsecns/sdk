@@ -1,16 +1,13 @@
-import type {
-    SynapseBridgeContract,
-    L1BridgeZapContract,
-    L2BridgeZapContract,
-    GenericZapBridgeContract,
-    BridgeConfigV3Contract,
-} from "./contracts";
-
 import {
     SynapseBridgeFactory,
     L1BridgeZapFactory,
     L2BridgeZapFactory,
     BridgeConfigV3Factory,
+    type SynapseBridgeContract,
+    type L1BridgeZapContract,
+    type L2BridgeZapContract,
+    type GenericZapBridgeContract,
+    type BridgeConfigV3Contract,
 } from "./contracts";
 
 import {ChainId}               from "@chainid";

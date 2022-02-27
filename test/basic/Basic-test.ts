@@ -2,8 +2,6 @@ import "@tests/setup";
 
 import {expect} from "chai";
 
-import type {Token} from "@sdk";
-
 import {
     allNetworksSwapTokensMap,
     ChainId,
@@ -11,8 +9,19 @@ import {
     NetworkSwappableTokensMap,
     networkSwapTokensMap,
     supportedChainIds,
-    Tokens
+    Tokens,
+    type Token
 } from "@sdk";
+
+import {
+    _rpcConnector,
+    rpcUriForChainId,
+    setRpcProviderUri,
+    setRpcProviderBatchInterval,
+    rpcProviderForNetwork
+} from "@sdk/internal/rpcproviders";
+
+import {MiniRpcProvider} from "@sdk/internal/minirpc";
 
 import {
     expectBoolean,
@@ -20,6 +29,8 @@ import {
     expectLength,
     wrapExpect
 } from "@tests/helpers";
+
+import {Web3Provider} from "@ethersproject/providers";
 
 const makeWantString = (tc: {want: boolean}, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
 
@@ -42,6 +53,74 @@ describe("Basic tests", function(this: Mocha.Suite) {
             `supportedNetworks ${testSuffix}`,
             wrapExpect(expectLength(supportedNetworks, numChains))
         )
+    })
+
+    describe("Test RpcConnector functions", function(this: Mocha.Suite) {
+        const
+            chainId                  = ChainId.BSC,
+            newUri:           string = "https://bsc-dataseed1.defibit.io/",
+            newBatchInterval: number = 500;
+
+        const getMiniProvider = (chainId: number): MiniRpcProvider => {
+            const provider = rpcProviderForNetwork(chainId);
+            return (provider as Web3Provider).provider as MiniRpcProvider;
+        }
+
+        it("should set the rpc URI for Binance Smart Chain", function(this: Mocha.Context) {
+            const oldUri: string = getMiniProvider(chainId).url;
+
+            setRpcProviderUri(chainId, newUri);
+
+            const gotUri: string = rpcUriForChainId(chainId);
+            expect(gotUri).to.equal(newUri);
+
+            setRpcProviderUri(chainId, oldUri);
+
+            const gotUri2: string = rpcUriForChainId(chainId);
+            expect(gotUri2).to.equal(oldUri);
+        })
+
+        it("should set the batch interval for Binance Smart Chain provider", function(this: Mocha.Context) {
+            const oldInterval: number = getMiniProvider(chainId).batchInterval;
+
+            setRpcProviderBatchInterval(chainId, newBatchInterval);
+
+            expect(getMiniProvider(chainId).batchInterval).to.equal(newBatchInterval);
+            expect(getMiniProvider(chainId).batchInterval).to.not.equal(oldInterval);
+
+            setRpcProviderBatchInterval(chainId, oldInterval);
+            expect(getMiniProvider(chainId).batchInterval).to.equal(oldInterval);
+            expect(getMiniProvider(chainId).batchInterval).to.not.equal(newBatchInterval);
+        })
+
+        it("should not override the Binance Smart Chain Provider", function(this: Mocha.Context) {
+            const connector = _rpcConnector();
+
+            const
+                miniProvider = getMiniProvider(chainId),
+                uri: string = miniProvider.url,
+                interval: number = miniProvider.batchInterval;
+
+            connector.addProvider(chainId, newUri, 500);
+            expect(connector.providerUri(chainId)).to.equal(uri);
+            expect(connector._miniRpcProvider(chainId).batchInterval).to.equal(interval);
+        })
+
+        it("should override the Binance Smart Chain Provider", function(this: Mocha.Context) {
+            const connector = _rpcConnector();
+
+            const
+                miniProvider = getMiniProvider(chainId),
+                uri:      string = miniProvider.url,
+                interval: number = miniProvider.batchInterval;
+
+            connector.addProvider(chainId, newUri, newBatchInterval, true);
+            expect(connector.providerUri(chainId)).to.equal(newUri);
+            expect(connector.providerUri(chainId)).to.not.equal(uri);
+
+            expect(connector._miniRpcProvider(chainId).batchInterval).to.equal(newBatchInterval);
+            expect(connector._miniRpcProvider(chainId).batchInterval).to.not.equal(interval);
+        })
     })
 
     describe("Check swappableTokens", function(this: Mocha.Suite) {

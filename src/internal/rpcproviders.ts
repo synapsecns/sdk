@@ -5,7 +5,7 @@ import type {Provider} from "@ethersproject/providers";
 import {ChainId, supportedChainIds} from "@chainid";
 import type {StringMap} from "@common/types";
 
-import {Web3RpcConnector} from "./rpcconnector";
+import {RpcConnector} from "./rpcconnector";
 
 const ENV_KEY_MAP: StringMap = {
     [ChainId.ETH]:       "ETH_RPC_URI",
@@ -41,23 +41,16 @@ const CHAIN_RPC_URIS: StringMap = {
     [ChainId.HARMONY]:   "https://api.harmony.one/",
 }
 
-const CHAINID_URI_MAP: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, rpcUriForChainId(cid)]));
+const CHAINID_URI_MAP: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, _getChainRpcUri(cid)]));
 
 const RPC_BATCH_INTERVAL = Number(process.env["RPC_BATCH_INTERVAL"]) || 60;
 
-const RPC_CONNECTOR: Web3RpcConnector = new Web3RpcConnector({
+const RPC_CONNECTOR = new RpcConnector({
     urls:          CHAINID_URI_MAP,
     batchInterval: RPC_BATCH_INTERVAL
 });
 
-/**
- * @param chainId chain id of the network for which to return a provider
- */
-export function rpcProviderForNetwork(chainId: number): Provider {
-    return RPC_CONNECTOR.provider(chainId)
-}
-
-export function rpcUriForChainId(chainId: number): string {
+function _getChainRpcUri(chainId: number): string {
     const
         rpcEnvKey: string           = ENV_KEY_MAP[chainId],
         rpcEnvVal: string|undefined = rpcEnvKey in process.env ? process.env[rpcEnvKey] : undefined;
@@ -66,7 +59,42 @@ export function rpcUriForChainId(chainId: number): string {
 }
 
 /**
+ * @param chainId chain id of the network for which to return a provider
+ */
+export function rpcProviderForNetwork(chainId: number): Provider {
+    return RPC_CONNECTOR.provider(chainId)
+}
+
+/**
+ * @internal
+ */
+export function rpcUriForChainId(chainId: number): string {
+    return RPC_CONNECTOR.providerUri(chainId)
+}
+
+/**
+ * @internal
+ */
+export function setRpcProviderUri(chainId: number, newUri: string) {
+    RPC_CONNECTOR.setProviderUri(chainId, newUri);
+}
+
+/**
+ * @internal
+ */
+export function setRpcProviderBatchInterval(chainId: number, batchInterval: number) {
+    RPC_CONNECTOR.setProviderBatchInterval(chainId, batchInterval);
+}
+
+/**
+ * @internal
+ */
+export function _rpcConnector(): RpcConnector {
+    return RPC_CONNECTOR
+}
+/**
  * Used solely for tests, initRpcConnectors() basically just makes sure on-import initialization
  * of Rpc connections occurs before tests run.
+ * @internal
  */
 export function initRpcConnectors() {}

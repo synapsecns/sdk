@@ -12,7 +12,6 @@ import {SwapType}              from "@internal/swaptype";
 import {rpcProviderForNetwork} from "@internal/rpcproviders";
 import {tokenSwitch}           from "@internal/utils";
 
-
 import type {
     GenericZapBridgeContract,
     L1BridgeZapContract,
@@ -25,8 +24,11 @@ import {TokenSwap}       from "@tokenswap";
 import {SwapPools}       from "@swappools";
 import {SynapseEntities} from "@entities";
 
-import type {Token}              from "@token";
-import {BaseToken, WrappedToken} from "@token";
+import {
+    type Token,
+    BaseToken,
+    WrappedToken
+} from "@token";
 
 import type {ChainIdTypeMap} from "@common/types";
 

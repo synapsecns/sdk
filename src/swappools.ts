@@ -4,8 +4,11 @@ import {ChainId, supportedChainIds} from "@chainid";
 
 import type {AddressMap, DecimalsMap, ChainIdTypeMap} from "@common/types";
 
-import {BaseToken}              from "@token";
-import type {IBaseToken, Token} from "@token";
+import {
+    BaseToken,
+    type Token,
+    type IBaseToken,
+} from "@token";
 
 import type {ID}  from "@internal/entity";
 import {SwapType} from "@internal/swaptype";

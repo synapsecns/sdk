@@ -22,8 +22,10 @@ import {
     makeWalletSignerWithProvider,
 } from "@tests/helpers";
 
-import {bridgeInteractionsPrivkey} from "./bridge_test_utils";
-import type {BridgeSwapTestCase}   from "./bridge_test_utils";
+import {
+    type BridgeSwapTestCase,
+    bridgeInteractionsPrivkey
+}  from "./bridge_test_utils";
 
 import type {TransactionResponse} from "@ethersproject/providers";
 

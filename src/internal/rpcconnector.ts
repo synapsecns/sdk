@@ -1,83 +1,109 @@
 import type {ChainIdTypeMap, StringMap} from "@common/types";
 
 import type {Provider} from "@ethersproject/providers";
-import {JsonRpcProvider, Web3Provider} from "@ethersproject/providers";
+import {Web3Provider} from "@ethersproject/providers";
 
 import {MiniRpcProvider} from "./minirpc";
-
-export interface ProviderConnector<T extends Provider> {
-    provider:            (chainId: number) => T;
-    supportedChainIds:   () => number[];
-}
-
-class AbstractProviderConnector<T extends Provider> implements ProviderConnector<T> {
-    protected urls:           StringMap;
-    protected providers:      ChainIdTypeMap<T>;
-    protected newProviderFn:  (uri: string) => T;
-
-    constructor(args: {
-        urls:        StringMap,
-        newProvider: (uri: string) => T
-    }) {
-        const {urls, newProvider} = args;
-        this.urls = urls;
-        this.newProviderFn = newProvider;
-
-        this.providers = Object.keys(urls).reduce((acc, chainId) => {
-            const cid = Number(chainId);
-            acc[cid]  = newProvider(urls[cid]);
-            return acc
-        }, {});
-    }
-
-    provider(chainId: number): T {
-        return this.providers[chainId]
-    }
-
-    supportedChainIds(): number[] {
-        return Object.keys(this.urls).map(cid => Number(cid))
-    }
-}
 
 interface RpcConnectorArgs {
     urls:           StringMap,
     batchInterval?: number,
 }
 
-export class JsonRpcConnector
-    extends AbstractProviderConnector<JsonRpcProvider>
-    implements ProviderConnector<JsonRpcProvider>
-{
-    constructor(args: RpcConnectorArgs) {
-        super({
-            ...args,
-            newProvider: (uri: string) => new JsonRpcProvider(uri)
-        });
-    }
-}
+export class RpcConnector {
+    private _providers:     ChainIdTypeMap<MiniRpcProvider>;
+    private _web3Providers: ChainIdTypeMap<Web3Provider>
 
-export class Web3RpcConnector
-    extends AbstractProviderConnector<Web3Provider>
-    implements ProviderConnector<Web3Provider>
-{
-    constructor(args: RpcConnectorArgs) {
-        const {batchInterval=50} = args;
+    private _chainUris: {[chainId: number]: string};
 
-        const _invertedUrlsMap = Object.keys(args.urls).reduce((acc, chainId) => {
+
+    constructor(args: RpcConnectorArgs) {
+        const {urls, batchInterval=50} = args;
+
+        this._chainUris = urls;
+
+        const miniRpcProviders = Object.keys(urls).reduce((acc, chainId) => {
             const cid = Number(chainId);
-            const url = args.urls[cid];
-            acc[url] = cid;
+            acc[cid]  = this._newProvider(cid, urls[cid], batchInterval);
             return acc
         }, {});
 
-        const _newProviderFn = (uri: string): Web3Provider => {
-            const provider = new MiniRpcProvider(_invertedUrlsMap[uri], uri, batchInterval);
-            return new Web3Provider(provider)
+        const web3Providers = Object.keys(miniRpcProviders).reduce((acc, chainId) => {
+            const cid = Number(chainId);
+            acc[cid]  = new Web3Provider(miniRpcProviders[cid]);
+            return acc
+        }, {});
+
+        this._providers = miniRpcProviders;
+        this._web3Providers = web3Providers;
+    }
+
+    provider(chainId: number): Provider {
+        return this._web3Providers[chainId]
+    }
+
+    providerUri(chainId: number): string {
+        return this._providers[chainId].url
+    }
+
+    /**
+     * @internal
+     */
+    _miniRpcProvider(chainId: number): MiniRpcProvider {
+        return this._providers[chainId]
+    }
+
+    /**
+     * @internal
+     */
+    addProvider(
+        chainId: number,
+        uri: string,
+        batchInterval: number = 50,
+        override: boolean = false
+    ) {
+        if (this._providers[chainId] && !override) {
+            return
         }
 
-        super({
-            ...args,
-            newProvider: _newProviderFn
-        })
+        const provider = this._newProvider(chainId, uri, batchInterval);
+
+        this._chainUris[chainId]     = uri;
+        this._providers[chainId]     = provider
+        this._web3Providers[chainId] = new Web3Provider(provider);
+    }
+
+    /**
+     * @internal
+     */
+    setProviderUri(chainId: number, newUri: string) {
+        if (this._providers[chainId]) {
+            this._chainUris[chainId] = newUri;
+
+            this._providers[chainId].url = newUri;
+            this._web3Providers[chainId] = new Web3Provider(this._providers[chainId]);
+        }
+    }
+
+    /**
+     * @internal
+     */
+    setProviderBatchInterval(chainId: number, batchInterval: number) {
+        if (this._providers[chainId]) {
+            this._providers[chainId].batchInterval = batchInterval;
+            this._web3Providers[chainId] = new Web3Provider(this._providers[chainId]);
+        }
+    }
+
+    private _newProvider(
+        chainId: number,
+        uri: string,
+        batchInterval: number
+    ): MiniRpcProvider {
+        return new MiniRpcProvider(
+            chainId,
+            uri,
+            batchInterval
+        );
     }
 }
