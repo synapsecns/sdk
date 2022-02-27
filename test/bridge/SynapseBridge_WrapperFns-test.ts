@@ -16,7 +16,7 @@ import {
 
 import {ERC20}                 from "@sdk/bridge/erc20";
 import {contractAddressFor}    from "@sdk/common/utils";
-import {rpcProviderForNetwork} from "@sdk/internal/rpcproviders";
+import {rpcProviderForChain} from "@sdk/internal/rpcproviders";
 
 import {
     DEFAULT_TEST_TIMEOUT,
@@ -54,7 +54,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
         for (const network of ALL_CHAIN_IDS) {
             const
-                provider          = rpcProviderForNetwork(network),
+                provider          = rpcProviderForChain(network),
                 bridgeInstance    = new Bridge.SynapseBridge({ network, provider}),
                 testTitle: string = `Should return ${expected.toString()} on Chain ID ${network}`;
 
@@ -69,7 +69,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
     describe(".WETH_ADDRESS", function(this: Mocha.Suite) {
         for (const network of ALL_CHAIN_IDS) {
             const
-                provider = rpcProviderForNetwork(network),
+                provider = rpcProviderForChain(network),
                 bridgeInstance = new Bridge.SynapseBridge({ network, provider }),
                 expected: string = ((): string => {
                     switch (network) {
@@ -114,7 +114,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
         const makeTestCase = (c: number, t: Token, a: string, n: BigNumberish): TestCase => {
             return {
-                provider:   rpcProviderForNetwork(c),
+                provider:   rpcProviderForChain(c),
                 chainId:    c,
                 token:      t,
                 address:    a,
@@ -177,7 +177,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                     if (allowance.lte(infiniteCheckAmt)) {
                         const wallet = new Wallet(
                             infiniteApprovalsPrivkey.privkey,
-                            rpcProviderForNetwork(ChainId.BSC)
+                            rpcProviderForChain(ChainId.BSC)
                         );
 
                         const approveArgs = {spender: bscZapAddr};

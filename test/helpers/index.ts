@@ -13,7 +13,7 @@ import {
 } from "@ethersproject/bignumber";
 
 import type {Token} from "@sdk";
-import {rpcProviderForNetwork} from "@sdk/internal/rpcproviders";
+import {rpcProviderForChain} from "@sdk/internal/rpcproviders";
 
 const TEN_BN: BigNumber = BigNumber.from(10);
 
@@ -39,7 +39,7 @@ export const getTestAmount = (
 export const makeWalletSignerWithProvider = (
     chainId: number,
     privKey: string
-): Wallet => new Wallet(privKey, rpcProviderForNetwork(chainId));
+): Wallet => new Wallet(privKey, rpcProviderForChain(chainId));
 
 
 export const

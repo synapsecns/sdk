@@ -12,8 +12,7 @@ export const {
     l2BridgeZap,
 } = SynapseEntities;
 
-import {Bridge} from "@bridge/bridge";
-export {Bridge};
+export {Bridge} from "@bridge/bridge";
 export {Slippages} from "@bridge/slippages";
 
 export {
@@ -43,7 +42,10 @@ export {
 
 export {TokenSwap, UnsupportedSwapErrors} from "@tokenswap";
 
-export type {ChainIdTypeMap, AddressMap, DecimalsMap, StringMap} from "@common/types";
+export {
+    type RPCEndpointsConfig,
+    configureRPCEndpoints
+} from "@internal/rpcproviders";
 
 export type {
     SynapseBridgeContract,

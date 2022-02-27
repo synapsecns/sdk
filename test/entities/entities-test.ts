@@ -18,7 +18,7 @@ import {
 
 import {SynapseEntities}       from "@sdk/entities";
 import {SynapseContracts}      from "@sdk/common/synapse_contracts";
-import {rpcProviderForNetwork} from "@sdk/internal/rpcproviders";
+import {rpcProviderForChain} from "@sdk/internal/rpcproviders";
 import type {SignerOrProvider} from "@sdk/common/types";
 
 import type {BaseContract} from "@ethersproject/contracts";
@@ -95,7 +95,7 @@ describe("Entities tests", function(this: Mocha.Suite) {
     for (const tc of testCases) {
         describe(Networks.networkName(tc.chainId), function(this: Mocha.Suite) {
             const
-                provider                = rpcProviderForNetwork(tc.chainId),
+                provider                = rpcProviderForChain(tc.chainId),
                 newInstanceArgs: fnArgs = {address: tc.address, chainId: tc.chainId, signerOrProvider: provider};
 
             let instance: BaseContract = null;

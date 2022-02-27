@@ -15,7 +15,7 @@ import {Networks}                   from "@networks";
 import {ChainId, supportedChainIds} from "@chainid";
 
 import {SwapType}              from "@internal/swaptype";
-import {rpcProviderForNetwork} from "@internal/rpcproviders";
+import {rpcProviderForChain} from "@internal/rpcproviders";
 
 import {
     BigNumber,
@@ -245,7 +245,7 @@ export namespace TokenSwap {
         const lpToken = _intermediateToken(token, chainId);
 
         return BRIDGE_CONFIG_INSTANCE.getPoolConfig(lpToken.address(chainId), chainId)
-            .then(({poolAddress}) => SwapFactory.connect(poolAddress, rpcProviderForNetwork(chainId)))
+            .then(({poolAddress}) => SwapFactory.connect(poolAddress, rpcProviderForChain(chainId)))
             .catch(rejectPromise)
     }
 

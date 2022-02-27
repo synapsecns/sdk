@@ -9,7 +9,7 @@ import {
 
 import type {ID}               from "@internal/entity";
 import {SwapType}              from "@internal/swaptype";
-import {rpcProviderForNetwork} from "@internal/rpcproviders";
+import {rpcProviderForChain} from "@internal/rpcproviders";
 import {tokenSwitch}           from "@internal/utils";
 
 import type {
@@ -129,7 +129,7 @@ export namespace Bridge {
 
         private readonly zapBridgeInstance: L1BridgeZapContract = SynapseEntities.l1BridgeZap({
             chainId: ChainId.ETH,
-            signerOrProvider: rpcProviderForNetwork(ChainId.ETH),
+            signerOrProvider: rpcProviderForChain(ChainId.ETH),
         });
 
         readonly requiredConfirmations: number;
@@ -142,7 +142,7 @@ export namespace Bridge {
 
             this.network = network instanceof Networks.Network ? network : Networks.fromChainId(network);
             this.chainId = this.network.chainId;
-            this.provider = provider ?? rpcProviderForNetwork(this.chainId);
+            this.provider = provider ?? rpcProviderForChain(this.chainId);
 
             this.requiredConfirmations = getRequiredConfirmationsForBridge(this.network);
 
@@ -443,7 +443,7 @@ export namespace Bridge {
         private async calculateBridgeRate(args: BridgeParams): Promise<BridgeOutputEstimate> {
             let {chainIdTo, amountFrom} = args;
 
-            const toChainZapParams = {chainId: chainIdTo, signerOrProvider: rpcProviderForNetwork(chainIdTo)};
+            const toChainZapParams = {chainId: chainIdTo, signerOrProvider: rpcProviderForChain(chainIdTo)};
             const toChainZap: GenericZapBridgeContract = SynapseEntities.zapBridge(toChainZapParams);
 
             const {

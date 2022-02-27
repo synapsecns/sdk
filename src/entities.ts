@@ -12,7 +12,7 @@ import {
 
 import {ChainId}               from "@chainid";
 import {contractAddressFor}    from "@common/utils";
-import {rpcProviderForNetwork} from "@internal/rpcproviders";
+import {rpcProviderForChain} from "@internal/rpcproviders";
 
 import type {SignerOrProvider} from "@common/types";
 
@@ -67,6 +67,6 @@ export namespace SynapseEntities {
     export const bridgeConfigV3 = (): BridgeConfigV3Contract =>
         BridgeConfigV3Factory.connect(
             bridgeConfigV3Address,
-            rpcProviderForNetwork(ChainId.ETH)
+            rpcProviderForChain(ChainId.ETH)
         )
 }
