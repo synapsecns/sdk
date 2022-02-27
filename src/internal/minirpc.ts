@@ -1,4 +1,4 @@
-import fetch, {Response} from "isomorphic-fetch";
+import fetch from "isomorphic-fetch";
 import type {ExternalProvider} from "@ethersproject/providers";
 
 const JSONRPC_VERSION: string = "2.0";
@@ -96,7 +96,7 @@ export class MiniRpcProvider implements ExternalProvider {
         this.batch = [];
         this.batchTimeoutId = null;
 
-        const handleRpcResponse = (response: Response): Response => {
+        const handleRpcResponse = (response: any): any => {
             if (!response.ok) {
                 const err: RequestError = new RequestError(
                     response.statusText,
@@ -111,7 +111,7 @@ export class MiniRpcProvider implements ExternalProvider {
             return response
         }
 
-        const rpcResponseProm: Promise<Response> = this.fetchBatch(currentBatch)
+        const rpcResponseProm: Promise<any> = this.fetchBatch(currentBatch)
             .then(handleRpcResponse)
             .catch(error => {
                 let errStr = `Failed to send batch call: ${error}`;
@@ -126,9 +126,9 @@ export class MiniRpcProvider implements ExternalProvider {
                 return null;
             })
 
-        const loadJsonResponse = (resp: Response): Promise<any> => resp === null ? null : resp.json()
+        const loadJsonResponse = (resp: any): Promise<any> => resp === null ? null : resp.json()
 
-        let rpcResponse: Response;
+        let rpcResponse: any;
         try {
             rpcResponse = await rpcResponseProm;
             if (rpcResponse === null) {
@@ -152,10 +152,10 @@ export class MiniRpcProvider implements ExternalProvider {
 
         Promise.resolve(jsonResponseProm)
             .then(this.handleJsonResponse(currentBatch))
-            .catch(e => {})
+            .catch(() => {})
     }
 
-    private fetchBatch(batch: MiniRpcBatchItem[]): Promise<Response> {
+    private fetchBatch(batch: MiniRpcBatchItem[]): Promise<any> {
         return fetch(this.url, {
             method: "POST",
             headers: {
