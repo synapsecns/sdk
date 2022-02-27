@@ -72,7 +72,7 @@ jobs:
         env:
           REPORTS_DIR: ${{ github.workspace }}/coverage
 
-      - name: "Coveralls: process coverage report"
+      - name: Coveralls - Process coverage
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -84,7 +84,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: "Coveralls: process all coverage results"
+      - name: Coveralls - Process all coverage results
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
