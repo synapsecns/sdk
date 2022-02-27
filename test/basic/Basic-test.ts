@@ -1,6 +1,7 @@
 import "@tests/setup";
 
 import {expect} from "chai";
+import {step} from "mocha-steps";
 
 import {
     allNetworksSwapTokensMap,
@@ -14,14 +15,10 @@ import {
 } from "@sdk";
 
 import {
-    _rpcConnector,
-    rpcUriForChainId,
-    setRpcProviderUri,
-    setRpcProviderBatchInterval,
-    rpcProviderForNetwork
+    type RPCEndpointsConfig,
+    configureRPCEndpoints,
+    rpcProviderForChain
 } from "@sdk/internal/rpcproviders";
-
-import {MiniRpcProvider} from "@sdk/internal/minirpc";
 
 import {
     expectBoolean,
@@ -55,71 +52,35 @@ describe("Basic tests", function(this: Mocha.Suite) {
         )
     })
 
-    describe("Test RpcConnector functions", function(this: Mocha.Suite) {
-        const
-            chainId                  = ChainId.BSC,
-            newUri:           string = "https://bsc-dataseed1.defibit.io/",
-            newBatchInterval: number = 500;
-
-        const getMiniProvider = (chainId: number): MiniRpcProvider => {
-            const provider = rpcProviderForNetwork(chainId);
-            return (provider as Web3Provider).provider as MiniRpcProvider;
+    describe("Test configureRPCEndpoints", function(this: Mocha.Suite) {
+        const rpcConfig: RPCEndpointsConfig = {
+            [ChainId.BSC]:  {endpoint:"https://bsc-dataseed2.defibit.io"},
+            [ChainId.BOBA]: {endpoint:"https://mainnet.boba.network/", batchInterval: 100},
         }
 
-        it("should set the rpc URI for Binance Smart Chain", function(this: Mocha.Context) {
-            const oldUri: string = getMiniProvider(chainId).url;
+        let
+            previousBscEndpoint:  string,
+            previousBobaEndpoint: string,
+            previousEthEndpoint:  string;
 
-            setRpcProviderUri(chainId, newUri);
-
-            const gotUri: string = rpcUriForChainId(chainId);
-            expect(gotUri).to.equal(newUri);
-
-            setRpcProviderUri(chainId, oldUri);
-
-            const gotUri2: string = rpcUriForChainId(chainId);
-            expect(gotUri2).to.equal(oldUri);
+        step("Populate current RPC endpoints", function(this: Mocha.Context) {
+            previousBscEndpoint  = (rpcProviderForChain(ChainId.BSC)  as Web3Provider).connection.url;
+            previousBobaEndpoint = (rpcProviderForChain(ChainId.BOBA) as Web3Provider).connection.url;
+            previousEthEndpoint  = (rpcProviderForChain(ChainId.ETH)  as Web3Provider).connection.url;
         })
 
-        it("should set the batch interval for Binance Smart Chain provider", function(this: Mocha.Context) {
-            const oldInterval: number = getMiniProvider(chainId).batchInterval;
 
-            setRpcProviderBatchInterval(chainId, newBatchInterval);
-
-            expect(getMiniProvider(chainId).batchInterval).to.equal(newBatchInterval);
-            expect(getMiniProvider(chainId).batchInterval).to.not.equal(oldInterval);
-
-            setRpcProviderBatchInterval(chainId, oldInterval);
-            expect(getMiniProvider(chainId).batchInterval).to.equal(oldInterval);
-            expect(getMiniProvider(chainId).batchInterval).to.not.equal(newBatchInterval);
-        })
-
-        it("should not override the Binance Smart Chain Provider", function(this: Mocha.Context) {
-            const connector = _rpcConnector();
+        it("configureRPCEndponts should only reconfigure BSC and Boba", function(this: Mocha.Context) {
+            configureRPCEndpoints(rpcConfig);
 
             const
-                miniProvider = getMiniProvider(chainId),
-                uri: string = miniProvider.url,
-                interval: number = miniProvider.batchInterval;
+                checkBscEndpoint:   string = (rpcProviderForChain(ChainId.BSC)  as Web3Provider).connection.url,
+                checkBobaEndpoint:  string = (rpcProviderForChain(ChainId.BOBA) as Web3Provider).connection.url,
+                checkEthEndpoint:   string = (rpcProviderForChain(ChainId.ETH)  as Web3Provider).connection.url;
 
-            connector.addProvider(chainId, newUri, 500);
-            expect(connector.providerUri(chainId)).to.equal(uri);
-            expect(connector._miniRpcProvider(chainId).batchInterval).to.equal(interval);
-        })
-
-        it("should override the Binance Smart Chain Provider", function(this: Mocha.Context) {
-            const connector = _rpcConnector();
-
-            const
-                miniProvider = getMiniProvider(chainId),
-                uri:      string = miniProvider.url,
-                interval: number = miniProvider.batchInterval;
-
-            connector.addProvider(chainId, newUri, newBatchInterval, true);
-            expect(connector.providerUri(chainId)).to.equal(newUri);
-            expect(connector.providerUri(chainId)).to.not.equal(uri);
-
-            expect(connector._miniRpcProvider(chainId).batchInterval).to.equal(newBatchInterval);
-            expect(connector._miniRpcProvider(chainId).batchInterval).to.not.equal(interval);
+            expect(checkBscEndpoint).to.not.equal(previousBscEndpoint);
+            expect(checkBobaEndpoint).to.not.equal(previousBobaEndpoint);
+            expect(checkEthEndpoint).to.equal(previousEthEndpoint);
         })
     })
 

@@ -61,36 +61,24 @@ function _getChainRpcUri(chainId: number): string {
 /**
  * @param chainId chain id of the network for which to return a provider
  */
-export function rpcProviderForNetwork(chainId: number): Provider {
+export function rpcProviderForChain(chainId: number): Provider {
     return RPC_CONNECTOR.provider(chainId)
 }
 
-/**
- * @internal
- */
-export function rpcUriForChainId(chainId: number): string {
-    return RPC_CONNECTOR.providerUri(chainId)
+export interface RPCEndpointsConfig {
+    [chainId: number]: {
+        endpoint:       string,
+        batchInterval?: number,
+    }
 }
 
-/**
- * @internal
- */
-export function setRpcProviderUri(chainId: number, newUri: string) {
-    RPC_CONNECTOR.setProviderUri(chainId, newUri);
-}
-
-/**
- * @internal
- */
-export function setRpcProviderBatchInterval(chainId: number, batchInterval: number) {
-    RPC_CONNECTOR.setProviderBatchInterval(chainId, batchInterval);
-}
-
-/**
- * @internal
- */
-export function _rpcConnector(): RpcConnector {
-    return RPC_CONNECTOR
+export function configureRPCEndpoints(config: RPCEndpointsConfig) {
+    for (const chainId of supportedChainIds()) {
+        if (config[chainId]) {
+            let {endpoint, batchInterval} = config[chainId];
+            RPC_CONNECTOR.setProviderConfig(chainId, endpoint, batchInterval);
+        }
+    }
 }
 /**
  * Used solely for tests, initRpcConnectors() basically just makes sure on-import initialization

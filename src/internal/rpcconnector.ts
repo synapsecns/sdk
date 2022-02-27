@@ -11,16 +11,16 @@ interface RpcConnectorArgs {
 }
 
 export class RpcConnector {
-    private _providers:     ChainIdTypeMap<MiniRpcProvider>;
-    private _web3Providers: ChainIdTypeMap<Web3Provider>
+    protected _providers:     ChainIdTypeMap<MiniRpcProvider>;
+    protected _web3Providers: ChainIdTypeMap<Web3Provider>
 
-    private _chainUris: {[chainId: number]: string};
+    protected _chainEndpoints: {[chainId: number]: string};
 
 
     constructor(args: RpcConnectorArgs) {
         const {urls, batchInterval=50} = args;
 
-        this._chainUris = urls;
+        this._chainEndpoints = urls;
 
         const miniRpcProviders = Object.keys(urls).reduce((acc, chainId) => {
             const cid = Number(chainId);
@@ -34,7 +34,7 @@ export class RpcConnector {
             return acc
         }, {});
 
-        this._providers = miniRpcProviders;
+        this._providers     = miniRpcProviders;
         this._web3Providers = web3Providers;
     }
 
@@ -42,67 +42,33 @@ export class RpcConnector {
         return this._web3Providers[chainId]
     }
 
-    providerUri(chainId: number): string {
-        return this._providers[chainId].url
-    }
-
     /**
      * @internal
      */
-    _miniRpcProvider(chainId: number): MiniRpcProvider {
-        return this._providers[chainId]
-    }
-
-    /**
-     * @internal
-     */
-    addProvider(
-        chainId: number,
-        uri: string,
+    setProviderConfig(
+        chainId:       number,
+        endpoint:      string,
         batchInterval: number = 50,
-        override: boolean = false
     ) {
-        if (this._providers[chainId] && !override) {
-            return
-        }
+        const provider = this._newProvider(chainId, endpoint, batchInterval);
 
-        const provider = this._newProvider(chainId, uri, batchInterval);
+        delete this._chainEndpoints[chainId];
+        delete this._providers[chainId];
+        delete this._web3Providers[chainId];
 
-        this._chainUris[chainId]     = uri;
-        this._providers[chainId]     = provider
-        this._web3Providers[chainId] = new Web3Provider(provider);
-    }
-
-    /**
-     * @internal
-     */
-    setProviderUri(chainId: number, newUri: string) {
-        if (this._providers[chainId]) {
-            this._chainUris[chainId] = newUri;
-
-            this._providers[chainId].url = newUri;
-            this._web3Providers[chainId] = new Web3Provider(this._providers[chainId]);
-        }
-    }
-
-    /**
-     * @internal
-     */
-    setProviderBatchInterval(chainId: number, batchInterval: number) {
-        if (this._providers[chainId]) {
-            this._providers[chainId].batchInterval = batchInterval;
-            this._web3Providers[chainId] = new Web3Provider(this._providers[chainId]);
-        }
+        this._chainEndpoints[chainId] = endpoint;
+        this._providers[chainId]      = provider
+        this._web3Providers[chainId]  = new Web3Provider(provider);
     }
 
     private _newProvider(
-        chainId: number,
-        uri: string,
+        chainId:       number,
+        endpoint:      string,
         batchInterval: number
     ): MiniRpcProvider {
         return new MiniRpcProvider(
             chainId,
-            uri,
+            endpoint,
             batchInterval
         );
     }
