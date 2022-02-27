@@ -27,7 +27,6 @@
       "node",
       "chai",
       "mocha",
-      "expect"
     ],
     "plugins": [
       { "transform": "typescript-transform-paths" } // Transform paths in output .js files
