@@ -2,9 +2,9 @@ export {
     newSynapseBridgeInstance,
     newL1BridgeZapInstance,
     newL2BridgeZapInstance
-} from "./entities";
+} from "@entities";
 
-import {SynapseEntities} from "./entities";
+import {SynapseEntities} from "@entities";
 
 export const {
     synapseBridge,
@@ -12,66 +12,46 @@ export const {
     l2BridgeZap,
 } = SynapseEntities;
 
-import {Bridge} from "./bridge/bridge";
-
-export {Bridge};
-export {Slippages} from "./bridge/slippages";
+export {Bridge} from "@bridge/bridge";
+export {Slippages} from "@bridge/slippages";
 
 export {
     ChainId,
     supportedChainIds
-} from "./common/chainid";
-
-import {
-    Networks,
-    supportedNetworks
-} from "./common/networks";
+} from "@common/chainid";
 
 export {
     Networks,
     supportedNetworks
-};
+} from "@common/networks";
 
-export {BaseToken, WrappedToken} from "./token";
-export {Tokens} from "./tokens";
+export {
+    type Token,
+    BaseToken,
+    WrappedToken
+} from "@token";
+
+export {Tokens} from "@tokens";
 
 export {
     SwapPools,
     networkSwapTokensMap,
     allNetworksSwapTokensMap,
-    swappableTokens,
-    swappableTokensAllNetworks,
-} from "./swappools";
+    type NetworkSwappableTokensMap
+} from "@swappools";
 
-export {TokenSwap, UnsupportedSwapErrors} from "./tokenswap";
+export {TokenSwap, UnsupportedSwapErrors} from "@tokenswap";
 
-import type {ChainIdTypeMap, AddressMap, DecimalsMap} from "./common/types";
-import type {Token} from "./token";
-import type {NetworkSwappableTokensMap} from "./swappools";
-import type {
-    SynapseBridgeContract,
-    GenericZapBridgeContract,
-    L1BridgeZapContract,
-    L2BridgeZapContract,
-    SynapseERC20Contract,
-    BridgeConfigContract
-} from "./contracts";
-
-type Network = Networks.Network;
-type BridgeOutputEstimate = Bridge.BridgeOutputEstimate;
+export {
+    type RPCEndpointsConfig,
+    configureRPCEndpoints
+} from "@internal/rpcproviders";
 
 export type {
-    Network,
-    Token,
-    ChainIdTypeMap,
-    AddressMap,
-    DecimalsMap,
-    NetworkSwappableTokensMap,
     SynapseBridgeContract,
     GenericZapBridgeContract,
     L1BridgeZapContract,
     L2BridgeZapContract,
     SynapseERC20Contract,
-    BridgeConfigContract,
-    BridgeOutputEstimate,
-}
+    BridgeConfigV3Contract
+} from "@contracts";

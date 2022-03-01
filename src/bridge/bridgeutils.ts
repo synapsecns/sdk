@@ -1,12 +1,12 @@
-import {Tokens} from "../tokens";
+import {Tokens} from "@tokens";
 import {Slippages} from "./slippages";
-import {ChainId} from "../common/chainid";
+import {ChainId} from "@chainid";
 
-import type {Token} from "../token";
-import type {GenericZapBridgeContract, L2BridgeZapContract} from "../contracts";
+import type {Token} from "@token";
+import type {GenericZapBridgeContract, L2BridgeZapContract} from "@contracts";
 
+import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
-import {Zero} from "@ethersproject/constants";
 
 
 export namespace BridgeUtils {
@@ -20,7 +20,16 @@ export namespace BridgeUtils {
         ChainId.HARMONY,
     ];
 
+    export const GAS_TOKEN_CHAINS = [
+        ChainId.ETH,
+        ChainId.OPTIMISM,
+        ChainId.BOBA,
+        ChainId.ARBITRUM,
+    ];
+
     export const isL2ETHChain = (chainId: number): boolean => L2_ETH_CHAINS.includes(chainId);
+
+    export const chainSupportsGasToken = (chainId: number): boolean => GAS_TOKEN_CHAINS.includes(chainId);
 
     interface DepositIfChainArgs {
         chainId:     number,
@@ -130,9 +139,9 @@ export namespace BridgeUtils {
         [args.addressTo, args.chainIdTo, t.address(chainId), args.amountFrom]
 
     export const makeEasySubParams = (
-        args: BridgeTxParams,
+        args:    BridgeTxParams,
         chainId: number,
-        t: Token
+        t:       Token
     ): [string, number, string] => {
         let x = makeEasyParams(args, chainId, t);
         return [x[0], x[1], x[2]]

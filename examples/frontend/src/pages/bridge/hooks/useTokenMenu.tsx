@@ -4,10 +4,10 @@ import TokenDropdown, {TokenDropdownItem} from "../components/TokenDropdown";
 
 import {TokenMenuContext} from "../contexts/TokenMenuContext";
 
-import {detailedTokenSwapMap} from "@synapseprotocol/sdk";
+import {TokenSwap}  from "@synapseprotocol/sdk";
 import type {Token} from "@synapseprotocol/sdk";
 
-import {BridgeDirections} from "../Directions";
+import {BridgeDirections}   from "../Directions";
 import {NetworkMenuContext} from "../contexts/NetworkMenuContext";
 import {isNullOrUndefined, SetStateFunction} from "@utils";
 
@@ -33,7 +33,7 @@ function isDisabled(t: Token, selected?: Token): boolean {
 function makeDropdownItems(tokens: Token[], selected?: Token): TokenDropdownItem[] {
     return tokens.map((t) => ({
         label:     t.name,
-        key:       String(t.hash),
+        key:       String(t.id),
         disabled:  isDisabled(t, selected),
         token:     t,
     }));
@@ -102,7 +102,7 @@ function getDestinationChainTokens({sourceChain, destChain, sourceToken}: {
     destChain:   number,
     sourceToken: Token,
 }): Token[] {
-    const swapMap = detailedTokenSwapMap()[sourceChain].find(({token}) => sourceToken.isEqual(token));
+    const swapMap = TokenSwap.detailedTokenSwapMap()[sourceChain].find(({token}) => sourceToken.isEqual(token));
     return swapMap[destChain] ?? [];
 }
 

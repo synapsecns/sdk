@@ -1,6 +1,7 @@
-import "../helpers/chaisetup";
+import "@tests/setup";
 
 import {expect} from "chai";
+import {step} from "mocha-steps";
 
 import {
     allNetworksSwapTokensMap,
@@ -9,19 +10,26 @@ import {
     NetworkSwappableTokensMap,
     networkSwapTokensMap,
     supportedChainIds,
-    SwapPools,
-    Token,
-    Tokens
-} from "../../src";
+    Tokens,
+    type Token
+} from "@sdk";
 
-import {expectBoolean, expectIncludes, expectLength, wrapExpect,} from "../helpers";
+import {
+    type RPCEndpointsConfig,
+    configureRPCEndpoints,
+    rpcProviderForChain
+} from "@sdk/internal/rpcproviders";
 
-interface _tc {
-    want: boolean,
-}
+import {
+    expectBoolean,
+    expectIncludes,
+    expectLength,
+    wrapExpect
+} from "@tests/helpers";
 
-const makeWantString = (tc: _tc, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
+import {Web3Provider} from "@ethersproject/providers";
 
+const makeWantString = (tc: {want: boolean}, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
 
 
 describe("Basic tests", function(this: Mocha.Suite) {
@@ -42,6 +50,38 @@ describe("Basic tests", function(this: Mocha.Suite) {
             `supportedNetworks ${testSuffix}`,
             wrapExpect(expectLength(supportedNetworks, numChains))
         )
+    })
+
+    describe("Test configureRPCEndpoints", function(this: Mocha.Suite) {
+        const rpcConfig: RPCEndpointsConfig = {
+            [ChainId.BSC]:  {endpoint:"https://bsc-dataseed2.defibit.io"},
+            [ChainId.BOBA]: {endpoint:"https://mainnet.boba.network/", batchInterval: 100},
+        }
+
+        let
+            previousBscEndpoint:  string,
+            previousBobaEndpoint: string,
+            previousEthEndpoint:  string;
+
+        step("Populate current RPC endpoints", function(this: Mocha.Context) {
+            previousBscEndpoint  = (rpcProviderForChain(ChainId.BSC)  as Web3Provider).connection.url;
+            previousBobaEndpoint = (rpcProviderForChain(ChainId.BOBA) as Web3Provider).connection.url;
+            previousEthEndpoint  = (rpcProviderForChain(ChainId.ETH)  as Web3Provider).connection.url;
+        })
+
+
+        it("configureRPCEndponts should only reconfigure BSC and Boba", function(this: Mocha.Context) {
+            configureRPCEndpoints(rpcConfig);
+
+            const
+                checkBscEndpoint:   string = (rpcProviderForChain(ChainId.BSC)  as Web3Provider).connection.url,
+                checkBobaEndpoint:  string = (rpcProviderForChain(ChainId.BOBA) as Web3Provider).connection.url,
+                checkEthEndpoint:   string = (rpcProviderForChain(ChainId.ETH)  as Web3Provider).connection.url;
+
+            expect(checkBscEndpoint).to.not.equal(previousBscEndpoint);
+            expect(checkBobaEndpoint).to.not.equal(previousBobaEndpoint);
+            expect(checkEthEndpoint).to.equal(previousEthEndpoint);
+        })
     })
 
     describe("Check swappableTokens", function(this: Mocha.Suite) {
@@ -142,53 +182,20 @@ describe("Basic tests", function(this: Mocha.Suite) {
             }
         })
     })
+
+    describe("Test Networks.networkSupportsToken()", function(this: Mocha.Suite) {
+        it("BSC should support gOHM", function(this: Mocha.Context) {
+            expect(Networks.networkSupportsToken(ChainId.BSC, Tokens.GOHM)).to.be.true;
+            expect(Networks.networkSupportsToken(Networks.BSC, Tokens.GOHM)).to.be.true;
+        })
+
+        it("ETH should not support MIM", function(this: Mocha.Context) {
+            expect(Networks.networkSupportsToken(ChainId.ETH, Tokens.MIM)).to.be.false;
+            expect(Networks.networkSupportsToken(Networks.ETH, Tokens.MIM)).to.be.false;
+        })
+    })
 })
 
 describe("SwapPools", function(this: Mocha.Suite) {
-    describe("Pool tokens", function(this: Mocha.Suite) {
-        interface testCaseToken {
-            token: Token,
-            want:  boolean,
-        }
-        interface testCase {
-            chainId:   number,
-            swapToken: SwapPools.SwapPoolToken,
-            tokens:    testCaseToken[]
-        }
 
-        const testCases: testCase[] = [
-            {
-                chainId:       ChainId.BSC,
-                swapToken:     SwapPools.BSC_POOL_SWAP_TOKEN,
-                tokens: [
-                    {token: Tokens.NUSD, want: true},
-                    {token: Tokens.BUSD, want: true},
-                    {token: Tokens.USDC, want: true},
-                    {token: Tokens.USDT, want: true},
-                    {token: Tokens.DAI,  want: false},
-                    {token: Tokens.FRAX, want: false},
-                ],
-            }
-        ];
-
-        for (const tc of testCases) {
-            const
-                describeTitle: string = `test ${Networks.networkName(tc.chainId)} ${tc.swapToken.name.trimEnd()} pool tokens`,
-                poolSymbols: string[] = tc.swapToken.poolTokens.map((t: Token) => t.symbol);
-
-            describe(describeTitle, function(this: Mocha.Suite) {
-                for (const tok of tc.tokens) {
-                    const
-                        wantTok: boolean  = tok.want,
-                        tokSymbol: string = tok.token.symbol,
-                        testTitle: string = `pool symbols ${makeWantString(tok)} symbol ${tokSymbol}`;
-
-                    it(
-                        testTitle,
-                        wrapExpect(expectIncludes(poolSymbols, tokSymbol, wantTok))
-                    )
-                }
-            })
-        }
-    })
 })

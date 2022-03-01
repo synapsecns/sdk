@@ -1,14 +1,19 @@
-import "./chaisetup";
+import "@tests/setup";
 
 import {expect} from "chai";
 
 import _ from "lodash";
-import {Zero} from "@ethersproject/constants";
-import {Wallet} from "@ethersproject/wallet";
-import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
-import {Token} from "../../src";
-import {newProviderForNetwork} from "../../src/internal/rpcproviders";
+import {Zero}   from "@ethersproject/constants";
+import {Wallet} from "@ethersproject/wallet";
+
+import {
+    BigNumber,
+    type BigNumberish
+} from "@ethersproject/bignumber";
+
+import type {Token} from "@sdk";
+import {rpcProviderForChain} from "@sdk/internal/rpcproviders";
 
 const TEN_BN: BigNumber = BigNumber.from(10);
 
@@ -17,26 +22,24 @@ const testAmounts: string[] = [
     "669", "555",
 ];
 
+// Completely clean privkey with low balances.
+export const bridgeTestPrivkey1: string = "53354287e3023f0629b7a5e187aa1ca3458c4b7ff9d66a6e3f4b2e821aafded7";
+
 export const
-    valueIfUndefined = <T>(data: T, fallback: T) => typeof data === "undefined" ? fallback : data,
-    makeTimeout = (seconds: number): number => seconds * 1000,
-    doneWithError = (
-        e:    any,
-        done: Mocha.Done
-    ) => done(e instanceof Error ? e : new Error(e)),
-    getActualWei = (
-        n:        BigNumber,
-        decimals: number
-    ): BigNumber => n.mul(TEN_BN.pow(18 - decimals)),
-    getTestAmount = (
-        t:    Token,
-        c:    number,
-        amt?: BigNumberish
-    ): BigNumber => t.valueToWei(amt ?? _.shuffle(testAmounts)[0], c),
-    makeWalletSignerWithProvider = (
-        chainId: number,
-        privKey: string
-    ): Wallet => new Wallet(privKey, newProviderForNetwork(chainId));
+    makeTimeout      = (seconds: number): number => seconds * 1000,
+    valueIfUndefined = <T>(data: T, fallback: T): T => typeof data === "undefined" ? fallback : data,
+    getActualWei     = (n: BigNumber, decimals: number): BigNumber => n.mul(TEN_BN.pow(18 - decimals));
+
+export const getTestAmount = (
+    t: Token,
+    c: number,
+    amt?: BigNumberish
+): BigNumber => t.valueToWei(amt ?? _.shuffle(testAmounts)[0], c);
+
+export const makeWalletSignerWithProvider = (
+    chainId: number,
+    privKey: string
+): Wallet => new Wallet(privKey, rpcProviderForChain(chainId));
 
 
 export const

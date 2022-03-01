@@ -1,30 +1,35 @@
-import {Token} from "./token";
-import {Tokens} from "./tokens";
-import {SwapPools} from "./swappools";
-import {rejectPromise} from "./common/utils";
+import type {Token}    from "@token";
+import {Tokens}        from "@tokens";
+import {SwapPools}     from "@swappools";
+import {rejectPromise} from "@common/utils";
 
-import {SynapseEntities} from "./entities";
-import {SwapContract, SwapFactory} from "./contracts";
+import {SynapseEntities} from "@entities";
+import {
+    SwapContract,
+    SwapFactory,
+} from "@contracts";
 
-import {ChainId, supportedChainIds} from "./common/chainid";
-import {Networks} from "./common/networks";
+import type {BridgeConfigV3Contract} from "@contracts";
 
-import {SwapType} from "./internal/swaptype";
-import {newProviderForNetwork} from "./internal/rpcproviders";
+import {Networks}                   from "@networks";
+import {ChainId, supportedChainIds} from "@chainid";
 
-import {PopulatedTransaction} from "@ethersproject/contracts";
-import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+import {SwapType}              from "@internal/swaptype";
+import {rpcProviderForChain} from "@internal/rpcproviders";
+
+import {
+    BigNumber,
+    type BigNumberish
+} from "@ethersproject/bignumber";
+
+import type {PopulatedTransaction} from "@ethersproject/contracts";
 
 export namespace UnsupportedSwapErrors {
-    interface _Token {symbol: string}
-
     export enum UnsupportedSwapErrorKind {
         UnsupportedToken,
         UnsupportedTokenNetFrom,
         UnsupportedTokenNetTo,
         NonmatchingSwapTypes,
-        BobaToL1,
-        ETHOnBoba,
     }
 
     export interface UnsupportedSwapError {
@@ -32,47 +37,36 @@ export namespace UnsupportedSwapErrors {
         reason:    string,
     }
 
-    export type UnsupportedSwapErrorFunc = (t: _Token, netName: string) => UnsupportedSwapErrors.UnsupportedSwapError;
-
-    export const tokenNotSupported = (t: _Token, netName: string): UnsupportedSwapError => ({
+    export const tokenNotSupported = (t: {symbol: string}, netName: string): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedToken,
         reason:    `Token ${t.symbol} not supported on network ${netName}`,
-    })
+    });
 
-    export const tokenNotSupportedNetFrom = (t: _Token, netName: string): UnsupportedSwapError => ({
+    export const tokenNotSupportedNetFrom = (t: {symbol: string}, netName: string): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetFrom,
         reason:    `Token ${t.symbol} not supported on 'from' network ${netName}`,
-    })
+    });
 
-    export const tokenNotSupportedNetTo = (t: _Token, netName: string): UnsupportedSwapError => ({
+    export const tokenNotSupportedNetTo = (t: {symbol: string}, netName: string): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetTo,
         reason:    `Token ${t.symbol} not supported on 'to' network ${netName}`,
-    })
+    });
 
-    export const nonMatchingSwapTypes = (st1: string, st2: string): UnsupportedSwapError => ({
+    export const nonMatchingSwapTypes = (): UnsupportedSwapError => ({
         errorKind:  UnsupportedSwapErrorKind.NonmatchingSwapTypes,
         reason:    "Token swap types don't match",
-    })
-
-    export const ethOnBoba = (): UnsupportedSwapError => ({
-        errorKind: UnsupportedSwapErrorKind.ETHOnBoba,
-        reason:    "Currently, the SDK only supports bridging Stablecoins to and from BOBA",
-    })
-
-    export const bobaToL1 = (): UnsupportedSwapError => ({
-        errorKind: UnsupportedSwapErrorKind.BobaToL1,
-        reason:    "Bridging ETH from Boba Mainnet to L1 not currently supported",
-    })
+    });
 }
 
 export namespace TokenSwap {
-    const POOL_CONFIG_INSTANCE = SynapseEntities.poolConfig();
+    const BRIDGE_CONFIG_INSTANCE: BridgeConfigV3Contract = SynapseEntities.bridgeConfigV3();
 
     export interface SwapParams {
         chainId:       number,
         tokenFrom:     Token,
         tokenTo:       Token,
         amountIn:      BigNumberish,
+        swapData?:     SwapSetup,
     }
 
     export interface SwapTokensParams extends SwapParams {
@@ -115,33 +109,12 @@ export namespace TokenSwap {
 
     export function swapSupported(args: SwapParams): SwapSupportedResult {
         const {tokenFrom, tokenTo, chainId} = args;
-
         return checkCanSwap(tokenFrom, tokenTo, chainId)
     }
 
     export function bridgeSwapSupported(args: BridgeSwapSupportedParams): SwapSupportedResult {
         const {tokenFrom, tokenTo, chainIdFrom, chainIdTo} = args;
-
-        let
-            swapSupported: boolean = true,
-            reasonNotSupported: UnsupportedSwapErrors.UnsupportedSwapError;
-
-        const canSwap = checkCanSwap(tokenFrom, tokenTo, chainIdFrom, chainIdTo);
-        if (!canSwap.swapSupported) {
-            return canSwap
-        }
-
-        const checkBoba = (c: number, t: Token): boolean => c === ChainId.BOBA && t.swapType === SwapType.ETH;
-        const
-            isEthFromBoba = checkBoba(chainIdFrom, tokenFrom),
-            isEthToBoba   = checkBoba(chainIdTo,   tokenTo);
-
-        if (isEthFromBoba || isEthToBoba) {
-            swapSupported = false;
-            reasonNotSupported = UnsupportedSwapErrors.ethOnBoba();
-        }
-
-        return {swapSupported, reasonNotSupported}
+        return checkCanSwap(tokenFrom, tokenTo, chainIdFrom, chainIdTo);
     }
 
     export async function calculateSwapRate(args: SwapParams): Promise<EstimatedSwapRate> {
@@ -150,10 +123,12 @@ export namespace TokenSwap {
             return rejectPromise(reasonNotSupported)
         }
 
-        const {swapInstance, tokenIndexFrom, tokenIndexTo} = await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
-
-        return swapInstance.calculateSwap(tokenIndexFrom, tokenIndexTo, args.amountIn)
-            .then((res): EstimatedSwapRate => ({amountOut: res}))
+        return resolveSwapData(args)
+            .then(({swapInstance, tokenIndexFrom, tokenIndexTo}) =>
+                swapInstance.calculateSwap(tokenIndexFrom, tokenIndexTo, args.amountIn)
+                    .then((res): EstimatedSwapRate => ({amountOut: res}))
+            )
+            .catch(rejectPromise)
     }
 
     export async function buildSwapTokensTransaction(args: SwapTokensParams): Promise<PopulatedTransaction> {
@@ -162,21 +137,34 @@ export namespace TokenSwap {
             return rejectPromise(reasonNotSupported)
         }
 
-        const {swapInstance, tokenIndexFrom, tokenIndexTo} = await swapSetup(args.tokenFrom, args.tokenTo, args.chainId);
+        return resolveSwapData(args)
+            .then(populateSwapTransaction(args))
+            .catch(rejectPromise)
+    }
 
-        let {deadline} = args;
-        deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
+    async function resolveSwapData(args: SwapTokensParams|SwapParams): Promise<SwapSetup> {
+        const {swapData} = args;
+        return Promise.resolve(swapData ? swapData : await swapSetup(args.tokenFrom, args.tokenTo, args.chainId))
+    }
 
-        const overrides: any = args.tokenFrom.isEqual(Tokens.ETH) ? {value:args.amountIn} : {};
+    function populateSwapTransaction(args: SwapTokensParams): (swapSetup: SwapSetup) => Promise<PopulatedTransaction> {
+        return (swapSetup: SwapSetup): Promise<PopulatedTransaction> => {
+            let {deadline} = args;
+            const {swapInstance, tokenIndexFrom, tokenIndexTo} = swapSetup;
 
-        return swapInstance.populateTransaction.swap(
-            tokenIndexFrom,
-            tokenIndexTo,
-            args.amountIn,
-            args.minAmountOut,
-            deadline,
-            overrides
-        )
+            deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
+
+            const overrides: any = args.tokenFrom.isEqual(Tokens.ETH) ? {value:args.amountIn} : {};
+
+            return swapInstance.populateTransaction.swap(
+                tokenIndexFrom,
+                tokenIndexTo,
+                args.amountIn,
+                args.minAmountOut,
+                deadline,
+                overrides
+            )
+        }
     }
 
     export function intermediateTokens(chainId: number, token: Token): IntermediateSwapTokens {
@@ -254,32 +242,24 @@ export namespace TokenSwap {
     }
 
     async function swapContract(token: Token, chainId: number): Promise<SwapContract> {
-        const
-            lpToken            = intermediateToken(token, chainId),
-            {poolAddress}      = await POOL_CONFIG_INSTANCE.getPoolConfig(lpToken.address(chainId), chainId);
+        const lpToken = _intermediateToken(token, chainId);
 
-        return SwapFactory.connect(poolAddress, newProviderForNetwork(chainId))
+        return BRIDGE_CONFIG_INSTANCE.getPoolConfig(lpToken.address(chainId), chainId)
+            .then(({poolAddress}) => SwapFactory.connect(poolAddress, rpcProviderForChain(chainId)))
+            .catch(rejectPromise)
     }
 
-    async function swapSetup(tokenFrom: Token, tokenTo: Token, chainId: number): Promise<SwapSetup> {
-        const swapInstance = await swapContract(tokenFrom, chainId)
+    export async function swapSetup(tokenFrom: Token, tokenTo: Token, chainId: number): Promise<SwapSetup> {
+        const swapInstance = await swapContract(tokenFrom, chainId);
 
-        const [tokenIndexFrom, tokenIndexTo] = await Promise.all([
-            swapInstance.getTokenIndex(tokenFrom.address(chainId)),
-            swapInstance.getTokenIndex(tokenTo.address(chainId))
-        ])
-
-        return {
+        return Promise.all([
+                swapInstance.getTokenIndex(tokenFrom.address(chainId)),
+                swapInstance.getTokenIndex(tokenTo.address(chainId)),
+        ]).then(([tokenIndexFrom, tokenIndexTo]) => ({
             swapInstance,
             tokenIndexFrom,
             tokenIndexTo,
-        }
-    }
-
-    function intermediateToken(token: Token, chainId: number): Token {
-        const {intermediateToken, bridgeConfigIntermediateToken} = intermediateTokens(chainId, token);
-
-        return intermediateToken ?? bridgeConfigIntermediateToken
+        })).catch(rejectPromise)
     }
 
     const mintBurnSwapTypes = [
@@ -287,6 +267,12 @@ export namespace TokenSwap {
         SwapType.NFD,  SwapType.OHM, SwapType.SOLAR,
         SwapType.GMX,
     ];
+
+    function _intermediateToken(token: Token, chainId: number): Token {
+        const {intermediateToken, bridgeConfigIntermediateToken} = intermediateTokens(chainId, token);
+
+        return intermediateToken ?? bridgeConfigIntermediateToken
+    }
 
     function checkCanSwap(tokenFrom: Token, tokenTo: Token, chainFrom: number, chainTo?: number): SwapSupportedResult {
         const
@@ -309,24 +295,23 @@ export namespace TokenSwap {
 
         if (tokenFrom.swapType !== tokenTo.swapType) {
             swapSupported = false;
-            reasonNotSupported = UnsupportedSwapErrors.nonMatchingSwapTypes(tokenFrom.swapType, tokenTo.swapType);
+            reasonNotSupported = UnsupportedSwapErrors.nonMatchingSwapTypes();
         }
 
         return {swapSupported, reasonNotSupported}
     }
 
-    function checkTokensSupported(tokenFrom: Token, tokenTo: Token, chainIdFrom: number, chainIdTo?: number): SwapSupportedResult {
-        const unsupportedFunc = (
-            chainId: number,
-            notSupportedErr: UnsupportedSwapErrors.UnsupportedSwapErrorFunc
-        ): UnsupportedSwapErrors.UnsupportedSwapErrorFunc => (typeof chainId !== "undefined"
-            ? notSupportedErr
-            : UnsupportedSwapErrors.tokenNotSupported
-        );
+    function checkTokensSupported(
+        tokenFrom:   Token,
+        tokenTo:     Token,
+        chainIdFrom: number,
+        chainIdTo?:  number
+    ): SwapSupportedResult {
+        const isSameNet: boolean = typeof chainIdTo === "undefined";
 
         const
-            unsupportedFromErr = unsupportedFunc(chainIdFrom, UnsupportedSwapErrors.tokenNotSupportedNetFrom),
-            unsupportedToErr   = unsupportedFunc(chainIdTo,   UnsupportedSwapErrors.tokenNotSupportedNetTo);
+            unsupportedFromErr = isSameNet ? UnsupportedSwapErrors.tokenNotSupported : UnsupportedSwapErrors.tokenNotSupportedNetFrom,
+            unsupportedToErr   = isSameNet ? UnsupportedSwapErrors.tokenNotSupported : UnsupportedSwapErrors.tokenNotSupportedNetTo;
 
         const
             netFrom = Networks.fromChainId(chainIdFrom),

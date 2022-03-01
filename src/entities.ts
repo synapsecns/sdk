@@ -1,24 +1,20 @@
-import type {
-    SynapseBridgeContract,
-    L1BridgeZapContract,
-    L2BridgeZapContract,
-    GenericZapBridgeContract,
-    BridgeConfigContract,
-    PoolConfigContract,
-} from "./contracts";
-
 import {
     SynapseBridgeFactory,
     L1BridgeZapFactory,
     L2BridgeZapFactory,
-    BridgeConfigFactory,
-    PoolConfigFactory,
+    BridgeConfigV3Factory,
+    type SynapseBridgeContract,
+    type L1BridgeZapContract,
+    type L2BridgeZapContract,
+    type GenericZapBridgeContract,
+    type BridgeConfigV3Contract,
 } from "./contracts";
 
-import type {SignerOrProvider} from "./common/types";
-import {contractAddressFor} from "./common/utils";
-import {ChainId} from "./common/chainid";
-import {newProviderForNetwork} from "./internal/rpcproviders";
+import {ChainId}               from "@chainid";
+import {contractAddressFor}    from "@common/utils";
+import {rpcProviderForChain} from "@internal/rpcproviders";
+
+import type {SignerOrProvider} from "@common/types";
 
 
 export const newSynapseBridgeInstance = (params: {
@@ -38,54 +34,39 @@ export const newL2BridgeZapInstance = (params: {
 }): L2BridgeZapContract => L2BridgeZapFactory.connect(params.address, params.signerOrProvider);
 
 export namespace SynapseEntities {
-    const
-        bridgeConfigAddress: string = "0x7fd806049608b7d04076b8187dd773343e0589e6",
-        poolConfigAddress:   string = "0xB34C67DB5F0Fd8D3D4238FD0A1cBbfD50a72e177";
+    const bridgeConfigV3Address: string = "0x3ee02f08B801B1990AC844d8CD2F119BA6Fb9bcF";
 
-    export function synapseBridge(params: {
-        chainId: number,
-        signerOrProvider?: SignerOrProvider
-    }): SynapseBridgeContract {
-        const address: string = contractAddressFor(params.chainId, "bridge");
-        return SynapseBridgeFactory.connect(address, params.signerOrProvider);
+    export interface NewEntityParams {
+        chainId:           number;
+        signerOrProvider?: SignerOrProvider;
     }
 
-    export function l1BridgeZap(params: {
-        chainId: number,
-        signerOrProvider?: SignerOrProvider
-    }): L1BridgeZapContract {
-        const address: string = contractAddressFor(params.chainId, "bridge_zap");
-        return L1BridgeZapFactory.connect(address, params.signerOrProvider);
-    }
+    export const synapseBridge = (params: NewEntityParams): SynapseBridgeContract =>
+        newSynapseBridgeInstance({
+            address: contractAddressFor(params.chainId, "bridge"),
+            ...params
+        })
 
-    export function l2BridgeZap(params: {
-        chainId: number,
-        signerOrProvider?: SignerOrProvider
-    }): L2BridgeZapContract {
-        const address: string = contractAddressFor(params.chainId, "bridge_zap");
-        return L2BridgeZapFactory.connect(address, params.signerOrProvider);
-    }
+    export const l1BridgeZap = (params: NewEntityParams): L1BridgeZapContract =>
+        newL1BridgeZapInstance({
+            address: contractAddressFor(params.chainId, "bridge_zap"),
+            ...params
+        })
 
-    export function zapBridge(params: {
-        chainId: number,
-        signerOrProvider?: SignerOrProvider
-    }): GenericZapBridgeContract {
-        const address: string = contractAddressFor(params.chainId, "bridge_zap");
+    export const l2BridgeZap = (params: NewEntityParams): L2BridgeZapContract =>
+        newL2BridgeZapInstance({
+            address: contractAddressFor(params.chainId, "bridge_zap"),
+            ...params
+        })
 
-        if (params.chainId === ChainId.ETH) {
-            return L1BridgeZapFactory.connect(address, params.signerOrProvider)
-        }
+    export const zapBridge = (params: NewEntityParams): GenericZapBridgeContract =>
+        params.chainId === ChainId.ETH
+            ? l1BridgeZap(params)
+            : l2BridgeZap(params)
 
-        return L2BridgeZapFactory.connect(address, params.signerOrProvider)
-    }
-
-    export function bridgeConfig(): BridgeConfigContract {
-        const provider = newProviderForNetwork(ChainId.ETH);
-        return BridgeConfigFactory.connect(bridgeConfigAddress, provider)
-    }
-
-    export function poolConfig(): PoolConfigContract {
-        const provider = newProviderForNetwork(ChainId.ETH);
-        return PoolConfigFactory.connect(poolConfigAddress, provider)
-    }
+    export const bridgeConfigV3 = (): BridgeConfigV3Contract =>
+        BridgeConfigV3Factory.connect(
+            bridgeConfigV3Address,
+            rpcProviderForChain(ChainId.ETH)
+        )
 }

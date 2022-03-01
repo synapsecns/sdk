@@ -1,13 +1,14 @@
-import {ChainId} from "../common/chainid";
-import type {ChainIdTypeMap} from "../common/types";
+import {ChainId} from "@chainid";
+import type {ChainIdTypeMap} from "@common/types";
 
 import {parseUnits} from "@ethersproject/units";
-import {BigNumber} from "@ethersproject/bignumber";
+import {BigNumber}  from "@ethersproject/bignumber";
 
 import type {PopulatedTransaction} from "@ethersproject/contracts";
 
 export namespace GasUtils {
     export interface GasParams {
+        maxFeePerGas?:    BigNumber,
         maxPriorityFee?:  BigNumber,
         gasPrice?:        BigNumber,
         bridgeGasLimit?:  BigNumber,
@@ -26,11 +27,12 @@ export namespace GasUtils {
             approveGasLimit: BigNumber.from(60000),
         },
         [ChainId.ARBITRUM]: {
-            gasPrice:       makeGwei("2.5"),
+            gasPrice:       makeGwei("1.5"),
             bridgeGasLimit: BigNumber.from(1500000),
         },
         [ChainId.AVALANCHE]: {
-            gasPrice:        makeGwei("150"),
+            maxFeePerGas:    makeGwei("80"),
+            maxPriorityFee:  makeGwei("3"),
             bridgeGasLimit:  BigNumber.from(800000),
             approveGasLimit: BigNumber.from(75000),
         },
@@ -39,17 +41,32 @@ export namespace GasUtils {
         },
     }
 
-    export function makeGasParams(chainId: number): GasParams {
-        return CHAIN_GAS_PARAMS[chainId] ?? {};
-    }
+    export const makeGasParams = (chainId: number): GasParams => CHAIN_GAS_PARAMS[chainId] ?? {};
 
-    export function populateGasParams(chainId: number, txn: PopulatedTransaction|Promise<PopulatedTransaction>, gasLimitKind: string): Promise<PopulatedTransaction> {
-        return Promise.resolve(txn)
+    export const populateGasParams = (
+        chainId: number,
+        txn: PopulatedTransaction|Promise<PopulatedTransaction>,
+        gasLimitKind: string
+    ): Promise<PopulatedTransaction> =>
+        Promise.resolve(txn)
             .then((tx: PopulatedTransaction): PopulatedTransaction => {
-                let {maxPriorityFee, gasPrice, approveGasLimit, bridgeGasLimit} = makeGasParams(chainId);
+                let {
+                    maxFeePerGas,
+                    maxPriorityFee,
+                    gasPrice,
+                    approveGasLimit,
+                    bridgeGasLimit
+                } = makeGasParams(chainId);
 
-                if (gasPrice)        tx.gasPrice             = gasPrice;
-                if (maxPriorityFee)  tx.maxPriorityFeePerGas = maxPriorityFee;
+                if (maxFeePerGas || gasPrice) {
+                    if (maxFeePerGas) {
+                        tx.maxFeePerGas = maxFeePerGas;
+                    } else if (gasPrice) {
+                        tx.gasPrice = gasPrice;
+                    }
+                }
+
+                if (maxPriorityFee) tx.maxPriorityFeePerGas = maxPriorityFee;
 
                 switch (gasLimitKind) {
                     case "bridge":
@@ -60,8 +77,6 @@ export namespace GasUtils {
                         break;
                 }
 
-
                 return tx
             })
-    }
 }

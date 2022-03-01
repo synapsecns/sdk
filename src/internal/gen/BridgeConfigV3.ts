@@ -17,7 +17,21 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export declare namespace BridgeConfig {
+export declare namespace BridgeConfigV3 {
+  export type PoolStruct = {
+    tokenAddress: string;
+    chainId: BigNumberish;
+    poolAddress: string;
+    metaswap: boolean;
+  };
+
+  export type PoolStructOutput = [string, BigNumber, string, boolean] & {
+    tokenAddress: string;
+    chainId: BigNumber;
+    poolAddress: string;
+    metaswap: boolean;
+  };
+
   export type TokenStruct = {
     chainId: BigNumberish;
     tokenAddress: string;
@@ -56,25 +70,34 @@ export declare namespace BridgeConfig {
   };
 }
 
-export interface BridgeConfigInterface extends utils.Interface {
-  contractName: "BridgeConfig";
+export interface BridgeConfigV3Interface extends utils.Interface {
+  contractName: "BridgeConfigV3";
   functions: {
     "BRIDGEMANAGER_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "calculateSwapFee(address,uint256,uint256)": FunctionFragment;
+    "bridgeConfigVersion()": FunctionFragment;
+    "calculateSwapFee(string,uint256,uint256)": FunctionFragment;
     "getAllTokenIDs()": FunctionFragment;
+    "getMaxGasPrice(uint256)": FunctionFragment;
+    "getPoolConfig(address,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
     "getRoleMemberCount(bytes32)": FunctionFragment;
     "getToken(string,uint256)": FunctionFragment;
+    "getTokenByAddress(string,uint256)": FunctionFragment;
+    "getTokenByEVMAddress(address,uint256)": FunctionFragment;
+    "getTokenByID(string,uint256)": FunctionFragment;
     "getTokenID(address,uint256)": FunctionFragment;
     "getUnderlyingToken(string)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "hasUnderlyingToken(string)": FunctionFragment;
     "isTokenIDExist(string)": FunctionFragment;
+    "removeTokenMapping(string)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
+    "setMaxGasPrice(uint256,uint256)": FunctionFragment;
+    "setPoolConfig(address,uint256,address,bool)": FunctionFragment;
     "setTokenConfig(string,uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)": FunctionFragment;
   };
 
@@ -87,12 +110,24 @@ export interface BridgeConfigInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "bridgeConfigVersion",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "calculateSwapFee",
     values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getAllTokenIDs",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMaxGasPrice",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPoolConfig",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -108,6 +143,18 @@ export interface BridgeConfigInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getToken",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTokenByAddress",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTokenByEVMAddress",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTokenByID",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -135,12 +182,24 @@ export interface BridgeConfigInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "removeTokenMapping",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceRole",
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
     values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxGasPrice",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPoolConfig",
+    values: [string, BigNumberish, string, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "setTokenConfig",
@@ -168,11 +227,23 @@ export interface BridgeConfigInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "bridgeConfigVersion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "calculateSwapFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getAllTokenIDs",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMaxGasPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPoolConfig",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -188,6 +259,18 @@ export interface BridgeConfigInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getToken", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokenByAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokenByEVMAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokenByID",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getTokenID", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getUnderlyingToken",
@@ -204,10 +287,22 @@ export interface BridgeConfigInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "removeTokenMapping",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxGasPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setPoolConfig",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setTokenConfig",
     data: BytesLike
@@ -246,13 +341,13 @@ export type RoleRevokedEvent = TypedEvent<
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
-export interface BridgeConfig extends BaseContract {
-  contractName: "BridgeConfig";
+export interface BridgeConfigV3 extends BaseContract {
+  contractName: "BridgeConfigV3";
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: BridgeConfigInterface;
+  interface: BridgeConfigV3Interface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -278,6 +373,8 @@ export interface BridgeConfig extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    bridgeConfigVersion(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     /**
      * This means the fee should be calculated based on the chain that the nodes emit a tx on
      * Calculates bridge swap fee based on the destination chain's token transfer.
@@ -285,7 +382,21 @@ export interface BridgeConfig extends BaseContract {
      * @param chainID destination chain ID to query the token config for
      * @param tokenAddress address of the destination token to query token config for
      */
-    calculateSwapFee(
+    "calculateSwapFee(string,uint256,uint256)"(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    /**
+     * This means the fee should be calculated based on the chain that the nodes emit a tx on
+     * Calculates bridge swap fee based on the destination chain's token transfer.
+     * @param amount in native token decimals
+     * @param chainID destination chain ID to query the token config for
+     * @param tokenAddress address of the destination token to query token config for
+     */
+    "calculateSwapFee(address,uint256,uint256)"(
       tokenAddress: string,
       chainID: BigNumberish,
       amount: BigNumberish,
@@ -298,6 +409,20 @@ export interface BridgeConfig extends BaseContract {
     getAllTokenIDs(
       overrides?: CallOverrides
     ): Promise<[string[]] & { result: string[] }>;
+
+    /**
+     * gets the max gas price for a chain
+     */
+    getMaxGasPrice(
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getPoolConfig(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BridgeConfigV3.PoolStructOutput]>;
 
     /**
      * Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.
@@ -326,13 +451,13 @@ export interface BridgeConfig extends BaseContract {
      * @param chainID Chain ID of which token address + config to get
      * @param tokenID String input of the token ID for the token
      */
-    "getToken(string,uint256)"(
+    getToken(
       tokenID: string,
       chainID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BridgeConfig.TokenStructOutput] & {
-        token: BridgeConfig.TokenStructOutput;
+      [BridgeConfigV3.TokenStructOutput] & {
+        token: BridgeConfigV3.TokenStructOutput;
       }
     >;
 
@@ -341,13 +466,38 @@ export interface BridgeConfig extends BaseContract {
      * @param chainID Chain ID of which token to get config for
      * @param tokenAddress Matches the token ID by using a combo of address + chain ID
      */
-    "getToken(address,uint256)"(
+    getTokenByAddress(
       tokenAddress: string,
       chainID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BridgeConfig.TokenStructOutput] & {
-        token: BridgeConfig.TokenStructOutput;
+      [BridgeConfigV3.TokenStructOutput] & {
+        token: BridgeConfigV3.TokenStructOutput;
+      }
+    >;
+
+    getTokenByEVMAddress(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BridgeConfigV3.TokenStructOutput] & {
+        token: BridgeConfigV3.TokenStructOutput;
+      }
+    >;
+
+    /**
+     * Returns the full token config struct
+     * @param chainID Chain ID of which token address + config to get
+     * @param tokenID String input of the token ID for the token
+     */
+    getTokenByID(
+      tokenID: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BridgeConfigV3.TokenStructOutput] & {
+        token: BridgeConfigV3.TokenStructOutput;
       }
     >;
 
@@ -356,7 +506,13 @@ export interface BridgeConfig extends BaseContract {
      * @param chainID chainID of which to get token ID for
      * @param tokenAddress address of token to get ID for
      */
-    getTokenID(
+    "getTokenID(address,uint256)"(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    "getTokenID(string,uint256)"(
       tokenAddress: string,
       chainID: BigNumberish,
       overrides?: CallOverrides
@@ -370,8 +526,8 @@ export interface BridgeConfig extends BaseContract {
       tokenID: string,
       overrides?: CallOverrides
     ): Promise<
-      [BridgeConfig.TokenStructOutput] & {
-        token: BridgeConfig.TokenStructOutput;
+      [BridgeConfigV3.TokenStructOutput] & {
+        token: BridgeConfigV3.TokenStructOutput;
       }
     >;
 
@@ -410,6 +566,11 @@ export interface BridgeConfig extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    removeTokenMapping(
+      tokenID: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     /**
      * Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.
      */
@@ -429,6 +590,23 @@ export interface BridgeConfig extends BaseContract {
     ): Promise<ContractTransaction>;
 
     /**
+     * sets the max gas price for a chain
+     */
+    setMaxGasPrice(
+      chainID: BigNumberish,
+      maxPrice: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setPoolConfig(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      poolAddress: string,
+      metaswap: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    /**
      * Main write function of this contract - Handles creating the struct and passing it to the internal logic function
      * @param chainID chain ID to use for the token config object
      * @param hasUnderlying bool which represents whether this is a global mint token or one to withdraw()
@@ -442,7 +620,36 @@ export interface BridgeConfig extends BaseContract {
      * @param tokenDecimals decimals of token
      * @param tokenID string ID to set the token config object form
      */
-    setTokenConfig(
+    "setTokenConfig(string,uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
+      tokenID: string,
+      chainID: BigNumberish,
+      tokenAddress: string,
+      tokenDecimals: BigNumberish,
+      maxSwap: BigNumberish,
+      minSwap: BigNumberish,
+      swapFee: BigNumberish,
+      maxSwapFee: BigNumberish,
+      minSwapFee: BigNumberish,
+      hasUnderlying: boolean,
+      isUnderlying: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    /**
+     * Main write function of this contract - Handles creating the struct and passing it to the internal logic function
+     * @param chainID chain ID to use for the token config object
+     * @param hasUnderlying bool which represents whether this is a global mint token or one to withdraw()
+     * @param isUnderlying bool which represents if this token is the one to withdraw on the given chain
+     * @param maxSwap maximum amount of token allowed to be transferred at once - in native token decimals
+     * @param maxSwapFee max swap fee to be charged - in native token decimals
+     * @param minSwap minimum amount of token needed to be transferred at once - in native token decimals
+     * @param minSwapFee min swap fee to be charged - in native token decimals - especially useful for mainnet ETH
+     * @param swapFee percent based swap fee -- 10e6 == 10bps
+     * @param tokenAddress token address of the token on the given chain
+     * @param tokenDecimals decimals of token
+     * @param tokenID string ID to set the token config object form
+     */
+    "setTokenConfig(string,uint256,string,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
       tokenID: string,
       chainID: BigNumberish,
       tokenAddress: string,
@@ -462,6 +669,8 @@ export interface BridgeConfig extends BaseContract {
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
+  bridgeConfigVersion(overrides?: CallOverrides): Promise<BigNumber>;
+
   /**
    * This means the fee should be calculated based on the chain that the nodes emit a tx on
    * Calculates bridge swap fee based on the destination chain's token transfer.
@@ -469,7 +678,21 @@ export interface BridgeConfig extends BaseContract {
    * @param chainID destination chain ID to query the token config for
    * @param tokenAddress address of the destination token to query token config for
    */
-  calculateSwapFee(
+  "calculateSwapFee(string,uint256,uint256)"(
+    tokenAddress: string,
+    chainID: BigNumberish,
+    amount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  /**
+   * This means the fee should be calculated based on the chain that the nodes emit a tx on
+   * Calculates bridge swap fee based on the destination chain's token transfer.
+   * @param amount in native token decimals
+   * @param chainID destination chain ID to query the token config for
+   * @param tokenAddress address of the destination token to query token config for
+   */
+  "calculateSwapFee(address,uint256,uint256)"(
     tokenAddress: string,
     chainID: BigNumberish,
     amount: BigNumberish,
@@ -480,6 +703,20 @@ export interface BridgeConfig extends BaseContract {
    * Returns a list of all existing token IDs converted to strings
    */
   getAllTokenIDs(overrides?: CallOverrides): Promise<string[]>;
+
+  /**
+   * gets the max gas price for a chain
+   */
+  getMaxGasPrice(
+    chainID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getPoolConfig(
+    tokenAddress: string,
+    chainID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BridgeConfigV3.PoolStructOutput>;
 
   /**
    * Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.
@@ -508,29 +745,52 @@ export interface BridgeConfig extends BaseContract {
    * @param chainID Chain ID of which token address + config to get
    * @param tokenID String input of the token ID for the token
    */
-  "getToken(string,uint256)"(
+  getToken(
     tokenID: string,
     chainID: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BridgeConfig.TokenStructOutput>;
+  ): Promise<BridgeConfigV3.TokenStructOutput>;
 
   /**
    * Returns token config struct, given an address and chainID
    * @param chainID Chain ID of which token to get config for
    * @param tokenAddress Matches the token ID by using a combo of address + chain ID
    */
-  "getToken(address,uint256)"(
+  getTokenByAddress(
     tokenAddress: string,
     chainID: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BridgeConfig.TokenStructOutput>;
+  ): Promise<BridgeConfigV3.TokenStructOutput>;
+
+  getTokenByEVMAddress(
+    tokenAddress: string,
+    chainID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BridgeConfigV3.TokenStructOutput>;
+
+  /**
+   * Returns the full token config struct
+   * @param chainID Chain ID of which token address + config to get
+   * @param tokenID String input of the token ID for the token
+   */
+  getTokenByID(
+    tokenID: string,
+    chainID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BridgeConfigV3.TokenStructOutput>;
 
   /**
    * Returns the token ID (string) of the cross-chain token inputted
    * @param chainID chainID of which to get token ID for
    * @param tokenAddress address of token to get ID for
    */
-  getTokenID(
+  "getTokenID(address,uint256)"(
+    tokenAddress: string,
+    chainID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  "getTokenID(string,uint256)"(
     tokenAddress: string,
     chainID: BigNumberish,
     overrides?: CallOverrides
@@ -543,7 +803,7 @@ export interface BridgeConfig extends BaseContract {
   getUnderlyingToken(
     tokenID: string,
     overrides?: CallOverrides
-  ): Promise<BridgeConfig.TokenStructOutput>;
+  ): Promise<BridgeConfigV3.TokenStructOutput>;
 
   /**
    * Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role.
@@ -577,6 +837,11 @@ export interface BridgeConfig extends BaseContract {
    */
   isTokenIDExist(tokenID: string, overrides?: CallOverrides): Promise<boolean>;
 
+  removeTokenMapping(
+    tokenID: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   /**
    * Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.
    */
@@ -596,6 +861,23 @@ export interface BridgeConfig extends BaseContract {
   ): Promise<ContractTransaction>;
 
   /**
+   * sets the max gas price for a chain
+   */
+  setMaxGasPrice(
+    chainID: BigNumberish,
+    maxPrice: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setPoolConfig(
+    tokenAddress: string,
+    chainID: BigNumberish,
+    poolAddress: string,
+    metaswap: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  /**
    * Main write function of this contract - Handles creating the struct and passing it to the internal logic function
    * @param chainID chain ID to use for the token config object
    * @param hasUnderlying bool which represents whether this is a global mint token or one to withdraw()
@@ -609,7 +891,36 @@ export interface BridgeConfig extends BaseContract {
    * @param tokenDecimals decimals of token
    * @param tokenID string ID to set the token config object form
    */
-  setTokenConfig(
+  "setTokenConfig(string,uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
+    tokenID: string,
+    chainID: BigNumberish,
+    tokenAddress: string,
+    tokenDecimals: BigNumberish,
+    maxSwap: BigNumberish,
+    minSwap: BigNumberish,
+    swapFee: BigNumberish,
+    maxSwapFee: BigNumberish,
+    minSwapFee: BigNumberish,
+    hasUnderlying: boolean,
+    isUnderlying: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  /**
+   * Main write function of this contract - Handles creating the struct and passing it to the internal logic function
+   * @param chainID chain ID to use for the token config object
+   * @param hasUnderlying bool which represents whether this is a global mint token or one to withdraw()
+   * @param isUnderlying bool which represents if this token is the one to withdraw on the given chain
+   * @param maxSwap maximum amount of token allowed to be transferred at once - in native token decimals
+   * @param maxSwapFee max swap fee to be charged - in native token decimals
+   * @param minSwap minimum amount of token needed to be transferred at once - in native token decimals
+   * @param minSwapFee min swap fee to be charged - in native token decimals - especially useful for mainnet ETH
+   * @param swapFee percent based swap fee -- 10e6 == 10bps
+   * @param tokenAddress token address of the token on the given chain
+   * @param tokenDecimals decimals of token
+   * @param tokenID string ID to set the token config object form
+   */
+  "setTokenConfig(string,uint256,string,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
     tokenID: string,
     chainID: BigNumberish,
     tokenAddress: string,
@@ -629,6 +940,8 @@ export interface BridgeConfig extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
+    bridgeConfigVersion(overrides?: CallOverrides): Promise<BigNumber>;
+
     /**
      * This means the fee should be calculated based on the chain that the nodes emit a tx on
      * Calculates bridge swap fee based on the destination chain's token transfer.
@@ -636,7 +949,21 @@ export interface BridgeConfig extends BaseContract {
      * @param chainID destination chain ID to query the token config for
      * @param tokenAddress address of the destination token to query token config for
      */
-    calculateSwapFee(
+    "calculateSwapFee(string,uint256,uint256)"(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    /**
+     * This means the fee should be calculated based on the chain that the nodes emit a tx on
+     * Calculates bridge swap fee based on the destination chain's token transfer.
+     * @param amount in native token decimals
+     * @param chainID destination chain ID to query the token config for
+     * @param tokenAddress address of the destination token to query token config for
+     */
+    "calculateSwapFee(address,uint256,uint256)"(
       tokenAddress: string,
       chainID: BigNumberish,
       amount: BigNumberish,
@@ -647,6 +974,20 @@ export interface BridgeConfig extends BaseContract {
      * Returns a list of all existing token IDs converted to strings
      */
     getAllTokenIDs(overrides?: CallOverrides): Promise<string[]>;
+
+    /**
+     * gets the max gas price for a chain
+     */
+    getMaxGasPrice(
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPoolConfig(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BridgeConfigV3.PoolStructOutput>;
 
     /**
      * Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.
@@ -675,29 +1016,52 @@ export interface BridgeConfig extends BaseContract {
      * @param chainID Chain ID of which token address + config to get
      * @param tokenID String input of the token ID for the token
      */
-    "getToken(string,uint256)"(
+    getToken(
       tokenID: string,
       chainID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BridgeConfig.TokenStructOutput>;
+    ): Promise<BridgeConfigV3.TokenStructOutput>;
 
     /**
      * Returns token config struct, given an address and chainID
      * @param chainID Chain ID of which token to get config for
      * @param tokenAddress Matches the token ID by using a combo of address + chain ID
      */
-    "getToken(address,uint256)"(
+    getTokenByAddress(
       tokenAddress: string,
       chainID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BridgeConfig.TokenStructOutput>;
+    ): Promise<BridgeConfigV3.TokenStructOutput>;
+
+    getTokenByEVMAddress(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BridgeConfigV3.TokenStructOutput>;
+
+    /**
+     * Returns the full token config struct
+     * @param chainID Chain ID of which token address + config to get
+     * @param tokenID String input of the token ID for the token
+     */
+    getTokenByID(
+      tokenID: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BridgeConfigV3.TokenStructOutput>;
 
     /**
      * Returns the token ID (string) of the cross-chain token inputted
      * @param chainID chainID of which to get token ID for
      * @param tokenAddress address of token to get ID for
      */
-    getTokenID(
+    "getTokenID(address,uint256)"(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    "getTokenID(string,uint256)"(
       tokenAddress: string,
       chainID: BigNumberish,
       overrides?: CallOverrides
@@ -710,7 +1074,7 @@ export interface BridgeConfig extends BaseContract {
     getUnderlyingToken(
       tokenID: string,
       overrides?: CallOverrides
-    ): Promise<BridgeConfig.TokenStructOutput>;
+    ): Promise<BridgeConfigV3.TokenStructOutput>;
 
     /**
      * Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role.
@@ -747,6 +1111,11 @@ export interface BridgeConfig extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    removeTokenMapping(
+      tokenID: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     /**
      * Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.
      */
@@ -766,6 +1135,23 @@ export interface BridgeConfig extends BaseContract {
     ): Promise<void>;
 
     /**
+     * sets the max gas price for a chain
+     */
+    setMaxGasPrice(
+      chainID: BigNumberish,
+      maxPrice: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setPoolConfig(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      poolAddress: string,
+      metaswap: boolean,
+      overrides?: CallOverrides
+    ): Promise<BridgeConfigV3.PoolStructOutput>;
+
+    /**
      * Main write function of this contract - Handles creating the struct and passing it to the internal logic function
      * @param chainID chain ID to use for the token config object
      * @param hasUnderlying bool which represents whether this is a global mint token or one to withdraw()
@@ -779,7 +1165,36 @@ export interface BridgeConfig extends BaseContract {
      * @param tokenDecimals decimals of token
      * @param tokenID string ID to set the token config object form
      */
-    setTokenConfig(
+    "setTokenConfig(string,uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
+      tokenID: string,
+      chainID: BigNumberish,
+      tokenAddress: string,
+      tokenDecimals: BigNumberish,
+      maxSwap: BigNumberish,
+      minSwap: BigNumberish,
+      swapFee: BigNumberish,
+      maxSwapFee: BigNumberish,
+      minSwapFee: BigNumberish,
+      hasUnderlying: boolean,
+      isUnderlying: boolean,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    /**
+     * Main write function of this contract - Handles creating the struct and passing it to the internal logic function
+     * @param chainID chain ID to use for the token config object
+     * @param hasUnderlying bool which represents whether this is a global mint token or one to withdraw()
+     * @param isUnderlying bool which represents if this token is the one to withdraw on the given chain
+     * @param maxSwap maximum amount of token allowed to be transferred at once - in native token decimals
+     * @param maxSwapFee max swap fee to be charged - in native token decimals
+     * @param minSwap minimum amount of token needed to be transferred at once - in native token decimals
+     * @param minSwapFee min swap fee to be charged - in native token decimals - especially useful for mainnet ETH
+     * @param swapFee percent based swap fee -- 10e6 == 10bps
+     * @param tokenAddress token address of the token on the given chain
+     * @param tokenDecimals decimals of token
+     * @param tokenID string ID to set the token config object form
+     */
+    "setTokenConfig(string,uint256,string,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
       tokenID: string,
       chainID: BigNumberish,
       tokenAddress: string,
@@ -835,6 +1250,8 @@ export interface BridgeConfig extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    bridgeConfigVersion(overrides?: CallOverrides): Promise<BigNumber>;
+
     /**
      * This means the fee should be calculated based on the chain that the nodes emit a tx on
      * Calculates bridge swap fee based on the destination chain's token transfer.
@@ -842,7 +1259,21 @@ export interface BridgeConfig extends BaseContract {
      * @param chainID destination chain ID to query the token config for
      * @param tokenAddress address of the destination token to query token config for
      */
-    calculateSwapFee(
+    "calculateSwapFee(string,uint256,uint256)"(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    /**
+     * This means the fee should be calculated based on the chain that the nodes emit a tx on
+     * Calculates bridge swap fee based on the destination chain's token transfer.
+     * @param amount in native token decimals
+     * @param chainID destination chain ID to query the token config for
+     * @param tokenAddress address of the destination token to query token config for
+     */
+    "calculateSwapFee(address,uint256,uint256)"(
       tokenAddress: string,
       chainID: BigNumberish,
       amount: BigNumberish,
@@ -853,6 +1284,20 @@ export interface BridgeConfig extends BaseContract {
      * Returns a list of all existing token IDs converted to strings
      */
     getAllTokenIDs(overrides?: CallOverrides): Promise<BigNumber>;
+
+    /**
+     * gets the max gas price for a chain
+     */
+    getMaxGasPrice(
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPoolConfig(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     /**
      * Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.
@@ -884,7 +1329,7 @@ export interface BridgeConfig extends BaseContract {
      * @param chainID Chain ID of which token address + config to get
      * @param tokenID String input of the token ID for the token
      */
-    "getToken(string,uint256)"(
+    getToken(
       tokenID: string,
       chainID: BigNumberish,
       overrides?: CallOverrides
@@ -895,8 +1340,25 @@ export interface BridgeConfig extends BaseContract {
      * @param chainID Chain ID of which token to get config for
      * @param tokenAddress Matches the token ID by using a combo of address + chain ID
      */
-    "getToken(address,uint256)"(
+    getTokenByAddress(
       tokenAddress: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTokenByEVMAddress(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    /**
+     * Returns the full token config struct
+     * @param chainID Chain ID of which token address + config to get
+     * @param tokenID String input of the token ID for the token
+     */
+    getTokenByID(
+      tokenID: string,
       chainID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -906,7 +1368,13 @@ export interface BridgeConfig extends BaseContract {
      * @param chainID chainID of which to get token ID for
      * @param tokenAddress address of token to get ID for
      */
-    getTokenID(
+    "getTokenID(address,uint256)"(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getTokenID(string,uint256)"(
       tokenAddress: string,
       chainID: BigNumberish,
       overrides?: CallOverrides
@@ -956,6 +1424,11 @@ export interface BridgeConfig extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    removeTokenMapping(
+      tokenID: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     /**
      * Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.
      */
@@ -975,6 +1448,23 @@ export interface BridgeConfig extends BaseContract {
     ): Promise<BigNumber>;
 
     /**
+     * sets the max gas price for a chain
+     */
+    setMaxGasPrice(
+      chainID: BigNumberish,
+      maxPrice: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setPoolConfig(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      poolAddress: string,
+      metaswap: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    /**
      * Main write function of this contract - Handles creating the struct and passing it to the internal logic function
      * @param chainID chain ID to use for the token config object
      * @param hasUnderlying bool which represents whether this is a global mint token or one to withdraw()
@@ -988,7 +1478,36 @@ export interface BridgeConfig extends BaseContract {
      * @param tokenDecimals decimals of token
      * @param tokenID string ID to set the token config object form
      */
-    setTokenConfig(
+    "setTokenConfig(string,uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
+      tokenID: string,
+      chainID: BigNumberish,
+      tokenAddress: string,
+      tokenDecimals: BigNumberish,
+      maxSwap: BigNumberish,
+      minSwap: BigNumberish,
+      swapFee: BigNumberish,
+      maxSwapFee: BigNumberish,
+      minSwapFee: BigNumberish,
+      hasUnderlying: boolean,
+      isUnderlying: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    /**
+     * Main write function of this contract - Handles creating the struct and passing it to the internal logic function
+     * @param chainID chain ID to use for the token config object
+     * @param hasUnderlying bool which represents whether this is a global mint token or one to withdraw()
+     * @param isUnderlying bool which represents if this token is the one to withdraw on the given chain
+     * @param maxSwap maximum amount of token allowed to be transferred at once - in native token decimals
+     * @param maxSwapFee max swap fee to be charged - in native token decimals
+     * @param minSwap minimum amount of token needed to be transferred at once - in native token decimals
+     * @param minSwapFee min swap fee to be charged - in native token decimals - especially useful for mainnet ETH
+     * @param swapFee percent based swap fee -- 10e6 == 10bps
+     * @param tokenAddress token address of the token on the given chain
+     * @param tokenDecimals decimals of token
+     * @param tokenID string ID to set the token config object form
+     */
+    "setTokenConfig(string,uint256,string,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
       tokenID: string,
       chainID: BigNumberish,
       tokenAddress: string,
@@ -1013,6 +1532,10 @@ export interface BridgeConfig extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    bridgeConfigVersion(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     /**
      * This means the fee should be calculated based on the chain that the nodes emit a tx on
      * Calculates bridge swap fee based on the destination chain's token transfer.
@@ -1020,7 +1543,21 @@ export interface BridgeConfig extends BaseContract {
      * @param chainID destination chain ID to query the token config for
      * @param tokenAddress address of the destination token to query token config for
      */
-    calculateSwapFee(
+    "calculateSwapFee(string,uint256,uint256)"(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    /**
+     * This means the fee should be calculated based on the chain that the nodes emit a tx on
+     * Calculates bridge swap fee based on the destination chain's token transfer.
+     * @param amount in native token decimals
+     * @param chainID destination chain ID to query the token config for
+     * @param tokenAddress address of the destination token to query token config for
+     */
+    "calculateSwapFee(address,uint256,uint256)"(
       tokenAddress: string,
       chainID: BigNumberish,
       amount: BigNumberish,
@@ -1031,6 +1568,20 @@ export interface BridgeConfig extends BaseContract {
      * Returns a list of all existing token IDs converted to strings
      */
     getAllTokenIDs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    /**
+     * gets the max gas price for a chain
+     */
+    getMaxGasPrice(
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPoolConfig(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     /**
      * Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.
@@ -1062,7 +1613,7 @@ export interface BridgeConfig extends BaseContract {
      * @param chainID Chain ID of which token address + config to get
      * @param tokenID String input of the token ID for the token
      */
-    "getToken(string,uint256)"(
+    getToken(
       tokenID: string,
       chainID: BigNumberish,
       overrides?: CallOverrides
@@ -1073,8 +1624,25 @@ export interface BridgeConfig extends BaseContract {
      * @param chainID Chain ID of which token to get config for
      * @param tokenAddress Matches the token ID by using a combo of address + chain ID
      */
-    "getToken(address,uint256)"(
+    getTokenByAddress(
       tokenAddress: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTokenByEVMAddress(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    /**
+     * Returns the full token config struct
+     * @param chainID Chain ID of which token address + config to get
+     * @param tokenID String input of the token ID for the token
+     */
+    getTokenByID(
+      tokenID: string,
       chainID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1084,7 +1652,13 @@ export interface BridgeConfig extends BaseContract {
      * @param chainID chainID of which to get token ID for
      * @param tokenAddress address of token to get ID for
      */
-    getTokenID(
+    "getTokenID(address,uint256)"(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getTokenID(string,uint256)"(
       tokenAddress: string,
       chainID: BigNumberish,
       overrides?: CallOverrides
@@ -1134,6 +1708,11 @@ export interface BridgeConfig extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    removeTokenMapping(
+      tokenID: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     /**
      * Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.
      */
@@ -1153,6 +1732,23 @@ export interface BridgeConfig extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     /**
+     * sets the max gas price for a chain
+     */
+    setMaxGasPrice(
+      chainID: BigNumberish,
+      maxPrice: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setPoolConfig(
+      tokenAddress: string,
+      chainID: BigNumberish,
+      poolAddress: string,
+      metaswap: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    /**
      * Main write function of this contract - Handles creating the struct and passing it to the internal logic function
      * @param chainID chain ID to use for the token config object
      * @param hasUnderlying bool which represents whether this is a global mint token or one to withdraw()
@@ -1166,7 +1762,36 @@ export interface BridgeConfig extends BaseContract {
      * @param tokenDecimals decimals of token
      * @param tokenID string ID to set the token config object form
      */
-    setTokenConfig(
+    "setTokenConfig(string,uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
+      tokenID: string,
+      chainID: BigNumberish,
+      tokenAddress: string,
+      tokenDecimals: BigNumberish,
+      maxSwap: BigNumberish,
+      minSwap: BigNumberish,
+      swapFee: BigNumberish,
+      maxSwapFee: BigNumberish,
+      minSwapFee: BigNumberish,
+      hasUnderlying: boolean,
+      isUnderlying: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    /**
+     * Main write function of this contract - Handles creating the struct and passing it to the internal logic function
+     * @param chainID chain ID to use for the token config object
+     * @param hasUnderlying bool which represents whether this is a global mint token or one to withdraw()
+     * @param isUnderlying bool which represents if this token is the one to withdraw on the given chain
+     * @param maxSwap maximum amount of token allowed to be transferred at once - in native token decimals
+     * @param maxSwapFee max swap fee to be charged - in native token decimals
+     * @param minSwap minimum amount of token needed to be transferred at once - in native token decimals
+     * @param minSwapFee min swap fee to be charged - in native token decimals - especially useful for mainnet ETH
+     * @param swapFee percent based swap fee -- 10e6 == 10bps
+     * @param tokenAddress token address of the token on the given chain
+     * @param tokenDecimals decimals of token
+     * @param tokenID string ID to set the token config object form
+     */
+    "setTokenConfig(string,uint256,string,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
       tokenID: string,
       chainID: BigNumberish,
       tokenAddress: string,

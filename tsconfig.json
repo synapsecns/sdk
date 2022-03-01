@@ -1,8 +1,23 @@
 {
   "compilerOptions": {
-    "rootDirs": [
-      "src"
-    ],
+    "baseUrl": "./",
+    "paths": {
+      "@abis":        ["./src/abis"],
+      "@abis/*":      ["./src/abis/*"],
+      "@bridge":      ["./src/bridge"],
+      "@bridge/*":    ["./src/bridge/*"],
+      "@common/*":    ["./src/common/*"],
+      "@entities":    ["./src/entities"],
+      "@contracts":   ["./src/contracts"],
+      "@contracts/*": ["./src/contracts/*"],
+      "@chainid":     ["./src/common/chainid"],
+      "@networks":    ["./src/common/networks"],
+      "@internal/*":  ["./src/internal/*"],
+      "@swappools":   ["./src/swappools"],
+      "@token":       ["./src/token"],
+      "@tokens":      ["./src/tokens"],
+      "@tokenswap":   ["./src/tokenswap"]
+    },
     "target": "ESNext",
     "module": "ESNext",
     "outDir": "dist",
@@ -10,31 +25,21 @@
     "esModuleInterop":   true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "baseUrl": "./src",
-    "allowJs": true,
-    "checkJs": true,
     "declaration": true,
-    "removeComments": true,
-    "downlevelIteration": true,
+    "removeComments": false,
     "types": [
       "node",
-      "chai",
-      "mocha",
-      "expect",
     ],
     "isolatedModules": true,
     "skipLibCheck": true,
-  },
-  "ts-node": {
-    "files": true,
   },
   "include": [
     "src/**/*"
   ],
   "exclude": [
     "node_modules",
-//    "test",
     "dist",
-    "**/*-test.ts"
+    "test",
+    "examples"
   ]
 }

@@ -1,17 +1,16 @@
-import "../helpers/chaisetup";
+import "@tests/setup";
 
 import {
     Tokens,
     ChainId,
-} from "../../src";
+} from "@sdk";
 
-import {SynapseContracts} from "../../src/common/synapse_contracts";
-
-import {ERC20} from "../../src/bridge/erc20";
+import {ERC20}            from "@sdk/bridge/erc20";
+import {SynapseContracts} from "@sdk/common/synapse_contracts";
 
 import {
     DEFAULT_TEST_TIMEOUT,
-    wrapExpect,
+    bridgeTestPrivkey1,
     getTestAmount,
     makeWalletSignerWithProvider,
     expectFulfilled,
@@ -19,12 +18,10 @@ import {
     expectGteZero,
     expectNotZero,
     expectNull,
-} from "../helpers";
+} from "@tests/helpers";
 
-import type {BigNumberish} from "@ethersproject/bignumber";
+import type {BigNumberish}         from "@ethersproject/bignumber";
 import type {PopulatedTransaction} from "@ethersproject/contracts";
-
-const bridgeTestPrivkey: string = "53354287e3023f0629b7a5e187aa1ca3458c4b7ff9d66a6e3f4b2e821aafded7";
 
 describe("ERC20 tests", function(this: Mocha.Suite) {
     const testAddr: string = "0xe972647539816442e0987817DF777a9fd9878650";
@@ -61,7 +58,7 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
         for (const tc of testCases) {
             let {chainId, address: spender, amount} = tc;
 
-            const wallet = makeWalletSignerWithProvider(chainId, bridgeTestPrivkey)
+            const wallet = makeWalletSignerWithProvider(chainId, bridgeTestPrivkey1)
             const args: ERC20.ApproveArgs = {spender, amount};
 
             it("should build a transaction successfully", async function(this: Mocha.Context) {

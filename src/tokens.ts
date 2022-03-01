@@ -1,23 +1,14 @@
-import type {Token} from "./token";
-
 import {
+    type Token,
     BaseToken,
     WrappedToken,
-} from "./token";
+} from "@token";
 
-import {ChainId} from "./common/chainid";
+import {ChainId} from "@chainid";
 
-import {SwapType} from "./internal/swaptype";
+import {SwapType} from "@internal/swaptype";
 
 export namespace Tokens {
-    const KEEP_THIS_HERE = new BaseToken({
-        name:      "",
-        symbol:    "",
-        decimals:  18,
-        addresses: {},
-        swapType:  SwapType.USD,
-    });
-
     // Stablecoins
 
     /**
@@ -317,7 +308,7 @@ export namespace Tokens {
         addresses: {
             [ChainId.ETH]:       '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f',
             [ChainId.OPTIMISM]:  '0x0b5740c6b4a97f90eF2F0220651Cca420B868FfB',
-            [ChainId.CRONOS]:   '0xbB0A63A6CA2071c6C4bcAC11a1A317b20E3E999C',
+            [ChainId.CRONOS]:    '0xbB0A63A6CA2071c6C4bcAC11a1A317b20E3E999C',
             [ChainId.BSC]:       '0x88918495892BAF4536611E38E75D771Dc6Ec0863',
             [ChainId.POLYGON]:   '0xd8cA34fd379d9ca3C6Ee3b3905678320F5b45195',
             [ChainId.FANTOM]:    '0x91fa20244Fb509e8289CA630E5db3E9166233FDc',
@@ -449,4 +440,13 @@ export namespace Tokens {
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
+
+    export const AllTokens: Token[] = [
+        DAI, BUSD, USDC, USDT, UST,
+        ETH, NETH, WETH, WETHBEAM, WETH_E,
+        AVWETH, ONE_ETH, FTM_ETH, SYN, NUSD,
+        AVAX, WAVAX, MOVR, WMOVR, GOHM,
+        MIM, HIGH, JUMP, DOG, NFD,
+        FRAX, SYN_FRAX, SOLAR, GMX,
+    ];
 }

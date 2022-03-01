@@ -5,19 +5,32 @@ on:
     types:
       - opened
       - synchronize
-      - ready_for_review
-      - reopened
+    branches:
+      - master
+      - dev
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - '.nvmrc'
+      - '.gitignore'
+      - '.yarnclean'
+      - 'scripts/**'
+      - 'examples/**'
+      - 'tsconfig.build.json'
+
   push:
     branches:
       - master
       - dev
     paths-ignore:
-      - 'README.md'
-      - 'CONTRIBUTING.md'
+      - '**.md'
       - 'LICENSE'
+      - '.nvmrc'
       - '.gitignore'
+      - '.yarnclean'
       - 'scripts/**'
       - 'examples/**'
+      - 'tsconfig.build.json'
 
 jobs:
   test:
@@ -33,35 +46,46 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install Node
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
 
-      - name: Yarn Install
-        run: yarn install
+      - run: yarn install
 
-      - name: Run Tests
+      - name: Run Tests (Node v${{ matrix.node-version }})
         run: yarn -s run test:coverage
         env:
-          REPORTS_DIR:      ${{ github.workspace }}/coverage
-          ETH_RPC_URI:      ${{ secrets.ETHEREUM_RPC_URI }}
-          POLYGON_RPC_URI:  ${{ secrets.POLYGON_RPC_URI }}
-          HARMONY_RPC_URI:  "https://api.fuzz.fi/"
-          TEST_PRIVKEY_A: ${{ secrets.TEST_PRIVKEY_A }}
+          REPORTS_DIR: ${{ github.workspace }}/coverage
+          RPC_BATCH_WAIT_TIME_MS: 75
+          HARMONY_RPC_URI:   "https://api.fuzz.fi/"
+          ETH_RPC_URI:       ${{ secrets.ETHEREUM_RPC_URI }}
+          POLYGON_RPC_URI:   ${{ secrets.POLYGON_RPC_URI }}
+          INFINITE_APPROVALS_PRIVKEY:          ${{ secrets.INFINITE_APPROVALS_PRIVKEY }}
+          INFINITE_APPROVALS_PRIVKEY_ADDRESS:  ${{ secrets.INFINITE_APPROVALS_PRIVKEY_ADDRESS }}
+          BRIDGE_INTERACTIONS_PRIVKEY:         ${{ secrets.BRIDGE_INTERACTIONS_PRIVKEY }}
+          BRIDGE_INTERACTIONS_PRIVKEY_ADDRESS: ${{ secrets.BRIDGE_INTERACTIONS_PRIVKEY_ADDRESS }}
 
-      - name: Coverage report
+      - name: Generate Coverage report
         run: yarn -s run coverage:report
         env:
           REPORTS_DIR: ${{ github.workspace }}/coverage
 
-      - name: Coveralls
+      - name: Coveralls - Process coverage
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ${{ github.workspace }}/coverage/lcov.info
-          flag-name: node-v${{ matrix.node-version }}
+          flag-name:    node-v${{ matrix.node-version }}
+          parallel:     true
+
+  send-coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls - Process all coverage results
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true

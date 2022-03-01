@@ -4,7 +4,10 @@
 
 import { Contract, Signer, utils } from "ethers";
 import { Provider } from "@ethersproject/providers";
-import type { BridgeConfig, BridgeConfigInterface } from "../BridgeConfig";
+import type {
+  BridgeConfigV3,
+  BridgeConfigV3Interface,
+} from "../BridgeConfigV3";
 
 const _abi = [
   {
@@ -114,6 +117,48 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "bridgeConfigVersion",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "tokenAddress",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "chainID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "calculateSwapFee",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -150,6 +195,71 @@ const _abi = [
         internalType: "string[]",
         name: "result",
         type: "string[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "chainID",
+        type: "uint256",
+      },
+    ],
+    name: "getMaxGasPrice",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "tokenAddress",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "chainID",
+        type: "uint256",
+      },
+    ],
+    name: "getPoolConfig",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "tokenAddress",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "chainId",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "poolAddress",
+            type: "address",
+          },
+          {
+            internalType: "bool",
+            name: "metaswap",
+            type: "bool",
+          },
+        ],
+        internalType: "struct BridgeConfigV3.Pool",
+        name: "",
+        type: "tuple",
       },
     ],
     stateMutability: "view",
@@ -240,9 +350,9 @@ const _abi = [
             type: "uint256",
           },
           {
-            internalType: "address",
+            internalType: "string",
             name: "tokenAddress",
-            type: "address",
+            type: "string",
           },
           {
             internalType: "uint8",
@@ -285,7 +395,83 @@ const _abi = [
             type: "bool",
           },
         ],
-        internalType: "struct BridgeConfig.Token",
+        internalType: "struct BridgeConfigV3.Token",
+        name: "token",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "tokenAddress",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "chainID",
+        type: "uint256",
+      },
+    ],
+    name: "getTokenByAddress",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "chainId",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "tokenAddress",
+            type: "string",
+          },
+          {
+            internalType: "uint8",
+            name: "tokenDecimals",
+            type: "uint8",
+          },
+          {
+            internalType: "uint256",
+            name: "maxSwap",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "minSwap",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "swapFee",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "maxSwapFee",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "minSwapFee",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "hasUnderlying",
+            type: "bool",
+          },
+          {
+            internalType: "bool",
+            name: "isUnderlying",
+            type: "bool",
+          },
+        ],
+        internalType: "struct BridgeConfigV3.Token",
         name: "token",
         type: "tuple",
       },
@@ -306,7 +492,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "getToken",
+    name: "getTokenByEVMAddress",
     outputs: [
       {
         components: [
@@ -316,9 +502,9 @@ const _abi = [
             type: "uint256",
           },
           {
-            internalType: "address",
+            internalType: "string",
             name: "tokenAddress",
-            type: "address",
+            type: "string",
           },
           {
             internalType: "uint8",
@@ -361,7 +547,83 @@ const _abi = [
             type: "bool",
           },
         ],
-        internalType: "struct BridgeConfig.Token",
+        internalType: "struct BridgeConfigV3.Token",
+        name: "token",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "tokenID",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "chainID",
+        type: "uint256",
+      },
+    ],
+    name: "getTokenByID",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "chainId",
+            type: "uint256",
+          },
+          {
+            internalType: "string",
+            name: "tokenAddress",
+            type: "string",
+          },
+          {
+            internalType: "uint8",
+            name: "tokenDecimals",
+            type: "uint8",
+          },
+          {
+            internalType: "uint256",
+            name: "maxSwap",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "minSwap",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "swapFee",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "maxSwapFee",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "minSwapFee",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "hasUnderlying",
+            type: "bool",
+          },
+          {
+            internalType: "bool",
+            name: "isUnderlying",
+            type: "bool",
+          },
+        ],
+        internalType: "struct BridgeConfigV3.Token",
         name: "token",
         type: "tuple",
       },
@@ -375,6 +637,30 @@ const _abi = [
         internalType: "address",
         name: "tokenAddress",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "chainID",
+        type: "uint256",
+      },
+    ],
+    name: "getTokenID",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "tokenAddress",
+        type: "string",
       },
       {
         internalType: "uint256",
@@ -411,9 +697,9 @@ const _abi = [
             type: "uint256",
           },
           {
-            internalType: "address",
+            internalType: "string",
             name: "tokenAddress",
-            type: "address",
+            type: "string",
           },
           {
             internalType: "uint8",
@@ -456,7 +742,7 @@ const _abi = [
             type: "bool",
           },
         ],
-        internalType: "struct BridgeConfig.Token",
+        internalType: "struct BridgeConfigV3.Token",
         name: "token",
         type: "tuple",
       },
@@ -547,6 +833,25 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "string",
+        name: "tokenID",
+        type: "string",
+      },
+    ],
+    name: "removeTokenMapping",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "bytes32",
         name: "role",
         type: "bytes32",
@@ -577,6 +882,80 @@ const _abi = [
     ],
     name: "revokeRole",
     outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "chainID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "maxPrice",
+        type: "uint256",
+      },
+    ],
+    name: "setMaxGasPrice",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "tokenAddress",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "chainID",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "poolAddress",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "metaswap",
+        type: "bool",
+      },
+    ],
+    name: "setPoolConfig",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "tokenAddress",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "chainId",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "poolAddress",
+            type: "address",
+          },
+          {
+            internalType: "bool",
+            name: "metaswap",
+            type: "bool",
+          },
+        ],
+        internalType: "struct BridgeConfigV3.Pool",
+        name: "",
+        type: "tuple",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -649,17 +1028,86 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "tokenID",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "chainID",
+        type: "uint256",
+      },
+      {
+        internalType: "string",
+        name: "tokenAddress",
+        type: "string",
+      },
+      {
+        internalType: "uint8",
+        name: "tokenDecimals",
+        type: "uint8",
+      },
+      {
+        internalType: "uint256",
+        name: "maxSwap",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "minSwap",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "swapFee",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "maxSwapFee",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "minSwapFee",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "hasUnderlying",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "isUnderlying",
+        type: "bool",
+      },
+    ],
+    name: "setTokenConfig",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
 
-export class BridgeConfig__factory {
+export class BridgeConfigV3__factory {
   static readonly abi = _abi;
-  static createInterface(): BridgeConfigInterface {
-    return new utils.Interface(_abi) as BridgeConfigInterface;
+  static createInterface(): BridgeConfigV3Interface {
+    return new utils.Interface(_abi) as BridgeConfigV3Interface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): BridgeConfig {
-    return new Contract(address, _abi, signerOrProvider) as BridgeConfig;
+  ): BridgeConfigV3 {
+    return new Contract(address, _abi, signerOrProvider) as BridgeConfigV3;
   }
 }

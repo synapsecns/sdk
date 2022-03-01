@@ -1,6 +1,6 @@
-import {ABIs} from "../abis/index";
+import {ABIs}    from "@abis/index";
+import {ChainId} from "@chainid";
 
-import {ChainId} from "./chainid";
 import type {ChainIdTypeMap} from "./types";
 
 import {ContractInterface} from "@ethersproject/contracts";

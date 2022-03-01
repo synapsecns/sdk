@@ -1,4 +1,4 @@
-import {ChainId} from "./chainid";
+import {ChainId}          from "@chainid";
 import {SynapseContracts} from "./synapse_contracts";
 
 import type {Signer} from "@ethersproject/abstract-signer";
@@ -28,7 +28,7 @@ export function contractAddressFor(chainId: number, key: string): string {
 const CHAINID_CONTRACTS_MAP: {[c: number]: SynapseContracts.SynapseContract} = {
     [ChainId.ETH]:       SynapseContracts.Ethereum,
     [ChainId.OPTIMISM]:  SynapseContracts.Optimism,
-    [ChainId.CRONOS]:   SynapseContracts.Cronos,
+    [ChainId.CRONOS]:    SynapseContracts.Cronos,
     [ChainId.BSC]:       SynapseContracts.BSC,
     [ChainId.POLYGON]:   SynapseContracts.Polygon,
     [ChainId.FANTOM]:    SynapseContracts.Fantom,
@@ -43,4 +43,3 @@ const CHAINID_CONTRACTS_MAP: {[c: number]: SynapseContracts.SynapseContract} = {
 }
 
 export const contractsForChainId = (chainId: number): SynapseContracts.SynapseContract => CHAINID_CONTRACTS_MAP[chainId] ?? null
-

@@ -1,103 +1,56 @@
-import "../helpers/chaisetup";
-
-import {expect} from "chai";
-
-import {step} from "mocha-steps";
-
-import {Zero} from "@ethersproject/constants";
-import {BigNumber} from "@ethersproject/bignumber";
+import "@tests/setup";
 
 import {
     ChainId,
     Networks,
-    Token,
     Tokens,
     TokenSwap,
     supportedChainIds,
-} from "../../src";
+    type Token
+} from "@sdk";
 
 import {
     wrapExpect,
-    DEFAULT_TEST_TIMEOUT,
-    getTestAmount,
-    expectRejected,
-    expectFulfilled,
     expectProperty,
     expectLength,
     expectUndefined,
-} from "../helpers";
+    expectBoolean,
+} from "@tests/helpers";
 
 
-describe("TokenSwap tests", function(this: Mocha.Suite) {
-    describe("Swap Rate tests", function(this: Mocha.Suite) {
+describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
+    describe("intermediateTokens tests", function(this: Mocha.Suite) {
         interface TestCase {
-            chainId:   number,
-            tokenFrom: Token,
-            tokenTo:   Token,
-            amountIn:  BigNumber,
-            wantError: boolean,
+            chainId: number;
+            token:   Token;
+            wantA:   Token;
+            wantB:   Token;
         }
 
-        const makeTestCase = (c: number, t1: Token, t2: Token, amt?: string, wantError?: boolean): TestCase =>
-            ({
-                chainId:   c,
-                tokenFrom: t1,
-                tokenTo:   t2,
-                amountIn:  getTestAmount(t1, c, amt),
-                wantError: wantError ?? false,
-            })
-
         const testCases: TestCase[] = [
-            makeTestCase(ChainId.ETH,        Tokens.DAI,        Tokens.USDC),
-            makeTestCase(ChainId.ETH,        Tokens.ETH,        Tokens.NETH, null, true),
-            makeTestCase(ChainId.OPTIMISM,   Tokens.WETH,       Tokens.NETH),
-            makeTestCase(ChainId.AVALANCHE,  Tokens.MIM,        Tokens.USDT, null, true),
-            makeTestCase(ChainId.BSC,        Tokens.BUSD,       Tokens.USDT),
-            makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.BUSD),
-        ]
+            {chainId: ChainId.ETH,       token: Tokens.FRAX,     wantA: undefined,   wantB: Tokens.FRAX},
+            {chainId: ChainId.ETH,       token: Tokens.SYN_FRAX, wantA: undefined,   wantB: Tokens.FRAX},
+            {chainId: ChainId.HARMONY,   token: Tokens.FRAX,     wantA: undefined,   wantB: Tokens.SYN_FRAX},
+            {chainId: ChainId.ETH,       token: Tokens.NETH,     wantA: Tokens.NETH, wantB: Tokens.WETH},
+            {chainId: ChainId.ARBITRUM,  token: Tokens.NETH,     wantA: Tokens.NETH, wantB: Tokens.NETH},
+            {chainId: ChainId.BSC,       token: Tokens.BUSD,     wantA: Tokens.NUSD, wantB: Tokens.NUSD},
+            {chainId: ChainId.AVALANCHE, token: Tokens.GOHM,     wantA: Tokens.GOHM, wantB: Tokens.GOHM},
+        ];
 
         for (const tc of testCases) {
             const
-                titleSuffix: string = tc.wantError ? "should fail" : "should pass",
-                tokFrom: string     = tc.tokenFrom.symbol,
-                tokTo: string       = tc.tokenTo.symbol,
-                testTitle: string   = `for ${tokFrom} => ${tokTo} on ${Networks.networkName(tc.chainId)} ${titleSuffix}`,
-                testTitle1: string  = `calculateSwapRate ${testTitle}`,
-                testTitle2: string  = `buildSwapTokensTransaction ${testTitle}`;
+                testPrefix: string = `intermediateTokens() with token ${tc.token.symbol} and Chain ID ${tc.chainId} should return`,
+                testWant:   string = `intermediateToken === ${tc.wantA?.symbol ?? 'undefined'}, bridgeConfigIntermediateToken === ${tc.wantB.symbol}`,
+                testTitle:  string = `${testPrefix} ${testWant}`;
 
-            let amountOut: BigNumber;
+            it(testTitle, function(this: Mocha.Context) {
+                const got = TokenSwap.intermediateTokens(tc.chainId, tc.token);
 
-            step(testTitle1, async function(this: Mocha.Context) {
-                this.timeout(DEFAULT_TEST_TIMEOUT);
+                typeof tc.wantA === "undefined"
+                    ? expectUndefined(tc.wantA, true)
+                    : expectBoolean(tc.wantA.isEqual(got.intermediateToken), true);
 
-                let prom: Promise<TokenSwap.EstimatedSwapRate> = Promise.resolve(TokenSwap.calculateSwapRate({
-                    chainId:   tc.chainId,
-                    tokenFrom: tc.tokenFrom,
-                    tokenTo:   tc.tokenTo,
-                    amountIn:  tc.amountIn,
-                })).then((res) => {
-                    amountOut = res.amountOut;
-                    return res
-                });
-
-                return tc.wantError
-                    ? await expectRejected(prom)
-                    : expectProperty(await prom, "amountOut").that.is.gt(Zero.toNumber())
-            })
-
-            step(testTitle2, async function(this: Mocha.Context) {
-                if (tc.wantError) return
-
-                this.timeout(DEFAULT_TEST_TIMEOUT);
-
-                const args: TokenSwap.SwapTokensParams = {
-                    ...tc,
-                    minAmountOut: amountOut,
-                };
-
-                return (await expectFulfilled(
-                    TokenSwap.buildSwapTokensTransaction(args)
-                ))
+                expectBoolean(tc.wantB.isEqual(got.bridgeConfigIntermediateToken), true);
             })
         }
     })
@@ -128,6 +81,7 @@ describe("TokenSwap tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.ETH,       token: Tokens.USDT},
                     {chainId: ChainId.ETH,       token: Tokens.BUSD},
                     {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
+                    {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
                 ],
             },
             {
@@ -136,6 +90,7 @@ describe("TokenSwap tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.BSC,       token: Tokens.USDC},
                     {chainId: ChainId.AVALANCHE, token: Tokens.GOHM},
                     {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
+                    {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
                 ],
             },
             {
@@ -144,6 +99,7 @@ describe("TokenSwap tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.AVALANCHE, token: Tokens.FTM_ETH},
                     {chainId: ChainId.BSC,       token: Tokens.MIM},
                     {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
+                    {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
                 ],
             }
         ];

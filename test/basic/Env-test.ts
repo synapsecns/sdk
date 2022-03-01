@@ -1,14 +1,13 @@
-import "../helpers/chaisetup";
+import "@tests/setup";
+
 import path from "path";
 
 import dotenv from "dotenv";
-import {ChainId} from "../../src";
 import * as fs from "fs";
 
-import {
-    wrapExpect,
-    expectEqual,
-} from "../helpers";
+import {expectEqual} from "@tests/helpers";
+
+import {ChainId} from "@sdk";
 
 const
     BASE_ENV_PATH: string = path.resolve(path.join("./", ".env")),
@@ -32,7 +31,7 @@ describe('Test ENV values', function(this: Mocha.Suite) {
 
         function loadTestEnv(): void {
             let envData = fs.readFileSync(TEST_ENV_PATH);
-            let parsedEnv = dotenv.parse(envData, {debug: true});
+            let parsedEnv = dotenv.parse(envData);
             for (const [k, v] of Object.entries(parsedEnv)) {
                 process.env[`${k}`] = `${v}`;
             }

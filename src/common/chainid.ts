@@ -15,10 +15,7 @@ export enum ChainId {
     HARMONY      = 1666600000,
 }
 
-export const supportedChainIds = (): number[] => [
-    ChainId.ETH,       ChainId.OPTIMISM,  ChainId.CRONOS,
-    ChainId.BSC,       ChainId.POLYGON,   ChainId.FANTOM,
-    ChainId.BOBA,      ChainId.METIS,     ChainId.MOONBEAM,
-    ChainId.MOONRIVER, ChainId.ARBITRUM,  ChainId.AVALANCHE,
-    ChainId.AURORA,    ChainId.HARMONY,
-]
+export const supportedChainIds = (): number[] =>
+    Object.keys(ChainId)
+        .map(k => Number.isNaN(Number(k)) ? null : Number(k))
+        .filter(c => c !== null);

@@ -256,6 +256,34 @@ const ABI = {
     {
       "inputs": [
         {
+          "internalType": "bytes32",
+          "name": "to",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "contract IERC20",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "redeemv2",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "to",
           "type": "address"
@@ -650,6 +678,14 @@ const ABI = {
           "tokenIndexFrom": "the token the user wants to swap from",
           "tokenIndexTo": "the token the user wants to swap to"
         }
+      },
+      "redeemv2(bytes32,uint256,address,uint256)": {
+        "params": {
+          "amount": "Amount in native token decimals to transfer cross-chain pre-fees*",
+          "chainId": "which chain to bridge assets onto",
+          "to": "address on other chain to bridge assets to",
+          "token": "ERC20 compatible token to redeem into the bridge"
+        }
       }
     },
     "version": 1
@@ -674,6 +710,9 @@ const ABI = {
       },
       "redeemAndSwap(address,uint256,address,uint256,uint8,uint8,uint256,uint256)": {
         "notice": "Wraps redeemAndSwap on SynapseBridge.sol Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g \"swap\" out of the LP token)"
+      },
+      "redeemv2(bytes32,uint256,address,uint256)": {
+        "notice": "Wraps SynapseBridge redeemv2() function"
       }
     },
     "version": 1

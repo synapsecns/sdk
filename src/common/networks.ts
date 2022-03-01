@@ -1,17 +1,15 @@
-import {ChainId} from "./chainid";
-
-import {Tokens} from "../tokens";
-import {SwapPools} from "../swappools";
-
+import type {Token} from "@token";
+import {ChainId}    from "@chainid";
+import {Tokens}     from "@tokens";
+import {SwapPools}  from "@swappools";
 
 import type {
     ID,
     Entity,
-} from "../internal/entity";
+} from "@internal/entity";
 
-import {BridgeUtils} from "../bridge/bridgeutils";
+import {BridgeUtils} from "@bridge/bridgeutils";
 
-import type {Token} from "../token";
 import type {ChainIdTypeMap} from "./types";
 
 export namespace Networks {
@@ -206,9 +204,11 @@ export namespace Networks {
      * @param {Network | number} network Either a {@link Network} instance, or the Chain ID of a supported network.
      * @param {Token} token A {@link Token} object.
      */
-    export function networkSupportsToken(network: Network | number, token: Token): boolean {
-        return (network instanceof Network ? network : fromChainId(network)).supportsToken(token)
-    }
+    export const networkSupportsToken = (network: Network | number, token: Token): boolean =>
+        (network instanceof Network
+            ? network
+            : fromChainId(network)
+        ).supportsToken(token)
 
     export const supportedNetworks = (): Network[] => Object.values(CHAINID_NETWORK_MAP)
 }
