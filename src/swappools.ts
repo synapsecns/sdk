@@ -339,7 +339,7 @@ export namespace SwapPools {
         chainId:      ChainId.AURORA,
         address:     "0xEAdC3524f3F007cdC5104BF28663b1141D3e3127",
         netName:     "Aurora",
-        poolId:       1,
+        poolId:       0,
         swapAddress: "0xcEf6C2e20898C2604886b888552CA6CcF66933B0",
         poolTokens:   USDPoolTokens(null),
     });
@@ -388,7 +388,11 @@ export namespace SwapPools {
         UST_Pool     = makeSingleTokenPool(Tokens.UST,    SwapType.UST);
 
     const makeTokenPoolsMap = (usdSwapTokens?: Token[], ethSwapTokens?: Token[], ...pools: LPToken[]): SwapGroupTokenMap => {
-        let m: SwapGroupTokenMap = {[SwapType.SYN]: SYN_Pool.poolTokens};
+        let m: SwapGroupTokenMap = {
+            [SwapType.SYN]: SYN_Pool.poolTokens,
+            [SwapType.UST]: UST_Pool.poolTokens,
+            [SwapType.OHM]: GOHM_Pool.poolTokens,
+        };
 
         if (usdSwapTokens) m[SwapType.USD] = usdSwapTokens;
         if (ethSwapTokens) m[SwapType.ETH] = ethSwapTokens;
@@ -411,19 +415,13 @@ export namespace SwapPools {
             HIGH_Pool,
             DOG_Pool,
             FRAX_Pool,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.OPTIMISM]: makeTokenPoolsMap(
             null,
             OPTIMISM_ETH_SWAP_TOKEN.poolTokens,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.CRONOS]: makeTokenPoolsMap(
             null, null,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.BSC]: makeTokenPoolsMap(
             BSC_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
@@ -432,35 +430,25 @@ export namespace SwapPools {
             DOG_Pool,
             JUMP_Pool,
             NFD_Pool,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.POLYGON]: makeTokenPoolsMap(
             POLYGON_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
             null,
             DOG_Pool,
             NFD_Pool,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.FANTOM]: makeTokenPoolsMap(
             FANTOM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
             FANTOM_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps,
             JUMP_Pool,
             FRAX_Pool,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.BOBA]: makeTokenPoolsMap(
             BOBA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
             BOBA_ETH_SWAP_TOKEN.poolTokens,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.METIS]: makeTokenPoolsMap(
             null, null,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.MOONBEAM]: makeTokenPoolsMap(
             null,
@@ -468,52 +456,46 @@ export namespace SwapPools {
             SOLAR_Pool,
             WAVAX_Pool,
             WMOVR_Pool,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.MOONRIVER]: makeTokenPoolsMap(
             null,
             null,
             FRAX_Pool,
-            GOHM_Pool,
             SOLAR_Pool,
             MOVR_Pool,
-            UST_Pool,
         ),
         [ChainId.ARBITRUM]: makeTokenPoolsMap(
             ARBITRUM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
             ARBITRUM_ETH_SWAP_TOKEN.poolTokens,
-            GOHM_Pool,
             GMX_Pool,
-            UST_Pool,
         ),
         [ChainId.AVALANCHE]: makeTokenPoolsMap(
             AVALANCHE_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
             AVALANCHE_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps,
             NFD_Pool,
-            GOHM_Pool,
             GMX_Pool,
             AVAX_Pool,
-            UST_Pool,
         ),
-        [ChainId.AURORA]:  makeTokenPoolsMap(
-            AURORA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
-            null,
-            UST_Pool,
-        ),
+        [ChainId.AURORA]:  {
+            [SwapType.USD]: AURORA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
+            [SwapType.SYN]: SYN_Pool.poolTokens,
+            [SwapType.UST]: UST_Pool.poolTokens,
+        },
         [ChainId.HARMONY]: makeTokenPoolsMap(
             HARMONY_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
             HARMONY_ONEETH_TOKEN.poolTokensForBridgeSwaps,
             FRAX_Pool,
-            GOHM_Pool,
-            UST_Pool,
         ),
     }
 
     interface SwapTypePoolTokens {[s: string]: {poolTokens: Token[]}}
 
     function makeSwapTypeTokenPool(poolSwapToken?: LPToken, ethSwapToken?: LPToken, ...pools: LPToken[]): SwapTypePoolTokens {
-        let m: SwapTypePoolTokens = {[SwapType.SYN]: {poolTokens: [Tokens.SYN]}};
+        let m: SwapTypePoolTokens = {
+            [SwapType.SYN]: SYN_Pool,
+            [SwapType.UST]: UST_Pool,
+            [SwapType.OHM]: GOHM_Pool,
+        };
 
         if (poolSwapToken) m[SwapType.USD] = poolSwapToken
 
@@ -531,21 +513,15 @@ export namespace SwapPools {
             ETH_Pool,
             HIGH_Pool,
             DOG_Pool,
-            GOHM_Pool,
             FRAX_Pool,
-            UST_Pool,
         ),
         [ChainId.OPTIMISM]: makeSwapTypeTokenPool(
             null,
             OPTIMISM_ETH_SWAP_TOKEN,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.CRONOS]: makeSwapTypeTokenPool(
             null,
             null,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.BSC]: makeSwapTypeTokenPool(
             BSC_POOL_SWAP_TOKEN,
@@ -554,82 +530,79 @@ export namespace SwapPools {
             DOG_Pool,
             JUMP_Pool,
             NFD_Pool,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.POLYGON]: makeSwapTypeTokenPool(
             POLYGON_POOL_SWAP_TOKEN,
             null,
             NFD_Pool,
             DOG_Pool,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.FANTOM]: makeSwapTypeTokenPool(
             FANTOM_POOL_SWAP_TOKEN,
             FANTOM_ETH_SWAP_TOKEN,
             JUMP_Pool,
-            GOHM_Pool,
             FRAX_Pool,
-            UST_Pool,
         ),
         [ChainId.BOBA]: makeSwapTypeTokenPool(
             BOBA_POOL_SWAP_TOKEN,
             BOBA_ETH_SWAP_TOKEN,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.METIS]: makeSwapTypeTokenPool(
             null,
             null,
-            GOHM_Pool,
-            UST_Pool,
         ),
         [ChainId.MOONBEAM]: makeSwapTypeTokenPool(
             null, null,
             SOLAR_Pool,
-            GOHM_Pool,
             WMOVR_Pool,
             WAVAX_Pool,
-            UST_Pool,
         ),
         [ChainId.MOONRIVER]: makeSwapTypeTokenPool(
             null, null,
-            GOHM_Pool,
             SOLAR_Pool,
             FRAX_Pool,
             MOVR_Pool,
-            UST_Pool,
         ),
         [ChainId.ARBITRUM]: makeSwapTypeTokenPool(
             ARBITRUM_POOL_SWAP_TOKEN,
             ARBITRUM_ETH_SWAP_TOKEN,
-            GOHM_Pool,
             GMX_Pool,
-            UST_Pool,
         ),
         [ChainId.AVALANCHE]: makeSwapTypeTokenPool(
             AVALANCHE_POOL_SWAP_TOKEN,
             AVALANCHE_ETH_SWAP_TOKEN,
             NFD_Pool,
-            GOHM_Pool,
             GMX_Pool,
             AVAX_Pool,
-            UST_Pool,
         ),
-        [ChainId.AURORA]: makeSwapTypeTokenPool(
-            AURORA_POOL_SWAP_TOKEN,
-            null,
-            UST_Pool,
-        ),
+        [ChainId.AURORA]: {
+            [SwapType.USD]: AURORA_POOL_SWAP_TOKEN,
+            [SwapType.SYN]: SYN_Pool,
+            [SwapType.UST]: UST_Pool,
+        },
         [ChainId.HARMONY]: makeSwapTypeTokenPool(
             HARMONY_POOL_SWAP_TOKEN,
             HARMONY_ONEETH_TOKEN,
             FRAX_Pool,
-            GOHM_Pool,
-            UST_Pool,
         )
     }
+
+    // export const BRIDGEABLE_TOKENS = {
+    //     [ChainId.ETH]:       [Tokens.USDC, Tokens.USDT, Tokens.DAI, Tokens.GOHM, Tokens.SYN, Tokens.FRAX, Tokens.NUSD, Tokens.ETH, Tokens.DOG, Tokens.HIGH],
+    //     [ChainId.BSC]:       [Tokens.BUSD, Tokens.USDC, Tokens.USDT, Tokens.GOHM, Tokens.SYN, Tokens.NUSD, Tokens.DOG, Tokens.JUMP, Tokens.NFD, Tokens.HIGH],
+    //     [ChainId.FANTOM]:    [Tokens.USDC, Tokens.USDT, Tokens.FTM_ETH, Tokens.GOHM, Tokens.SYN, Tokens.NETH, Tokens.NUSD, Tokens.JUMP],                 //  FRAX,
+    //     [ChainId.POLYGON]:   [Tokens.USDC, Tokens.USDT, Tokens.DAI, Tokens.GOHM, Tokens.NUSD, Tokens.SYN, Tokens.DOG, Tokens.NFD],
+    //     [ChainId.BOBA]:      [Tokens.ETH, Tokens.NETH, Tokens.GOHM, Tokens.DAI, Tokens.USDC, Tokens.USDT, Tokens.SYN, Tokens.NUSD],
+    //     [ChainId.MOONBEAM]:  [Tokens.GOHM, Tokens.SOLAR, Tokens.WMOVR, Tokens.WAVAX, Tokens.SYN],                                  // FRAX, , WETHBEAM #temp
+    //     [ChainId.MOONRIVER]: [Tokens.GOHM, Tokens.SOLAR, Tokens.FRAX, Tokens.MOVR, Tokens.SYN],
+    //     [ChainId.ARBITRUM]:  [Tokens.ETH, Tokens.GOHM, Tokens.USDC, Tokens.USDT, Tokens.GMX, Tokens.SYN, Tokens.NETH, Tokens.NUSD],
+    //     [ChainId.AVALANCHE]: [Tokens.USDC, Tokens.USDT, Tokens.DAI, Tokens.WETH_E, Tokens.GMX, Tokens.AVAX, Tokens.GOHM, Tokens.SYN, Tokens.NUSD, Tokens.NFD, Tokens.NETH],
+    //     [ChainId.HARMONY]:   [Tokens.USDC, Tokens.USDT, Tokens.DAI, Tokens.FRAX, Tokens.ONE_ETH, Tokens.SYN, Tokens.NUSD, Tokens.NETH, Tokens.GOHM],
+    //     [ChainId.OPTIMISM]:  [Tokens.ETH, Tokens.NETH, Tokens.GOHM, Tokens.SYN],
+    //     [ChainId.AURORA]:    [Tokens.USDC, Tokens.USDT, Tokens.NUSD, Tokens.SYN],
+    //     [ChainId.CRONOS]:    [Tokens.GOHM, Tokens.SYN],
+    //     [ChainId.METIS]:     [Tokens.GOHM, Tokens.SYN],
+    // }
 
     export function getAllSwappableTokensForNetwork(chainId: number): Token[] {
         let
