@@ -54,7 +54,6 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     {token: Tokens.USDT, want: true},
                     {token: Tokens.DAI,  want: false},
                     {token: Tokens.FRAX, want: false},
-                    {token: Tokens.MIM,  want: false},
                 ],
             },
         ];

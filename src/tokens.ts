@@ -336,17 +336,6 @@ export namespace Tokens {
         swapType: SwapType.OHM,
     });
 
-    export const MIM = new BaseToken({
-        name:         'MIM',
-        symbol:       'MIM',
-        decimals:     18,
-        addresses: {
-            [ChainId.FANTOM]:   "0x82f0b8b456c1a451378467398982d4834b6829c1",
-            [ChainId.ARBITRUM]: "0xfea7a6a0b346362bf88a9e4a88416b77a57d6c2a",
-        },
-        swapType: SwapType.USD
-    });
-
     export const HIGH = new BaseToken({
         name:    "Highstreet",
         symbol:  "HIGH",
@@ -461,7 +450,7 @@ export namespace Tokens {
         ETH, NETH, WETH, WETHBEAM, WETH_E,
         AVWETH, ONE_ETH, FTM_ETH, SYN, NUSD,
         AVAX, WAVAX, MOVR, WMOVR, GOHM,
-        MIM, HIGH, JUMP, DOG, NFD,
-        FRAX, SYN_FRAX, SOLAR, GMX,
+        HIGH, JUMP, DOG, NFD, FRAX,
+        SYN_FRAX, SOLAR, GMX,
     ];
 }
