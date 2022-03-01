@@ -6,7 +6,7 @@ import type {AddressMap, ChainIdTypeMap, DecimalsMap} from "@common/types";
 
 import {BaseToken, type IBaseToken, type Token,} from "@token";
 
-import type {ID} from "@internal/entity";
+import type {ID} from "@internal/id_types";
 import {SwapType} from "@internal/swaptype";
 
 
@@ -404,9 +404,9 @@ export namespace SwapPools {
         return m
     }
 
-    export interface SwapGroupTokenMap {[grp: string]: Token[]}
+    export type SwapGroupTokenMap          = {[grp: string]: Token[]}
 
-    export interface BridgeTokensBySwapGroupMap {[c: number]: SwapGroupTokenMap}
+    export type BridgeTokensBySwapGroupMap = {[c: number]: SwapGroupTokenMap}
 
     export const bridgeSwappableTokensByType: BridgeTokensBySwapGroupMap = {
         [ChainId.ETH]: makeTokenPoolsMap(

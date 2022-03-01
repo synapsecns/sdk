@@ -27,8 +27,7 @@ export namespace BridgeUtils {
         ChainId.ARBITRUM,
     ];
 
-    export const isL2ETHChain = (chainId: number): boolean => L2_ETH_CHAINS.includes(chainId);
-
+    export const isL2ETHChain          = (chainId: number): boolean => L2_ETH_CHAINS.includes(chainId);
     export const chainSupportsGasToken = (chainId: number): boolean => GAS_TOKEN_CHAINS.includes(chainId);
 
     interface DepositIfChainArgs {

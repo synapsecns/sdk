@@ -7,7 +7,7 @@ import {ContractInterface} from "@ethersproject/contracts";
 
 
 export namespace SynapseContracts {
-    interface abiAndAddress {
+    type abiAndAddress = {
         address: string,
         abi:     ContractInterface,
     }
@@ -34,16 +34,8 @@ export namespace SynapseContracts {
             return this.bridge.address
         }
 
-        get bridge_abi(): ContractInterface {
-            return this.bridge.abi
-        }
-
         get bridge_zap_address(): string {
             return this.bridge_zap.address
-        }
-
-        get bridge_zap_abi(): ContractInterface {
-            return this.bridge_zap.abi
         }
     }
 

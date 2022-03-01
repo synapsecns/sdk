@@ -6,19 +6,19 @@ import {SwapPools}  from "@swappools";
 import type {
     ID,
     Entity,
-} from "@internal/entity";
+} from "@internal/id_types";
 
 import {BridgeUtils} from "@bridge/bridgeutils";
 
 import type {ChainIdTypeMap} from "./types";
 
 export namespace Networks {
-    interface SupportsTokenChecks {
+    type supportedTokenEdgeCase = {
         chainId: ChainId,
         token:   Token,
     }
 
-    const tokenSupportChecks: SupportsTokenChecks[] = [
+    const tokenSupportChecks: supportedTokenEdgeCase[] = [
         {chainId: ChainId.ETH,       token: Tokens.WETH},
         {chainId: ChainId.ETH,       token: Tokens.NETH},
         {chainId: ChainId.AVALANCHE, token: Tokens.AVAX},

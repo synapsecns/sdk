@@ -1,6 +1,6 @@
 import type {AddressMap, DecimalsMap} from "@common/types";
 
-import type {ID, Entity} from "@internal/entity";
+import type {ID, Entity} from "@internal/id_types";
 import type {SwapType}   from "@internal/swaptype";
 
 import {

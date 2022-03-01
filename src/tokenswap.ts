@@ -81,21 +81,21 @@ export namespace TokenSwap {
         chainIdTo:   number,
     }
 
-    export interface EstimatedSwapRate {
+    export type EstimatedSwapRate = {
         amountOut: BigNumber
     }
 
-    export interface IntermediateSwapTokens {
+    export type IntermediateSwapTokens = {
         intermediateToken?:            Token,
         bridgeConfigIntermediateToken: Token
     }
 
-    export interface SwapSupportedResult {
+    export type SwapSupportedResult = {
         swapSupported:       boolean,
         reasonNotSupported?: UnsupportedSwapErrors.UnsupportedSwapError,
     }
 
-    export interface DetailedTokenSwapMap {
+    export type DetailedTokenSwapMap = {
         [chainId: number]: {
             token: Token,
             [chainId: number]: Token[],

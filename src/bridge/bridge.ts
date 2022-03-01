@@ -7,7 +7,7 @@ import {
     rejectPromise,
 } from "@common/utils";
 
-import type {ID}               from "@internal/entity";
+import type {ID}               from "@internal/id_types";
 import {SwapType}              from "@internal/swaptype";
 import {rpcProviderForChain} from "@internal/rpcproviders";
 import {tokenSwitch}           from "@internal/utils";
@@ -56,7 +56,7 @@ export namespace Bridge {
     type CanBridgeResult = [boolean, Error|string];
     export type CheckCanBridgeResult = [boolean, BigNumber];
 
-    export interface BridgeOutputEstimate {
+    export type BridgeOutputEstimate = {
         amountToReceive: BigNumber,
         bridgeFee:       BigNumber,
     }
@@ -86,13 +86,13 @@ export namespace Bridge {
         addressTo?: string
     }
 
-    interface EasyArgsCheck {
+    type EasyArgsCheck = {
         isEasy:   boolean,
         castArgs: BridgeUtils.BridgeTxParams,
         txn?:     Promise<PopulatedTransaction>,
     }
 
-    interface BridgeTokenArgs {
+    type BridgeTokenArgs = {
         fromChainTokens: Token[],
         toChainTokens:   Token[],
         tokenFrom:       Token,
@@ -101,7 +101,7 @@ export namespace Bridge {
         tokenIndexTo:    number,
     }
 
-    interface CheckCanBridgeParams {
+    type CheckCanBridgeParams = {
         address: string,
         token:   Token,
         amount:  BigNumberish,
@@ -997,11 +997,7 @@ export namespace Bridge {
         return REQUIRED_CONFS[chainId] ?? -1
     }
 
-    interface EasyArgsCheck {
-        isEasy: boolean,
-        castArgs: BridgeUtils.BridgeTxParams,
-        txn?: Promise<PopulatedTransaction>,
-    }
+
 
     export function bridgeSwapSupported(args: TokenSwap.BridgeSwapSupportedParams): TokenSwap.SwapSupportedResult {
         return TokenSwap.bridgeSwapSupported(args)
