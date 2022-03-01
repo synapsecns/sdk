@@ -50,6 +50,8 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
             makeTestCase(ChainId.BSC,        Tokens.BUSD,       Tokens.USDT),
             makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.BUSD),
             makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.DAI,  undefined,true),
+            makeTestCase(ChainId.FANTOM,     Tokens.MIM,        Tokens.NUSD, undefined,true),
+            makeTestCase(ChainId.ARBITRUM,   Tokens.MIM,        Tokens.USDT, undefined,true),
         ]
 
         for (const tc of testCases) {

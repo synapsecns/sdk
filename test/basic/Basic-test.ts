@@ -165,8 +165,10 @@ describe("Basic tests", function(this: Mocha.Suite) {
                 {chainId: ChainId.AVALANCHE,    token: Tokens.AVWETH,       want: true},
                 {chainId: ChainId.AVALANCHE,    token: Tokens.WAVAX,        want: true},
                 {chainId: ChainId.MOONRIVER,    token: Tokens.WMOVR,        want: true},
-                {chainId: ChainId.CRONOS,      token: Tokens.GOHM,         want: true},
+                {chainId: ChainId.CRONOS,       token: Tokens.GOHM,         want: true},
                 {chainId: ChainId.METIS,        token: Tokens.SYN,          want: true},
+                {chainId: ChainId.FANTOM,       token: Tokens.MIM,          want: false},
+                {chainId: ChainId.ARBITRUM,     token: Tokens.MIM,          want: false}
             ];
 
             for (const tc of testCases) {
@@ -192,6 +194,10 @@ describe("Basic tests", function(this: Mocha.Suite) {
         it("ETH should not support MIM", function(this: Mocha.Context) {
             expect(Networks.networkSupportsToken(ChainId.ETH, Tokens.MIM)).to.be.false;
             expect(Networks.networkSupportsToken(Networks.ETH, Tokens.MIM)).to.be.false;
+        })
+
+        it("Fantom should not support MIM", function(this: Mocha.Context) {
+            expect(Networks.networkSupportsToken(ChainId.FANTOM, Tokens.MIM)).to.be.false;
         })
     })
 })
