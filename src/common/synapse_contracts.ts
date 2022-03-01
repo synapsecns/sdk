@@ -60,6 +60,7 @@ export namespace SynapseContracts {
 
     export const Cronos = new SynapseContract({
         bridge:     "0xE27BFf97CE92C3e1Ff7AA9f86781FDd6D48F5eE9",
+        bridge_zap: "0x88E7af57270F70BCF32CD61fff0Ff635775C8f7c",
     });
 
     export const BSC = new SynapseContract({
@@ -83,7 +84,8 @@ export namespace SynapseContracts {
     });
 
     export const Metis = new SynapseContract({
-        bridge:    "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
+        bridge:     "0x06Fea8513FF03a0d3f61324da709D4cf06F42A5c",
+        bridge_zap: "0x244268b9082E05a8BcF18b3b0e83999EA4Fc9fCf",
     });
 
     export const Moonbeam = new SynapseContract(({
