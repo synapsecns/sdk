@@ -451,6 +451,7 @@ export namespace Tokens {
         HIGH,  DOG,      JUMP,
         FRAX,  SYN_FRAX, NFD,
         GOHM,  SOLAR,    GMX,
+        UST,
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)

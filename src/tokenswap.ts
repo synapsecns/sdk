@@ -265,7 +265,7 @@ export namespace TokenSwap {
     const mintBurnSwapTypes = [
         SwapType.HIGH, SwapType.DOG, SwapType.JUMP,
         SwapType.NFD,  SwapType.OHM, SwapType.SOLAR,
-        SwapType.GMX,
+        SwapType.GMX,  SwapType.UST,
     ];
 
     function _intermediateToken(token: Token, chainId: number): Token {

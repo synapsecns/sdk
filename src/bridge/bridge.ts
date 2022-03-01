@@ -598,7 +598,7 @@ export namespace Bridge {
                 });
 
             let
-                easyRedeems:    ID[] = [Tokens.SYN.id],
+                easyRedeems:    ID[] = [Tokens.SYN.id,  Tokens.UST.id],
                 easyDeposits:   ID[] = [Tokens.HIGH.id, Tokens.DOG.id, Tokens.FRAX.id],
                 easyDepositETH: ID[] = [Tokens.NETH.id];
 
@@ -698,8 +698,12 @@ export namespace Bridge {
 
             let
                 easyDeposits:   ID[] = [],
-                easyRedeems:    ID[] = [Tokens.SYN.id, Tokens.HIGH.id, Tokens.DOG.id, Tokens.FRAX.id],
-                easyDepositETH: ID[] = [];
+                easyDepositETH: ID[] = [],
+                easyRedeems:    ID[] = [
+                    Tokens.SYN.id, Tokens.HIGH.id,
+                    Tokens.DOG.id, Tokens.FRAX.id,
+                    Tokens.UST.id
+                ];
 
             BridgeUtils.DepositIfChainTokens.forEach((args) => {
                 let {chainId, tokens, depositEth, altChainId} = args;
