@@ -456,7 +456,7 @@ export namespace Bridge {
             let {intermediateToken, bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
 
             const
-                intermediateTokenAddr = bridgeConfigIntermediateToken.address(chainIdTo),
+                intermediateTokenAddr = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase(),
                 multiplier            = BigNumber.from(10).pow(18-tokenFrom.decimals(this.chainId)),
                 feeRequestAmountFrom  = amountFrom.mul(multiplier);
 
@@ -956,7 +956,7 @@ export namespace Bridge {
 
             const makeTokenArgs = (chainId: number, t: Token): [Token[], number] => {
                 let
-                    toks = SwapPools.bridgeSwappableTypePoolsByChain[chainId]?.[t.swapType]?.poolTokens,
+                    toks: Token[] = SwapPools.bridgeSwappableTypePoolsByChain[`${chainId}`]?.[`${t.swapType}`]?.poolTokens,
                     idx  = toks.findIndex((tok: Token) => findSymbol(tok, t));
 
                 return [toks, idx]
