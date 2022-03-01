@@ -98,13 +98,26 @@ export namespace Tokens {
     });
 
     export const UST = new BaseToken({
-        symbol:       'UST',
-        name:         'TerraUSD',
+        symbol:       "UST",
+        name:         "TerraUSD",
         decimals:     18,
         addresses: {
-            [ChainId.BSC]: "0x23396cf899ca06c4472205fc903bdb4de249d6f",
+            [ChainId.ETH]:       "0x0261018Aa50E28133C1aE7a29ebdf9Bd21b878Cb",
+            [ChainId.OPTIMISM]:  "0xFB21B70922B9f6e3C6274BcD6CB1aa8A0fe20B80",
+            [ChainId.CRONOS]:    "0x7Bb5c7e3bF0B2a28fA26359667110bB974fF9359",
+            [ChainId.BSC]:       "0xb7A6c5f0cc98d24Cf4B2011842e64316Ff6d042c",
+            [ChainId.POLYGON]:   "0x565098CBa693b3325f9fe01D41b7A1cd792Abab1",
+            [ChainId.FANTOM]:    "0xa0554607e477cdC9d0EE2A6b087F4b2DC2815C22",
+            [ChainId.BOBA]:      "0x61A269a9506272D128d79ABfE8E8276570967f00",
+            [ChainId.METIS]:     "0x0b5740c6b4a97f90eF2F0220651Cca420B868FfB",
+            [ChainId.MOONBEAM]:  "0x5CF84397944B9554A278870B510e86667681ff8D",
+            [ChainId.MOONRIVER]: "0xa9D0C0E124F53f4bE1439EBc35A9C73c0e8275fB",
+            [ChainId.ARBITRUM]:  "0x13780E6d5696DD91454F6d3BbC2616687fEa43d0",
+            [ChainId.AVALANCHE]: "0xE97097dE8d6A17Be3c39d53AE63347706dCf8f43",
+            [ChainId.AURORA]:    "0xb1Da21B0531257a7E5aEfa0cd3CbF23AfC674cE1",
+            [ChainId.HARMONY]:   "0xa0554607e477cdC9d0EE2A6b087F4b2DC2815C22",
         },
-        swapType: SwapType.USD
+        swapType: SwapType.UST
     });
 
     // ETH, ETH wrappers, and nETH :D
@@ -219,7 +232,7 @@ export namespace Tokens {
             [ChainId.POLYGON]:   "0xf8f9efc0db77d8881500bb06ff5d6abc3070e695",
             [ChainId.FANTOM]:    "0xE55e19Fb4F2D85af758950957714292DAC1e25B2",
             [ChainId.BOBA]:      "0xb554A55358fF0382Fb21F0a478C3546d1106Be8c",
-            [ChainId.METIS]:     "0xE55e19Fb4F2D85af758950957714292DAC1e25B2",
+            [ChainId.METIS]:     "0x67C10C397dD0Ba417329543c1a40eb48AAa7cd00",
             [ChainId.MOONBEAM]:  "0xF44938b0125A6662f9536281aD2CD6c499F22004",
             [ChainId.MOONRIVER]: "0xd80d8688b02B3FD3afb81cDb124F188BB5aD0445",
             [ChainId.ARBITRUM]:  "0x080f6aed32fc474dd5717105dba5ea57268f46eb",
@@ -239,12 +252,12 @@ export namespace Tokens {
         decimals:    18,
         addresses: {
             [ChainId.ETH]:       "0x1B84765dE8B7566e4cEAF4D0fD3c5aF52D3DdE4F",
-            [ChainId.CRONOS]:   "0x396c9c192dd323995346632581BEF92a31AC623b",
+            [ChainId.CRONOS]:    "0x396c9c192dd323995346632581BEF92a31AC623b",
             [ChainId.BSC]:       "0x23b891e5c62e0955ae2bd185990103928ab817b3",
             [ChainId.POLYGON]:   "0xb6c473756050de474286bed418b77aeac39b02af",
             [ChainId.FANTOM]:    "0xED2a7edd7413021d440b09D654f3b87712abAB66",
             [ChainId.BOBA]:      "0x6B4712AE9797C199edd44F897cA09BC57628a1CF",
-            [ChainId.METIS]:     "0xED2a7edd7413021d440b09D654f3b87712abAB66",
+            [ChainId.METIS]:     "0x961318Fc85475E125B99Cc9215f62679aE5200aB",
             [ChainId.ARBITRUM]:  "0x2913E812Cf0dcCA30FB28E6Cac3d2DCFF4497688",
             [ChainId.AVALANCHE]: "0xCFc37A6AB183dd4aED08C204D1c2773c0b1BDf46",
             [ChainId.AURORA]:    "0x07379565cD8B0CaE7c60Dc78e7f601b34AF2A21c",
@@ -313,7 +326,7 @@ export namespace Tokens {
             [ChainId.POLYGON]:   '0xd8cA34fd379d9ca3C6Ee3b3905678320F5b45195',
             [ChainId.FANTOM]:    '0x91fa20244Fb509e8289CA630E5db3E9166233FDc',
             [ChainId.BOBA]:      '0xd22C0a4Af486C7FA08e282E9eB5f30F9AaA62C95',
-            [ChainId.METIS]:     '0x91fa20244Fb509e8289CA630E5db3E9166233FDc',
+            [ChainId.METIS]:     '0xFB21B70922B9f6e3C6274BcD6CB1aa8A0fe20B80',
             [ChainId.MOONBEAM]:  '0xD2666441443DAa61492FFe0F37717578714a4521',
             [ChainId.MOONRIVER]: '0x3bF21Ce864e58731B6f28D68d5928BcBEb0Ad172',
             [ChainId.ARBITRUM]:  '0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1',
@@ -328,7 +341,8 @@ export namespace Tokens {
         symbol:       'MIM',
         decimals:     18,
         addresses: {
-            [ChainId.FANTOM]: '0x82f0b8b456c1a451378467398982d4834b6829c1'
+            [ChainId.FANTOM]:   "0x82f0b8b456c1a451378467398982d4834b6829c1",
+            [ChainId.ARBITRUM]: "0xfea7a6a0b346362bf88a9e4a88416b77a57d6c2a",
         },
         swapType: SwapType.USD
     });
