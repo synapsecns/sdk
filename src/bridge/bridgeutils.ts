@@ -1,6 +1,8 @@
-import {Tokens} from "@tokens";
 import {Slippages} from "./slippages";
-import {ChainId} from "@chainid";
+
+import {Tokens}    from "@tokens";
+import {ChainId}   from "@chainid";
+import {SwapPools} from "@swappools";
 
 import type {Token} from "@token";
 import type {GenericZapBridgeContract, L2BridgeZapContract} from "@contracts";
@@ -8,7 +10,6 @@ import type {GenericZapBridgeContract, L2BridgeZapContract} from "@contracts";
 import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
 import {tokenSwitch} from "@internal/utils";
-import {SwapPools} from "@swappools";
 
 
 export namespace BridgeUtils {
@@ -205,7 +206,7 @@ export namespace BridgeUtils {
 
     export const makeTokenArgs = (chainId: number, t: Token): [Token[], number] => {
         let
-            toks: Token[] = SwapPools.tokensForChainBySwapGroup(chainId, t.swapType),
+            toks: Token[] = SwapPools.bridgeSwappableMap[chainId].swappableSwapGroups[t.swapType].poolTokens,
             idx  = toks.findIndex((tok: Token) => findSymbol(tok, t));
 
         return [toks, idx]
