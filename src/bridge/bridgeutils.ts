@@ -7,6 +7,8 @@ import type {GenericZapBridgeContract, L2BridgeZapContract} from "@contracts";
 
 import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
+import {tokenSwitch} from "@internal/utils";
+import {SwapPools} from "@swappools";
 
 
 export namespace BridgeUtils {
@@ -167,4 +169,45 @@ export namespace BridgeUtils {
         t.isEqual(Tokens.WETH_E) || t.isEqual(Tokens.ONE_ETH) || t.isEqual(Tokens.FTM_ETH)
 
     export const makeOverrides = (value: BigNumber, withValue: boolean): any => withValue ? {value} : {};
+
+    /**
+     * Switch t1 with t3 is t1 is t2
+     * @param {Token} t1 token being checked
+     * @param {Token} t2 token to check t1 against
+     * @param {Token} t3 token to return instead of t1 if t1 equals t2
+     */
+    const checkReplaceToken = (t1: Token, t2: Token, t3: Token): Token => t1.isEqual(t2) ? t3 : t1;
+    export const checkReplaceTokens = (
+        check:   Token,
+        replace: Token
+    ): ((t1: Token, t2: Token) => [Token, Token]) =>
+        (t1: Token, t2: Token) => [
+            checkReplaceToken(t1, check, replace),
+            checkReplaceToken(t2, check, replace)
+        ];
+
+    const findSymbol = (t1: Token, t2: Token): boolean => {
+        let compare: Token = t2;
+        switch (tokenSwitch(t2)) {
+            case Tokens.WETH_E:
+                compare = Tokens.AVWETH;
+                break;
+            case Tokens.WETH:
+                compare = Tokens.WETH;
+                break;
+            default:
+                compare = t2.isWrappedToken ? t2.underlyingToken : compare;
+                break;
+        }
+
+        return t1.isEqual(compare);
+    }
+
+    export const makeTokenArgs = (chainId: number, t: Token): [Token[], number] => {
+        let
+            toks: Token[] = SwapPools.tokensForChainBySwapGroup(chainId, t.swapType),
+            idx  = toks.findIndex((tok: Token) => findSymbol(tok, t));
+
+        return [toks, idx]
+    }
 }

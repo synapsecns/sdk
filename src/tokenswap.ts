@@ -222,7 +222,7 @@ export namespace TokenSwap {
                 for (const c2 of allChainIds) {
                     if (c1 === c2) continue
 
-                    let outToks: Token[] = SwapPools.bridgeSwappableTypePoolsByChain[c2][swapType]?.poolTokens || [];
+                    let outToks: Token[] = SwapPools.tokensForChainBySwapGroup(c2, swapType);
                     if (outToks.length === 0) continue
 
                     tokSwapMap[c2] = outToks;

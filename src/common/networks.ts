@@ -5,8 +5,8 @@ import {SwapPools}  from "@swappools";
 
 import type {
     ID,
-    Entity,
-} from "@internal/id_types";
+    Distinct,
+} from "@internal/distinct";
 
 import {BridgeUtils} from "@bridge/bridgeutils";
 
@@ -42,7 +42,7 @@ export namespace Networks {
         chainCurrency: string,
     }
 
-    export class Network implements Entity {
+    export class Network implements Distinct {
         readonly id:              ID;
         readonly name:            string;
         readonly chainCurrency:   string;

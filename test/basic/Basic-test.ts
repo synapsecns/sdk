@@ -177,7 +177,7 @@ describe("Basic tests", function(this: Mocha.Suite) {
 
                 it(
                     testTitle,
-                    wrapExpect(expectBoolean(supported, tc.want))
+                    function(this: Mocha.Context) {expect(supported).to.equal(tc.want)}
                 )
             }
         })

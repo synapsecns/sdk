@@ -7,7 +7,7 @@ import {
     rejectPromise,
 } from "@common/utils";
 
-import type {ID}               from "@internal/id_types";
+import type {ID}               from "@internal/distinct";
 import {SwapType}              from "@internal/swaptype";
 import {rpcProviderForChain} from "@internal/rpcproviders";
 import {tokenSwitch}           from "@internal/utils";
@@ -902,32 +902,17 @@ export namespace Bridge {
         private makeBridgeTokenArgs(args: BridgeParams): BridgeTokenArgs {
             let {tokenFrom, tokenTo, chainIdTo} = args;
 
-            const
-                checkAndChangeToken = (
-                    t:      Token,
-                    check:  Token,
-                    swappy: Token
-                ): Token => t.isEqual(check) ? swappy : t,
-                checkAndChangeTokens = (
-                    check: Token,
-                    swappy: Token
-                ): ((t1: Token, t2: Token) => [Token, Token]) =>
-                    (t1: Token, t2: Token) => [
-                        checkAndChangeToken(t1, check, swappy),
-                        checkAndChangeToken(t2, check, swappy)
-                    ];
-
             let bridgeTokens: (t1: Token, t2: Token) => [Token, Token];
 
             switch (tokenFrom.swapType) {
                 case SwapType.ETH:
-                    bridgeTokens = checkAndChangeTokens(Tokens.ETH, Tokens.WETH);
+                    bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.ETH, Tokens.WETH);
                     break;
                 case SwapType.AVAX:
-                    bridgeTokens = checkAndChangeTokens(Tokens.AVAX, Tokens.WAVAX);
+                    bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.AVAX, Tokens.WAVAX);
                     break;
                 case SwapType.MOVR:
-                    bridgeTokens = checkAndChangeTokens(Tokens.MOVR, Tokens.WMOVR);
+                    bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.MOVR, Tokens.WMOVR);
                     break;
                 default:
                     bridgeTokens = (t1: Token, t2: Token) => [t1, t2];
@@ -935,36 +920,9 @@ export namespace Bridge {
 
             [tokenFrom, tokenTo] = bridgeTokens(tokenFrom, tokenTo);
 
-            const findSymbol = (tokA: Token, tokB: Token): boolean => {
-                let compareTok: Token = tokB;
-                switch (tokenSwitch(tokB)) {
-                    case Tokens.WETH_E:
-                        compareTok = Tokens.AVWETH;
-                        break;
-                    case Tokens.WETH:
-                        compareTok = Tokens.WETH;
-                        break;
-                    default:
-                        if (tokB.isWrappedToken) {
-                            compareTok = tokB.underlyingToken;
-                        }
-                        break;
-                }
-
-                return tokA.isEqual(compareTok);
-            }
-
-            const makeTokenArgs = (chainId: number, t: Token): [Token[], number] => {
-                let
-                    toks: Token[] = SwapPools.bridgeSwappableTypePoolsByChain[`${chainId}`]?.[`${t.swapType}`]?.poolTokens,
-                    idx  = toks.findIndex((tok: Token) => findSymbol(tok, t));
-
-                return [toks, idx]
-            }
-
             const
-                [fromChainTokens, tokenIndexFrom] = makeTokenArgs(this.chainId, tokenFrom),
-                [toChainTokens,   tokenIndexTo]   = makeTokenArgs(chainIdTo,    tokenTo);
+                [fromChainTokens, tokenIndexFrom] = BridgeUtils.makeTokenArgs(this.chainId, tokenFrom),
+                [toChainTokens,   tokenIndexTo]   = BridgeUtils.makeTokenArgs(chainIdTo,    tokenTo);
 
             return {
                 fromChainTokens,

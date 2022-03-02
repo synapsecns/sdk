@@ -6,9 +6,8 @@ import type {AddressMap, ChainIdTypeMap, DecimalsMap} from "@common/types";
 
 import {BaseToken, type IBaseToken, type Token,} from "@token";
 
-import type {ID} from "@internal/id_types";
+import type {ID} from "@internal/distinct";
 import {SwapType} from "@internal/swaptype";
-
 
 export namespace SwapPools {
     function moveFirstToLast(arr: Token[]) {
@@ -367,224 +366,182 @@ export namespace SwapPools {
         depositTokens:   ONEETH_POOL_TOKENS,
     });
 
-    const makeSingleTokenPool = (t: Token, swapType: SwapType): LPToken => ({poolTokens: [t], swapType});
+    const makeSingleTokenPool = (t: Token): LPToken => ({poolTokens: [t], swapType: t.swapType});
 
     const
-        ETH_Pool     = makeSingleTokenPool(Tokens.ETH,    SwapType.ETH),
-        SYN_Pool     = makeSingleTokenPool(Tokens.SYN,    SwapType.SYN),
-        NUSD_Pool    = makeSingleTokenPool(Tokens.NUSD,   SwapType.USD),
-        FRAX_Pool    = makeSingleTokenPool(Tokens.FRAX,   SwapType.FRAX),
-        HIGH_Pool    = makeSingleTokenPool(Tokens.HIGH,   SwapType.HIGH),
-        DOG_Pool     = makeSingleTokenPool(Tokens.DOG,    SwapType.DOG),
-        JUMP_Pool    = makeSingleTokenPool(Tokens.JUMP,   SwapType.JUMP),
-        NFD_Pool     = makeSingleTokenPool(Tokens.NFD,    SwapType.NFD),
-        GOHM_Pool    = makeSingleTokenPool(Tokens.GOHM,   SwapType.OHM),
-        GMX_Pool     = makeSingleTokenPool(Tokens.GMX,    SwapType.GMX),
-        SOLAR_Pool   = makeSingleTokenPool(Tokens.SOLAR,  SwapType.SOLAR),
-        AVAX_Pool    = makeSingleTokenPool(Tokens.AVAX,   SwapType.AVAX),
-        WAVAX_Pool   = makeSingleTokenPool(Tokens.WAVAX,  SwapType.AVAX),
-        MOVR_Pool    = makeSingleTokenPool(Tokens.MOVR,   SwapType.MOVR),
-        WMOVR_Pool   = makeSingleTokenPool(Tokens.WMOVR,  SwapType.MOVR),
-        UST_Pool     = makeSingleTokenPool(Tokens.UST,    SwapType.UST);
+        ETH_Pool     = makeSingleTokenPool(Tokens.ETH),
+        SYN_Pool     = makeSingleTokenPool(Tokens.SYN),
+        FRAX_Pool    = makeSingleTokenPool(Tokens.FRAX),
+        HIGH_Pool    = makeSingleTokenPool(Tokens.HIGH),
+        DOG_Pool     = makeSingleTokenPool(Tokens.DOG),
+        JUMP_Pool    = makeSingleTokenPool(Tokens.JUMP),
+        NFD_Pool     = makeSingleTokenPool(Tokens.NFD),
+        GOHM_Pool    = makeSingleTokenPool(Tokens.GOHM),
+        GMX_Pool     = makeSingleTokenPool(Tokens.GMX),
+        SOLAR_Pool   = makeSingleTokenPool(Tokens.SOLAR),
+        AVAX_Pool    = makeSingleTokenPool(Tokens.AVAX),
+        WAVAX_Pool   = makeSingleTokenPool(Tokens.WAVAX),
+        MOVR_Pool    = makeSingleTokenPool(Tokens.MOVR),
+        WMOVR_Pool   = makeSingleTokenPool(Tokens.WMOVR),
+        UST_Pool     = makeSingleTokenPool(Tokens.UST);
 
-    const makeTokenPoolsMap = (usdSwapTokens?: Token[], ethSwapTokens?: Token[], ...pools: LPToken[]): SwapGroupTokenMap => {
-        let m: SwapGroupTokenMap = {
-            [SwapType.SYN]: SYN_Pool.poolTokens,
-            [SwapType.UST]: UST_Pool.poolTokens,
-            [SwapType.OHM]: GOHM_Pool.poolTokens,
+
+    export interface SwapTypePoolTokens {[swapType: string]: LPToken}
+
+    interface SwapTypeMapArgs {
+        usdPool?:   [SwapToken, Token[]],
+        ethPool?:   [ETHSwapToken, Token[]],
+        ohm?: boolean
+    }
+
+    interface BridgeTokenMapping {
+        swappableTokens: {
+            [swapGroup: string]: Token[]
+        }
+        swappableSwapGroups: {
+            [swapGroup: string]: LPToken
+        }
+    }
+
+    interface ChainSwapTypePoolsMap {
+        [chainId: number]: BridgeTokenMapping
+    }
+
+    const makeSwapTypeMap = (base: SwapTypeMapArgs, ...pools: LPToken[]): BridgeTokenMapping => {
+        let m: BridgeTokenMapping = {
+            swappableTokens: {
+                [SwapType.SYN]: SYN_Pool.poolTokens,
+                [SwapType.UST]: UST_Pool.poolTokens,
+                [SwapType.OHM]: GOHM_Pool.poolTokens,
+            },
+            swappableSwapGroups: {
+                [SwapType.SYN]: SYN_Pool,
+                [SwapType.UST]: UST_Pool,
+                [SwapType.OHM]: GOHM_Pool,
+            }
         };
 
-        if (usdSwapTokens) m[SwapType.USD] = usdSwapTokens;
-        if (ethSwapTokens) m[SwapType.ETH] = ethSwapTokens;
+        const {usdPool=null, ethPool=null, ohm: useOhm=true} = base;
+
+        if (usdPool) {
+            m.swappableSwapGroups[SwapType.USD] = usdPool[0];
+            m.swappableTokens[SwapType.USD] = usdPool[1];
+        }
+        if (ethPool) {
+            m.swappableSwapGroups[SwapType.ETH] = ethPool[0];
+            m.swappableTokens[SwapType.ETH] = ethPool[1];
+        }
 
         for (const p of pools) {
-            m[p.swapType] = p.poolTokens
+            m.swappableTokens[p.swapType] = p.poolTokens;
+            m.swappableSwapGroups[p.swapType] = p;
+        }
+
+        if (!useOhm) {
+            delete m.swappableTokens[SwapType.OHM];
+            delete m.swappableSwapGroups[SwapType.OHM]
         }
 
         return m
     }
 
-    export type SwapGroupTokenMap          = {[grp: string]: Token[]}
-
-    export type BridgeTokensBySwapGroupMap = {[c: number]: SwapGroupTokenMap}
-
-    export const bridgeSwappableTokensByType: BridgeTokensBySwapGroupMap = {
-        [ChainId.ETH]: makeTokenPoolsMap(
-            [...ETH_POOL_SWAP_TOKEN.poolTokens, Tokens.NUSD],
-            ETH_Pool.poolTokens,
-            HIGH_Pool,
-            DOG_Pool,
-            FRAX_Pool,
-        ),
-        [ChainId.OPTIMISM]: makeTokenPoolsMap(
-            null,
-            OPTIMISM_ETH_SWAP_TOKEN.poolTokens,
-        ),
-        [ChainId.CRONOS]: makeTokenPoolsMap(
-            null, null,
-        ),
-        [ChainId.BSC]: makeTokenPoolsMap(
-            BSC_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
-            null,
-            HIGH_Pool,
-            DOG_Pool,
-            JUMP_Pool,
-            NFD_Pool,
-        ),
-        [ChainId.POLYGON]: makeTokenPoolsMap(
-            POLYGON_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
-            null,
-            DOG_Pool,
-            NFD_Pool,
-        ),
-        [ChainId.FANTOM]: makeTokenPoolsMap(
-            FANTOM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
-            FANTOM_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps,
-            JUMP_Pool,
-            FRAX_Pool,
-        ),
-        [ChainId.BOBA]: makeTokenPoolsMap(
-            BOBA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
-            BOBA_ETH_SWAP_TOKEN.poolTokens,
-        ),
-        [ChainId.METIS]: makeTokenPoolsMap(
-            null, null,
-        ),
-        [ChainId.MOONBEAM]: makeTokenPoolsMap(
-            null,
-            null, // [Tokens.WETHBEAM],
-            SOLAR_Pool,
-            WAVAX_Pool,
-            WMOVR_Pool,
-        ),
-        [ChainId.MOONRIVER]: makeTokenPoolsMap(
-            null,
-            null,
-            FRAX_Pool,
-            SOLAR_Pool,
-            MOVR_Pool,
-        ),
-        [ChainId.ARBITRUM]: makeTokenPoolsMap(
-            ARBITRUM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
-            ARBITRUM_ETH_SWAP_TOKEN.poolTokens,
-            GMX_Pool,
-        ),
-        [ChainId.AVALANCHE]: makeTokenPoolsMap(
-            AVALANCHE_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
-            AVALANCHE_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps,
-            NFD_Pool,
-            GMX_Pool,
-            AVAX_Pool,
-        ),
-        [ChainId.AURORA]:  {
-            [SwapType.USD]: AURORA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
-            [SwapType.SYN]: SYN_Pool.poolTokens,
-            [SwapType.UST]: UST_Pool.poolTokens,
-        },
-        [ChainId.HARMONY]: makeTokenPoolsMap(
-            HARMONY_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps,
-            HARMONY_ONEETH_TOKEN.poolTokensForBridgeSwaps,
-            FRAX_Pool,
-        ),
-    }
-
-    interface SwapTypePoolTokens {[s: string]: {poolTokens: Token[]}}
-
-    function makeSwapTypeTokenPool(poolSwapToken?: LPToken, ethSwapToken?: LPToken, ...pools: LPToken[]): SwapTypePoolTokens {
-        let m: SwapTypePoolTokens = {
-            [SwapType.SYN]: SYN_Pool,
-            [SwapType.UST]: UST_Pool,
-            [SwapType.OHM]: GOHM_Pool,
-        };
-
-        if (poolSwapToken) m[SwapType.USD] = poolSwapToken
-
-        if (ethSwapToken) m[SwapType.ETH] = ethSwapToken
-
-        pools.forEach((s) => m = {...m, [s.swapType]: {poolTokens: s.poolTokens}})
-
-        return m
-    }
-
-    export const bridgeSwappableTypePoolsByChain = {
-        [ChainId.ETH]: makeSwapTypeTokenPool(
-            ETH_POOL_SWAP_TOKEN,
-            null,
+    export const bridgeSwappableMap: ChainSwapTypePoolsMap = {
+        [ChainId.ETH]: makeSwapTypeMap(
+            {
+                usdPool: [
+                    ETH_POOL_SWAP_TOKEN,
+                    [...ETH_POOL_SWAP_TOKEN.poolTokens, Tokens.NUSD]
+                ]
+            },
             ETH_Pool,
             HIGH_Pool,
             DOG_Pool,
             FRAX_Pool,
         ),
-        [ChainId.OPTIMISM]: makeSwapTypeTokenPool(
-            null,
-            OPTIMISM_ETH_SWAP_TOKEN,
+        [ChainId.OPTIMISM]: makeSwapTypeMap(
+        {ethPool: [OPTIMISM_ETH_SWAP_TOKEN, OPTIMISM_ETH_SWAP_TOKEN.poolTokens]}
         ),
-        [ChainId.CRONOS]: makeSwapTypeTokenPool(
-            null,
-            null,
-        ),
-        [ChainId.BSC]: makeSwapTypeTokenPool(
-            BSC_POOL_SWAP_TOKEN,
-            null,
+        [ChainId.CRONOS]: makeSwapTypeMap({}),
+        [ChainId.BSC]: makeSwapTypeMap(
+        {usdPool: [BSC_POOL_SWAP_TOKEN, BSC_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps]},
             HIGH_Pool,
             DOG_Pool,
             JUMP_Pool,
             NFD_Pool,
         ),
-        [ChainId.POLYGON]: makeSwapTypeTokenPool(
-            POLYGON_POOL_SWAP_TOKEN,
-            null,
+        [ChainId.POLYGON]: makeSwapTypeMap(
+        {usdPool: [POLYGON_POOL_SWAP_TOKEN, POLYGON_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps]},
             NFD_Pool,
             DOG_Pool,
         ),
-        [ChainId.FANTOM]: makeSwapTypeTokenPool(
-            FANTOM_POOL_SWAP_TOKEN,
-            FANTOM_ETH_SWAP_TOKEN,
+        [ChainId.FANTOM]: makeSwapTypeMap(
+            {
+                usdPool: [FANTOM_POOL_SWAP_TOKEN, FANTOM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+                ethPool: [FANTOM_ETH_SWAP_TOKEN,  FANTOM_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps]
+            },
             JUMP_Pool,
             FRAX_Pool,
         ),
-        [ChainId.BOBA]: makeSwapTypeTokenPool(
-            BOBA_POOL_SWAP_TOKEN,
-            BOBA_ETH_SWAP_TOKEN,
+        [ChainId.BOBA]: makeSwapTypeMap(
+            {
+                usdPool: [BOBA_POOL_SWAP_TOKEN, BOBA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+                ethPool: [BOBA_ETH_SWAP_TOKEN,  BOBA_ETH_SWAP_TOKEN.poolTokens]
+            },
         ),
-        [ChainId.METIS]: makeSwapTypeTokenPool(
-            null,
-            null,
-        ),
-        [ChainId.MOONBEAM]: makeSwapTypeTokenPool(
-            null, null,
+        [ChainId.METIS]: makeSwapTypeMap({}),
+        [ChainId.MOONBEAM]: makeSwapTypeMap(
+            {},
             SOLAR_Pool,
             WMOVR_Pool,
             WAVAX_Pool,
         ),
-        [ChainId.MOONRIVER]: makeSwapTypeTokenPool(
-            null, null,
+        [ChainId.MOONRIVER]: makeSwapTypeMap(
+            {},
             SOLAR_Pool,
             FRAX_Pool,
             MOVR_Pool,
         ),
-        [ChainId.ARBITRUM]: makeSwapTypeTokenPool(
-            ARBITRUM_POOL_SWAP_TOKEN,
-            ARBITRUM_ETH_SWAP_TOKEN,
+        [ChainId.ARBITRUM]: makeSwapTypeMap(
+            {
+                usdPool: [ARBITRUM_POOL_SWAP_TOKEN, ARBITRUM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+                ethPool: [ARBITRUM_ETH_SWAP_TOKEN,  ARBITRUM_ETH_SWAP_TOKEN.poolTokens]
+            },
             GMX_Pool,
         ),
-        [ChainId.AVALANCHE]: makeSwapTypeTokenPool(
-            AVALANCHE_POOL_SWAP_TOKEN,
-            AVALANCHE_ETH_SWAP_TOKEN,
+        [ChainId.AVALANCHE]: makeSwapTypeMap(
+            {
+                usdPool: [AVALANCHE_POOL_SWAP_TOKEN, AVALANCHE_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+                ethPool: [AVALANCHE_ETH_SWAP_TOKEN,  AVALANCHE_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps]
+            },
             NFD_Pool,
             GMX_Pool,
             AVAX_Pool,
         ),
-        [ChainId.AURORA]: {
-            [SwapType.USD]: AURORA_POOL_SWAP_TOKEN,
-            [SwapType.SYN]: SYN_Pool,
-            [SwapType.UST]: UST_Pool,
-        },
-        [ChainId.HARMONY]: makeSwapTypeTokenPool(
-            HARMONY_POOL_SWAP_TOKEN,
-            HARMONY_ONEETH_TOKEN,
+        [ChainId.AURORA]: makeSwapTypeMap(
+            {
+                usdPool: [AURORA_POOL_SWAP_TOKEN, AURORA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+                ohm: false
+            }
+        ),
+        [ChainId.HARMONY]: makeSwapTypeMap(
+            {
+                usdPool: [HARMONY_POOL_SWAP_TOKEN, HARMONY_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+                ethPool: [HARMONY_ONEETH_TOKEN,    HARMONY_ONEETH_TOKEN.poolTokensForBridgeSwaps]
+            },
             FRAX_Pool,
         )
+    }
+
+    export function swapGroupsForChain(chainId: number): string[] {
+        return Object.values(bridgeSwappableMap[chainId].swappableSwapGroups).map(lp => lp.swapType)
+    }
+
+    export function tokensForChainBySwapGroup(
+        chainId: number,
+        swapGroup: string
+    ): Token[] {
+        const m = bridgeSwappableMap[chainId].swappableTokens;
+        return swapGroup in m ? m[swapGroup] : []
     }
 
     // export const BRIDGEABLE_TOKENS = {
@@ -605,18 +562,15 @@ export namespace SwapPools {
     // }
 
     export function getAllSwappableTokensForNetwork(chainId: number): Token[] {
-        let
-            swappableTokens: Token[] = [],
-            groupsForChain = bridgeSwappableTokensByType[chainId];
+        let swappableTokens: Token[] = [];
 
-        Object.keys(groupsForChain).forEach((grp) => {
-            swappableTokens = [...swappableTokens, ...groupsForChain[grp]];
+        swapGroupsForChain(chainId).forEach((grp) => {
+            const tokens = tokensForChainBySwapGroup(chainId, grp);
+            swappableTokens = [...swappableTokens, ...tokens];
         })
 
         return swappableTokens
     }
-
-    export const swapGroupsForNetwork = (chainId: number): string[] => Object.keys(bridgeSwappableTokensByType[chainId])
 
     export function stableswapPoolForNetwork(chainId: number): SwapPoolToken {
         switch (chainId) {
@@ -666,12 +620,12 @@ export namespace SwapPools {
 export type NetworkSwappableTokensMap     = ChainIdTypeMap<Token[]>;
 export type AllNetworksSwappableTokensMap = ChainIdTypeMap<NetworkSwappableTokensMap>;
 
-function filterGrps(chainAGrps: string[], chainBGrpsMap: SwapPools.SwapGroupTokenMap): Token[] {
+function filterGrps(chainAGrps: string[], chainBGrpsMap: SwapPools.SwapTypePoolTokens): Token[] {
     let tokens: Token[] = [];
 
     Object.keys(chainBGrpsMap).forEach((grp: string) => {
         if (chainAGrps.includes(grp)) {
-            tokens = [...tokens, ...chainBGrpsMap[grp]];
+            tokens = [...tokens, ...chainBGrpsMap[grp].poolTokens];
         }
     })
 
@@ -686,7 +640,7 @@ function swapGroupsLoop(chainIdA: number, swapGrps: string[]): NetworkSwappableT
             return
         }
 
-        res[chainId] = filterGrps(swapGrps, SwapPools.bridgeSwappableTokensByType[chainId]);
+        res[chainId] = filterGrps(swapGrps, SwapPools.bridgeSwappableMap[chainId].swappableSwapGroups);
     })
 
     return res
@@ -703,18 +657,16 @@ function swapGroupsLoop(chainIdA: number, swapGrps: string[]): NetworkSwappableT
 export function networkSwapTokensMap(chainIdA: number, chainIdB?: number): NetworkSwappableTokensMap {
     let res: NetworkSwappableTokensMap = {};
 
-    const swapGrpsA: string[] = SwapPools.swapGroupsForNetwork(chainIdA);
+    const swapGrpsA: string[] = SwapPools.swapGroupsForChain(chainIdA);
 
     if (typeof chainIdB !== 'undefined') {
-        res[chainIdB] = filterGrps(swapGrpsA, SwapPools.bridgeSwappableTokensByType[chainIdB]);
+        res[chainIdB] = filterGrps(swapGrpsA, SwapPools.bridgeSwappableMap[chainIdB].swappableSwapGroups);
     } else {
         res = swapGroupsLoop(chainIdA, swapGrpsA);
     }
 
     return res
 }
-
-
 
 /**
  * Returns map of all swappable tokens between all supported networks.
@@ -724,7 +676,7 @@ export function allNetworksSwapTokensMap(): AllNetworksSwappableTokensMap {
     let res: AllNetworksSwappableTokensMap = {};
 
     supportedChainIds().forEach((chainIdA: number) => {
-        const swapGrpsA: string[] = SwapPools.swapGroupsForNetwork(chainIdA);
+        const swapGrpsA: string[] = SwapPools.swapGroupsForChain(chainIdA);
 
         res[chainIdA] = swapGroupsLoop(chainIdA, swapGrpsA);
     })
