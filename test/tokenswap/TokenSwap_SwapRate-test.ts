@@ -46,7 +46,6 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
             makeTestCase(ChainId.ETH,        Tokens.DAI,        Tokens.USDC),
             makeTestCase(ChainId.ETH,        Tokens.ETH,        Tokens.NETH, null, true),
             makeTestCase(ChainId.OPTIMISM,   Tokens.WETH,       Tokens.NETH),
-            makeTestCase(ChainId.AVALANCHE,  Tokens.MIM,        Tokens.USDT, null, true),
             makeTestCase(ChainId.BSC,        Tokens.BUSD,       Tokens.USDT),
             makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.BUSD),
             makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.DAI,  undefined,true),

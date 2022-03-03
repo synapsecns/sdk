@@ -35,6 +35,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
             {chainId: ChainId.ARBITRUM,  token: Tokens.NETH,     wantA: Tokens.NETH, wantB: Tokens.NETH},
             {chainId: ChainId.BSC,       token: Tokens.BUSD,     wantA: Tokens.NUSD, wantB: Tokens.NUSD},
             {chainId: ChainId.AVALANCHE, token: Tokens.GOHM,     wantA: Tokens.GOHM, wantB: Tokens.GOHM},
+
         ];
 
         for (const tc of testCases) {
@@ -97,7 +98,6 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                 chainId:       ChainId.FANTOM,
                 chainTokens:   [
                     {chainId: ChainId.AVALANCHE, token: Tokens.FTM_ETH},
-                    {chainId: ChainId.BSC,       token: Tokens.MIM},
                     {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
                     {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
                 ],

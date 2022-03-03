@@ -44,9 +44,6 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.WETH,   ChainId.ETH,       Tokens.ETH,    true),
             makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.WETH,   ChainId.AVALANCHE, Tokens.ETH,    true),
             makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.SYN,    ChainId.BSC,       Tokens.SYN,    true),
-            makeBridgeSwapTestCase(ChainId.POLYGON,   Tokens.MIM,    ChainId.BSC,       Tokens.USDT,   false),
-            makeBridgeSwapTestCase(ChainId.FANTOM,    Tokens.MIM,    ChainId.BSC,       Tokens.USDT,   true),
-            makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.MIM,    ChainId.ETH,       Tokens.MIM,    false),
             makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BOBA,      Tokens.NETH,   true),
             makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BOBA,      Tokens.ETH,    true),
             makeBridgeSwapTestCase(ChainId.BOBA,      Tokens.ETH,    ChainId.ETH,       Tokens.ETH,    true),
@@ -86,7 +83,6 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             makeBridgeSwapTestCase(ChainId.BSC,       Tokens.HIGH,   ChainId.ETH,       Tokens.HIGH,   true),
             makeBridgeSwapTestCase(ChainId.BSC,       Tokens.JUMP,   ChainId.FANTOM,    Tokens.JUMP,   true),
             makeBridgeSwapTestCase(ChainId.BSC,       Tokens.DOG,    ChainId.POLYGON,   Tokens.DOG,    true),
-            makeBridgeSwapTestCase(ChainId.FANTOM,    Tokens.MIM,    ChainId.POLYGON,   Tokens.DAI,    true),
             makeBridgeSwapTestCase(ChainId.POLYGON,   Tokens.NFD,    ChainId.AVALANCHE, Tokens.NFD,    true),
             makeBridgeSwapTestCase(ChainId.OPTIMISM,  Tokens.WETH_E, ChainId.AVALANCHE, Tokens.WETH_E, false),
             makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.ETH,    ChainId.AVALANCHE, Tokens.WETH_E, true),
@@ -98,6 +94,8 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             makeBridgeSwapTestCase(ChainId.HARMONY,   Tokens.GOHM,   ChainId.AVALANCHE, Tokens.GOHM,   true),
             makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.GOHM,   ChainId.BSC,       Tokens.GOHM,   true),
             makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.GOHM,   ChainId.HARMONY,   Tokens.GOHM,   true),
+            makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.UST,    ChainId.HARMONY,   Tokens.UST,    true),
+            makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.GOHM,   ChainId.HARMONY,   Tokens.UST,    false),
         ];
 
         for (const tc of testCases) {
@@ -175,7 +173,6 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             makeTestCase(Tokens.ETH,     Tokens.WETH_E,  ChainId.ETH,       ChainId.AVALANCHE),
             makeTestCase(Tokens.ETH,     Tokens.WETH_E,  ChainId.ETH,       ChainId.ETH, "101", true, true),
             makeTestCase(Tokens.NUSD,    Tokens.DAI,     ChainId.AVALANCHE, ChainId.ETH),
-            makeTestCase(Tokens.MIM,     Tokens.NUSD,    ChainId.FANTOM,    ChainId.ETH),
             makeTestCase(Tokens.NUSD,    Tokens.DAI,     ChainId.AVALANCHE, ChainId.POLYGON),
             makeTestCase(Tokens.DOG,     Tokens.DOG,     ChainId.POLYGON,   ChainId.ETH, "3133731337"),
             makeTestCase(Tokens.ETH,     Tokens.ETH,     ChainId.ARBITRUM,  ChainId.OPTIMISM),
@@ -204,7 +201,6 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             makeTestCase(Tokens.HIGH,    Tokens.HIGH,    ChainId.BSC,       ChainId.ETH),
             makeTestCase(Tokens.JUMP,    Tokens.JUMP,    ChainId.BSC,       ChainId.FANTOM),
             makeTestCase(Tokens.DOG,     Tokens.DOG,     ChainId.BSC,       ChainId.POLYGON,   "3133731337"),
-            makeTestCase(Tokens.MIM,     Tokens.DAI,     ChainId.FANTOM,    ChainId.POLYGON),
             makeTestCase(Tokens.NFD,     Tokens.NFD,     ChainId.POLYGON,   ChainId.AVALANCHE, "3133731337"),
             makeTestCase(Tokens.GMX,     Tokens.GMX,     ChainId.ARBITRUM,  ChainId.AVALANCHE),
             makeTestCase(Tokens.GMX,     Tokens.GMX,     ChainId.AVALANCHE, ChainId.ARBITRUM),
@@ -231,6 +227,8 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             makeTestCase(Tokens.NUSD,    Tokens.USDT,    ChainId.ETH,       ChainId.BSC,     "2500"),
             makeTestCase(Tokens.NUSD,    Tokens.NUSD,    ChainId.BSC,       ChainId.POLYGON, "2500"),
             makeTestCase(Tokens.NUSD,    Tokens.NUSD,    ChainId.POLYGON,   ChainId.BSC,     "2500"),
+            makeTestCase(Tokens.UST,     Tokens.UST,     ChainId.BSC,       ChainId.POLYGON, "2500"),
+            makeTestCase(Tokens.UST,     Tokens.UST,     ChainId.POLYGON,   ChainId.ETH,     "2500"),
         ];
 
         function makeTestName(tc: TestCase): [string, string, string] {

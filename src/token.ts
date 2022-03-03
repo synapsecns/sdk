@@ -1,6 +1,6 @@
 import type {AddressMap, DecimalsMap} from "@common/types";
 
-import type {ID, Entity} from "@internal/entity";
+import type {ID, Distinct} from "@internal/distinct";
 import type {SwapType}   from "@internal/swaptype";
 
 import {
@@ -11,7 +11,7 @@ import {
 import {parseUnits} from "@ethersproject/units";
 
 
-export interface IBaseToken extends Entity {
+export interface IBaseToken extends Distinct {
     readonly name:      string;
     readonly symbol:    string;
     readonly addresses: AddressMap;

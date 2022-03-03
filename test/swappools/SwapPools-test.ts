@@ -43,7 +43,19 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     {token: Tokens.DAI,  want: false},
                     {token: Tokens.FRAX, want: false},
                 ],
-            }
+            },
+            {
+                chainId:       ChainId.FANTOM,
+                swapToken:     SwapPools.FANTOM_POOL_SWAP_TOKEN,
+                tokens: [
+                    {token: Tokens.NUSD, want: true},
+                    {token: Tokens.BUSD, want: false},
+                    {token: Tokens.USDC, want: true},
+                    {token: Tokens.USDT, want: true},
+                    {token: Tokens.DAI,  want: false},
+                    {token: Tokens.FRAX, want: false},
+                ],
+            },
         ];
 
         for (const tc of testCases) {
