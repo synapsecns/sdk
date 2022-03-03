@@ -47,6 +47,7 @@ import type {
     ContractTransaction,
     PopulatedTransaction,
 } from "@ethersproject/contracts";
+import {SynapseContracts} from "@common/synapse_contracts";
 
 /**
  * Bridge provides a wrapper around common Synapse Bridge interactions, such as output estimation, checking supported swaps/bridges,
@@ -149,14 +150,18 @@ export namespace Bridge {
             this.isL2Zap = this.network.zapIsL2BridgeZap;
             this.isL2ETHChain = BridgeUtils.isL2ETHChain(this.chainId);
 
-            let factoryParams = {chainId: this.chainId, signerOrProvider: this.provider};
+            const
+                factoryParams = {chainId: this.chainId, signerOrProvider: this.provider},
+                contractAddrs = SynapseContracts.contractsForChainId(this.chainId);
+
+            this.bridgeAddress    = contractAddrs.bridge_address;
+            this.zapBridgeAddress = contractAddrs.bridge_zap_address;
 
             this.bridgeInstance = SynapseEntities.synapseBridge(factoryParams);
-            this.bridgeAddress = contractAddressFor(this.chainId, "bridge");
 
-            this.networkZapBridgeInstance = SynapseEntities.zapBridge({ chainId: this.chainId, signerOrProvider: this.provider })
-
-            this.zapBridgeAddress = this.networkZapBridgeInstance.address;
+            if (this.zapBridgeAddress && this.zapBridgeAddress !== "") {
+                this.networkZapBridgeInstance = SynapseEntities.zapBridge(factoryParams);
+            }
         }
 
         bridgeVersion(): Promise<BigNumber> {
