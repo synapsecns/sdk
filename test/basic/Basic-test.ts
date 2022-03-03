@@ -21,7 +21,6 @@ import {
 } from "@sdk/internal/rpcproviders";
 
 import {
-    expectBoolean,
     expectIncludes,
     expectLength,
     wrapExpect
@@ -119,41 +118,37 @@ describe("Basic tests", function(this: Mocha.Suite) {
         )
 
         describe("Check result of two inputs", function(this: Mocha.Suite) {
-            const testCases: TestCase[] = [
-                {token: Tokens.USDC, want: true},
-                {token: Tokens.USDT, want: true},
-            ];
-
             const symbols = symbolsForChain(resA, chainB);
 
-            for (const tc of testCases) {
+            [
+                {token: Tokens.USDC, want: true},
+                {token: Tokens.USDT, want: true},
+            ].forEach((tc: TestCase) => {
                 const testTitle: string = `symbolsForChain(resA, ${chainB}) ${makeWantString(tc)} token ${tc.token.name}`;
 
                 it(
                     testTitle,
                     wrapExpect(expectIncludes(symbols, tc.token.symbol, tc.want))
                 )
-            }
+            })
         })
 
         describe("Check result of one input", function(this: Mocha.Suite) {
-            const testCases: ChainTestCase[] = [
+            [
                 {token: Tokens.NETH, want: true, chainId: ChainId.ARBITRUM},
                 {token: Tokens.NETH, want: true, chainId: ChainId.BOBA},
-            ];
-
-            for (const tc of testCases) {
+            ].forEach((tc: ChainTestCase) => {
                 const testTitle: string = `network ${Networks.networkName(tc.chainId)} ${makeWantString(tc)} token ${tc.token.name}`;
 
                 it(
                     testTitle,
                     wrapExpect(expectIncludes(symbolsForChain(resB, tc.chainId), tc.token.symbol, tc.want))
                 )
-            }
+            })
         })
 
         describe("Test supported tokens", function(this: Mocha.Suite) {
-            const testCases: ChainTestCase[] = [
+            [
                 {chainId: ChainId.BSC,          token: Tokens.NUSD,         want: true},
                 {chainId: ChainId.BSC,          token: Tokens.BUSD,         want: true},
                 {chainId: ChainId.BSC,          token: Tokens.DAI,          want: false},
@@ -167,9 +162,7 @@ describe("Basic tests", function(this: Mocha.Suite) {
                 {chainId: ChainId.MOONRIVER,    token: Tokens.WMOVR,        want: true},
                 {chainId: ChainId.CRONOS,       token: Tokens.GOHM,         want: true},
                 {chainId: ChainId.METIS,        token: Tokens.SYN,          want: true},
-            ];
-
-            for (const tc of testCases) {
+            ].forEach((tc: ChainTestCase) => {
                 const
                     net: Networks.Network = Networks.fromChainId(tc.chainId),
                     testTitle: string  = `${net.name} ${makeWantString(tc, "support")} token ${tc.token.name}`,
@@ -179,7 +172,7 @@ describe("Basic tests", function(this: Mocha.Suite) {
                     testTitle,
                     function(this: Mocha.Context) {expect(supported).to.equal(tc.want)}
                 )
-            }
+            })
         })
     })
 
@@ -194,8 +187,4 @@ describe("Basic tests", function(this: Mocha.Suite) {
             expect(Networks.networkSupportsToken(Networks.ETH, Tokens.BUSD)).to.be.false;
         })
     })
-})
-
-describe("SwapPools", function(this: Mocha.Suite) {
-
 })

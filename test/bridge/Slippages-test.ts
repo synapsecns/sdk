@@ -18,9 +18,9 @@ describe("Slippages tests", function(this: Mocha.Suite) {
 
     describe("_applySlippage", function(this: Mocha.Suite) {
         const makeTitle = (tc: TestCase): string =>
-            `value of ${tc.value.toString()} with slippage of ${tc.slippage} should return ${tc.expected.toString()}`
+            `value of ${tc.value.toString()} with slippage of ${tc.slippage} should return ${tc.expected.toString()}`;
 
-        let testCases: TestCase[] = [
+        [
             {
                 func:     Slippages._applySlippage,
                 value:    BigNumber.from(69420),
@@ -39,9 +39,7 @@ describe("Slippages tests", function(this: Mocha.Suite) {
                 slippage: Slippages.Quarter,
                 expected: BigNumber.from(98),
             }
-        ]
-
-        testCases.forEach((tc: TestCase) => {
+        ].forEach((tc: TestCase) => {
             it(makeTitle(tc), function(this: Mocha.Context) {
                 expect(tc.func(tc.value, tc.slippage)._hex).to.equal(tc.expected._hex);
             })
@@ -66,20 +64,18 @@ describe("Slippages tests", function(this: Mocha.Suite) {
             want:         string,
         }
 
-        const testCases: formatTestCase[] = [
+        [
             {slippage: Slippages.One,      slippageName: "Slippages.One",      want: "1.0"},
             {slippage: Slippages.OneTenth, slippageName: "Slippages.OneTenth", want: "0.1"},
             {slippage: Slippages.TwoTenth, slippageName: "Slippages.TwoTenth", want: "0.2"},
             {slippage: Slippages.Quarter,  slippageName: "Slippages.Quarter",  want: "2.0"},
             {slippage: "foo",              slippageName: "foo",                want: "N/A"},
-        ]
-
-        for (const tc of testCases) {
+        ].forEach((tc: formatTestCase) => {
             const testTitle: string = `${tc.slippageName} should return ${tc.want}`;
 
             it(testTitle, function(this: Mocha.Context) {
                 expectEqual(Slippages.formatSlippageToString(tc.slippage), tc.want);
             })
-        }
+        })
     })
 })

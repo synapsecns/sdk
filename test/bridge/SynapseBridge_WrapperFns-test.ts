@@ -30,20 +30,17 @@ import {
 
 import {infiniteApprovalsPrivkey} from "./bridge_test_utils";
 
+import {parseUnits}               from "@ethersproject/units";
 import {Wallet}                   from "@ethersproject/wallet";
 import {BigNumber}                from "@ethersproject/bignumber";
 import type {Provider}            from "@ethersproject/providers";
 import type {BigNumberish}        from "@ethersproject/bignumber";
 import type {ContractTransaction} from "@ethersproject/contracts";
 
-
-
 import {
     Zero,
     MaxUint256,
 } from "@ethersproject/constants";
-
-import {parseUnits} from "@ethersproject/units";
 
 
 describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Mocha.Suite) {
@@ -52,7 +49,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
     describe(".bridgeVersion()", function(this: Mocha.Suite) {
         const expected = 6;
 
-        for (const network of ALL_CHAIN_IDS) {
+        ALL_CHAIN_IDS.forEach(network => {
             const
                 provider          = rpcProviderForChain(network),
                 bridgeInstance    = new Bridge.SynapseBridge({ network, provider}),
@@ -63,11 +60,11 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 let prom = bridgeInstance.bridgeVersion();
                 return wrapExpectAsync(expectBnEqual(await prom, expected), prom)
             })
-        }
+        })
     })
 
     describe(".WETH_ADDRESS", function(this: Mocha.Suite) {
-        for (const network of ALL_CHAIN_IDS) {
+        ALL_CHAIN_IDS.forEach(network => {
             const
                 provider = rpcProviderForChain(network),
                 bridgeInstance = new Bridge.SynapseBridge({ network, provider }),
@@ -91,7 +88,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 let prom = bridgeInstance.WETH_ADDRESS();
                 return wrapExpectAsync(expectEqual(await prom, expected), prom)
             })
-        }
+        })
     })
 
     describe(".getAllowanceForAddress", function(this: Mocha.Suite) {
@@ -164,7 +161,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
                 dotenv.config();
 
-                const bscZapAddr: string = contractAddressFor(ChainId.BSC, "bridge_zap");
+                const bscZapAddr: string = contractAddressFor(ChainId.BSC, "bridgeZap");
                 const tokenParams = {tokenAddress: Tokens.BUSD.address(ChainId.BSC), chainId: ChainId.BSC};
 
                 try {

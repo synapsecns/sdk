@@ -38,7 +38,7 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
     describe("checkSwapSupported", function(this: Mocha.Suite) {
         type TestCase = BridgeSwapTestCase<boolean>
 
-        let testCases: TestCase[] = [
+        [
             makeBridgeSwapTestCase(ChainId.ETH,       Tokens.DAI,    ChainId.BSC,       Tokens.USDC,   true),
             makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,    ChainId.BSC,       Tokens.USDC,   false),
             makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.WETH,   ChainId.ETH,       Tokens.ETH,    true),
@@ -96,9 +96,7 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.GOHM,   ChainId.HARMONY,   Tokens.GOHM,   true),
             makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.UST,    ChainId.HARMONY,   Tokens.UST,    true),
             makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.GOHM,   ChainId.HARMONY,   Tokens.UST,    false),
-        ];
-
-        for (const tc of testCases) {
+        ].forEach((tc: TestCase) => {
             const {args, expected} = tc;
 
             const {
@@ -121,7 +119,7 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
                 const [swapAllowed, errReason] = bridgeInstance.swapSupported({ ...testArgs, chainIdTo });
                 expectEqual(swapAllowed, expected, errReason);
             })
-        }
+        })
     })
 
     describe("getEstimatedBridgeOutput", function(this: Mocha.Suite) {
@@ -150,7 +148,41 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             return makeBridgeSwapTestCase(c1, t1, c2, t2, expected, getTestAmount(t1, c1, amt))
         }
 
-        let testCases: TestCase[] = [
+        function makeTestName(tc: TestCase): [string, string, string] {
+            let {
+                args: {
+                    amountFrom,
+                    tokenFrom,
+                    tokenFrom: { symbol: tokFrom },
+                    tokenTo:   { symbol: tokTo   },
+                    chainIdFrom: chainFrom,
+                    chainIdTo:   chainTo,
+                },
+                expected: {
+                    notZero,
+                    wantError
+                }
+            } = tc;
+
+            const
+                amt             = formatUnits(amountFrom, tokenFrom.decimals(chainFrom)),
+                netFrom         = Networks.networkName(chainFrom),
+                netTo           = Networks.networkName(chainTo);
+
+            const
+                titleSuffix:     string = notZero ? "a value greater than zero" : "a value === zero",
+                passFailSuffix:  string =  wantError ? "should fail" : "should pass",
+                testParamsTitle: string = `with params ${amt} ${tokFrom} on ${netFrom} to ${tokTo} on ${netTo}`;
+
+            const
+                bridgeOutputTestTitle: string = `getEstimatedBridgeOutput ${testParamsTitle} should return ${titleSuffix}`,
+                transactionTestTitle:  string = `buildBridgeTokenTransaction ${testParamsTitle} ${passFailSuffix}`,
+                approveTestTitle:      string = `buildApproveTransaction ${testParamsTitle} ${passFailSuffix}`;
+
+            return [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle]
+        }
+
+        [
             makeTestCase(Tokens.DAI,     Tokens.USDC,    ChainId.ETH,       ChainId.BSC, "500"),
             makeTestCase(Tokens.DAI,     Tokens.USDC,    ChainId.ETH,       ChainId.BSC, "50"),
             makeTestCase(Tokens.DAI,     Tokens.USDC,    ChainId.ETH,       ChainId.BSC, "1",   false),
@@ -229,43 +261,7 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             makeTestCase(Tokens.NUSD,    Tokens.NUSD,    ChainId.POLYGON,   ChainId.BSC,     "2500"),
             makeTestCase(Tokens.UST,     Tokens.UST,     ChainId.BSC,       ChainId.POLYGON, "2500"),
             makeTestCase(Tokens.UST,     Tokens.UST,     ChainId.POLYGON,   ChainId.ETH,     "2500"),
-        ];
-
-        function makeTestName(tc: TestCase): [string, string, string] {
-            let {
-                args: {
-                    amountFrom,
-                    tokenFrom,
-                    tokenFrom: { symbol: tokFrom },
-                    tokenTo:   { symbol: tokTo   },
-                    chainIdFrom: chainFrom,
-                    chainIdTo:   chainTo,
-                },
-                expected: {
-                    notZero,
-                    wantError
-                }
-            } = tc;
-
-            const
-                amt             = formatUnits(amountFrom, tokenFrom.decimals(chainFrom)),
-                netFrom         = Networks.networkName(chainFrom),
-                netTo           = Networks.networkName(chainTo);
-
-            const
-                titleSuffix:     string = notZero ? "a value greater than zero" : "a value === zero",
-                passFailSuffix:  string =  wantError ? "should fail" : "should pass",
-                testParamsTitle: string = `with params ${amt} ${tokFrom} on ${netFrom} to ${tokTo} on ${netTo}`;
-
-            const
-                bridgeOutputTestTitle: string = `getEstimatedBridgeOutput ${testParamsTitle} should return ${titleSuffix}`,
-                transactionTestTitle:  string = `buildBridgeTokenTransaction ${testParamsTitle} ${passFailSuffix}`,
-                approveTestTitle:      string = `buildApproveTransaction ${testParamsTitle} ${passFailSuffix}`;
-
-            return [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle]
-        }
-
-        for (const tc of testCases) {
+        ].forEach((tc: TestCase) => {
             const [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc)
 
             let amountTo: BigNumber;
@@ -343,7 +339,7 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
                         : expectPromiseResolve(prom, !noAddrTo)
                 ))
             })
-        }
+        })
     })
 })
 

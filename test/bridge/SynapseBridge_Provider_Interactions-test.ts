@@ -17,7 +17,7 @@ import {
     makeWalletSignerWithProvider,
 } from "@tests/helpers";
 
-import {bridgeInteractionsPrivkey, BridgeSwapTestArgs, type BridgeSwapTestCase} from "./bridge_test_utils";
+import {bridgeInteractionsPrivkey, type BridgeSwapTestCase} from "./bridge_test_utils";
 
 import type {TransactionResponse} from "@ethersproject/providers";
 
@@ -207,8 +207,11 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
 
     testCases.forEach(tc => {
         const
-            describeTitle:       string = `Test ${tc.args.tokenFrom.symbol} on ${Networks.networkName(tc.args.chainIdFrom)} to ${tc.args.tokenTo.symbol} on ${Networks.networkName(tc.args.chainIdTo)}`,
-            executionTestSuffix: string = `should ${tc.expected.executeSuccess ? "execute succesfully" : "fail"}`;
+            describeNetFromTitle: string = `${tc.args.tokenFrom.symbol} on ${Networks.networkName(tc.args.chainIdFrom)}`,
+            desribeNetToTitle:    string = `${tc.args.tokenTo.symbol} on ${Networks.networkName(tc.args.chainIdTo)}`,
+            execModeTitle:        string = tc.callStatic ? "(CallStatic)" : "(Signer Sends)",
+            describeTitle:        string = `Test ${describeNetFromTitle} to ${desribeNetToTitle} ${execModeTitle}`,
+            executionTestSuffix:  string = `should ${tc.expected.executeSuccess ? "execute succesfully" : "fail"}`;
 
         const
             executeTxnTestTitle = (txnKind: string): string => `${txnKind} transaction ${executionTestSuffix}`,
@@ -292,7 +295,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 return
             });
 
-            describe("Test checkCanBridge()", function(this: Mocha.Suite) {
+            describe("- checkCanBridge()", function(this: Mocha.Suite) {
                 const canBridgeTestTitle: string = `should${tc.expected.canBridge ? "" : " not"} be able to bridge`;
 
                 it(canBridgeTestTitle, async function(this: Mocha.Context) {
@@ -307,99 +310,85 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 })
             });
 
-            describe("test using transaction builders", function(this: Mocha.Suite) {
+            describe("- Transaction Builders", function(this: Mocha.Suite) {
                 let
                     approvalTxn:     PopulatedTransaction,
                     bridgeTxn:       PopulatedTransaction;
 
-                step(
-                    "approval transaction should be populated successfully",
-                    async function(this: Mocha.Context) {
-                        if (tc.args.tokenFrom.isEqual(Tokens.ETH)) return
-                        this.timeout(DEFAULT_TEST_TIMEOUT);
+                const
+                    approveTitle: string = "approval transaction should be populated successfully",
+                    bridgeTitle:  string = "bridge transaction should be populated successfully";
 
-                        return (await expectFulfilled(
-                            bridgeInstance
-                                .buildApproveTransaction({token: tc.args.tokenFrom})
-                                .then((txn) => approvalTxn = txn)
-                        ))
-                    }
-                );
+                step(approveTitle, async function(this: Mocha.Context) {
+                    if (tc.args.tokenFrom.isEqual(Tokens.ETH)) return
+                    this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                step(
-                    "bridge transaction should be populated successfully",
-                    async function(this: Mocha.Context) {
-                        this.timeout(DEFAULT_TEST_TIMEOUT);
+                    return (await expectFulfilled(
+                        bridgeInstance
+                            .buildApproveTransaction({token: tc.args.tokenFrom})
+                            .then((txn) => approvalTxn = txn)
+                    ))
+                });
 
-                        return (await expectFulfilled(
-                            bridgeInstance.buildBridgeTokenTransaction(doBridgeArgs)
-                                .then((txn) => bridgeTxn = txn)
-                        ))
-                    }
-                );
+                step(bridgeTitle, async function(this: Mocha.Context) {
+                    this.timeout(DEFAULT_TEST_TIMEOUT);
+
+                    return (await expectFulfilled(
+                        bridgeInstance.buildBridgeTokenTransaction(doBridgeArgs)
+                            .then((txn) => bridgeTxn = txn)
+                    ))
+                });
 
                 const approval = true;
 
-                step(
-                    approvalTxnTestTitle,
-                    async function(this: Mocha.Context) {
-                        if (tc.callStatic) {
-                            return await callStaticFunc(
-                                tc,
-                                staticCallPopulatedTransaction(approvalTxn, wallet),
-                                approval
-                            )(this)
-                        } else {
-                            return await executeTxnFunc(
-                                tc,
-                                wallet.sendTransaction(approvalTxn),
-                                approval
-                            )(this)
-                        }
-                    }
-                );
-
-                step(
-                    bridgeTxnTestTitle,
-                    async function(this: Mocha.Context) {
-                        if (tc.callStatic) {
-                            return await callStaticFunc(
-                                tc,
-                                staticCallPopulatedTransaction(bridgeTxn, wallet)
-                            )(this)
-                        } else {
-                            return await executeTxnFunc(
-                                tc,
-                                wallet.sendTransaction(bridgeTxn)
-                            )(this)
-                        }
-                    }
-                );
-            });
-
-            (tc.callStatic ? describe.skip : describe)("Test Magic Executors", function(this: Mocha.Suite) {
-                const approval = true;
-
-                step(
-                    approvalTxnTestTitle,
-                    async function(this: Mocha.Context) {
+                step(approvalTxnTestTitle, async function(this: Mocha.Context) {
+                    if (tc.callStatic) {
+                        return await callStaticFunc(
+                            tc,
+                            staticCallPopulatedTransaction(approvalTxn, wallet),
+                            approval
+                        )(this)
+                    } else {
                         return await executeTxnFunc(
                             tc,
-                            bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet),
+                            wallet.sendTransaction(approvalTxn),
                             approval
                         )(this)
                     }
-                );
+                });
 
-                step(
-                    bridgeTxnTestTitle,
-                    async function (this: Mocha.Context) {
+                step(bridgeTxnTestTitle, async function(this: Mocha.Context) {
+                    if (tc.callStatic) {
+                        return await callStaticFunc(
+                            tc,
+                            staticCallPopulatedTransaction(bridgeTxn, wallet)
+                        )(this)
+                    } else {
                         return await executeTxnFunc(
                             tc,
-                            bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet)
+                            wallet.sendTransaction(bridgeTxn)
                         )(this)
                     }
-                );
+                });
+            });
+
+            (tc.callStatic ? describe.skip : describe)("- Magic Executors", function(this: Mocha.Suite) {
+                const approval = true;
+
+                step(approvalTxnTestTitle, async function(this: Mocha.Context) {
+                    return await executeTxnFunc(
+                        tc,
+                        bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet),
+                        approval
+                    )(this)
+                });
+
+                step(bridgeTxnTestTitle, async function (this: Mocha.Context) {
+                    return await executeTxnFunc(
+                        tc,
+                        bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet)
+                    )(this)
+                });
             })
         })
     })

@@ -40,18 +40,16 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                 tokenTo:   t2,
                 amountIn:  getTestAmount(t1, c, amt),
                 wantError: wantError ?? false,
-            })
+            });
 
-        const testCases: TestCase[] = [
+        [
             makeTestCase(ChainId.ETH,        Tokens.DAI,        Tokens.USDC),
             makeTestCase(ChainId.ETH,        Tokens.ETH,        Tokens.NETH, null, true),
             makeTestCase(ChainId.OPTIMISM,   Tokens.WETH,       Tokens.NETH),
             makeTestCase(ChainId.BSC,        Tokens.BUSD,       Tokens.USDT),
             makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.BUSD),
             makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.DAI,  undefined,true),
-        ]
-
-        for (const tc of testCases) {
+        ].forEach((tc: TestCase) => {
             const
                 titleSuffix: string = tc.wantError ? "should fail" : "should pass",
                 tokFrom: string     = tc.tokenFrom.symbol,
@@ -111,6 +109,6 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                     ? await expectRejected(prom)
                     : expectProperty(await prom, "swapInstance").that.is.instanceof(Contract)
             })
-        }
+        })
     })
 })

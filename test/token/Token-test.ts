@@ -24,7 +24,10 @@ describe("Token Tests", function(this: Mocha.Suite) {
             wantAmount: BigNumber,
         }
 
-        const testCases: TestCase[] = [
+        const makeTestTitle = (tc: TestCase): string =>
+            `valueToWei(${tc.amount.toString()}) of token ${tc.token.symbol} on Chain ID ${tc.chainId} should return ${tc.wantAmount.toString()}`;
+
+        [
             {
                 token:      Tokens.NUSD,
                 chainId:    ChainId.BSC,
@@ -49,18 +52,13 @@ describe("Token Tests", function(this: Mocha.Suite) {
                 amount:     BigNumber.from("225"),
                 wantAmount: BigNumber.from("225000000")
             },
-        ];
-
-        const makeTestTitle = (tc: TestCase): string =>
-            `valueToWei(${tc.amount.toString()}) of token ${tc.token.symbol} on Chain ID ${tc.chainId} should return ${tc.wantAmount.toString()}`
-
-        for (const tc of testCases) {
+        ].forEach((tc: TestCase) => {
             it(makeTestTitle(tc), function(this: Mocha.Context) {
                 const got: BigNumber = tc.token.valueToWei(tc.amount, tc.chainId);
 
                 expectBnEqual(got, tc.wantAmount);
             })
-        }
+        })
     })
 
     describe("canSwap tests", function(this: Mocha.Suite) {
@@ -70,7 +68,10 @@ describe("Token Tests", function(this: Mocha.Suite) {
             expected:  boolean
         }
 
-        const testCases: TestCase[] = [
+        const makeTestTitle = (tc: TestCase): string =>
+            `${tc.tokenA.symbol} should${!tc.expected ? " not": ""} be able to swap with ${tc.tokenB.symbol}`;
+
+       [
             {
                 tokenA:   Tokens.NUSD,
                 tokenB:   Tokens.DAI,
@@ -96,19 +97,14 @@ describe("Token Tests", function(this: Mocha.Suite) {
                 tokenB:   Tokens.GOHM,
                 expected: false,
             },
-        ];
-
-        const makeTestTitle = (tc: TestCase): string =>
-            `${tc.tokenA.symbol} should${!tc.expected ? " not": ""} be able to swap with ${tc.tokenB.symbol}`
-
-        for (const tc of testCases) {
+        ].forEach((tc: TestCase) => {
             it(
                 makeTestTitle(tc),
                 wrapExpect(
                     expectBoolean(tc.tokenA.canSwap(tc.tokenB), tc.expected)
                 )
             )
-        }
+        })
     })
 
     describe("wrapperAddress tests", function(this: Mocha.Suite) {
@@ -118,19 +114,17 @@ describe("Token Tests", function(this: Mocha.Suite) {
             want:    string | null,
         }
 
-        const testCases: TestCase[] = [
+        [
             {token: Tokens.GMX,  chainId: ChainId.AVALANCHE, want: "0x20A9DC684B4d0407EF8C9A302BEAaA18ee15F656"},
             {token: Tokens.GMX,  chainId: ChainId.BSC,       want: null},
             {token: Tokens.NUSD, chainId: ChainId.FANTOM,    want: null},
-        ];
-
-        for (const tc of testCases) {
+        ].forEach((tc: TestCase) => {
             const testTitle: string =
                 `${tc.token.symbol} should have ${tc.want===null ? "no wrapper address" : `wrapper address equal to ${tc.want}`} on Chain ID ${tc.chainId}`;
 
             it(testTitle, function(this: Mocha.Context) {
                 expectNull(tc.token.wrapperAddress(tc.chainId), tc.want === null);
             })
-        }
+        })
     })
 })

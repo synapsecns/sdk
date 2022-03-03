@@ -39,7 +39,7 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
             return {
                 chainId,
                 amount,
-                address: SynapseContracts.contractsForChainId(chainId).bridge_zap_address,
+                address: SynapseContracts.contractsForChainId(chainId).bridgeZapAddress,
             }
         }
 
@@ -85,7 +85,7 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
 
             return expectGteZero(await ERC20.allowanceOf(
                 testAddr,
-                SynapseContracts.contractsForChainId(ChainId.BSC).bridge_zap_address,
+                SynapseContracts.contractsForChainId(ChainId.BSC).bridgeZapAddress,
                 tokenParams(ChainId.BSC)
             ))
         })
