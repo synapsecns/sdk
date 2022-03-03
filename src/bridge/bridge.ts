@@ -2,14 +2,17 @@ import {ChainId}  from "@chainid";
 import {Networks} from "@networks";
 
 import {
-    contractAddressFor,
-    executePopulatedTransaction,
     rejectPromise,
+    executePopulatedTransaction,
+    staticCallPopulatedTransaction
 } from "@common/utils";
+
+import {SynapseContracts} from "@common/synapse_contracts";
+
 
 import type {ID}               from "@internal/distinct";
 import {SwapType}              from "@internal/swaptype";
-import {rpcProviderForChain} from "@internal/rpcproviders";
+import {rpcProviderForChain}   from "@internal/rpcproviders";
 import {tokenSwitch}           from "@internal/utils";
 
 import type {
@@ -21,7 +24,6 @@ import type {
 
 import {Tokens}          from "@tokens";
 import {TokenSwap}       from "@tokenswap";
-import {SwapPools}       from "@swappools";
 import {SynapseEntities} from "@entities";
 
 import {
@@ -30,7 +32,7 @@ import {
     WrappedToken
 } from "@token";
 
-import type {ChainIdTypeMap} from "@common/types";
+import type {ChainIdTypeMap, StaticCallResult} from "@common/types";
 
 import {GasUtils}                   from "./gasutils";
 import {BridgeUtils}                from "./bridgeutils";
@@ -47,7 +49,6 @@ import type {
     ContractTransaction,
     PopulatedTransaction,
 } from "@ethersproject/contracts";
-import {SynapseContracts} from "@common/synapse_contracts";
 
 /**
  * Bridge provides a wrapper around common Synapse Bridge interactions, such as output estimation, checking supported swaps/bridges,
@@ -241,9 +242,14 @@ export namespace Bridge {
          * Note that this function **does** send a signed transaction.
          * @param {BridgeTransactionParams} args Parameters for the bridge transaction.
          * @param {Signer} signer Some instance which implements the Ethersjs {@link Signer} interface.
+         * @param {boolean} callStatic (Optional, default: false) if true, uses provider.callStatic instead of actually sending the signed transaction.
          * @return {Promise<ContractTransaction>}
          */
-        async executeBridgeTokenTransaction(args: BridgeTransactionParams, signer: Signer): Promise<ContractTransaction> {
+        async executeBridgeTokenTransaction(
+            args:       BridgeTransactionParams,
+            signer:     Signer,
+            callStatic: boolean=false
+        ): Promise<ContractTransaction|StaticCallResult> {
             try {
                 await this.checkSwapSupported(args);
             } catch (e) {
@@ -259,15 +265,21 @@ export namespace Bridge {
             const checkArgs = {signer, token: tokenFrom, amount: amountFrom};
 
             return this.checkCanBridge(checkArgs)
-                .then(canBridgeRes => {
+                .then((canBridgeRes: CanBridgeResult): Promise<ContractTransaction|StaticCallResult> => {
                     const [canBridge, err] = canBridgeRes;
 
                     if (!canBridge) {
                         return rejectPromise(err)
                     }
 
-                    let txnProm = this.buildBridgeTokenTransaction(args);
-                    return executePopulatedTransaction(txnProm, signer)
+                    return this.buildBridgeTokenTransaction(args)
+                        .then((txn): Promise<ContractTransaction|StaticCallResult> => {
+                            if (callStatic) {
+                                return staticCallPopulatedTransaction(txn, signer)
+                            }
+
+                            return executePopulatedTransaction(txn, signer)
+                        })
                 })
                 .catch(rejectPromise)
         }
@@ -306,17 +318,24 @@ export namespace Bridge {
          * to the bridge on the source chain.
          * @param {BigNumberish} args.amount Optional, a specific amount of args.token to approve. By default, this function
          * @param {Signer} signer Valid ethers Signer instance for building a fully and properly populated
+         * @param {boolean} callStatic (Optional, default: false) if true, uses provider.callStatic instead of actually sending the signed transaction.
          * transaction.
          */
-        async executeApproveTransaction(args: {
-            token:   Token | string,
-            amount?: BigNumberish
-        }, signer: Signer): Promise<ContractTransaction> {
+        async executeApproveTransaction(
+            args:       {token: Token | string, amount?: BigNumberish},
+            signer:     Signer,
+            callStatic: boolean=false
+        ): Promise<ContractTransaction|StaticCallResult> {
             const [approveArgs, tokenAddress] = this.buildERC20ApproveArgs(args);
 
-            return Promise.resolve(
-                ERC20.approve(approveArgs, {tokenAddress, chainId: this.chainId}, signer)
-                    .then((res: ContractTransaction) => res)
+            return ERC20.approve(
+                approveArgs,
+                {
+                    tokenAddress,
+                    chainId: this.chainId
+                },
+                signer,
+                callStatic
             )
         }
 

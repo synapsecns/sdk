@@ -17,11 +17,12 @@ import {
     expectBoolean,
     expectGteZero,
     expectNotZero,
-    expectNull,
+    expectNull, expectEqual,
 } from "@tests/helpers";
 
 import type {BigNumberish}         from "@ethersproject/bignumber";
 import type {PopulatedTransaction} from "@ethersproject/contracts";
+import {StaticCallResult} from "@common/types";
 
 describe("ERC20 tests", function(this: Mocha.Suite) {
     const testAddr: string = "0xe972647539816442e0987817DF777a9fd9878650";
@@ -76,14 +77,14 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
             it("should do an approve successfully", async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                let prom: Promise<boolean> = ERC20.approve(
+                let prom: Promise<StaticCallResult> = ERC20.approve(
                     args,
                     tokenParams(chainId),
                     wallet,
                     true
-                ).then((res: boolean) => res);
+                ).then(res => res as StaticCallResult);
 
-                return expectBoolean(await prom, true)
+                return expectEqual(await prom, StaticCallResult.Success)
             })
         }
     })

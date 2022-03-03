@@ -1,5 +1,5 @@
 import {Signer} from "@ethersproject/abstract-signer";
-import {Provider} from "@ethersproject/providers";
+import type {TransactionResponse} from "@ethersproject/abstract-provider";
 import {
     BigNumber,
     type BigNumberish,
@@ -18,8 +18,11 @@ import {rpcProviderForChain} from "@internal/rpcproviders";
 
 import {
     executePopulatedTransaction,
-    rejectPromise,
+    rejectPromise
 } from "@common/utils";
+
+import {StaticCallResult} from "@common/types";
+import type {SignerOrProvider} from "@common/types";
 
 import {GasUtils} from "./gasutils";
 
@@ -40,51 +43,90 @@ export namespace ERC20 {
     class ERC20 {
         readonly address: string;
         readonly chainId: number;
-        private readonly provider: Provider;
+        // private readonly provider: Provider;
         private readonly instance: ERC20Contract;
 
         constructor(args: ERC20TokenParams) {
             this.address = args.tokenAddress;
             this.chainId = args.chainId;
 
-            this.provider = rpcProviderForChain(this.chainId);
-            this.instance = ERC20Factory.connect(this.address, this.provider);
+            this.instance = ERC20Factory.connect(this.address, null);
         }
 
-        approve = async (
-            args:    ApproveArgs,
-            signer:  Signer,
-            dryRun:  boolean=false
-        ): Promise<boolean|ContractTransaction> =>
-            dryRun
-                ? this.instance.callStatic.approve(
-                    args.spender,
-                    args.amount ?? MAX_APPROVAL_AMOUNT,
-                    {from: signer.getAddress()}
-                )
-                : executePopulatedTransaction(this.buildApproveTransaction(args), signer)
+        private connectContract(provider?: SignerOrProvider): ERC20Contract {
+            provider = provider ? provider : rpcProviderForChain(this.chainId);
 
-        buildApproveTransaction = async ({spender, amount=MAX_APPROVAL_AMOUNT}: ApproveArgs): Promise<PopulatedTransaction> =>
-            this.instance.populateTransaction.approve(spender, amount)
-                .then((txn) => GasUtils.populateGasParams(this.chainId, txn, "approve"))
+            return this.instance.connect(provider);
+        }
+
+        async approve(
+            args:       ApproveArgs,
+            signer:     Signer,
+            callStatic: boolean=false
+        ): Promise<ContractTransaction|StaticCallResult> {
+            const contract = this.connectContract(signer);
+
+            if (callStatic) {
+                return contract
+                    .callStatic
+                    .approve(args.spender, args.amount ?? MAX_APPROVAL_AMOUNT)
+                    .then(res => res ? StaticCallResult.Success : StaticCallResult.Failure)
+                    .catch(() => StaticCallResult.Failure)
+            }
+
+            let approveTxn = await this._buildApproveTransaction(args, contract);
+
+            return executePopulatedTransaction(approveTxn, signer)
+        }
+
+        async buildApproveTransaction(
+            args:      ApproveArgs,
+            provider?: SignerOrProvider
+        ): Promise<PopulatedTransaction> {
+            const contract = this.connectContract(provider);
+
+            return this._buildApproveTransaction(args, contract)
+        }
+
+        private async _buildApproveTransaction(
+            args:     ApproveArgs,
+            contract: ERC20Contract
+        ): Promise<PopulatedTransaction> {
+            const {spender, amount=MAX_APPROVAL_AMOUNT} = args;
+
+            return contract
+                .populateTransaction
+                .approve(spender, amount)
+                .then(txn => {
+                    return GasUtils.populateGasParams(
+                        this.chainId,
+                        txn,
+                        "approve"
+                    )
+                })
                 .catch(rejectPromise)
+        }
 
         balanceOf = async (
             address: string
-        ): Promise<BigNumber> => this.instance.balanceOf(address)
+        ): Promise<BigNumber> => this.connectContract().balanceOf(address)
 
         allowanceOf = async (
             owner: string,
             spender: string
-        ): Promise<BigNumber> => this.instance.allowance(owner, spender)
+        ): Promise<BigNumber> => this.connectContract().allowance(owner, spender)
     }
 
-    export const approve = async (
+    export async function approve(
         approveArgs: ApproveArgs,
         tokenParams: ERC20TokenParams,
         signer:      Signer,
-        dryRun?:     boolean,
-    ): Promise<boolean|ContractTransaction> => new ERC20(tokenParams).approve(approveArgs, signer, dryRun)
+        callStatic?: boolean,
+    ): Promise<TransactionResponse|StaticCallResult> {
+        let erc20 = new ERC20(tokenParams);
+
+        return erc20.approve(approveArgs, signer, callStatic)
+    }
 
     export const buildApproveTransaction = async (
         approveArgs: ApproveArgs,
