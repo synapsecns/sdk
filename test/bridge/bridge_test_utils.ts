@@ -38,7 +38,7 @@ export interface BridgeSwapTestArgs {
     tokenFrom:   Token,
     tokenTo:     Token,
     amountFrom:  BigNumber,
-    execute:     boolean,
+    execute?:    boolean,
 }
 
 export interface BridgeSwapTestCase<T> {
