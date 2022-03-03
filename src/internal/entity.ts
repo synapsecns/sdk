@@ -1,5 +1,5 @@
 export type ID = symbol;
 
-export interface Distinct {
+export interface Entity {
     readonly id: ID,
 }

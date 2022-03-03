@@ -7,7 +7,7 @@ import {BigNumber}  from "@ethersproject/bignumber";
 import type {PopulatedTransaction} from "@ethersproject/contracts";
 
 export namespace GasUtils {
-    type GasParams = {
+    export interface GasParams {
         maxFeePerGas?:    BigNumber,
         maxPriorityFee?:  BigNumber,
         gasPrice?:        BigNumber,
