@@ -3,7 +3,7 @@ import {ChainId} from "@chainid";
 
 import type {ChainIdTypeMap} from "./types";
 
-import {ContractInterface} from "@ethersproject/contracts";
+import type {ContractInterface} from "@ethersproject/contracts";
 
 
 export namespace SynapseContracts {
@@ -16,26 +16,32 @@ export namespace SynapseContracts {
         bridge:     string,
         bridgeZap?: string,
         mainnet?:   boolean,
+        terra?:     boolean,
     }
 
     export class SynapseContract {
         readonly bridge:      abiAndAddress;
         readonly bridgeZap?:  abiAndAddress;
+        readonly terra:       boolean;
 
         constructor({
             bridge,
             bridgeZap=null,
-            mainnet=false
+            mainnet=false,
+            terra=false,
         }: SynapseContractArgs) {
+            this.terra = terra;
 
             this.bridge = {address: bridge};
+            if (!terra) {
             this.bridge.abi = ABIs.SynapseBridge;
+            }
 
             if (bridgeZap) {
-                this.bridgeZap = {
-                    address: bridgeZap,
-                    abi:     mainnet ? ABIs.L1BridgeZap : ABIs.L2BridgeZap,
-                };
+                this.bridgeZap = {address: bridgeZap};
+                if (!terra) {
+                    this.bridgeZap.abi = mainnet ? ABIs.L1BridgeZap : ABIs.L2BridgeZap;
+                }
             }
         }
 
