@@ -56,13 +56,15 @@ export namespace BridgeUtils {
         bridgeTransactionDeadline: number,
     }
 
-    export const getBridgeTxArgs = (): BridgeTxArgs => ({
-        slippageCustom:   null,
-        slippageSelected: Slippages.OneTenth,
-        infiniteApproval: true,
-        transactionDeadline: getTimeMinutesFromNow(10),
-        bridgeTransactionDeadline: getTimeMinutesFromNow(60*24)
-    })
+    export function getBridgeTxArgs(): BridgeTxArgs {
+        return {
+            slippageCustom:            null,
+            slippageSelected:          Slippages.OneTenth,
+            infiniteApproval:          true,
+            transactionDeadline:       getTimeMinutesFromNow(10),
+            bridgeTransactionDeadline: getTimeMinutesFromNow(60*24)
+        }
+    }
 
     interface BridgeSlippages {
         slippageSelected: string,
@@ -152,19 +154,20 @@ export namespace BridgeUtils {
     export const depositETHParams = (args: BridgeTxParams): [string, number, BigNumber] =>
         [args.addressTo, args.chainIdTo, args.amountFrom];
 
-    export const calculateSwapL2Zap = async (
+    export async function calculateSwapL2Zap(
         zapBridge:         GenericZapBridgeContract,
         intermediateToken: string,
         tokenIndexFrom:    number,
         tokenIndexTo:      number,
         amount:           BigNumber
-    ): Promise<BigNumber> =>
-        (zapBridge as L2BridgeZapContract).calculateSwap(
+    ): Promise<BigNumber> {
+        return (zapBridge as L2BridgeZapContract).calculateSwap(
             intermediateToken,
             tokenIndexFrom,
             tokenIndexTo,
             amount
         )
+    }
 
     export const isETHLikeToken = (t: Token): boolean =>
         t.isEqual(Tokens.WETH_E) || t.isEqual(Tokens.ONE_ETH) || t.isEqual(Tokens.FTM_ETH)
@@ -187,7 +190,7 @@ export namespace BridgeUtils {
             checkReplaceToken(t2, check, replace)
         ];
 
-    const findSymbol = (t1: Token, t2: Token): boolean => {
+    function findSymbol(t1: Token, t2: Token): boolean {
         let compare: Token = t2;
         switch (tokenSwitch(t2)) {
             case Tokens.WETH_E:
@@ -204,7 +207,7 @@ export namespace BridgeUtils {
         return t1.isEqual(compare);
     }
 
-    export const makeTokenArgs = (chainId: number, t: Token): [Token[], number] => {
+    export function makeTokenArgs(chainId: number, t: Token): [Token[], number] {
         let
             toks: Token[] = SwapPools.bridgeSwappableMap[chainId].swappableSwapGroups[t.swapType].poolTokens,
             idx  = toks.findIndex((tok: Token) => findSymbol(tok, t));

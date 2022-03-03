@@ -3,7 +3,7 @@ import {Tokens}        from "@tokens";
 import {SwapPools}     from "@swappools";
 import {rejectPromise} from "@common/utils";
 
-import {SynapseEntities} from "@entities";
+import {BridgeConfigV3ContractInstance} from "@entities";
 import {
     SwapContract,
     SwapFactory,
@@ -59,7 +59,7 @@ export namespace UnsupportedSwapErrors {
 }
 
 export namespace TokenSwap {
-    const BRIDGE_CONFIG_INSTANCE: BridgeConfigV3Contract = SynapseEntities.bridgeConfigV3();
+    const BRIDGE_CONFIG_INSTANCE: BridgeConfigV3Contract = BridgeConfigV3ContractInstance();
 
     export interface SwapParams {
         chainId:       number,

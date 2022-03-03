@@ -8,6 +8,7 @@ import {
 
 import {SynapseContracts} from "@common/synapse_contracts";
 
+import * as SynapseEntities from "@entities";
 
 import type {ID}               from "@internal/distinct";
 import {SwapType}              from "@internal/swaptype";
@@ -23,7 +24,6 @@ import type {
 
 import {Tokens}          from "@tokens";
 import {TokenSwap}       from "@tokenswap";
-import {SynapseEntities} from "@entities";
 
 import {
     type Token,
@@ -126,9 +126,9 @@ export namespace Bridge {
 
         private readonly zapBridgeAddress: string;
 
-        private readonly bridgeConfigInstance: BridgeConfigV3Contract = SynapseEntities.bridgeConfigV3();
+        private readonly bridgeConfigInstance: BridgeConfigV3Contract = SynapseEntities.BridgeConfigV3ContractInstance();
 
-        private readonly zapBridgeInstance: L1BridgeZapContract = SynapseEntities.l1BridgeZap({
+        private readonly zapBridgeInstance: L1BridgeZapContract = SynapseEntities.L1BridgeZapContractInstance({
             chainId: ChainId.ETH,
             signerOrProvider: rpcProviderForChain(ChainId.ETH),
         });
@@ -154,13 +154,13 @@ export namespace Bridge {
                 factoryParams = {chainId: this.chainId, signerOrProvider: this.provider},
                 contractAddrs = SynapseContracts.contractsForChainId(this.chainId);
 
-            this.bridgeAddress    = contractAddrs.bridge_address;
-            this.zapBridgeAddress = contractAddrs.bridge_zap_address;
+            this.bridgeAddress    = contractAddrs.bridgeAddress;
+            this.zapBridgeAddress = contractAddrs.bridgeZapAddress;
 
-            this.bridgeInstance = SynapseEntities.synapseBridge(factoryParams);
+            this.bridgeInstance = SynapseEntities.SynapseBridgeContractInstance(factoryParams);
 
             if (this.zapBridgeAddress && this.zapBridgeAddress !== "") {
-                this.networkZapBridgeInstance = SynapseEntities.zapBridge(factoryParams);
+                this.networkZapBridgeInstance = SynapseEntities.GenericZapBridgeContractInstance(factoryParams);
             }
         }
 
@@ -453,7 +453,7 @@ export namespace Bridge {
             let {chainIdTo, amountFrom} = args;
 
             const toChainZapParams = {chainId: chainIdTo, signerOrProvider: rpcProviderForChain(chainIdTo)};
-            const toChainZap: GenericZapBridgeContract = SynapseEntities.zapBridge(toChainZapParams);
+            const toChainZap: GenericZapBridgeContract = SynapseEntities.GenericZapBridgeContractInstance(toChainZapParams);
 
             const {
                 tokenFrom, tokenTo,
@@ -601,7 +601,7 @@ export namespace Bridge {
         ): Promise<PopulatedTransaction> {
             const
                 {addressTo, chainIdTo, amountFrom, amountTo} = args,
-                zapBridge = SynapseEntities.l1BridgeZap({
+                zapBridge = SynapseEntities.L1BridgeZapContractInstance({
                     chainId: this.chainId,
                     signerOrProvider: this.provider
                 });
@@ -696,7 +696,7 @@ export namespace Bridge {
         ): Promise<PopulatedTransaction> {
             const
                 {chainIdTo, amountFrom, amountTo} = args,
-                zapBridge = SynapseEntities.l2BridgeZap({
+                zapBridge = SynapseEntities.L2BridgeZapContractInstance({
                     chainId: this.chainId,
                     signerOrProvider: this.provider
                 });
