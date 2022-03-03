@@ -336,7 +336,9 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
             })
 
             describe("Test Magic Executors", function(this: Mocha.Suite) {
-                const doStaticCall: boolean = !tc.args.execute;
+                if (!tc.args.execute) {
+                    this.ctx.skip()
+                }
 
                 step(
                     approvalTxnTestTitle,
@@ -345,8 +347,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                             tc,
                             bridgeInstance.executeApproveTransaction(
                                 {token: tc.args.tokenFrom},
-                                wallet,
-                                doStaticCall
+                                wallet
                             ),
                             true
                         )(this)
@@ -360,8 +361,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                             tc,
                             bridgeInstance.executeBridgeTokenTransaction(
                                 doBridgeArgs,
-                                wallet,
-                                doStaticCall
+                                wallet
                             )
                         )(this)
                     }

@@ -10,19 +10,15 @@ import {SynapseContracts} from "@sdk/common/synapse_contracts";
 
 import {
     DEFAULT_TEST_TIMEOUT,
-    bridgeTestPrivkey1,
     getTestAmount,
-    makeWalletSignerWithProvider,
     expectFulfilled,
-    expectBoolean,
     expectGteZero,
     expectNotZero,
-    expectNull, expectEqual,
+    expectNull,
 } from "@tests/helpers";
 
 import type {BigNumberish}         from "@ethersproject/bignumber";
 import type {PopulatedTransaction} from "@ethersproject/contracts";
-import {StaticCallResult} from "@common/types";
 
 describe("ERC20 tests", function(this: Mocha.Suite) {
     const testAddr: string = "0xe972647539816442e0987817DF777a9fd9878650";
@@ -59,7 +55,6 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
         for (const tc of testCases) {
             let {chainId, address: spender, amount} = tc;
 
-            const wallet = makeWalletSignerWithProvider(chainId, bridgeTestPrivkey1)
             const args: ERC20.ApproveArgs = {spender, amount};
 
             it("should build a transaction successfully", async function(this: Mocha.Context) {
@@ -72,19 +67,6 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
                 } catch (e) {
                     return (await expectFulfilled(prom))
                 }
-            })
-
-            it("should do an approve successfully", async function(this: Mocha.Context) {
-                this.timeout(DEFAULT_TEST_TIMEOUT);
-
-                let prom: Promise<StaticCallResult> = ERC20.approve(
-                    args,
-                    tokenParams(chainId),
-                    wallet,
-                    true
-                ).then(res => res as StaticCallResult);
-
-                return expectEqual(await prom, StaticCallResult.Success)
             })
         }
     })

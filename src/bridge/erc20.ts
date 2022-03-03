@@ -21,7 +21,6 @@ import {
     rejectPromise
 } from "@common/utils";
 
-import {StaticCallResult} from "@common/types";
 import type {SignerOrProvider} from "@common/types";
 
 import {GasUtils} from "./gasutils";
@@ -43,7 +42,6 @@ export namespace ERC20 {
     class ERC20 {
         readonly address: string;
         readonly chainId: number;
-        // private readonly provider: Provider;
         private readonly instance: ERC20Contract;
 
         constructor(args: ERC20TokenParams) {
@@ -59,22 +57,11 @@ export namespace ERC20 {
             return this.instance.connect(provider);
         }
 
-        async approve(
-            args:       ApproveArgs,
-            signer:     Signer,
-            callStatic: boolean=false
-        ): Promise<ContractTransaction|StaticCallResult> {
-            const contract = this.connectContract(signer);
-
-            if (callStatic) {
-                return contract
-                    .callStatic
-                    .approve(args.spender, args.amount ?? MAX_APPROVAL_AMOUNT)
-                    .then(res => res ? StaticCallResult.Success : StaticCallResult.Failure)
-                    .catch(() => StaticCallResult.Failure)
-            }
-
-            let approveTxn = await this._buildApproveTransaction(args, contract);
+        async approve(args: ApproveArgs, signer: Signer,
+        ): Promise<ContractTransaction> {
+            const
+                contract   = this.connectContract(signer),
+                approveTxn = this._buildApproveTransaction(args, contract);
 
             return executePopulatedTransaction(approveTxn, signer)
         }
@@ -84,7 +71,6 @@ export namespace ERC20 {
             provider?: SignerOrProvider
         ): Promise<PopulatedTransaction> {
             const contract = this.connectContract(provider);
-
             return this._buildApproveTransaction(args, contract)
         }
 
@@ -107,40 +93,49 @@ export namespace ERC20 {
                 .catch(rejectPromise)
         }
 
-        balanceOf = async (
+        async balanceOf(
             address: string
-        ): Promise<BigNumber> => this.connectContract().balanceOf(address)
+        ): Promise<BigNumber> {
+            return this.connectContract().balanceOf(address)
+        }
 
-        allowanceOf = async (
+        async allowanceOf(
             owner: string,
             spender: string
-        ): Promise<BigNumber> => this.connectContract().allowance(owner, spender)
+        ): Promise<BigNumber> {
+            return this.connectContract().allowance(owner, spender)
+        }
     }
 
     export async function approve(
         approveArgs: ApproveArgs,
         tokenParams: ERC20TokenParams,
-        signer:      Signer,
-        callStatic?: boolean,
-    ): Promise<TransactionResponse|StaticCallResult> {
+        signer:      Signer
+    ): Promise<TransactionResponse> {
         let erc20 = new ERC20(tokenParams);
 
-        return erc20.approve(approveArgs, signer, callStatic)
+        return erc20.approve(approveArgs, signer)
     }
 
-    export const buildApproveTransaction = async (
+    export async function buildApproveTransaction(
         approveArgs: ApproveArgs,
         tokenParams: ERC20TokenParams
-    ): Promise<PopulatedTransaction> => new ERC20(tokenParams).buildApproveTransaction(approveArgs)
+    ): Promise<PopulatedTransaction> {
+        return new ERC20(tokenParams).buildApproveTransaction(approveArgs)
+    }
 
-    export const balanceOf = async (
+    export async function balanceOf(
         address:     string,
         tokenParams: ERC20TokenParams
-    ): Promise<BigNumber> => new ERC20(tokenParams).balanceOf(address)
+    ): Promise<BigNumber> {
+        return new ERC20(tokenParams).balanceOf(address)
+    }
 
-    export const allowanceOf = async (
+    export async function allowanceOf(
         owner:       string,
         spender:     string,
         tokenParams: ERC20TokenParams
-    ): Promise<BigNumber> => new ERC20(tokenParams).allowanceOf(owner, spender)
+    ): Promise<BigNumber> {
+        return new ERC20(tokenParams).allowanceOf(owner, spender)
+    }
 }

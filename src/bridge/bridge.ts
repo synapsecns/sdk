@@ -3,8 +3,7 @@ import {Networks} from "@networks";
 
 import {
     rejectPromise,
-    executePopulatedTransaction,
-    staticCallPopulatedTransaction
+    executePopulatedTransaction
 } from "@common/utils";
 
 import {SynapseContracts} from "@common/synapse_contracts";
@@ -32,7 +31,7 @@ import {
     WrappedToken
 } from "@token";
 
-import type {ChainIdTypeMap, StaticCallResult} from "@common/types";
+import type {ChainIdTypeMap} from "@common/types";
 
 import {GasUtils}                   from "./gasutils";
 import {BridgeUtils}                from "./bridgeutils";
@@ -249,7 +248,7 @@ export namespace Bridge {
             args:       BridgeTransactionParams,
             signer:     Signer,
             callStatic: boolean=false
-        ): Promise<ContractTransaction|StaticCallResult> {
+        ): Promise<ContractTransaction> {
             try {
                 await this.checkSwapSupported(args);
             } catch (e) {
@@ -265,7 +264,7 @@ export namespace Bridge {
             const checkArgs = {signer, token: tokenFrom, amount: amountFrom};
 
             return this.checkCanBridge(checkArgs)
-                .then((canBridgeRes: CanBridgeResult): Promise<ContractTransaction|StaticCallResult> => {
+                .then(canBridgeRes => {
                     const [canBridge, err] = canBridgeRes;
 
                     if (!canBridge) {
@@ -273,13 +272,7 @@ export namespace Bridge {
                     }
 
                     return this.buildBridgeTokenTransaction(args)
-                        .then((txn): Promise<ContractTransaction|StaticCallResult> => {
-                            if (callStatic) {
-                                return staticCallPopulatedTransaction(txn, signer)
-                            }
-
-                            return executePopulatedTransaction(txn, signer)
-                        })
+                        .then(txn => executePopulatedTransaction(txn, signer))
                 })
                 .catch(rejectPromise)
         }
@@ -318,25 +311,17 @@ export namespace Bridge {
          * to the bridge on the source chain.
          * @param {BigNumberish} args.amount Optional, a specific amount of args.token to approve. By default, this function
          * @param {Signer} signer Valid ethers Signer instance for building a fully and properly populated
-         * @param {boolean} callStatic (Optional, default: false) if true, uses provider.callStatic instead of actually sending the signed transaction.
          * transaction.
          */
         async executeApproveTransaction(
             args:       {token: Token | string, amount?: BigNumberish},
             signer:     Signer,
-            callStatic: boolean=false
-        ): Promise<ContractTransaction|StaticCallResult> {
-            const [approveArgs, tokenAddress] = this.buildERC20ApproveArgs(args);
+        ): Promise<ContractTransaction> {
+            const
+                [approveArgs, tokenAddress] = this.buildERC20ApproveArgs(args),
+                tokenParams = {tokenAddress, chainId: this.chainId};
 
-            return ERC20.approve(
-                approveArgs,
-                {
-                    tokenAddress,
-                    chainId: this.chainId
-                },
-                signer,
-                callStatic
-            )
+            return ERC20.approve(approveArgs, tokenParams, signer)
         }
 
         async getAllowanceForAddress(args: {
