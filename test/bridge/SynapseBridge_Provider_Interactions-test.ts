@@ -154,7 +154,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
         {
             args: {
                 tokenFrom:   Tokens.NUSD,
-                tokenTo:     Tokens.MIM,
+                tokenTo:     Tokens.USDT,
                 chainIdFrom: ChainId.POLYGON,
                 chainIdTo:   ChainId.FANTOM,
                 amountFrom:  parseEther("666"),

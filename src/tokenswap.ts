@@ -81,21 +81,21 @@ export namespace TokenSwap {
         chainIdTo:   number,
     }
 
-    export interface EstimatedSwapRate {
+    export type EstimatedSwapRate = {
         amountOut: BigNumber
     }
 
-    export interface IntermediateSwapTokens {
+    export type IntermediateSwapTokens = {
         intermediateToken?:            Token,
         bridgeConfigIntermediateToken: Token
     }
 
-    export interface SwapSupportedResult {
+    export type SwapSupportedResult = {
         swapSupported:       boolean,
         reasonNotSupported?: UnsupportedSwapErrors.UnsupportedSwapError,
     }
 
-    export interface DetailedTokenSwapMap {
+    export type DetailedTokenSwapMap = {
         [chainId: number]: {
             token: Token,
             [chainId: number]: Token[],
@@ -222,7 +222,7 @@ export namespace TokenSwap {
                 for (const c2 of allChainIds) {
                     if (c1 === c2) continue
 
-                    let outToks: Token[] = SwapPools.bridgeSwappableTypePoolsByChain[c2][swapType]?.poolTokens || [];
+                    let outToks: Token[] = SwapPools.tokensForChainBySwapGroup(c2, swapType);
                     if (outToks.length === 0) continue
 
                     tokSwapMap[c2] = outToks;
@@ -265,7 +265,7 @@ export namespace TokenSwap {
     const mintBurnSwapTypes = [
         SwapType.HIGH, SwapType.DOG, SwapType.JUMP,
         SwapType.NFD,  SwapType.OHM, SwapType.SOLAR,
-        SwapType.GMX,
+        SwapType.GMX,  SwapType.UST,
     ];
 
     function _intermediateToken(token: Token, chainId: number): Token {

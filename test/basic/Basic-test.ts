@@ -165,7 +165,7 @@ describe("Basic tests", function(this: Mocha.Suite) {
                 {chainId: ChainId.AVALANCHE,    token: Tokens.AVWETH,       want: true},
                 {chainId: ChainId.AVALANCHE,    token: Tokens.WAVAX,        want: true},
                 {chainId: ChainId.MOONRIVER,    token: Tokens.WMOVR,        want: true},
-                {chainId: ChainId.CRONOS,      token: Tokens.GOHM,         want: true},
+                {chainId: ChainId.CRONOS,       token: Tokens.GOHM,         want: true},
                 {chainId: ChainId.METIS,        token: Tokens.SYN,          want: true},
             ];
 
@@ -177,7 +177,7 @@ describe("Basic tests", function(this: Mocha.Suite) {
 
                 it(
                     testTitle,
-                    wrapExpect(expectBoolean(supported, tc.want))
+                    function(this: Mocha.Context) {expect(supported).to.equal(tc.want)}
                 )
             }
         })
@@ -189,9 +189,9 @@ describe("Basic tests", function(this: Mocha.Suite) {
             expect(Networks.networkSupportsToken(Networks.BSC, Tokens.GOHM)).to.be.true;
         })
 
-        it("ETH should not support MIM", function(this: Mocha.Context) {
-            expect(Networks.networkSupportsToken(ChainId.ETH, Tokens.MIM)).to.be.false;
-            expect(Networks.networkSupportsToken(Networks.ETH, Tokens.MIM)).to.be.false;
+        it("ETH should not support BUSD", function(this: Mocha.Context) {
+            expect(Networks.networkSupportsToken(ChainId.ETH, Tokens.BUSD)).to.be.false;
+            expect(Networks.networkSupportsToken(Networks.ETH, Tokens.BUSD)).to.be.false;
         })
     })
 })

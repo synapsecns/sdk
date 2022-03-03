@@ -7,7 +7,7 @@ import {
     rejectPromise,
 } from "@common/utils";
 
-import type {ID}               from "@internal/entity";
+import type {ID}               from "@internal/distinct";
 import {SwapType}              from "@internal/swaptype";
 import {rpcProviderForChain} from "@internal/rpcproviders";
 import {tokenSwitch}           from "@internal/utils";
@@ -47,6 +47,7 @@ import type {
     ContractTransaction,
     PopulatedTransaction,
 } from "@ethersproject/contracts";
+import {SynapseContracts} from "@common/synapse_contracts";
 
 /**
  * Bridge provides a wrapper around common Synapse Bridge interactions, such as output estimation, checking supported swaps/bridges,
@@ -56,7 +57,7 @@ export namespace Bridge {
     type CanBridgeResult = [boolean, Error|string];
     export type CheckCanBridgeResult = [boolean, BigNumber];
 
-    export interface BridgeOutputEstimate {
+    export type BridgeOutputEstimate = {
         amountToReceive: BigNumber,
         bridgeFee:       BigNumber,
     }
@@ -86,13 +87,13 @@ export namespace Bridge {
         addressTo?: string
     }
 
-    interface EasyArgsCheck {
+    type EasyArgsCheck = {
         isEasy:   boolean,
         castArgs: BridgeUtils.BridgeTxParams,
         txn?:     Promise<PopulatedTransaction>,
     }
 
-    interface BridgeTokenArgs {
+    type BridgeTokenArgs = {
         fromChainTokens: Token[],
         toChainTokens:   Token[],
         tokenFrom:       Token,
@@ -101,7 +102,7 @@ export namespace Bridge {
         tokenIndexTo:    number,
     }
 
-    interface CheckCanBridgeParams {
+    type CheckCanBridgeParams = {
         address: string,
         token:   Token,
         amount:  BigNumberish,
@@ -149,14 +150,18 @@ export namespace Bridge {
             this.isL2Zap = this.network.zapIsL2BridgeZap;
             this.isL2ETHChain = BridgeUtils.isL2ETHChain(this.chainId);
 
-            let factoryParams = {chainId: this.chainId, signerOrProvider: this.provider};
+            const
+                factoryParams = {chainId: this.chainId, signerOrProvider: this.provider},
+                contractAddrs = SynapseContracts.contractsForChainId(this.chainId);
+
+            this.bridgeAddress    = contractAddrs.bridge_address;
+            this.zapBridgeAddress = contractAddrs.bridge_zap_address;
 
             this.bridgeInstance = SynapseEntities.synapseBridge(factoryParams);
-            this.bridgeAddress = contractAddressFor(this.chainId, "bridge");
 
-            this.networkZapBridgeInstance = SynapseEntities.zapBridge({ chainId: this.chainId, signerOrProvider: this.provider })
-
-            this.zapBridgeAddress = this.networkZapBridgeInstance.address;
+            if (this.zapBridgeAddress && this.zapBridgeAddress !== "") {
+                this.networkZapBridgeInstance = SynapseEntities.zapBridge(factoryParams);
+            }
         }
 
         bridgeVersion(): Promise<BigNumber> {
@@ -456,7 +461,7 @@ export namespace Bridge {
             let {intermediateToken, bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
 
             const
-                intermediateTokenAddr = bridgeConfigIntermediateToken.address(chainIdTo),
+                intermediateTokenAddr = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase(),
                 multiplier            = BigNumber.from(10).pow(18-tokenFrom.decimals(this.chainId)),
                 feeRequestAmountFrom  = amountFrom.mul(multiplier);
 
@@ -598,7 +603,7 @@ export namespace Bridge {
                 });
 
             let
-                easyRedeems:    ID[] = [Tokens.SYN.id],
+                easyRedeems:    ID[] = [Tokens.SYN.id,  Tokens.UST.id],
                 easyDeposits:   ID[] = [Tokens.HIGH.id, Tokens.DOG.id, Tokens.FRAX.id],
                 easyDepositETH: ID[] = [Tokens.NETH.id];
 
@@ -698,8 +703,12 @@ export namespace Bridge {
 
             let
                 easyDeposits:   ID[] = [],
-                easyRedeems:    ID[] = [Tokens.SYN.id, Tokens.HIGH.id, Tokens.DOG.id, Tokens.FRAX.id],
-                easyDepositETH: ID[] = [];
+                easyDepositETH: ID[] = [],
+                easyRedeems:    ID[] = [
+                    Tokens.SYN.id, Tokens.HIGH.id,
+                    Tokens.DOG.id, Tokens.FRAX.id,
+                    Tokens.UST.id
+                ];
 
             BridgeUtils.DepositIfChainTokens.forEach((args) => {
                 let {chainId, tokens, depositEth, altChainId} = args;
@@ -898,32 +907,17 @@ export namespace Bridge {
         private makeBridgeTokenArgs(args: BridgeParams): BridgeTokenArgs {
             let {tokenFrom, tokenTo, chainIdTo} = args;
 
-            const
-                checkAndChangeToken = (
-                    t:      Token,
-                    check:  Token,
-                    swappy: Token
-                ): Token => t.isEqual(check) ? swappy : t,
-                checkAndChangeTokens = (
-                    check: Token,
-                    swappy: Token
-                ): ((t1: Token, t2: Token) => [Token, Token]) =>
-                    (t1: Token, t2: Token) => [
-                        checkAndChangeToken(t1, check, swappy),
-                        checkAndChangeToken(t2, check, swappy)
-                    ];
-
             let bridgeTokens: (t1: Token, t2: Token) => [Token, Token];
 
             switch (tokenFrom.swapType) {
                 case SwapType.ETH:
-                    bridgeTokens = checkAndChangeTokens(Tokens.ETH, Tokens.WETH);
+                    bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.ETH, Tokens.WETH);
                     break;
                 case SwapType.AVAX:
-                    bridgeTokens = checkAndChangeTokens(Tokens.AVAX, Tokens.WAVAX);
+                    bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.AVAX, Tokens.WAVAX);
                     break;
                 case SwapType.MOVR:
-                    bridgeTokens = checkAndChangeTokens(Tokens.MOVR, Tokens.WMOVR);
+                    bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.MOVR, Tokens.WMOVR);
                     break;
                 default:
                     bridgeTokens = (t1: Token, t2: Token) => [t1, t2];
@@ -931,36 +925,9 @@ export namespace Bridge {
 
             [tokenFrom, tokenTo] = bridgeTokens(tokenFrom, tokenTo);
 
-            const findSymbol = (tokA: Token, tokB: Token): boolean => {
-                let compareTok: Token = tokB;
-                switch (tokenSwitch(tokB)) {
-                    case Tokens.WETH_E:
-                        compareTok = Tokens.AVWETH;
-                        break;
-                    case Tokens.WETH:
-                        compareTok = Tokens.WETH;
-                        break;
-                    default:
-                        if (tokB.isWrappedToken) {
-                            compareTok = tokB.underlyingToken;
-                        }
-                        break;
-                }
-
-                return tokA.isEqual(compareTok);
-            }
-
-            const makeTokenArgs = (chainId: number, t: Token): [Token[], number] => {
-                let
-                    toks = SwapPools.bridgeSwappableTypePoolsByChain[chainId]?.[t.swapType]?.poolTokens,
-                    idx  = toks.findIndex((tok: Token) => findSymbol(tok, t));
-
-                return [toks, idx]
-            }
-
             const
-                [fromChainTokens, tokenIndexFrom] = makeTokenArgs(this.chainId, tokenFrom),
-                [toChainTokens,   tokenIndexTo]   = makeTokenArgs(chainIdTo,    tokenTo);
+                [fromChainTokens, tokenIndexFrom] = BridgeUtils.makeTokenArgs(this.chainId, tokenFrom),
+                [toChainTokens,   tokenIndexTo]   = BridgeUtils.makeTokenArgs(chainIdTo,    tokenTo);
 
             return {
                 fromChainTokens,
@@ -993,11 +960,7 @@ export namespace Bridge {
         return REQUIRED_CONFS[chainId] ?? -1
     }
 
-    interface EasyArgsCheck {
-        isEasy: boolean,
-        castArgs: BridgeUtils.BridgeTxParams,
-        txn?: Promise<PopulatedTransaction>,
-    }
+
 
     export function bridgeSwapSupported(args: TokenSwap.BridgeSwapSupportedParams): TokenSwap.SwapSupportedResult {
         return TokenSwap.bridgeSwapSupported(args)
