@@ -12,5 +12,4 @@ export enum SwapType {
     SOLAR   = "SOLAR",
     AVAX    = "AVAX",
     MOVR    = "MOVR",
-    UST     = "UST",
 }

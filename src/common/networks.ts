@@ -5,20 +5,20 @@ import {SwapPools}  from "@swappools";
 
 import type {
     ID,
-    Distinct,
-} from "@internal/distinct";
+    Entity,
+} from "@internal/entity";
 
 import {BridgeUtils} from "@bridge/bridgeutils";
 
 import type {ChainIdTypeMap} from "./types";
 
 export namespace Networks {
-    type supportedTokenEdgeCase = {
+    interface SupportsTokenChecks {
         chainId: ChainId,
         token:   Token,
     }
 
-    const tokenSupportChecks: supportedTokenEdgeCase[] = [
+    const tokenSupportChecks: SupportsTokenChecks[] = [
         {chainId: ChainId.ETH,       token: Tokens.WETH},
         {chainId: ChainId.ETH,       token: Tokens.NETH},
         {chainId: ChainId.AVALANCHE, token: Tokens.AVAX},
@@ -42,7 +42,7 @@ export namespace Networks {
         chainCurrency: string,
     }
 
-    export class Network implements Distinct {
+    export class Network implements Entity {
         readonly id:              ID;
         readonly name:            string;
         readonly chainCurrency:   string;
