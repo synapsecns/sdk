@@ -1,5 +1,3 @@
-import _ from "lodash";
-
 import {
     ChainId,
     Networks,
@@ -8,31 +6,40 @@ import {
     type Token
 } from "@sdk";
 
-import {tokenSwitch} from "@sdk/internal";
+import {terraRpcProvider, tokenSwitch} from "@sdk/internal";
 
 import {
     DEFAULT_TEST_TIMEOUT,
     getTestAmount,
     expectFulfilled,
     expectPromiseResolve,
+    expectZero,
+    expectNotZero,
     valueIfUndefined,
     makeWalletSignerWithProvider,
-    bridgeTestPrivkey1,
     expectRejected
 } from "@tests/helpers";
 
 import {
-    type BridgeSwapTestCase,
+    type BridgeSwapTestCase, bridgeSwapTestPrivkey,
     makeBridgeSwapTestCase
 }  from "./bridge_test_utils";
 
 import {formatUnits} from "@ethersproject/units";
 import {BigNumber}   from "@ethersproject/bignumber";
+
 import {expect} from "chai";
 import {Zero} from "@ethersproject/constants";
+import {shuffle} from "lodash-es";
+import {isTerraChainId} from "@chainid";
+import {RawKey} from "@terra-money/terra.js";
 
 
 describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.Suite) {
+    const
+        terraWallet = new RawKey(Buffer.from(bridgeSwapTestPrivkey.privkey, "hex")),
+        evmWallet   = chainId => makeWalletSignerWithProvider(chainId, bridgeSwapTestPrivkey.privkey);
+
     interface Expected {
         notZero:   boolean,
         wantError: boolean,
@@ -289,11 +296,16 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
 
             let {args: { chainIdFrom }, args, expected: {wantError, noAddrTo}} = tc;
 
-            const
-                bridgeInstance    = new Bridge.SynapseBridge({ network: chainIdFrom }),
-                addressTo: string = noAddrTo
-                    ? _.shuffle(undefEmptyArr)[0]
-                    : makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey1).address;
+            const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
+            let addressTo: string;
+
+            if (noAddrTo) {
+                addressTo = shuffle(undefEmptyArr)[0];
+            } else {
+                addressTo = isTerraChainId(tc.args.chainIdTo)
+                    ? terraRpcProvider().wallet(terraWallet).key.accAddress
+                    : evmWallet(tc.args.chainIdTo).address;
+            }
 
             let prom = bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo});
 

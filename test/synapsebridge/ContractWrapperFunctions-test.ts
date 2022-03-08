@@ -19,11 +19,8 @@ import {rpcProviderForChain} from "@sdk/internal";
 import {
     DEFAULT_TEST_TIMEOUT,
     EXECUTORS_TEST_TIMEOUT,
-    expectBnEqual,
-    expectEqual,
     expectFulfilled,
     getActualWei,
-    wrapExpectAsync
 } from "@tests/helpers";
 
 import {infiniteApprovalsPrivkey} from "./bridge_test_utils";
@@ -58,7 +55,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 testTitle: string = `Should return ${expected.toString()} on Chain ID ${network}`;
 
             it(testTitle, async function(this: Mocha.Context) {
-                this.timeout(DEFAULT_TEST_TIMEOUT);
+                this.timeout(3.75*1000);
                 let prom = bridgeInstance.bridgeVersion();
                 return expect(await prom).to.equal(expected);
             })
@@ -90,7 +87,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 testTitle: string = `Should return ${expected} for Chain ID ${network}`;
 
             it(testTitle, async function(this: Mocha.Context) {
-                this.timeout(DEFAULT_TEST_TIMEOUT);
+                this.timeout(3.75*1000);
                 let prom = bridgeInstance.WETH_ADDRESS();
                 return expect(await prom).to.equal(expected);
             })

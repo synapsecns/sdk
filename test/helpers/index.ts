@@ -20,9 +20,6 @@ const testAmounts: string[] = [
     "669", "555",
 ];
 
-// Completely clean privkey with low balances.
-export const bridgeTestPrivkey1: string = "53354287e3023f0629b7a5e187aa1ca3458c4b7ff9d66a6e3f4b2e821aafded7";
-
 export const
     makeTimeout      = (seconds: number): number => seconds * 1000,
     valueIfUndefined = <T>(data: T, fallback: T): T => typeof data === "undefined" ? fallback : data,
@@ -38,7 +35,6 @@ export const makeWalletSignerWithProvider = (
     chainId: number,
     privKey: string
 ): Wallet => new Wallet(privKey, rpcProviderForChain(chainId));
-
 
 export const
     DEFAULT_TEST_TIMEOUT   = makeTimeout(10),

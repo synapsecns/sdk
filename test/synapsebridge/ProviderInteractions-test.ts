@@ -6,7 +6,6 @@ import {Bridge, ChainId, Networks, Tokens} from "@sdk";
 import {rejectPromise, staticCallPopulatedTransaction} from "@sdk/common/utils";
 
 import {
-    bridgeTestPrivkey1,
     DEFAULT_TEST_TIMEOUT,
     expectFulfilled,
     expectNotZero,
@@ -14,7 +13,7 @@ import {
     makeWalletSignerWithProvider,
 } from "@tests/helpers";
 
-import {bridgeInteractionsPrivkey, type BridgeSwapTestCase} from "./bridge_test_utils";
+import {bridgeInteractionsPrivkey, type BridgeSwapTestCase, bridgeSwapTestPrivkey} from "./bridge_test_utils";
 
 import type {TransactionResponse} from "@ethersproject/providers";
 
@@ -58,7 +57,7 @@ interface WalletArgs {
     bridgeInstance: Bridge.SynapseBridge,
 }
 
-async function buildWalletArgs(chainId: number, privkey: string=bridgeTestPrivkey1): Promise<WalletArgs> {
+async function buildWalletArgs(chainId: number, privkey: string=bridgeSwapTestPrivkey.privkey): Promise<WalletArgs> {
     const wallet = makeWalletSignerWithProvider(chainId, privkey);
 
     return {
