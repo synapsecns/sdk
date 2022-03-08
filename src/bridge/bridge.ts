@@ -1,4 +1,9 @@
-import {ChainId}  from "@chainid";
+import {toLower} from "lodash-es";
+
+import {
+    ChainId,
+    isTerraChainId
+}  from "@chainid";
 import {Networks} from "@networks";
 
 import {executePopulatedTransaction, rejectPromise} from "@common/utils";
@@ -11,6 +16,7 @@ import {
     type ID,
     SwapType,
     rpcProviderForChain,
+    terraRpcProvider,
     tokenSwitch
 } from "@internal/index";
 
@@ -29,7 +35,7 @@ import {
     instanceOfToken
 } from "@token";
 
-import type {ChainIdTypeMap} from "@common/types";
+import type {NumberMap} from "@common/types";
 
 import {GasUtils}                   from "./gasutils";
 import {BridgeUtils}                from "./bridgeutils";
@@ -43,7 +49,9 @@ import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 import type {Signer}   from "@ethersproject/abstract-signer";
 import type {Provider} from "@ethersproject/providers";
 
-import type {ContractTransaction, PopulatedTransaction,} from "@ethersproject/contracts";
+import type {ContractTransaction, PopulatedTransaction} from "@ethersproject/contracts";
+
+import {LCDClient} from "@terra-money/terra.js";
 
 /**
  * Bridge provides a wrapper around common Synapse Bridge interactions, such as output estimation, checking supported swaps/bridges,
@@ -123,13 +131,14 @@ export namespace Bridge {
     export class SynapseBridge {
         protected network: Networks.Network;
         protected chainId: number;
-        protected provider: Provider;
+        protected _provider: Provider | LCDClient;
 
         private readonly bridgeAddress: string;
 
         private readonly bridgeInstance:           SynapseBridgeContract;
         private readonly networkZapBridgeInstance: GenericZapBridgeContract;
 
+        private readonly isTerra:      boolean;
         private readonly isL2Zap:      boolean;
         private readonly isL2ETHChain: boolean;
 
@@ -152,25 +161,40 @@ export namespace Bridge {
 
             this.network = network instanceof Networks.Network ? network : Networks.fromChainId(network);
             this.chainId = this.network.chainId;
-            this.provider = provider ?? rpcProviderForChain(this.chainId);
 
             this.requiredConfirmations = getRequiredConfirmationsForBridge(this.network);
 
+            this.isTerra = isTerraChainId(this.chainId)
             this.isL2Zap = this.network.zapIsL2BridgeZap;
             this.isL2ETHChain = BridgeUtils.isL2ETHChain(this.chainId);
 
-            const
-                factoryParams = {chainId: this.chainId, signerOrProvider: this.provider},
-                contractAddrs = SynapseContracts.contractsForChainId(this.chainId);
+            this._provider = provider ?? (this.isTerra
+                ? terraRpcProvider(this.chainId)
+                : rpcProviderForChain(this.chainId)
+            );
+
+            const contractAddrs = SynapseContracts.contractsForChainId(this.chainId);
 
             this.bridgeAddress    = contractAddrs.bridgeAddress;
             this.zapBridgeAddress = contractAddrs.bridgeZapAddress;
+
+            if (!this.isTerra) {
+                const factoryParams = {chainId: this.chainId, signerOrProvider: (this._provider as Provider)};
 
             this.bridgeInstance = SynapseEntities.SynapseBridgeContractInstance(factoryParams);
 
             if (this.zapBridgeAddress && this.zapBridgeAddress !== "") {
                 this.networkZapBridgeInstance = SynapseEntities.GenericZapBridgeContractInstance(factoryParams);
             }
+        }
+        }
+
+        private get provider(): Provider {
+            return this._provider as Provider
+        }
+
+        private get terraProvider(): LCDClient {
+            return this._provider as LCDClient
         }
 
         bridgeVersion(): Promise<BigNumber> {
@@ -476,7 +500,11 @@ export namespace Bridge {
             let {chainIdTo, amountFrom} = args;
 
             const toChainZapParams = {chainId: chainIdTo, signerOrProvider: rpcProviderForChain(chainIdTo)};
-            const toChainZap: GenericZapBridgeContract = SynapseEntities.GenericZapBridgeContractInstance(toChainZapParams);
+            let toChainZap: GenericZapBridgeContract;
+
+            if (!isTerraChainId(chainIdTo)) {
+                toChainZap = SynapseEntities.GenericZapBridgeContractInstance(toChainZapParams);
+            }
 
             const {
                 tokenFrom, tokenTo,
@@ -951,7 +979,7 @@ export namespace Bridge {
         }
     }
 
-    const REQUIRED_CONFS: ChainIdTypeMap<number> = {
+    const REQUIRED_CONFS: NumberMap = {
         [ChainId.ETH]:       7,
         [ChainId.OPTIMISM]:  1,
         [ChainId.CRONOS]:    6,
@@ -964,6 +992,8 @@ export namespace Bridge {
         [ChainId.MOONRIVER]: 21,
         [ChainId.ARBITRUM]:  40,
         [ChainId.AVALANCHE]: 5,
+        [ChainId.TERRA]:     1,
+        [ChainId.AURORA]:    5,
         [ChainId.HARMONY]:   1,
         [ChainId.AURORA]:    5,
     };
