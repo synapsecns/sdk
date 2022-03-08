@@ -8,7 +8,7 @@ export type ChainIdTypeMap<T> = {[k in ChainId]?: T}
 
 
 export type StringMap   = ChainIdTypeMap<string>
-export type DecimalsMap = ChainIdTypeMap<number>
+export type NumberMap   = ChainIdTypeMap<number>
 
 export type AddressMap  = StringMap
 
