@@ -1,9 +1,11 @@
 import "@tests/setup";
 
+import _ from "lodash";
+
 import {
     ChainId,
     Tokens,
-    type Token
+    type Token, supportedChainIds
 } from "@sdk";
 
 import {
@@ -11,9 +13,12 @@ import {
     expectBoolean,
     expectNull,
     wrapExpect,
+    expectEqual
 } from "@tests/helpers";
 
 import {BigNumber} from "@ethersproject/bignumber";
+import {expect} from "chai";
+import {tokenSwitch} from "@internal/utils";
 
 describe("Token Tests", function(this: Mocha.Suite) {
     describe("valueToWei tests", function(this: Mocha.Suite) {
@@ -126,5 +131,43 @@ describe("Token Tests", function(this: Mocha.Suite) {
                 expectNull(tc.token.wrapperAddress(tc.chainId), tc.want === null);
             })
         })
-    })
+    });
+
+    describe("Test all tokens", function(this: Mocha.Suite) {
+        Tokens.AllTokens.forEach(t => {
+            let supportedNets = Object.keys(t.addresses).map(c => Number(c));
+            _.map(supportedChainIds(), (cid) => {
+                let tokenAddr = t.address(cid);
+                switch (tokenSwitch(t)) {
+                    case Tokens.ETH:
+                        it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
+                            expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
+                        })
+                        return
+                    case Tokens.AVAX:
+                        it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
+                            expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
+                        })
+                        return
+                    case Tokens.MOVR:
+                        it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
+                            expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
+                        })
+                        return
+                }
+                if (supportedNets.includes(cid)) {
+                    if (t.isEqual(Tokens.FRAX) && cid === ChainId.MOONBEAM) {
+                        return
+                    }
+                    it(`${t.symbol} address for chain id ${cid} should not be null`, function(this: Mocha.Context) {
+                        expect(tokenAddr, `${t.symbol}: ${cid}`).to.not.be.null;
+                    })
+                } else {
+                    it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
+                        expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
+                    })
+                }
+            })
+        });
+    });
 })
