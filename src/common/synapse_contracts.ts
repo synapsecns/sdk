@@ -115,6 +115,10 @@ export namespace SynapseContracts {
         bridgeZap: "0xE85429C97589AD793Ca11A8BC3477C03d27ED140",
     });
 
+    export const Terra = new SynapseContract({
+        bridge:    "terra1cz4tl2l67sknlm8h4n836qxydau9thscrkrkg0",
+    });
+
     export const Aurora = new SynapseContract({
         bridge:    "0xaeD5b25BE1c3163c907a471082640450F928DDFE",
         bridgeZap: "0x2D8Ee8d6951cB4Eecfe4a79eb9C2F973C02596Ed",
@@ -138,6 +142,7 @@ export namespace SynapseContracts {
         [ChainId.MOONRIVER]: Moonriver,
         [ChainId.ARBITRUM]:  Arbitrum,
         [ChainId.AVALANCHE]: Avalanche,
+        [ChainId.TERRA]:     Terra,
         [ChainId.AURORA]:    Aurora,
         [ChainId.HARMONY]:   Harmony,
     }
