@@ -5,12 +5,12 @@ export class RequestError extends Error {
     readonly code: number;
     readonly data: any;
 
-    constructor(message: string, code: number, data: any) {
+    constructor(chainId: number, message: string, code: number, data: any) {
         super(message)
         this.code = code
         this.data = data
         this.name = this.constructor.name // dafuq
-        this.message = message // dafuq message
+        this.message = `[${chainId}]: ${message}` // dafuq message
     }
 }
 
@@ -154,7 +154,7 @@ export class MiniRpcProvider implements ExternalProvider {
                     const payload = result[idx];
                     if (payload.error) {
                         const {message, code, data} = payload.error;
-                        req.reject(new RequestError(message, code, data));
+                        req.reject(new RequestError(this.chainId, message, code, data));
                     } else {
                         req.resolve(payload.result);
                     }
