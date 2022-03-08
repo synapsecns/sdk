@@ -51,7 +51,14 @@ import type {Provider} from "@ethersproject/providers";
 
 import type {ContractTransaction, PopulatedTransaction} from "@ethersproject/contracts";
 
-import {LCDClient} from "@terra-money/terra.js";
+import {
+    MsgSend,
+    MsgExecuteContract,
+    Coins,
+    LCDClient
+} from "@terra-money/terra.js";
+import bech32 from "bech32";
+
 
 /**
  * Bridge provides a wrapper around common Synapse Bridge interactions, such as output estimation, checking supported swaps/bridges,
@@ -198,10 +205,18 @@ export namespace Bridge {
         }
 
         bridgeVersion(): Promise<BigNumber> {
+            if (this.isTerra) {
+                return Promise.resolve(BigNumber.from(1))
+            }
+
             return this.bridgeInstance.bridgeVersion()
         }
 
         WETH_ADDRESS(): Promise<string> {
+            if (this.isTerra) {
+                return Promise.resolve("0x0000000000000000000000000000000000000000")
+            }
+
             return this.bridgeInstance.WETH_ADDRESS()
         }
 
@@ -262,6 +277,10 @@ export namespace Bridge {
             }
 
             args = {...args, tokenFrom, tokenTo};
+
+            // if (tokenFrom.isEqual(Tokens.UST) && this.chainId === ChainId.TERRA) {
+            //     return this.buildTerraBridgeTxn(args)
+            // }
 
             let newTxn: Promise<PopulatedTransaction> = this.chainId === ChainId.ETH
                 ? this.buildETHMainnetBridgeTxn(args, tokenArgs)
@@ -941,6 +960,25 @@ export namespace Bridge {
 
                     return easySwapAndRedeemAndSwap(Tokens.NUSD)
             }
+        }
+
+        private buildTerraBridgeTxn({
+            addressTo,
+            chainIdTo,
+            amountFrom
+        }: BridgeTransactionParams): Promise<MsgExecuteContract> {
+            return Promise.resolve(new MsgExecuteContract(
+                null,
+                this.bridgeAddress,
+                {
+                    deposit: {
+                        to_address: addressTo,
+                        chain_id:  `${chainIdTo}`,
+                        denom:     "uusd"
+                    }
+                },
+                new Coins({ uusd: amountFrom.toNumber() })
+            ))
         }
 
         private makeBridgeTokenArgs(args: BridgeParams): BridgeTokenArgs {
