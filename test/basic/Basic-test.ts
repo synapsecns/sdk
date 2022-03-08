@@ -32,7 +32,7 @@ const makeWantString = (tc: {want: boolean}, suffix: string="include"): string =
 
 
 describe("Basic tests", function(this: Mocha.Suite) {
-    const numChains: number = 14;
+    const numChains: number = 15;
 
     describe("Check networks", function(this: Mocha.Suite) {
         const
