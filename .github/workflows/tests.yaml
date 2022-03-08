@@ -55,8 +55,8 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - lts/gallium   # most recent release of Node v16, since it's LTS
-          - 17.0.1        # Node version used in .nvmrc
+          - lts/gallium       # most recent release of Node v16, since it's LTS
+          - 17.0.1   # Node version used in .nvmrc
         platform:
           - ubuntu-latest
 
@@ -103,6 +103,8 @@ jobs:
           INFINITE_APPROVALS_PRIVKEY_ADDRESS:  ${{ secrets.INFINITE_APPROVALS_PRIVKEY_ADDRESS }}
           BRIDGE_INTERACTIONS_PRIVKEY:         ${{ secrets.BRIDGE_INTERACTIONS_PRIVKEY }}
           BRIDGE_INTERACTIONS_PRIVKEY_ADDRESS: ${{ secrets.BRIDGE_INTERACTIONS_PRIVKEY_ADDRESS }}
+          BRIDGE_SWAPTEST_PRIVKEY:             ${{ secrets.BRIDGE_SWAPTEST_PRIVKEY }}
+          BRIDGE_SWAPTEST_PRIVKEY_ADDRESS:     ${{ secrets.BRIDGE_SWAPTEST_PRIVKEY_ADDRESS }}
 
       - name: Generate Coverage report
         run: yarn -s run coverage:report
