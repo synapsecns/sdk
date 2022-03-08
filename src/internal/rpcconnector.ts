@@ -1,7 +1,13 @@
 import type {ChainIdTypeMap, StringMap} from "@common/types";
 
-import type {Provider} from "@ethersproject/providers";
-import {Web3Provider} from "@ethersproject/providers";
+import {terraChainIdName} from "@common/chainid";
+
+import {
+    type Provider,
+    Web3Provider
+}  from "@ethersproject/providers";
+
+import {LCDClient} from "@terra-money/terra.js";
 
 import {MiniRpcProvider} from "./minirpc";
 
@@ -10,7 +16,7 @@ interface RpcConnectorArgs {
     batchInterval?: number,
 }
 
-export class RpcConnector {
+export class EvmRpcConnector {
     protected _providers:     ChainIdTypeMap<MiniRpcProvider>;
     protected _web3Providers: ChainIdTypeMap<Web3Provider>
 
@@ -71,5 +77,53 @@ export class RpcConnector {
             endpoint,
             batchInterval
         );
+    }
+}
+
+export class TerraRpcConnector {
+    protected _providers:      ChainIdTypeMap<LCDClient>;
+    protected _chainEndpoints: {[chainId: number]: string};
+
+    constructor(args: Omit<RpcConnectorArgs, "batchInterval">) {
+        const {urls} = args;
+
+        this._chainEndpoints = urls;
+
+        this._providers = Object.keys(urls).reduce((acc, chainId) => {
+            const cid = Number(chainId);
+            acc[cid]  = this._newProvider(cid, urls[cid]);
+            return acc
+        }, {});
+    }
+
+    provider(chainId: number): LCDClient {
+        return this._providers[chainId]
+    }
+
+    /**
+     * @internal
+     */
+    setProviderConfig(
+        chainId:       number,
+        endpoint:      string,
+        batchInterval: number = 50,
+    ) {
+        const provider = this._newProvider(chainId, endpoint);
+
+        delete this._chainEndpoints[chainId];
+        delete this._providers[chainId];
+
+        this._chainEndpoints[chainId] = endpoint;
+        this._providers[chainId]      = provider
+    }
+
+    private _newProvider(
+        chainId:       number,
+        endpoint:      string,
+    ): LCDClient {
+        return new LCDClient({
+          URL:     endpoint,
+          chainID: terraChainIdName(chainId),
+        })
     }
 }

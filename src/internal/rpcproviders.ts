@@ -1,11 +1,25 @@
-import _ from "lodash";
+import {fromPairs} from "lodash";
 
 import type {Provider} from "@ethersproject/providers";
 
-import {ChainId, supportedChainIds} from "@chainid";
+import {
+    ChainId,
+    supportedChainIds,
+    isTerraChainId
+} from "@chainid";
 import type {StringMap} from "@common/types";
 
-import {RpcConnector} from "./rpcconnector";
+import {
+    EvmRpcConnector,
+    TerraRpcConnector
+} from "./rpcconnector";
+
+import {LCDClient} from "@terra-money/terra.js";
+
+enum UriMapKind {
+    evm,
+    nonEvm,
+}
 
 const ENV_KEY_MAP: StringMap = {
     [ChainId.ETH]:       "ETH_RPC_URI",
@@ -20,6 +34,7 @@ const ENV_KEY_MAP: StringMap = {
     [ChainId.MOONRIVER]: "MOONRIVER_RPC_URI",
     [ChainId.ARBITRUM]:  "ARBITRUM_RPC_URI",
     [ChainId.AVALANCHE]: "AVALANCHE_RPC_URI",
+    [ChainId.TERRA]:     "TERRA_RPC_URI",
     [ChainId.AURORA]:    "AURORA_RPC_URI",
     [ChainId.HARMONY]:   "HARMONY_RPC_URI",
 }
@@ -37,18 +52,41 @@ const CHAIN_RPC_URIS: StringMap = {
     [ChainId.MOONRIVER]: "https://rpc.api.moonriver.moonbeam.network",
     [ChainId.ARBITRUM]:  "https://arb1.arbitrum.io/rpc",
     [ChainId.AVALANCHE]: "https://api.avax.network/ext/bc/C/rpc",
+    [ChainId.TERRA]:     "http://public-node.terra.dev:26657/",
     [ChainId.AURORA]:    "https://mainnet.aurora.dev",
     [ChainId.HARMONY]:   "https://api.harmony.one/",
 }
 
-const CHAINID_URI_MAP: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, _getChainRpcUri(cid)]));
+const
+    EVM_CHAINS_URI_MAP:    StringMap = _makeChainIdMap(UriMapKind.evm),
+    NONEVM_CHAINS_URI_MAP: StringMap = _makeChainIdMap(UriMapKind.nonEvm);
+
 
 const RPC_BATCH_INTERVAL = Number(process.env["RPC_BATCH_INTERVAL"]) || 60;
 
-const RPC_CONNECTOR = new RpcConnector({
-    urls:          CHAINID_URI_MAP,
+const EVM_RPC_CONNECTOR = new EvmRpcConnector({
+    urls:          EVM_CHAINS_URI_MAP,
     batchInterval: RPC_BATCH_INTERVAL
 });
+
+const TERRA_RPC_CONNECTOR = new TerraRpcConnector({
+    urls: NONEVM_CHAINS_URI_MAP
+});
+
+function _makeChainIdMap(mapKind: UriMapKind): StringMap {
+    let allChainIds = supportedChainIds();
+
+    switch (mapKind) {
+        case UriMapKind.evm:
+            allChainIds = allChainIds.filter(cid => !isTerraChainId(cid));
+            break;
+        case UriMapKind.nonEvm:
+            allChainIds.filter(cid => isTerraChainId(cid));
+            break;
+    }
+
+    return fromPairs(allChainIds.map(cid => [cid, _getChainRpcUri(cid)]));
+}
 
 function _getChainRpcUri(chainId: number): string {
     const
@@ -62,7 +100,21 @@ function _getChainRpcUri(chainId: number): string {
  * @param chainId chain id of the network for which to return a provider
  */
 export function rpcProviderForChain(chainId: number): Provider {
-    return RPC_CONNECTOR.provider(chainId)
+    if (isTerraChainId(chainId)) {
+        console.error("call `terraRpcProvider(chainId)` for a Terra-compatible RPC provider");
+        return null
+    }
+
+    return EVM_RPC_CONNECTOR.provider(chainId)
+}
+
+export function terraRpcProvider(chainId: number = ChainId.TERRA): LCDClient {
+    if (!isTerraChainId(chainId)) {
+        console.error("call `rpcProviderForChain(chainId)` for an EVM-compatible RPC provider");
+        return null
+    }
+
+    return TERRA_RPC_CONNECTOR.provider(chainId)
 }
 
 export interface RPCEndpointsConfig {
@@ -76,7 +128,9 @@ export function configureRPCEndpoints(config: RPCEndpointsConfig) {
     for (const chainId of supportedChainIds()) {
         if (config[chainId]) {
             let {endpoint, batchInterval} = config[chainId];
-            RPC_CONNECTOR.setProviderConfig(chainId, endpoint, batchInterval);
+            isTerraChainId(chainId)
+                ? TERRA_RPC_CONNECTOR.setProviderConfig(chainId, endpoint, batchInterval)
+                : EVM_RPC_CONNECTOR.setProviderConfig(chainId, endpoint, batchInterval);
         }
     }
 }
