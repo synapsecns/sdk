@@ -1,4 +1,4 @@
-import {fromPairs} from "lodash";
+import {fromPairs} from "lodash-es";
 
 import type {Provider} from "@ethersproject/providers";
 
@@ -42,7 +42,7 @@ const ENV_KEY_MAP: StringMap = {
 const CHAIN_RPC_URIS: StringMap = {
     [ChainId.ETH]:       "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     [ChainId.OPTIMISM]:  "https://mainnet.optimism.io",
-    [ChainId.CRONOS]:    "https://evm-cronos.crypto.org",
+    [ChainId.CRONOS]:    "https://evm.cronos.org",
     [ChainId.BSC]:       "https://bsc-dataseed.binance.org/",
     [ChainId.POLYGON]:   "https://polygon-rpc.com/",
     [ChainId.FANTOM]:    "https://rpc.ftm.tools/",
@@ -52,7 +52,7 @@ const CHAIN_RPC_URIS: StringMap = {
     [ChainId.MOONRIVER]: "https://rpc.api.moonriver.moonbeam.network",
     [ChainId.ARBITRUM]:  "https://arb1.arbitrum.io/rpc",
     [ChainId.AVALANCHE]: "https://api.avax.network/ext/bc/C/rpc",
-    [ChainId.TERRA]:     "http://public-node.terra.dev:26657/",
+    [ChainId.TERRA]:     "https://lcd.terra.dev/",
     [ChainId.AURORA]:    "https://mainnet.aurora.dev",
     [ChainId.HARMONY]:   "https://api.harmony.one/",
 }
@@ -76,16 +76,22 @@ const TERRA_RPC_CONNECTOR = new TerraRpcConnector({
 function _makeChainIdMap(mapKind: UriMapKind): StringMap {
     let allChainIds = supportedChainIds();
 
+    let filterFn: (cid: number) => boolean;
+
     switch (mapKind) {
         case UriMapKind.evm:
-            allChainIds = allChainIds.filter(cid => !isTerraChainId(cid));
+            filterFn = cid => !isTerraChainId(cid)
             break;
         case UriMapKind.nonEvm:
-            allChainIds.filter(cid => isTerraChainId(cid));
+            filterFn = cid => isTerraChainId(cid)
             break;
     }
 
-    return fromPairs(allChainIds.map(cid => [cid, _getChainRpcUri(cid)]));
+    return fromPairs(
+        allChainIds
+            .filter(filterFn)
+            .map(cid => [cid, _getChainRpcUri(cid)])
+    );
 }
 
 function _getChainRpcUri(chainId: number): string {

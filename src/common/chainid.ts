@@ -30,4 +30,4 @@ export const supportedChainIds = (): number[] =>
 
 
 export const terraChainIdName = chainId => TerraChainNames[chainId];
-export const isTerraChainId   = chainId => Object.keys(TerraChainNames).includes(chainId.toString())
+export const isTerraChainId   = chainId => Object.keys(TerraChainNames).map(Number).includes(chainId);

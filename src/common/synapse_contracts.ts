@@ -16,30 +16,30 @@ export namespace SynapseContracts {
         bridge:     string,
         bridgeZap?: string,
         mainnet?:   boolean,
-        terra?:     boolean,
+        isTerra?:     boolean,
     }
 
     export class SynapseContract {
         readonly bridge:      abiAndAddress;
         readonly bridgeZap?:  abiAndAddress;
-        readonly terra:       boolean;
+        readonly isTerra:       boolean;
 
         constructor({
             bridge,
             bridgeZap=null,
             mainnet=false,
-            terra=false,
+            isTerra=false,
         }: SynapseContractArgs) {
-            this.terra = terra;
+            this.isTerra = isTerra;
 
             this.bridge = {address: bridge};
-            if (!terra) {
+            if (!this.isTerra) {
             this.bridge.abi = ABIs.SynapseBridge;
             }
 
             if (bridgeZap) {
                 this.bridgeZap = {address: bridgeZap};
-                if (!terra) {
+                if (!this.isTerra) {
                     this.bridgeZap.abi = mainnet ? ABIs.L1BridgeZap : ABIs.L2BridgeZap;
                 }
             }
@@ -50,7 +50,7 @@ export namespace SynapseContracts {
         }
 
         get bridgeZapAddress(): string {
-            return this.bridgeZap.address
+            return this.bridgeZap?.address ?? ""
         }
     }
 
@@ -116,6 +116,7 @@ export namespace SynapseContracts {
     });
 
     export const Terra = new SynapseContract({
+        isTerra:    true,
         bridge:    "terra1cz4tl2l67sknlm8h4n836qxydau9thscrkrkg0",
     });
 
