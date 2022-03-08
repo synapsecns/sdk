@@ -8,7 +8,8 @@ import type {
     PopulatedTransaction,
     ContractTransaction,
 } from "@ethersproject/contracts";
-import {BigNumber} from "@ethersproject/bignumber";
+import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+import {BytesLike} from "@ethersproject/bytes";
 
 export function rejectPromise(e: any): Promise<never> { return Promise.reject(e instanceof Error ? e : new Error(e)) }
 
@@ -25,14 +26,31 @@ export function executePopulatedTransaction(
 
 export function staticCallPopulatedTransaction(
     populatedTxn: Resolveable<PopulatedTransaction>,
-    signer:       Signer
+    signer:       Signer,
+    successFn?:   (result: BytesLike, tx?: {data: string, value?: BigNumberish}) => boolean
 ): Promise<StaticCallResult> {
     return Promise.resolve(populatedTxn)
-        .then(txn => {
-            return signer.call(txn)
-                .then(()  => StaticCallResult.Success)
-                .catch((err) => StaticCallResult.Failure)
+        .then(txn => signer.call(txn)
+            .then((res): number  => {
+                let successRes = StaticCallResult.Success;
+
+                if (successFn && (txn.data && txn.data !== "0x")) {
+                    try {
+                        let {data="", value} = txn;
+                        successRes = successFn(res, {data, value})
+                            ? StaticCallResult.Success
+                            : StaticCallResult.Failure
+                    } catch {}
+                }
+
+                return successRes
         })
+            .catch((err) => {
+                // console.error(err);
+                return StaticCallResult.Failure
+            })
+        )
+        .catch(rejectPromise)
 }
 
 function pow10(exp: number): BigNumber { return BigNumber.from(10).pow(exp) }
@@ -70,6 +88,7 @@ const CHAINID_CONTRACTS_MAP: {[c: number]: SynapseContracts.SynapseContract} = {
     [ChainId.MOONRIVER]: SynapseContracts.Moonriver,
     [ChainId.ARBITRUM]:  SynapseContracts.Arbitrum,
     [ChainId.AVALANCHE]: SynapseContracts.Avalanche,
+    [ChainId.TERRA]:     SynapseContracts.Terra,
     [ChainId.AURORA]:    SynapseContracts.Aurora,
     [ChainId.HARMONY]:   SynapseContracts.Harmony,
 }
