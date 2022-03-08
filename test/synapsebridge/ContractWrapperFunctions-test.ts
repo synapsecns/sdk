@@ -45,10 +45,6 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
         const expected = 6;
 
         ALL_CHAIN_IDS.forEach(network => {
-            if (network === ChainId.TERRA) {
-                return
-            }
-
             const
                 provider          = rpcProviderForChain(network),
                 bridgeInstance    = new Bridge.SynapseBridge({ network, provider}),
@@ -64,10 +60,6 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
     describe(".WETH_ADDRESS", function(this: Mocha.Suite) {
         ALL_CHAIN_IDS.forEach(network => {
-            if (network === ChainId.TERRA) {
-                return
-            }
-
             const
                 provider = rpcProviderForChain(network),
                 bridgeInstance = new Bridge.SynapseBridge({ network, provider }),

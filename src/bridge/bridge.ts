@@ -209,7 +209,7 @@ export namespace Bridge {
 
         bridgeVersion(): Promise<BigNumber> {
             if (this.isTerra) {
-                return Promise.resolve(BigNumber.from(1))
+                return Promise.resolve(BigNumber.from(6))
             }
 
             return this.bridgeInstance.bridgeVersion()
