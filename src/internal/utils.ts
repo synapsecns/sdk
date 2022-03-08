@@ -5,6 +5,14 @@ import {find} from "lodash-es";
 import type {Token} from "@token";
 import {Tokens} from "@tokens";
 
+import {
+    type Tx,
+    type Wallet,
+    type MsgExecuteContract,
+    type SyncTxBroadcastResult,
+    LCDClient
+} from "@terra-money/terra.js";
+
 function tokenReducer(check: Token): Token {
     const ret: Token = find(Tokens.AllTokens, (t => check.isEqual(t)));
 
@@ -27,5 +35,26 @@ export function validateTerraAddress(address: string): boolean {
     } catch {
         // invalid checksum
         return false
+    }
+}
+
+export class TerraSignerWrapper {
+    private _terraWallet: Wallet;
+
+    constructor(terraWallet: Wallet) {
+        this._terraWallet = terraWallet;
+    }
+
+    getAddress(): Promise<string> {
+        return Promise.resolve(this._terraWallet.key.accAddress)
+    }
+
+    sendTransaction(provider: LCDClient, ...messages: MsgExecuteContract[]): Promise<SyncTxBroadcastResult> {
+        return this.makeSignedTransaction(...messages)
+            .then(tx => provider.tx.broadcastSync(tx))
+    }
+
+    private makeSignedTransaction(...messages: MsgExecuteContract[]): Promise<Tx> {
+        return this._terraWallet.createAndSignTx({msgs: messages})
     }
 }
