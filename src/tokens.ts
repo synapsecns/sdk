@@ -98,7 +98,7 @@ export namespace Tokens {
     export const UST = new BaseToken({
         symbol:       "UST",
         name:         "TerraUSD",
-        decimals:     18,
+        decimals:     6,
         addresses: {
             [ChainId.ETH]:       "0x0261018Aa50E28133C1aE7a29ebdf9Bd21b878Cb",
             [ChainId.OPTIMISM]:  "0xFB21B70922B9f6e3C6274BcD6CB1aa8A0fe20B80",
