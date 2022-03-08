@@ -42,7 +42,7 @@ const ENV_KEY_MAP: StringMap = {
 const CHAIN_RPC_URIS: StringMap = {
     [ChainId.ETH]:       "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     [ChainId.OPTIMISM]:  "https://mainnet.optimism.io",
-    [ChainId.CRONOS]:    "https://evm.cronos.org",
+    [ChainId.CRONOS]:    "https://evm-cronos.crypto.org",
     [ChainId.BSC]:       "https://bsc-dataseed.binance.org/",
     [ChainId.POLYGON]:   "https://polygon-rpc.com/",
     [ChainId.FANTOM]:    "https://rpc.ftm.tools/",
