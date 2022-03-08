@@ -37,7 +37,7 @@ import {
     isTxError,
     Wallet as TerraWallet,
     MnemonicKey,
-    MsgExecuteContract
+    MsgExecuteContract, RawKey
 } from "@terra-money/terra.js";
 
 type TxnResponse = ContractTransaction | TransactionResponse;
@@ -89,10 +89,12 @@ async function buildWalletArgs(chainId: number, privkey: string=bridgeInteractio
         _terra = chainId === ChainId.TERRA,
         _evmChainId = _terra ? ChainId.ETH : chainId,
         evmWallet:   EvmWallet   = makeWalletSignerWithProvider(_evmChainId, privkey),
-        terraWallet: TerraWallet = terraRpcProvider(ChainId.TERRA).wallet(new MnemonicKey({
-            mnemonic: process.env["BRIDGE_INTERACTIONS_PRIVKEY_MNEMONIC"],
-            index:    1,
-        }));
+        terraWallet: TerraWallet = terraRpcProvider(ChainId.TERRA).wallet(new RawKey(
+            Buffer.from(
+                process.env["BRIDGE_INTERACTIONS_PRIVKEY_TERRA"] || "",
+                "hex"
+            )
+        ));
 
     const
         wallet       = _terra ? terraWallet : evmWallet,

@@ -105,6 +105,7 @@ jobs:
           BRIDGE_INTERACTIONS_PRIVKEY_ADDRESS: ${{ secrets.BRIDGE_INTERACTIONS_PRIVKEY_ADDRESS }}
           BRIDGE_SWAPTEST_PRIVKEY:             ${{ secrets.BRIDGE_SWAPTEST_PRIVKEY }}
           BRIDGE_SWAPTEST_PRIVKEY_ADDRESS:     ${{ secrets.BRIDGE_SWAPTEST_PRIVKEY_ADDRESS }}
+          BRIDGE_INTERACTIONS_PRIVKEY_TERRA:   ${{ secrets.BRIDGE_INTERACTIONS_PRIVKEY_TERRA }}
 
       - name: Generate Coverage report
         run: yarn -s run coverage:report
