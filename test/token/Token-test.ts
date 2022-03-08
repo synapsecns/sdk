@@ -1,11 +1,10 @@
 import {expect} from "chai";
 
-import _ from "lodash";
-
 import {
     ChainId,
     Tokens,
-    type Token, supportedChainIds
+    type Token,
+    supportedChainIds
 } from "@sdk";
 
 import {tokenSwitch} from "@sdk/internal";
@@ -14,7 +13,7 @@ import {
     expectBnEqual,
     expectBoolean,
     expectNull,
-    wrapExpect,
+    wrapExpect
 } from "@tests/helpers";
 
 import {BigNumber} from "@ethersproject/bignumber";
@@ -215,7 +214,7 @@ describe("Token Tests", function(this: Mocha.Suite) {
     describe("Test all tokens", function(this: Mocha.Suite) {
         Tokens.AllTokens.forEach(t => {
             let supportedNets = Object.keys(t.addresses).map(c => Number(c));
-            _.map(supportedChainIds(), (cid) => {
+            supportedChainIds().forEach((cid) => {
                 let tokenAddr = t.address(cid);
                 switch (tokenSwitch(t)) {
                     case Tokens.ETH:

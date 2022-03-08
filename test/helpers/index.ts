@@ -1,6 +1,6 @@
 import {expect} from "chai";
 
-import _ from "lodash";
+import {shuffle} from "lodash-es";
 
 import {Zero}   from "@ethersproject/constants";
 import {Wallet} from "@ethersproject/wallet";
@@ -32,7 +32,7 @@ export const getTestAmount = (
     t: Token,
     c: number,
     amt?: BigNumberish
-): BigNumber => t.etherToWei(amt ?? _.shuffle(testAmounts)[0], c);
+): BigNumber => t.etherToWei(amt ?? shuffle(testAmounts)[0], c);
 
 export const makeWalletSignerWithProvider = (
     chainId: number,

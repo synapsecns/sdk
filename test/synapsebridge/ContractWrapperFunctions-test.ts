@@ -48,6 +48,10 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
         const expected = 6;
 
         ALL_CHAIN_IDS.forEach(network => {
+            if (network === ChainId.TERRA) {
+                return
+            }
+
             const
                 provider          = rpcProviderForChain(network),
                 bridgeInstance    = new Bridge.SynapseBridge({ network, provider}),
@@ -56,13 +60,17 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
             it(testTitle, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
                 let prom = bridgeInstance.bridgeVersion();
-                return wrapExpectAsync(expectBnEqual(await prom, expected), prom)
+                return expect(await prom).to.equal(expected);
             })
         })
     })
 
     describe(".WETH_ADDRESS", function(this: Mocha.Suite) {
         ALL_CHAIN_IDS.forEach(network => {
+            if (network === ChainId.TERRA) {
+                return
+            }
+
             const
                 provider = rpcProviderForChain(network),
                 bridgeInstance = new Bridge.SynapseBridge({ network, provider }),
@@ -84,7 +92,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
             it(testTitle, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
                 let prom = bridgeInstance.WETH_ADDRESS();
-                return wrapExpectAsync(expectEqual(await prom, expected), prom)
+                return expect(await prom).to.equal(expected);
             })
         })
     })
