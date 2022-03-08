@@ -282,9 +282,35 @@ export namespace Bridge {
             //     return this.buildTerraBridgeTxn(args)
             // }
 
-            let newTxn: Promise<PopulatedTransaction> = this.chainId === ChainId.ETH
+            let newTxn: Promise<PopulatedTransaction>;
+
+            if (args.tokenFrom.isEqual(Tokens.UST)) {
+                const redeemArgs: [BigNumberish, string, BigNumberish] = [
+                    args.chainIdTo,
+                    Tokens.UST.address(this.chainId),
+                    args.amountFrom
+                ];
+
+                if (isTerraChainId(args.chainIdTo)) {
+                    newTxn = this.bridgeInstance
+                        .populateTransaction
+                        .redeemV2(
+                            bech32.decode(args.addressTo).words,
+                            ...redeemArgs
+                        )
+                } else {
+                    newTxn = this.bridgeInstance
+                        .populateTransaction
+                        .redeem(
+                            args.addressTo,
+                            ...redeemArgs
+                        )
+                }
+            } else {
+                newTxn = this.chainId === ChainId.ETH
                 ? this.buildETHMainnetBridgeTxn(args, tokenArgs)
                 : this.buildL2BridgeTxn(args, tokenArgs);
+            }
 
             return newTxn
                 .then(txn =>
