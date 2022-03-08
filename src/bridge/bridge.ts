@@ -1,10 +1,7 @@
 import {ChainId}  from "@chainid";
 import {Networks} from "@networks";
 
-import {
-    rejectPromise,
-    executePopulatedTransaction
-} from "@common/utils";
+import {executePopulatedTransaction, rejectPromise} from "@common/utils";
 
 import {SynapseContracts} from "@common/synapse_contracts";
 
@@ -18,10 +15,10 @@ import {
 } from "@internal/index";
 
 import type {
+    BridgeConfigV3Contract,
     GenericZapBridgeContract,
     L1BridgeZapContract,
-    SynapseBridgeContract,
-    BridgeConfigV3Contract
+    SynapseBridgeContract
 } from "@contracts";
 
 import {Tokens}    from "@tokens";
@@ -46,10 +43,7 @@ import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 import type {Signer}   from "@ethersproject/abstract-signer";
 import type {Provider} from "@ethersproject/providers";
 
-import type {
-    ContractTransaction,
-    PopulatedTransaction,
-} from "@ethersproject/contracts";
+import type {ContractTransaction, PopulatedTransaction,} from "@ethersproject/contracts";
 
 /**
  * Bridge provides a wrapper around common Synapse Bridge interactions, such as output estimation, checking supported swaps/bridges,
@@ -493,12 +487,14 @@ export namespace Bridge {
 
             let {intermediateToken, bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
 
-            const fromCoinDecimals = tokenFrom.decimals(this.chainId);
+            const TEN = BigNumber.from(10);
 
+            const fromCoinDecimals = tokenFrom.decimals(this.chainId);
+            const involvesUST = [tokenFrom.swapType, tokenTo.swapType].includes(SwapType.UST);
+            const intermediateTokenAddr = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase();
             const
-                intermediateTokenAddr   = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase(),
-                multiplier              = BigNumber.from(10).pow(18-fromCoinDecimals),
-                amountFromFixedDecimals = amountFrom.mul(multiplier);
+                bridgeFeeMultiplier     = involvesUST ? TEN.pow(12) : 1,
+                amountFromFixedDecimals = involvesUST ? amountFrom : amountFrom.mul(TEN.pow(18-fromCoinDecimals));
 
             const bridgeFeeRequest: Promise<BigNumber> = this.bridgeConfigInstance["calculateSwapFee(string,uint256,uint256)"](
                 intermediateTokenAddr,
@@ -584,7 +580,17 @@ export namespace Bridge {
                 return rejectPromise(err)
             } /* c8 ignore stop */
 
-            return {amountToReceive, bridgeFee}
+            let fee = bridgeFee;
+            if (fee) {
+                fee = fee.mul(bridgeFeeMultiplier);
+            } else {
+                fee = Zero;
+            }
+
+            return {
+                amountToReceive,
+                bridgeFee: fee
+            }
         }
 
         private checkEasyArgs(
