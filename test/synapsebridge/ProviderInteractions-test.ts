@@ -333,7 +333,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
                     return (await expectFulfilled(
                         bridgeInstance.buildBridgeTokenTransaction(doBridgeArgs)
-                            .then((txn) => bridgeTxn = txn)
+                            .then((txn) => bridgeTxn = txn as PopulatedTransaction)
                     ))
                 });
 
@@ -382,9 +382,13 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 });
 
                 step(bridgeTxnTestTitle, async function (this: Mocha.Context) {
+                    let prom: Promise<TxnResponse> = bridgeInstance
+                        .executeBridgeTokenTransaction(doBridgeArgs, wallet)
+                        .then(res => res as ContractTransaction)
+
                     return await executeTxnFunc(
                         tc,
-                        bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet)
+                        prom
                     )(this)
                 });
             })
