@@ -50,6 +50,7 @@
     "@ethersproject/units": "^5.5.0",
     "@ethersproject/wallet": "^5.5.0",
     "@ethersproject/web": "^5.5.1",
+    "@terra-money/terra.js": "^3.0.8",
     "ethers": "^5.5.1",
     "isomorphic-fetch": "^3.0.0",
     "lodash": "^4.17.21"
