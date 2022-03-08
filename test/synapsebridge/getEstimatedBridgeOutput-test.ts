@@ -297,6 +297,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
             let {args: { chainIdFrom }, args, expected: {wantError, noAddrTo}} = tc;
 
             const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
+            const wantResolve: boolean = !noAddrTo;
             let addressTo: string;
 
             if (noAddrTo) {
@@ -312,7 +313,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
             return (await (
                 wantError
                     ? expectRejected(prom)
-                    : expectPromiseResolve(prom, !noAddrTo)
+                    : expectPromiseResolve(prom, wantResolve)
             ))
         });
     });
