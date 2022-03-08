@@ -57,6 +57,7 @@ import {
     Coins,
     LCDClient
 } from "@terra-money/terra.js";
+
 import bech32 from "bech32";
 
 
@@ -295,7 +296,7 @@ export namespace Bridge {
                     newTxn = this.bridgeInstance
                         .populateTransaction
                         .redeemV2(
-                            bech32.decode(args.addressTo).words,
+                            bech32.decode(addressTo).words,
                             ...redeemArgs
                         )
                 } else {
