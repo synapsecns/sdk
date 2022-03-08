@@ -18,7 +18,8 @@ import {
     rpcProviderForChain,
     terraRpcProvider,
     tokenSwitch,
-    TerraSignerWrapper
+    TerraSignerWrapper,
+    validateTerraAddress
 } from "@internal/index";
 
 import type {
@@ -174,7 +175,7 @@ export namespace Bridge {
 
             this.requiredConfirmations = getRequiredConfirmationsForBridge(this.network);
 
-            this.isTerra = isTerraChainId(this.chainId)
+            this.isTerra = this.chainId === ChainId.TERRA;
             this.isL2Zap = this.network.zapIsL2BridgeZap;
             this.isL2ETHChain = BridgeUtils.isL2ETHChain(this.chainId);
 
@@ -279,6 +280,12 @@ export namespace Bridge {
                 )
             }
 
+            if (args.chainIdTo === ChainId.TERRA && !validateTerraAddress(args.addressTo)) {
+                return rejectPromise(
+                    new Error(`${args.addressTo} passed as BridgeTransactionParams.addressTo is not a valid Terra address`)
+                )
+            }
+
             args = {...args, tokenFrom, tokenTo};
 
             let newTxn: Promise<PopulatedTransaction>;
@@ -294,11 +301,21 @@ export namespace Bridge {
                     args.amountFrom
                 ];
 
-                let populateTx = this.bridgeInstance.populateTransaction;
-
-                newTxn = isTerraChainId(args.chainIdTo)
-                    ? populateTx.redeemV2(bech32.decode(addressTo).words, ...redeemArgs)
-                    : populateTx.redeem(args.addressTo, ...redeemArgs);
+                if (args.chainIdTo === ChainId.TERRA) {
+                    newTxn = this.bridgeInstance
+                        .populateTransaction
+                        .redeemV2(
+                            bech32.decode(args.addressTo).words,
+                            ...redeemArgs
+                        );
+                } else {
+                    newTxn = this.bridgeInstance
+                        .populateTransaction
+                        .redeem(
+                            args.addressTo,
+                            ...redeemArgs
+                        );
+                }
             } else {
                 newTxn = this.chainId === ChainId.ETH
                 ? this.buildETHMainnetBridgeTxn(args, tokenArgs)
@@ -478,7 +495,6 @@ export namespace Bridge {
 
         private async checkGasTokenBalance(args: CanBridgeParams): Promise<CanBridgeResult> {
             const {address, token, amount} = args;
-
             const balanceProm: Promise<BigNumber> = this.provider.getBalance(address);
 
             return this.resolveBalanceFunc(
@@ -491,12 +507,17 @@ export namespace Bridge {
         private async checkTerraUSTBalance({address, token, amount}: CanBridgeParams): Promise<CanBridgeResult> {
             const balProm: Promise<BigNumber> = this.terraProvider.bank.balance(address)
                 .then(([res]) => {
-                    const { amount } = res[0]._coins.uusd.toData()
+                    let coin = res.get("uusd");
+                    if (coin) {
+                        const {amount} = coin.toData();
                     if (amount && (amount !== "")) {
                         return BigNumber.from(amount);
-                    } else {
+                        }
+
                         return Zero
                     }
+
+                    return Zero
                 })
 
             return this.resolveBalanceFunc(
@@ -518,19 +539,18 @@ export namespace Bridge {
 
             const checkArgs: CanBridgeParams = {...args, address: signerAddress};
             const
-                isGasTokenTransfer: boolean = (this.network.chainCurrency === token.symbol) && BridgeUtils.chainSupportsGasToken(this.chainId),
-                isTerraTx: boolean = this.isTerra && token.isEqual(Tokens.UST);
+                isTerraTx:          boolean = this.isTerra && token.isEqual(Tokens.UST),
+                isGasTokenTransfer: boolean = (this.network.chainCurrency === token.symbol) && BridgeUtils.chainSupportsGasToken(this.chainId);
 
-            let hasBalanceRes: Promise<CanBridgeResult>;
             if (isTerraTx) {
-                hasBalanceRes = this.checkTerraUSTBalance(checkArgs);
-            } else {
-                hasBalanceRes = isGasTokenTransfer
-                ? this.checkGasTokenBalance(checkArgs)
-                : this.checkERC20Balance(checkArgs);
+                return this.checkTerraUSTBalance(checkArgs);
             }
 
-            return isGasTokenTransfer || isTerraTx
+            let hasBalanceRes: Promise<CanBridgeResult> = isGasTokenTransfer
+                ? this.checkGasTokenBalance(checkArgs)
+                : this.checkERC20Balance(checkArgs);
+
+            return isGasTokenTransfer
                 ? hasBalanceRes
                 : this.checkNeedsApprove(checkArgs)
                     .then(approveRes => this.resolveApproveFunc(approveRes, hasBalanceRes, token))

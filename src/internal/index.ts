@@ -8,4 +8,4 @@ export {rpcProviderForChain, terraRpcProvider} from "./rpcproviders";
 
 export type {ValueOf} from "./generic_types";
 
-export {tokenSwitch, TerraSignerWrapper} from "./utils";
+export {tokenSwitch, TerraSignerWrapper, validateTerraAddress} from "./utils";
