@@ -9,7 +9,7 @@ import {
     type Tx,
     type Wallet,
     type MsgExecuteContract,
-    type SyncTxBroadcastResult
+    type BlockTxBroadcastResult
 } from "@terra-money/terra.js";
 
 function tokenReducer(check: Token): Token {
@@ -48,12 +48,35 @@ export class TerraSignerWrapper {
         return Promise.resolve(this._terraWallet.key.accAddress)
     }
 
-    sendTransaction(...messages: MsgExecuteContract[]): Promise<SyncTxBroadcastResult> {
+    sendTransaction(...messages: MsgExecuteContract[]): Promise<BlockTxBroadcastResult> {
         return this.makeSignedTransaction(...messages)
-            .then(tx => this._terraWallet.lcd.tx.broadcastSync(tx))
+            .then(tx => this._terraWallet.lcd.tx.broadcast(tx))
     }
 
-    private makeSignedTransaction(...messages: MsgExecuteContract[]): Promise<Tx> {
-        return this._terraWallet.createAndSignTx({msgs: messages})
+    private async makeSignedTransaction(...messages: MsgExecuteContract[]): Promise<Tx> {
+        const {accountNumber, sequence} = await this.accountData();
+
+        let msgs: MsgExecuteContract[] = messages.map(msg => {
+            if (!msg.sender) {
+                msg.sender = this._terraWallet.key.accAddress;
+            }
+
+            return msg
+        })
+
+        return this._terraWallet.createAndSignTx({msgs, accountNumber, sequence})
+    }
+
+    /**
+     * returns the wallet's account number and sequence
+     * @private
+     */
+    private accountData(): Promise<{accountNumber: number, sequence: number}> {
+        return this._terraWallet.accountNumberAndSequence()
+            .then(({account_number, sequence}) => ({accountNumber: account_number, sequence}))
+    }
+
+    private accountNumber(): Promise<number> {
+        return this._terraWallet.accountNumber()
     }
 }
