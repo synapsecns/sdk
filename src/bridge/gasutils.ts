@@ -24,6 +24,11 @@ export namespace GasUtils {
             bridgeGasLimit: BigNumber.from(100000),
             approveGasLimit: BigNumber.from(75000),
         },
+        [ChainId.BSC]: {
+            gasPrice:        makeGwei("6"),
+            bridgeGasLimit:  BigNumber.from(260000),
+            approveGasLimit: BigNumber.from(75000)
+        },
         [ChainId.BOBA]: {
             gasPrice:        makeGwei("10"),
             approveGasLimit: BigNumber.from(60000),
@@ -46,8 +51,8 @@ export namespace GasUtils {
     export const makeGasParams = (chainId: number): GasParams => CHAIN_GAS_PARAMS[chainId] ?? {};
 
     export const populateGasParams = (
-        chainId: number,
-        txn: PopulatedTransaction|Promise<PopulatedTransaction>,
+        chainId:      number,
+        txn:          PopulatedTransaction|Promise<PopulatedTransaction>,
         gasLimitKind: string
     ): Promise<PopulatedTransaction> =>
         Promise.resolve(txn)
