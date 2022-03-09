@@ -40,7 +40,12 @@ import {
 import type {NumberMap} from "@common/types";
 
 import {GasUtils}                   from "./gasutils";
-import {BridgeUtils}                from "./bridgeutils";
+
+import {
+    BridgeUtils,
+    CanBridgeError
+} from "./bridgeutils";
+
 import {ERC20, MAX_APPROVAL_AMOUNT} from "./erc20";
 
 import {id as makeKappa}         from "@ethersproject/hash";
@@ -276,13 +281,13 @@ export namespace Bridge {
 
             if ((!addressTo) || addressTo === "") {
                 return rejectPromise(
-                    new Error("BridgeTransactionParams.addressTo cannot be empty string or undefined")
+                    new CanBridgeError("BridgeTransactionParams.addressTo cannot be empty string or undefined")
                 )
             }
 
             if (args.chainIdTo === ChainId.TERRA && !validateTerraAddress(args.addressTo)) {
                 return rejectPromise(
-                    new Error(`${args.addressTo} passed as BridgeTransactionParams.addressTo is not a valid Terra address`)
+                    new CanBridgeError(`${args.addressTo} passed as BridgeTransactionParams.addressTo is not a valid Terra address`)
                 )
             }
 
@@ -365,10 +370,10 @@ export namespace Bridge {
 
             return this.checkCanBridge(checkArgs)
                 .then(canBridgeRes => {
-                    const {canBridge, reasonUnable} = canBridgeRes;
+                    const {canBridge, reasonUnable, amount} = canBridgeRes;
 
                     if (!canBridge) {
-                        return rejectPromise(reasonUnable)
+                        return rejectPromise(new CanBridgeError(reasonUnable, amount))
                     }
 
                     return this.buildBridgeTokenTransaction(args)
@@ -488,7 +493,7 @@ export namespace Bridge {
                         hasBalance
                             ? {canBridge: true}
                             : {canBridge: false, reasonUnable: `Balance of token ${token.symbol} is too low; current balance is ${balanceEth}`, amount: balance}
-                    ) as CanBridgeResult
+                    )
                 })
                 .catch(rejectPromise)
         }
@@ -579,8 +584,15 @@ export namespace Bridge {
                 ? token.address(this.chainId)
                 : token as string;
 
+            let spender: string;
+            if (tokenAddr === Tokens.UST.address(this.chainId)) {
+                spender = this.bridgeAddress;
+            } else {
+                spender = this.zapBridgeAddress;
+            }
+
             return [{
-                spender: this.zapBridgeAddress,
+                spender,
                 amount
             }, tokenAddr]
         }
