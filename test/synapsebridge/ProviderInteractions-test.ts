@@ -39,6 +39,7 @@ import {
     BlockTxBroadcastResult,
     RawKey,
     Wallet as TerraWallet,
+    isTxError
 } from "@terra-money/terra.js";
 import {SynapseContracts} from "@common/synapse_contracts";
 
@@ -65,6 +66,8 @@ function executeTransactionTerra(prom: Promise<BlockTxBroadcastResult>): Promise
                 const {response: {data}} = err;
                 return rejectPromise(data.message)
             }
+
+            return rejectPromise(err)
         })
 }
 
@@ -192,7 +195,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         makeCallStaticTc(Tokens.UST,    Tokens.UST,    ChainId.POLYGON,   ChainId.FANTOM,    false, false,  parseUSTWei("666", ChainId.POLYGON)),
         makeCallStaticTc(Tokens.UST,    Tokens.UST,    ChainId.POLYGON,   ChainId.TERRA,     false, false,  parseUSTWei("666", ChainId.POLYGON)),
         makeCallStaticTc(Tokens.UST,    Tokens.UST,    ChainId.TERRA,     ChainId.FANTOM,    false, false,  parseUSTWei("666", ChainId.TERRA)),
-        makeCallStaticTc(Tokens.UST,    Tokens.UST,    ChainId.TERRA,     ChainId.HARMONY,   false, true,   BigNumber.from("5000000")),
+        makeSignerSendTc(Tokens.UST,    Tokens.UST,    ChainId.TERRA,     ChainId.HARMONY,   false, false,  BigNumber.from("5000000")),
     ];
 
     function makeUSTTest(
