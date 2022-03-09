@@ -53,19 +53,23 @@ import {Zero}                    from "@ethersproject/constants";
 import {isAddress}   from "@ethersproject/address";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
-import {Signer} from "@ethersproject/abstract-signer";
+import {
+    Signer as EthersSigner
+} from "@ethersproject/abstract-signer";
+
 import type {Provider} from "@ethersproject/providers";
 
 import type {ContractTransaction, PopulatedTransaction} from "@ethersproject/contracts";
 
 import {
     MsgExecuteContract,
-    Coins,
     LCDClient,
-    Wallet, SyncTxBroadcastResult
+    Wallet as TerraWallet,
+    BlockTxBroadcastResult
 } from "@terra-money/terra.js";
 
 import bech32 from "bech32";
+import {formatUnits} from "@ethersproject/units";
 
 const TEN = BigNumber.from(10);
 
@@ -132,7 +136,7 @@ export namespace Bridge {
 
     interface CheckCanBridgeParams {
         address?: string;
-        signer?:  Signer;
+        signer?:  EthersSigner;
         token:    Token;
         amount:   BigNumberish;
     }
@@ -341,15 +345,15 @@ export namespace Bridge {
          * Starts the Bridge process between this Bridge (the source chain) and the bridge contract on the destination chain.
          * Note that this function **does** send a signed transaction.
          * @param {BridgeTransactionParams} args Parameters for the bridge transaction.
-         * @param {Signer} signer Some instance which implements the Ethersjs {@link Signer} interface.
+         * @param {EthersSigner} signer Some instance which implements the Ethersjs {@link EthersSigner} interface.
          * @param {boolean} callStatic (Optional, default: false) if true, uses provider.callStatic instead of actually sending the signed transaction.
          * @return {Promise<ContractTransaction>}
          */
         async executeBridgeTokenTransaction(
             args:       BridgeTransactionParams,
-            signer:     Signer | Wallet,
+            signer:     EthersSigner | TerraWallet,
             callStatic: boolean=false
-        ): Promise<ContractTransaction | SyncTxBroadcastResult> {
+        ): Promise<ContractTransaction | BlockTxBroadcastResult> {
             try {
                 await this.checkSwapSupported(args);
             } catch (e) {
@@ -361,37 +365,37 @@ export namespace Bridge {
             let signerAddress: string;
             let wrappedTerraWallet: TerraSignerWrapper;
 
-            if (signer instanceof Signer) {
+            if (signer instanceof EthersSigner) {
                 signerAddress = await signer.getAddress();
-            } else if (signer instanceof Wallet) {
+            } else if (signer instanceof TerraWallet) {
                 wrappedTerraWallet = new TerraSignerWrapper(signer);
                 signerAddress = await wrappedTerraWallet.getAddress();
             }
 
             args.addressTo = addressTo ?? signerAddress
 
-            let checkArgs = {token: tokenFrom, amount: amountFrom, address: signerAddress};
+            let checkArgs = {token: tokenFrom, amount: amountFrom, address: toLower(signerAddress)};
 
-            return this.checkCanBridge(checkArgs)
-                .then(canBridgeRes => {
-                    const {canBridge, reasonUnable, amount} = canBridgeRes;
-
-                    if (!canBridge) {
-                        return rejectPromise(new CanBridgeError(reasonUnable, amount))
-                    }
-
-                    return this.buildBridgeTokenTransaction(args)
-                        .then((txn): Promise<ContractTransaction | SyncTxBroadcastResult> => {
+            const sendTxn = (txn: PopulatedTransaction | MsgExecuteContract): Promise<ContractTransaction | BlockTxBroadcastResult> => {
                             if (this.isTerra) {
                                 let msg = txn as MsgExecuteContract;
                                 msg.sender = signerAddress;
-                                return wrappedTerraWallet.sendTransaction(this.terraProvider, txn as MsgExecuteContract)
-                            } else {
-                                return executePopulatedTransaction(txn as PopulatedTransaction, signer as Signer)
+
+                                return wrappedTerraWallet.sendTransaction(txn as MsgExecuteContract)
                             }
-                })
-                .catch(rejectPromise)
-                })
+
+                return executePopulatedTransaction(
+                    txn as PopulatedTransaction,
+                    signer as EthersSigner
+                )
+            }
+
+            return this.checkCanBridge(checkArgs)
+                .then(({canBridge, reasonUnable, amount}) =>
+                    canBridge
+                        ? this.buildBridgeTokenTransaction(args).then(sendTxn).catch(rejectPromise)
+                        : rejectPromise(new CanBridgeError(reasonUnable, amount))
+                )
         }
 
 
@@ -428,12 +432,12 @@ export namespace Bridge {
          * @param {Token|string} args.token {@link Token} instance or valid on-chain address of the token the user will be sending
          * to the bridge on the source chain.
          * @param {BigNumberish} args.amount Optional, a specific amount of args.token to approve. By default, this function
-         * @param {Signer} signer Valid ethers Signer instance for building a fully and properly populated
+         * @param {EthersSigner} signer Valid ethers Signer instance for building a fully and properly populated
          * transaction.
          */
         async executeApproveTransaction(
             args:       {token: Token | string, amount?: BigNumberish},
-            signer:     Signer,
+            signer:     EthersSigner,
         ): Promise<ContractTransaction> {
             const
                 [approveArgs, tokenAddress] = this.buildERC20ApproveArgs(args),
@@ -1070,12 +1074,12 @@ export namespace Bridge {
                 this.bridgeAddress,
                 {
                     deposit: {
-                        to_address: addressTo,
+                        to_address: toLower(addressTo),
                         chain_id:  `${chainIdTo}`,
                         denom:     "uusd"
                     }
                 },
-                new Coins({ uusd: amountFrom.toNumber() })
+                { uusd: amountFrom.toNumber() }
             ))
         }
 
