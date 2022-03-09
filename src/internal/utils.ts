@@ -9,8 +9,7 @@ import {
     type Tx,
     type Wallet,
     type MsgExecuteContract,
-    type SyncTxBroadcastResult,
-    LCDClient
+    type SyncTxBroadcastResult
 } from "@terra-money/terra.js";
 
 function tokenReducer(check: Token): Token {
@@ -49,9 +48,9 @@ export class TerraSignerWrapper {
         return Promise.resolve(this._terraWallet.key.accAddress)
     }
 
-    sendTransaction(provider: LCDClient, ...messages: MsgExecuteContract[]): Promise<SyncTxBroadcastResult> {
+    sendTransaction(...messages: MsgExecuteContract[]): Promise<SyncTxBroadcastResult> {
         return this.makeSignedTransaction(...messages)
-            .then(tx => provider.tx.broadcastSync(tx))
+            .then(tx => this._terraWallet.lcd.tx.broadcastSync(tx))
     }
 
     private makeSignedTransaction(...messages: MsgExecuteContract[]): Promise<Tx> {
