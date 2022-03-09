@@ -20,6 +20,12 @@ const testAmounts: string[] = [
     "669", "555",
 ];
 
+const
+    liveBridgeTestsEnvKey: string = "TEST_IT_IN_PROD",
+    liveBridgeTestsEnvVal: string = "never tell me the odds";
+
+export const RunLiveBridgeTests: boolean = (liveBridgeTestsEnvKey in process.env && process.env[liveBridgeTestsEnvKey] === liveBridgeTestsEnvVal);
+
 export const
     makeTimeout      = (seconds: number): number => seconds * 1000,
     valueIfUndefined = <T>(data: T, fallback: T): T => typeof data === "undefined" ? fallback : data,
@@ -58,7 +64,22 @@ export const
     expectPromiseResolve = (
         data: Promise<any>,
         wantResolve: boolean
-    ): Chai.PromisedAssertion => wantResolve ? expectFulfilled(data) : expectRejected(data);
+    ): Chai.PromisedAssertion => wantResolve ? expectFulfilled(data) : expectRejected(data),
+    expectNothingFromPromise = async (data: Promise<any>): Promise<Chai.PromisedAssertion> => {
+        let promReturned: boolean = false;
+
+        if (!data) {
+            return expectToEventuallyBe(data).undefined
+        }
+
+        const promFn = (): void  => { promReturned = true; }
+
+        await Promise.resolve(data)
+            .then(promFn)
+            .catch(promFn);
+
+        return expect(promReturned).to.be.true
+    }
 
 export const
     expectBoolean   = (data: boolean, want:      boolean):             Chai.Assertion => expectToBe(data)[want ? "true" : "false"],
