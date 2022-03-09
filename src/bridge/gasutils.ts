@@ -19,15 +19,21 @@ export namespace GasUtils {
 
     const CHAIN_GAS_PARAMS: ChainIdTypeMap<GasParams> = {
         [ChainId.ETH]: {
-            maxFeePerGas:   makeGwei("100"),
-            maxPriorityFee: makeGwei("1.5"),
-            bridgeGasLimit: BigNumber.from(100000),
+            maxFeePerGas:    makeGwei("100"),
+            maxPriorityFee:  makeGwei("1.5"),
+            bridgeGasLimit:  BigNumber.from(100000),
             approveGasLimit: BigNumber.from(75000),
         },
         [ChainId.BSC]: {
             gasPrice:        makeGwei("6"),
             bridgeGasLimit:  BigNumber.from(260000),
             approveGasLimit: BigNumber.from(75000)
+        },
+        [ChainId.POLYGON]: {
+            maxFeePerGas:     makeGwei("32.01"),
+            maxPriorityFee:   makeGwei("32"),
+            bridgeGasLimit:   BigNumber.from(1000000),
+            approveGasLimit:  BigNumber.from(86000)
         },
         [ChainId.BOBA]: {
             gasPrice:        makeGwei("10"),
