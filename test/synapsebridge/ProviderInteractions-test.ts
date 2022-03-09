@@ -1,13 +1,13 @@
 import {expect} from "chai";
 import {step} from "mocha-steps";
 
+import type {Token} from "@sdk";
 import {Bridge, ChainId, Networks, Tokens} from "@sdk";
 import {ERC20Factory}     from "@sdk/contracts";
 import {StaticCallResult} from "@sdk/common/types";
 import {terraRpcProvider} from "@sdk/internal/rpcproviders";
-
+import {CanBridgeError}   from "@sdk/bridge/bridgeutils";
 import {rejectPromise, staticCallPopulatedTransaction} from "@sdk/common/utils";
-
 
 import {
     DEFAULT_TEST_TIMEOUT,
@@ -28,17 +28,17 @@ import type {
 import {Wallet as EvmWallet} from "@ethersproject/wallet";
 
 import {BytesLike}  from "@ethersproject/bytes";
-import {parseEther} from "@ethersproject/units";
-import {BigNumber} from "@ethersproject/bignumber";
+import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
 import {
+    MsgExecuteContract,
     SyncTxBroadcastResult,
     TxError,
     isTxError,
+    RawKey,
     Wallet as TerraWallet,
-    MnemonicKey,
-    MsgExecuteContract, RawKey
 } from "@terra-money/terra.js";
+
 
 type TxnResponse = ContractTransaction | TransactionResponse;
 
@@ -122,163 +122,70 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         callStatic: boolean,
     }
 
-    const executeFailAmt: BigNumber = parseEther("420.696969");
+    function makeTc(
+        t1: Token,  t2: Token,
+        c1: number, c2: number,
+        succeeds: boolean, canBridge: boolean,
+        amountFrom: BigNumber
+    ): any {
+        return {
+            args: {
+                tokenFrom:   t1,
+                tokenTo:     t2,
+                chainIdFrom: c1,
+                chainIdTo:   c2,
+                amountFrom:  amountFrom,
+            },
+            expected: {
+                executeSuccess: succeeds,
+                canBridge:      canBridge,
+            },
+        }
+    }
+
+    function makeCallStaticTc(
+        t1: Token, t2: Token,
+        c1: number, c2: number,
+        succeeds: boolean, canBridge: boolean,
+        amountFrom: BigNumber
+    ): TestCase
+        {
+        const {args, expected} = makeTc(t1, t2, c1, c2, succeeds, canBridge, amountFrom);
+        return {
+            args, expected,
+            callStatic:         true,
+        }
+    }
+
+    function makeSignerSendTc(
+        t1: Token, t2: Token,
+        c1: number, c2: number,
+        succeeds: boolean, canBridge: boolean,
+        amountFrom: BigNumber
+    ): TestCase
+        {
+        const {args, expected} = makeTc(t1, t2, c1, c2, succeeds, canBridge, amountFrom);
+        return {
+            args, expected,
+            callStatic:         false,
+        }
+    }
+
+    const parseUSTWei = (amt: BigNumberish, cid: number): BigNumber => Tokens.UST.valueToWei(amt, cid);
+
+    const failAmt: BigNumber = BigNumber.from("420696969000000000000");
 
     const testCases: TestCase[] = [
-        {
-            args: {
-                tokenFrom:   Tokens.ETH,
-                tokenTo:     Tokens.WETH,
-                chainIdFrom: ChainId.OPTIMISM,
-                chainIdTo:   ChainId.ETH,
-                amountFrom:  executeFailAmt,
-            },
-            expected: {
-                executeSuccess: false,
-                canBridge:      false,
-            },
-            callStatic:         false,
-        },
-        {
-            args: {
-                tokenFrom:   Tokens.ETH,
-                tokenTo:     Tokens.WETH,
-                chainIdFrom: ChainId.BOBA,
-                chainIdTo:   ChainId.ETH,
-                amountFrom:  executeFailAmt,
-            },
-            expected: {
-                executeSuccess: false,
-                canBridge:      false,
-            },
-            callStatic:         true,
-        },
-        {
-            args: {
-                tokenFrom:   Tokens.ETH,
-                tokenTo:     Tokens.WETH_E,
-                chainIdFrom: ChainId.ARBITRUM,
-                chainIdTo:   ChainId.AVALANCHE,
-                amountFrom:  parseEther("0.005"),
-            },
-            expected: {
-                executeSuccess: true,
-                canBridge:      true,
-            },
-            callStatic:         true,
-        },
-        // {
-        //     args: {
-        //         tokenFrom:   Tokens.WETH_E,
-        //         tokenTo:     Tokens.ETH,
-        //         chainIdFrom: ChainId.AVALANCHE,
-        //         chainIdTo:   ChainId.ARBITRUM,
-        //         amountFrom:  parseEther("0.05"),
-        //     },
-        //     expected: {
-        //         executeSuccess: false,
-        //         canBridge:      false,
-        //     },
-        //     callStatic:         true,
-        // },
-        {
-            args: {
-                tokenFrom:   Tokens.ETH,
-                tokenTo:     Tokens.NETH,
-                chainIdFrom: ChainId.ETH,
-                chainIdTo:   ChainId.OPTIMISM,
-                amountFrom:  executeFailAmt,
-            },
-            expected: {
-                executeSuccess: false,
-                canBridge:      false,
-            },
-            callStatic:         true,
-        },
-        {
-            args: {
-                tokenFrom:   Tokens.ETH,
-                tokenTo:     Tokens.NETH,
-                chainIdFrom: ChainId.ETH,
-                chainIdTo:   ChainId.OPTIMISM,
-                amountFrom:  executeFailAmt,
-            },
-            expected: {
-                executeSuccess: false,
-                canBridge:      false,
-            },
-            callStatic:         false,
-        },
-        {
-            args: {
-                tokenFrom:   Tokens.NUSD,
-                tokenTo:     Tokens.USDT,
-                chainIdFrom: ChainId.POLYGON,
-                chainIdTo:   ChainId.FANTOM,
-                amountFrom:  parseEther("666"),
-            },
-            expected: {
-                executeSuccess: false,
-                canBridge:      false,
-            },
-            callStatic:         false,
-        },
-        {
-            args: {
-                tokenFrom:   Tokens.UST,
-                tokenTo:     Tokens.UST,
-                chainIdFrom: ChainId.POLYGON,
-                chainIdTo:   ChainId.FANTOM,
-                amountFrom:  Tokens.UST.valueToWei("666", ChainId.POLYGON),
-            },
-            expected: {
-                executeSuccess: false,
-                canBridge:      false,
-            },
-            callStatic:         true,
-        },
-        {
-            args: {
-                tokenFrom:   Tokens.UST,
-                tokenTo:     Tokens.UST,
-                chainIdFrom: ChainId.POLYGON,
-                chainIdTo:   ChainId.TERRA,
-                amountFrom:  Tokens.UST.valueToWei("666", ChainId.POLYGON),
-            },
-            expected: {
-                executeSuccess: false,
-                canBridge:      false,
-            },
-            callStatic:         true,
-        },
-        {
-            args: {
-                tokenFrom:   Tokens.UST,
-                tokenTo:     Tokens.UST,
-                chainIdFrom: ChainId.TERRA,
-                chainIdTo:   ChainId.FANTOM,
-                amountFrom:  Tokens.UST.valueToWei("666", ChainId.TERRA),
-            },
-            expected: {
-                executeSuccess: false,
-                canBridge:      false,
-            },
-            callStatic:         true,
-        },
-        {
-            args: {
-                tokenFrom:   Tokens.UST,
-                tokenTo:     Tokens.UST,
-                chainIdFrom: ChainId.TERRA,
-                chainIdTo:   ChainId.FANTOM,
-                amountFrom:  Tokens.UST.valueToWei("2", ChainId.TERRA),
-            },
-            expected: {
-                executeSuccess: false,
-                canBridge:      true,
-            },
-            callStatic:         true,
-        },
+        makeSignerSendTc(Tokens.ETH,    Tokens.WETH,   ChainId.OPTIMISM,  ChainId.ETH,       false, false,  failAmt),
+        makeCallStaticTc(Tokens.ETH,    Tokens.WETH,   ChainId.BOBA,      ChainId.ETH,       false, false,  failAmt),
+        makeCallStaticTc(Tokens.ETH,    Tokens.WETH_E, ChainId.ARBITRUM,  ChainId.AVALANCHE, true,  true,   BigNumber.from("6000000000000000")),
+        makeCallStaticTc(Tokens.ETH,    Tokens.NETH,   ChainId.ETH,       ChainId.OPTIMISM,  false, false,  failAmt),
+        makeSignerSendTc(Tokens.ETH,    Tokens.NETH,   ChainId.ETH,       ChainId.OPTIMISM,  false, false,  failAmt),
+        makeSignerSendTc(Tokens.NUSD,   Tokens.USDT,   ChainId.POLYGON,   ChainId.FANTOM,    false, false,  BigNumber.from("666000000000000000000")),
+        makeCallStaticTc(Tokens.UST,    Tokens.UST,    ChainId.POLYGON,   ChainId.FANTOM,    false, false,  parseUSTWei("666", ChainId.POLYGON)),
+        makeCallStaticTc(Tokens.UST,    Tokens.UST,    ChainId.POLYGON,   ChainId.TERRA,     false, false,  parseUSTWei("666", ChainId.POLYGON)),
+        makeCallStaticTc(Tokens.UST,    Tokens.UST,    ChainId.TERRA,     ChainId.FANTOM,    false, false,  parseUSTWei("666", ChainId.TERRA)),
+        makeCallStaticTc(Tokens.UST,    Tokens.UST,    ChainId.TERRA,     ChainId.HARMONY,   false, true,   BigNumber.from("5000000")),
     ];
 
     const getBridgeEstimate = async (
@@ -402,6 +309,8 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
                 if (tc.args.chainIdTo === ChainId.TERRA) {
                     doBridgeArgs.addressTo = walletArgs.terraAddress;
+                } else {
+                    doBridgeArgs.addressTo = walletArgs.evmAddress;
                 }
 
                 return
@@ -547,7 +456,147 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                         prom
                     )(this)
                 });
+            });
+        });
+    });
+
+    describe("* Validation tests", function(this: Mocha.Suite) {
+        let
+            walletArgs:     WalletArgs,
+            wallet:         EvmWallet | TerraWallet,
+            bridgeInstance: Bridge.SynapseBridge,
+            outEstimate:    Bridge.BridgeOutputEstimate;
+
+        const chainIdFrom = ChainId.BSC;
+
+        const params: Bridge.BridgeParams = {
+            tokenFrom:   Tokens.UST,
+            tokenTo:     Tokens.UST,
+            chainIdTo:   ChainId.TERRA,
+            amountFrom:  Tokens.UST.valueToWei("10", chainIdFrom),
+        };
+
+        before(async function(this: Mocha.Context) {
+            this.timeout(DEFAULT_TEST_TIMEOUT);
+
+            walletArgs = await buildWalletArgs(
+                ChainId.BSC,
+                bridgeInteractionsPrivkey.privkey
+            );
+
+            wallet         = walletArgs.wallet;
+            bridgeInstance = walletArgs.bridgeInstance;
+        });
+
+        step("- get output estimate", async function(this: Mocha.Context) {
+            this.timeout(5*1000);
+
+            let prom: Promise<Bridge.BridgeOutputEstimate> = bridgeInstance.estimateBridgeTokenOutput(params);
+            Promise.resolve(prom).then(res => outEstimate = res);
+
+            return (await expect(prom).to.eventually.not.be.rejected)
+        });
+
+        it("- should throw an error trying to use an invalid terra address", async function(this: Mocha.Context) {
+            const bridgeArgs: Bridge.BridgeTransactionParams = {
+                ...params,
+                amountFrom: Tokens.UST.valueToWei("5", chainIdFrom),
+                amountTo:   outEstimate.amountToReceive,
+                addressTo:  walletArgs.evmAddress,
+            };
+
+            let prom: Promise<PopulatedTransaction> = bridgeInstance
+                .buildBridgeTokenTransaction(bridgeArgs)
+                .then(res => res as PopulatedTransaction);
+
+            const wantErrMsg: string = `${bridgeArgs.addressTo} passed as BridgeTransactionParams.addressTo is not a valid Terra address`;
+
+            return (
+                await expect(prom).to.eventually
+                    .be.rejectedWith(wantErrMsg)
+                    .and.be.an.instanceOf(CanBridgeError)
+            )
+        });
+
+        it("- should throw an error trying to use an invalid EVM address", async function(this: Mocha.Context) {
+            const terraBridge: Bridge.SynapseBridge = new Bridge.SynapseBridge({network: ChainId.TERRA}),
+                amountFrom  = Tokens.UST.valueToWei("5", ChainId.TERRA),
+                bridgeParams: Bridge.BridgeParams = {
+                    tokenFrom:   Tokens.UST,
+                    tokenTo:     Tokens.UST,
+                    chainIdTo:   ChainId.BSC,
+                    amountFrom,
+                };
+
+            const bridgeArgs: Bridge.BridgeTransactionParams = {
+                ...bridgeParams,
+                amountFrom,
+                amountTo:   outEstimate.amountToReceive,
+                addressTo:  walletArgs.terraAddress,
+            };
+
+            let prom: Promise<MsgExecuteContract> = terraBridge
+                .buildBridgeTokenTransaction(bridgeArgs)
+                .then(res => res as MsgExecuteContract);
+
+            const wantErrMsg: string = `${bridgeArgs.addressTo} passed as BridgeTransactionParams.addressTo is not a valid EVM address`;
+
+            return (
+                await expect(prom).to.eventually
+                    .be.rejectedWith(wantErrMsg)
+                    .and.be.an.instanceOf(CanBridgeError)
+            )
+        });
+
+        describe("attempt to execute a transaction on Terra, but fail", function(this: Mocha.Suite) {
+            const terraBridge: Bridge.SynapseBridge = new Bridge.SynapseBridge({network: ChainId.TERRA}),
+                amountFrom  = Tokens.UST.valueToWei("3000000", ChainId.TERRA),
+                bridgeParams: Bridge.BridgeParams = {
+                    tokenFrom:   Tokens.UST,
+                    tokenTo:     Tokens.UST,
+                    chainIdTo:   ChainId.BSC,
+                    amountFrom,
+                };
+
+            let terraWallet: TerraWallet,
+                walletArgs:  WalletArgs,
+                estimate: Bridge.BridgeOutputEstimate;
+
+            before(async function(this: Mocha.Context) {
+                walletArgs  = await buildWalletArgs(ChainId.TERRA);
+                terraWallet = walletArgs.wallet as TerraWallet;
             })
+
+            step("- get another output estimate", async function(this: Mocha.Context) {
+                this.timeout(5*1000);
+
+                let prom: Promise<Bridge.BridgeOutputEstimate> = terraBridge
+                    .estimateBridgeTokenOutput(bridgeParams)
+                    .then(res => estimate = res);
+
+                return (await expect(prom).to.eventually.not.be.rejected)
+            });
+
+            it("- fail to use a magic executor", async function(this: Mocha.Context) {
+                const txnParams: Bridge.BridgeTransactionParams = {
+                    ...bridgeParams,
+                    amountFrom,
+                    amountTo:  estimate.amountToReceive,
+                    addressTo: walletArgs.evmAddress,
+                };
+
+                const noBalanceErr: string = `Balance of token ${Tokens.UST.symbol} is too low`;
+
+                let prom: Promise<SyncTxBroadcastResult> = terraBridge
+                    .executeBridgeTokenTransaction(txnParams, terraWallet)
+                    .then(res => res as SyncTxBroadcastResult);
+
+                return (
+                    await expect(prom).to.eventually
+                        .be.rejectedWith(noBalanceErr)
+                        .and.be.an.instanceOf(CanBridgeError)
+                )
+            });
         })
     })
 })
