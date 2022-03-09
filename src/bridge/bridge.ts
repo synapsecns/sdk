@@ -50,7 +50,7 @@ import {ERC20, MAX_APPROVAL_AMOUNT} from "./erc20";
 
 import {id as makeKappa}         from "@ethersproject/hash";
 import {Zero}                    from "@ethersproject/constants";
-import {formatUnits}             from "@ethersproject/units";
+import {isAddress}   from "@ethersproject/address";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
 import {Signer} from "@ethersproject/abstract-signer";
@@ -288,6 +288,10 @@ export namespace Bridge {
             if (args.chainIdTo === ChainId.TERRA && !validateTerraAddress(args.addressTo)) {
                 return rejectPromise(
                     new CanBridgeError(`${args.addressTo} passed as BridgeTransactionParams.addressTo is not a valid Terra address`)
+                )
+            } else if (args.chainIdTo !== ChainId.TERRA && !isAddress(args.addressTo)) {
+                return rejectPromise(
+                    new CanBridgeError(`${args.addressTo} passed as BridgeTransactionParams.addressTo is not a valid EVM address`)
                 )
             }
 
