@@ -3,14 +3,30 @@ import {Slippages} from "./slippages";
 import {Tokens} from "@tokens";
 import {ChainId}   from "@chainid";
 import {SwapPools} from "@swappools";
-
-import type {Token} from "@token";
-import type {GenericZapBridgeContract, L2BridgeZapContract} from "@contracts";
-
-import {Zero}      from "@ethersproject/constants";
-import {BigNumber} from "@ethersproject/bignumber";
 import {tokenSwitch} from "@internal/index";
+import type {Token} from "@token";
 
+import type {GenericZapBridgeContract, L2BridgeZapContract} from "@contracts";
+import {Zero}      from "@ethersproject/constants";
+import {BigNumber, type BigNumberish} from "@ethersproject/bignumber";
+
+
+export class CanBridgeError extends Error {
+    readonly amount: BigNumberish;
+
+    constructor(message: Error | string, amount?: BigNumberish) {
+        const msg: string = message instanceof Error ? message.message : message;
+
+        super(msg)
+
+        this.name = this.constructor.name // dafuq
+        this.message = msg;
+
+        if (amount) {
+            this.amount = amount;
+        }
+    }
+}
 
 export namespace BridgeUtils {
     export const L2_ETH_CHAINS: number[] = [
