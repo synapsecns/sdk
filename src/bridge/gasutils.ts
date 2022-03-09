@@ -17,12 +17,18 @@ export namespace GasUtils {
 
     const makeGwei = (n: string): BigNumber => parseUnits(n, "gwei")
 
+
+
     const CHAIN_GAS_PARAMS: ChainIdTypeMap<GasParams> = {
         [ChainId.ETH]: {
             maxFeePerGas:    makeGwei("100"),
             maxPriorityFee:  makeGwei("1.5"),
             bridgeGasLimit:  BigNumber.from(100000),
             approveGasLimit: BigNumber.from(75000),
+        },
+        [ChainId.OPTIMISM]: {
+            bridgeGasLimit:  BigNumber.from(250000),
+            approveGasLimit: BigNumber.from(90000),
         },
         [ChainId.BSC]: {
             gasPrice:        makeGwei("6"),
