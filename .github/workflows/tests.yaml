@@ -65,6 +65,7 @@ jobs:
           POLYGON_RPC_URI:   ${{ secrets.POLYGON_RPC_URI }}
           FANTOM_RPC_URI:    ${{ secrets.FANTOM_RPC_URI }}
           ARBITRUM_RPC_URI:  ${{ secrets.ARBITRUM_RPC_URI }}
+          HARMONY_RPC_URI:   "https://api.fuzz.fi"
           INFINITE_APPROVALS_PRIVKEY:          ${{ secrets.INFINITE_APPROVALS_PRIVKEY }}
           INFINITE_APPROVALS_PRIVKEY_ADDRESS:  ${{ secrets.INFINITE_APPROVALS_PRIVKEY_ADDRESS }}
           BRIDGE_INTERACTIONS_PRIVKEY:         ${{ secrets.BRIDGE_INTERACTIONS_PRIVKEY }}
