@@ -24,7 +24,7 @@ import {
     expectNotZero,
     expectRejected,
     makeWalletSignerWithProvider,
-    RunLiveBridgeTests
+    RunLiveBridgeTests, SHORT_TEST_TIMEOUT, skipDescribeIf
 } from "@tests/helpers";
 
 import {bridgeInteractionsPrivkey, type BridgeSwapTestCase} from "./bridge_test_utils";
@@ -193,7 +193,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
     const
         failAmt:  BigNumber = BigNumber.from("420696969000000000000"),
         beastAmt: BigNumber = BigNumber.from("666000000"),
-        fiveUST:  BigNumber = BigNumber.from("5000000");
+        bridgeAmt: BigNumber = BigNumber.from("1005000");
 
     let testCases: TestCase[] = [
         makeSignerSendTc(Tokens.ETH,    Tokens.WETH,   ChainId.OPTIMISM,  ChainId.ETH,       false, false,  failAmt),
@@ -208,7 +208,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         makeUSTTest(ChainId.POLYGON, ChainId.FANTOM,  false, false, beastAmt),
         makeUSTTest(ChainId.POLYGON, ChainId.TERRA,   false, false, beastAmt),
         makeUSTTest(ChainId.TERRA,   ChainId.FANTOM,  false, false, beastAmt),
-        makeUSTTest(ChainId.TERRA,   ChainId.HARMONY, false, false, fiveUST, false),
+        // makeUSTTest(ChainId.TERRA,   ChainId.FANTOM,  true,  true,  bridgeAmt, false),
     ];
 
     const liveTestCases: TestCase[] = [
@@ -242,37 +242,6 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 })
             )
             .catch(rejectPromise)
-
-    testCases.forEach(tc => {
-        const
-            describeNetFromTitle: string = `${tc.args.tokenFrom.symbol} on ${Networks.networkName(tc.args.chainIdFrom)}`,
-            desribeNetToTitle:    string = `${tc.args.tokenTo.symbol} on ${Networks.networkName(tc.args.chainIdTo)}`,
-            execModeTitle:        string = tc.callStatic ? "(CallStatic)" : "(Signer Sends)",
-            describeTitle:        string = `Test ${describeNetFromTitle} to ${desribeNetToTitle} ${execModeTitle}`,
-            executionTestSuffix:  string = `should ${tc.expected.executeSuccess ? "execute succesfully" : "fail"}`;
-
-        const
-            executeTxnTestTitle = (txnKind: string): string => `${txnKind} transaction ${executionTestSuffix}`,
-            approvalTxnTestTitle: string = executeTxnTestTitle("ERC20.Approve"),
-            bridgeTxnTestTitle:   string = executeTxnTestTitle("SynapseBridge token bridge");
-
-        describe(describeTitle, function(this: Mocha.Suite) {
-            let
-                walletArgs:     WalletArgs,
-                wallet:         EvmWallet | TerraWallet,
-                bridgeInstance: Bridge.SynapseBridge;
-
-            before(async function(this: Mocha.Context) {
-                this.timeout(DEFAULT_TEST_TIMEOUT);
-
-                walletArgs = await buildWalletArgs(
-                    tc.args.chainIdFrom,
-                    bridgeInteractionsPrivkey.privkey
-                );
-
-                wallet         = walletArgs.wallet;
-                bridgeInstance = walletArgs.bridgeInstance;
-            })
 
             function executeTxnFunc(
                 tc:       TestCase,
@@ -327,12 +296,44 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 }
             }
 
+    testCases.forEach(tc => {
+        const
+            describeNetFromTitle: string = `${tc.args.tokenFrom.symbol} on ${Networks.networkName(tc.args.chainIdFrom)}`,
+            desribeNetToTitle:    string = `${tc.args.tokenTo.symbol} on ${Networks.networkName(tc.args.chainIdTo)}`,
+            execModeTitle:        string = tc.callStatic ? "(CallStatic)" : "(Signer Sends)",
+            describeTitle:        string = `Test ${describeNetFromTitle} to ${desribeNetToTitle} ${execModeTitle}`,
+            executionTestSuffix:  string = `should ${tc.expected.executeSuccess ? "execute succesfully" : "fail"}`;
+
+        const
+            executeTxnTestTitle = (txnKind: string): string => `${txnKind} transaction ${executionTestSuffix}`,
+            approvalTxnTestTitle: string = executeTxnTestTitle("ERC20.Approve"),
+            bridgeTxnTestTitle:   string = executeTxnTestTitle("SynapseBridge token bridge");
+
+        describe(describeTitle, function(this: Mocha.Suite) {
+            let
+                walletArgs:     WalletArgs,
+                wallet:         EvmWallet | TerraWallet,
+                bridgeInstance: Bridge.SynapseBridge;
+
+            before(async function(this: Mocha.Context) {
+                this.timeout(DEFAULT_TEST_TIMEOUT);
+
+                walletArgs = await buildWalletArgs(
+                    tc.args.chainIdFrom,
+                    bridgeInteractionsPrivkey.privkey
+                );
+
+                wallet         = walletArgs.wallet;
+                bridgeInstance = walletArgs.bridgeInstance;
+            })
+
             let
                 outputEstimate: Bridge.BridgeOutputEstimate,
                 doBridgeArgs:   Bridge.BridgeTransactionParams;
 
             step("acquire output estimate", async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
+                this.slow(1.5*1000);
 
                 let prom = getBridgeEstimate(tc, walletArgs);
 
@@ -370,10 +371,35 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                     expect(prom).to.eventually
                         .equal(tc.expected.canBridge)
                         .notify(done);
-            });
+                });
             });
 
             let needsApproval = true;
+
+            step("- Check approval", async function(this: Mocha.Context) {
+                if (tc.args.chainIdFrom === ChainId.TERRA) {
+                    needsApproval = false;
+                    return
+                }
+
+                this.slow(1.5*1000);
+
+                const _contracts = SynapseContracts.contractsForChainId(tc.args.chainIdFrom);
+
+                const spender: string = tc.args.tokenFrom.isEqual(Tokens.UST) && tc.args.chainIdTo === ChainId.TERRA
+                    ? _contracts.bridgeAddress
+                    : _contracts.bridgeZapAddress;
+
+                let allowance = await ERC20.allowanceOf(
+                    walletArgs.evmAddress,
+                    spender,
+                    {
+                        tokenAddress: Tokens.UST.address(tc.args.chainIdFrom),
+                        chainId:      tc.args.chainIdFrom,
+                    });
+
+                needsApproval = allowance.lt(tc.args.amountFrom);
+            });
 
             describe("- Transaction Builders", function(this: Mocha.Suite) {
                 let
@@ -394,6 +420,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                     }
                 }
 
+                describe("-- Build transactions", function(this: Mocha.Suite) {
                 step(approveTitle, async function(this: Mocha.Context) {
                     if (tc.args.tokenFrom.isEqual(Tokens.ETH)) return
                     if (tc.args.chainIdFrom === ChainId.TERRA) return
@@ -416,34 +443,17 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                             .then((txn) => bridgeTxn = txn)
                     ))
                 });
-
-                step("- check if we need approval", async function(this: Mocha.Context) {
-                    if (tc.args.chainIdFrom === ChainId.TERRA) {
-                        needsApproval = false;
-                        return
-                    }
-
-                    const _contracts = SynapseContracts.contractsForChainId(tc.args.chainIdFrom);
-
-                    const spender: string = tc.args.tokenFrom.isEqual(Tokens.UST) && tc.args.chainIdTo === ChainId.TERRA
-                        ? _contracts.bridgeAddress
-                        : _contracts.bridgeZapAddress;
-
-                    let allowance = await ERC20.allowanceOf(
-                        walletArgs.evmAddress,
-                        spender,
-                        {
-                            tokenAddress: Tokens.UST.address(tc.args.chainIdFrom),
-                            chainId:      tc.args.chainIdFrom,
                         });
 
-                    needsApproval = allowance.lt(tc.args.amountFrom);
-                })
+                const execOnTerra: boolean = tc.args.chainIdFrom === ChainId.TERRA && !tc.callStatic;
 
+                skipDescribeIf(execOnTerra)("-- Execute transactions", function(this: Mocha.Suite) {
                 step(approvalTxnTestTitle, async function(this: Mocha.Context) {
                     if (!needsApproval) {
                         return
                     }
+
+                        this.slow(SHORT_TEST_TIMEOUT);
 
                     if (tc.callStatic) {
                         return await callStaticFunc(
@@ -465,11 +475,9 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 });
 
                 step(bridgeTxnTestTitle, async function(this: Mocha.Context) {
-                    if (tc.callStatic) {
-                        if (tc.args.chainIdFrom === ChainId.TERRA) {
-                            return
-                        }
+                        this.slow(SHORT_TEST_TIMEOUT);
 
+                        if (tc.callStatic) {
                         return await callStaticFunc(
                             tc,
                             staticCallPopulatedTransaction(
@@ -489,12 +497,15 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                     }
                 });
             });
+            });
 
-            (tc.callStatic ? describe.skip : describe)("- Magic Executors", function(this: Mocha.Suite) {
+            skipDescribeIf(tc.callStatic)("- Magic Executors", function(this: Mocha.Suite) {
                 step(approvalTxnTestTitle, async function(this: Mocha.Context) {
                     if (!needsApproval) {
                         return
                     }
+
+                    this.slow(1.5*1000);
 
                     return await executeTxnFunc(
                         tc,
@@ -504,6 +515,8 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 });
 
                 step(bridgeTxnTestTitle, async function (this: Mocha.Context) {
+                    this.slow(SHORT_TEST_TIMEOUT);
+
                     let prom: Promise<GenericTxnResponse> =
                         bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet)
 
@@ -546,6 +559,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
         step("- get output estimate", async function(this: Mocha.Context) {
             this.timeout(5*1000);
+            this.slow(1.5*1000);
 
             let prom = bridgeInstance.estimateBridgeTokenOutput(params);
             Promise.resolve(prom).then(res => outEstimate = res);
@@ -608,7 +622,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         describe("attempt to execute a transaction on Terra, but fail", function(this: Mocha.Suite) {
             const
                 terraBridge = new Bridge.SynapseBridge({network: ChainId.TERRA}),
-                amountFrom  = Tokens.UST.valueToWei("3000000", ChainId.TERRA),
+                amountFrom  = Tokens.UST.valueToWei("500000000000", ChainId.TERRA),
                 bridgeParams: Bridge.BridgeParams = {
                     tokenFrom:   Tokens.UST,
                     tokenTo:     Tokens.UST,
@@ -628,6 +642,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
             step("- get another output estimate", async function(this: Mocha.Context) {
                 this.timeout(5*1000);
+                this.slow(1.5*1000);
 
                 let prom = terraBridge
                     .estimateBridgeTokenOutput(bridgeParams)
@@ -637,6 +652,8 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
             });
 
             it("- fail to use a magic executor", async function(this: Mocha.Context) {
+                this.slow(1.5*1000);
+
                 const txnParams: Bridge.BridgeTransactionParams = {
                     ...bridgeParams,
                     amountFrom,
@@ -658,10 +675,12 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
             });
 
             it("- fail to use a built transaction", async function(this: Mocha.Context) {
+                this.slow(1.5*1000);
+
                 const txnParams: Bridge.BridgeTransactionParams = {
                     ...bridgeParams,
-                    amountFrom: BigNumber.from(500000),
-                    amountTo:   BigNumber.from(400000),
+                    amountFrom: BigNumber.from("500000000000"),
+                    amountTo:   BigNumber.from("400000000000"),
                     addressTo:  walletArgs.evmAddress,
                 };
 

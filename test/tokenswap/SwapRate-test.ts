@@ -64,6 +64,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
 
             step(testTitle1, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
+                this.slow(750);
 
                 let prom: Promise<TokenSwap.EstimatedSwapRate> = Promise.resolve(TokenSwap.calculateSwapRate({
                     chainId:   tc.chainId,

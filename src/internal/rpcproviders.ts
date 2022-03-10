@@ -115,6 +115,7 @@ export function rpcProviderForChain(chainId: number): Provider {
 }
 
 export function terraRpcProvider(chainId: number = ChainId.TERRA): LCDClient {
+    /* c8 ignore next 4 */
     if (!isTerraChainId(chainId)) {
         console.error("call `rpcProviderForChain(chainId)` for an EVM-compatible RPC provider");
         return null

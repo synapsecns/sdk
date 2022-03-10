@@ -52,6 +52,8 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
             it(testTitle, async function(this: Mocha.Context) {
                 this.timeout(3.75*1000);
+                this.slow(750);
+
                 let prom = bridgeInstance.bridgeVersion();
                 return expect(await prom).to.equal(expected);
             })
@@ -80,6 +82,8 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
             it(testTitle, async function(this: Mocha.Context) {
                 this.timeout(3.75*1000);
+                this.slow(750);
+
                 let prom = bridgeInstance.WETH_ADDRESS();
                 return expect(await prom).to.equal(expected);
             })
@@ -127,6 +131,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
             it(title, async function (this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
+                this.slow(750);
 
                 let bridgeInstance = new Bridge.SynapseBridge({network, provider});
 
@@ -153,6 +158,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
         describe("- infinite approval", function(this: Mocha.Suite) {
             step("Ensure infinite approval test address has infinite approval", async function(this: Mocha.Context) {
                 this.timeout(EXECUTORS_TEST_TIMEOUT);
+                this.slow(750);
 
                 dotenv.config();
 

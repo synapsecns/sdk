@@ -103,6 +103,12 @@ export const
     expectGteZero = (data: BigNumber): Chai.Assertion => expectGte(data, Zero),
     expectNotZero = (data: BigNumber): Chai.Assertion => expectGt(data, Zero);
 
+export function skipDescribeIf(condition: boolean): Mocha.SuiteFunction | Mocha.PendingSuiteFunction {
+    return condition
+        ? describe.skip
+        : describe
+}
+
 export function wrapExpect(expectFn: Chai.Assertion): Mocha.Func {
     return function(this: Mocha.Context): void {
         expect(expectFn);

@@ -100,6 +100,7 @@ export class TerraRpcConnector {
         return this._providers[chainId]
     }
 
+    /* c8 ignore start */
     /**
      * @internal
      */
@@ -116,6 +117,7 @@ export class TerraRpcConnector {
         this._chainEndpoints[chainId] = endpoint;
         this._providers[chainId]      = provider
     }
+    /* c8 ignore stop */
 
     private _newProvider(
         chainId:       number,

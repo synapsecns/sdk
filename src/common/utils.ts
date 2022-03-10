@@ -36,7 +36,7 @@ export function staticCallPopulatedTransaction(
         .then(txn => signer.call(txn)
             .then((res): number  => {
                 let successRes = StaticCallResult.Success;
-
+                /* c8 ignore start */
                 if (successFn && (txn.data && txn.data !== "0x")) {
                     try {
                         let {data="", value} = txn;
@@ -45,6 +45,7 @@ export function staticCallPopulatedTransaction(
                             : StaticCallResult.Failure
                     } catch {}
                 }
+                /* c8 ignore stop */
 
                 return successRes
         })

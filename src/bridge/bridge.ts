@@ -356,6 +356,7 @@ export namespace Bridge {
             try {
                 await this.checkSwapSupported(args);
             } catch (e) {
+                /* c8 ignore next 2 */
                 return rejectPromise(e);
             }
 
@@ -577,6 +578,7 @@ export namespace Bridge {
             try { /* c8 ignore start */
                 amountToReceive = await Promise.resolve(amountToReceive_to_prom)
             } catch (err) {
+                /* c8 ignore next */
                 return rejectPromise(err)
             } /* c8 ignore stop */
 
@@ -1043,6 +1045,7 @@ export namespace Bridge {
 
             let balanceFn: () => Promise<BigNumber>;
             if (signer) {
+                /* c8 ignore next */
                 balanceFn = signer.getBalance;
             } else if (address) {
                 balanceFn = () => this.provider.getBalance(address);
@@ -1138,6 +1141,7 @@ export namespace Bridge {
         return null
     }
 
+    /* c8 ignore next */
     export function bridgeSwapSupported(args: TokenSwap.BridgeSwapSupportedParams): TokenSwap.SwapSupportedResult {
         return TokenSwap.bridgeSwapSupported(args)
     }

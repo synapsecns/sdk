@@ -258,6 +258,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
             if (tc.expected.wantError) return
 
             this.timeout(DEFAULT_TEST_TIMEOUT);
+            this.slow(1000);
 
             let {
                 args: {

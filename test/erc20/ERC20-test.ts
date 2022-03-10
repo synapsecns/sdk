@@ -72,6 +72,7 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
     describe("Balance of test", function(this: Mocha.Suite) {
         it("should have an nUSD balance greater than zero", async function(this: Mocha.Context) {
             this.timeout(DEFAULT_TEST_TIMEOUT);
+            this.slow(750);
 
             return expectNotZero(await ERC20.balanceOf(testAddr, tokenParams(ChainId.BSC)))
         })
@@ -80,6 +81,7 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
     describe("allowanceOf test", function(this: Mocha.Suite) {
         it("synapsebridgezap should have an nUSD allowance gte zero", async function(this: Mocha.Context) {
             this.timeout(DEFAULT_TEST_TIMEOUT);
+            this.slow(750);
 
             return expectGteZero(await ERC20.allowanceOf(
                 testAddr,
