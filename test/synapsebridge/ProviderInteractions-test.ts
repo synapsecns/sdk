@@ -4,12 +4,18 @@ import {step} from "mocha-steps";
 import type {Token} from "@sdk";
 import {Bridge, ChainId, Networks, Tokens} from "@sdk";
 import {ERC20Factory}     from "@sdk/contracts";
-import {StaticCallResult} from "@sdk/common/types";
+import {
+    StaticCallResult,
+    GenericTxnResponse,
+    GenericSigner
+} from "@sdk/common/types";
 import {TerraSignerWrapper} from "@sdk/internal/utils";
 import {terraRpcProvider} from "@sdk/internal/rpcproviders";
 import {CanBridgeError}   from "@sdk/bridge/bridgeutils";
 import {ERC20}              from "@sdk/bridge/erc20";
 import {rejectPromise, staticCallPopulatedTransaction} from "@sdk/common/utils";
+import {SynapseContracts}   from "@sdk/common/synapse_contracts";
+
 
 import {
     DEFAULT_TEST_TIMEOUT,
@@ -23,16 +29,15 @@ import {
 
 import {bridgeInteractionsPrivkey, type BridgeSwapTestCase} from "./bridge_test_utils";
 
-import type {TransactionRequest, TransactionResponse} from "@ethersproject/providers";
 import type {
-    ContractTransaction,
     PopulatedTransaction
 } from "@ethersproject/contracts";
 
 import {Wallet as EvmWallet} from "@ethersproject/wallet";
 
 import {BytesLike}  from "@ethersproject/bytes";
-import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+import {BigNumber}  from "@ethersproject/bignumber";
+import {TransactionResponse} from "@ethersproject/providers";
 
 import {
     MsgExecuteContract,
@@ -41,18 +46,12 @@ import {
     Wallet as TerraWallet,
     isTxError
 } from "@terra-money/terra.js";
-import {SynapseContracts} from "@common/synapse_contracts";
 
 
-type Resolveable<T> = {[ K in keyof T ]: T[K] | Promise<T[K]>};
 
-type GenericTxn         = TransactionRequest | MsgExecuteContract;
-type TxnResponse = ContractTransaction | TransactionResponse;
-type GenericTxnResponse = TxnResponse | BlockTxBroadcastResult;
-
-function executeTransaction(prom: Promise<TxnResponse>): Promise<void> {
+function executeTransaction(prom: Promise<TransactionResponse>): Promise<void> {
     return prom
-        .then((response: TxnResponse): Promise<void> =>
+        .then((response: TransactionResponse): Promise<void> =>
             response.wait(1)
                 .then(() => {})
         )
@@ -181,23 +180,6 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         }
     }
 
-    const parseUSTWei = (amt: BigNumberish, cid: number): BigNumber => Tokens.UST.valueToWei(amt, cid);
-
-    const failAmt: BigNumber = BigNumber.from("420696969000000000000");
-
-    const testCases: TestCase[] = [
-        makeSignerSendTc(Tokens.ETH,    Tokens.WETH,   ChainId.OPTIMISM,  ChainId.ETH,       false, false,  failAmt),
-        makeCallStaticTc(Tokens.ETH,    Tokens.WETH,   ChainId.BOBA,      ChainId.ETH,       false, false,  failAmt),
-        makeCallStaticTc(Tokens.ETH,    Tokens.WETH_E, ChainId.ARBITRUM,  ChainId.AVALANCHE, true,  true,   BigNumber.from("6000000000000000")),
-        makeCallStaticTc(Tokens.ETH,    Tokens.NETH,   ChainId.ETH,       ChainId.OPTIMISM,  false, false,  failAmt),
-        makeSignerSendTc(Tokens.ETH,    Tokens.NETH,   ChainId.ETH,       ChainId.OPTIMISM,  false, false,  failAmt),
-        makeSignerSendTc(Tokens.NUSD,   Tokens.USDT,   ChainId.POLYGON,   ChainId.FANTOM,    false, false,  BigNumber.from("666000000000000000000")),
-        makeCallStaticTc(Tokens.UST,    Tokens.UST,    ChainId.POLYGON,   ChainId.FANTOM,    false, false,  parseUSTWei("666", ChainId.POLYGON)),
-        makeCallStaticTc(Tokens.UST,    Tokens.UST,    ChainId.POLYGON,   ChainId.TERRA,     false, false,  parseUSTWei("666", ChainId.POLYGON)),
-        makeCallStaticTc(Tokens.UST,    Tokens.UST,    ChainId.TERRA,     ChainId.FANTOM,    false, false,  parseUSTWei("666", ChainId.TERRA)),
-        makeSignerSendTc(Tokens.UST,    Tokens.UST,    ChainId.TERRA,     ChainId.HARMONY,   false, false,  BigNumber.from("5000000")),
-    ];
-
     function makeUSTTest(
         c1: number, c2: number,
         succeeds: boolean, canBridge: boolean,
@@ -208,20 +190,38 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
             : makeSignerSendTc(Tokens.UST, Tokens.UST, c1, c2, succeeds, canBridge, amountFrom)
     }
 
-    // const liveTestCases: TestCase[] = [
+    const
+        failAmt:  BigNumber = BigNumber.from("420696969000000000000"),
+        beastAmt: BigNumber = BigNumber.from("666000000"),
+        fiveUST:  BigNumber = BigNumber.from("5000000");
+
+    let testCases: TestCase[] = [
+        makeSignerSendTc(Tokens.ETH,    Tokens.WETH,   ChainId.OPTIMISM,  ChainId.ETH,       false, false,  failAmt),
+        makeCallStaticTc(Tokens.ETH,    Tokens.WETH,   ChainId.BOBA,      ChainId.ETH,       false, false,  failAmt),
+        makeCallStaticTc(Tokens.ETH,    Tokens.NETH,   ChainId.ETH,       ChainId.OPTIMISM,  false, false,  failAmt),
+        makeSignerSendTc(Tokens.ETH,    Tokens.NETH,   ChainId.ETH,       ChainId.OPTIMISM,  false, false,  failAmt),
+        makeSignerSendTc(Tokens.NUSD,   Tokens.USDT,   ChainId.POLYGON,   ChainId.FANTOM,    false, false,  BigNumber.from("666000000000000000000")),
+        makeCallStaticTc(Tokens.ETH,    Tokens.WETH_E, ChainId.ARBITRUM,  ChainId.AVALANCHE, true,  true,   BigNumber.from("6000000000000000")),
+    ];
+
+    const ustTestCases: TestCase[] = [
+        makeUSTTest(ChainId.POLYGON, ChainId.FANTOM,  false, false, beastAmt),
+        makeUSTTest(ChainId.POLYGON, ChainId.TERRA,   false, false, beastAmt),
+        makeUSTTest(ChainId.TERRA,   ChainId.FANTOM,  false, false, beastAmt),
+        makeUSTTest(ChainId.TERRA,   ChainId.HARMONY, false, false, fiveUST, false),
+    ];
+
+    const liveTestCases: TestCase[] = [
     //     makeUSTTest(ChainId.TERRA,    ChainId.HARMONY, true, true,  BigNumber.from("2000000"),false),
     //     makeUSTTest(ChainId.HARMONY,  ChainId.BSC,     true, true,  BigNumber.from("8000000"), false),
     //     makeUSTTest(ChainId.BSC,      ChainId.TERRA,   true, true,  BigNumber.from("4500000"), false),
-    // ];
-    //
-    // if (RunLiveBridgeTests) {
-    //     testCases.push(...liveTestCases);
-    // }
+    ];
 
-    interface GenericSigner {
-        getAddress:         () => Promise<string>;
-        sendTransaction:    (tx: Resolveable<GenericTxn>) => Promise<GenericTxnResponse>;
-    }
+    testCases = [
+        ...testCases,
+        ...ustTestCases,
+        ...(RunLiveBridgeTests ? liveTestCases : [])
+    ];
 
     const getBridgeEstimate = async (
         tc: TestCase,
@@ -293,7 +293,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                         ))
                     }
 
-                    let execProm = executeTransaction(prom as Promise<TxnResponse>);
+                    let execProm = executeTransaction(prom as Promise<TransactionResponse>);
 
                     return (await (approval
                         ? expectNothingFromPromise(execProm)
@@ -655,6 +655,27 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                         .be.rejectedWith(noBalanceErr)
                         .and.be.an.instanceOf(CanBridgeError)
                 )
+            });
+
+            it("- fail to use a built transaction", async function(this: Mocha.Context) {
+                const txnParams: Bridge.BridgeTransactionParams = {
+                    ...bridgeParams,
+                    amountFrom: BigNumber.from(500000),
+                    amountTo:   BigNumber.from(400000),
+                    addressTo:  walletArgs.evmAddress,
+                };
+
+                let walletWrapper = new TerraSignerWrapper(terraWallet);
+
+                let prom: Promise<MsgExecuteContract> = terraBridge
+                    .buildBridgeTokenTransaction(txnParams)
+                    .then(m => m as MsgExecuteContract);
+
+
+                let msg = await prom;
+                let prom2 = walletWrapper.sendTransaction(msg);
+
+                return (await expect(prom2).to.eventually.be.rejected)
             });
         })
     })
