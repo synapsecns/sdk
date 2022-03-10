@@ -29,6 +29,13 @@ export interface Token extends IBaseToken {
     wrapperAddress:   (chainId: number) => string | null;
 }
 
+export function instanceOfToken(object: any): object is Token {
+    return 'name' in object
+        && 'isWrappedToken' in object
+        && 'valueToWei' in object
+        && 'swapType' in object
+}
+
 export interface BaseTokenArgs {
     name:              string,
     symbol:            string,
