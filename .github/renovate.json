@@ -13,9 +13,9 @@
       "matchUpdateTypes": ["minor", "patch", "pin"],
       "matchDepTypes": ["devDependencies"],
       "groupName": "dev dependencies (minor/patch/pin)",
-      "excludePackagePrefixes": [],
+      "excludePackagePrefixes": ["dotenv"],
       "matchManagers": ["npm"],
-      "automerge": false
+      "automerge": true
     },
     {
       "matchUpdateTypes": ["minor", "patch", "pin"],
@@ -23,7 +23,7 @@
       "groupName": "dependencies (minor/patch/pin)",
       "excludePackagePrefixes": [],
       "matchManagers": ["npm"],
-      "automerge": false
+      "automerge": true
     },
     {
       "matchUpdateTypes": ["major"],
@@ -35,7 +35,7 @@
       "matchUpdateTypes": ["major"],
       "matchDepTypes": ["devDependencies"],
       "groupName": "dev dependencies (major)",
-      "excludePackagePrefixes": [],
+      "excludePackagePrefixes": ["dotenv"],
       "matchManagers": ["npm"],
       "automerge": false
     }
@@ -44,5 +44,6 @@
   "prHourlyLimit": 5,
   "baseBranches": ["dev"],
   "enabledManagers": ["npm"],
+  "rebaseWhen": "behind-base-branch",
   "lockFileMaintenance": { "enabled": true }
 }
