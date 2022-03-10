@@ -58,13 +58,14 @@ export namespace SwapPools {
         swapAddress:  string,
         poolId:       number,
         poolTokens:   Token[],
-        notLP?:       boolean
+        notLP?:       boolean,
+        symbol?:      string
     }): SwapToken =>
         new SwapToken({
             addresses: {[args.chainId]: args.address},
             decimals:  18,
             name:      "Synapse nUSD LP Token" + (args.netName != "BSC" ? ` ${args.netName}` : ""),
-            symbol:    (args.notLP ?? false) ? "nUSD" : "nUSD-LP",
+            symbol:    args.symbol ? args.symbol : (args.notLP ?? false) ? "nUSD" : "nUSD-LP",
             poolName:  `${args.netName} Stableswap Pool `,
             poolId:    args.poolId,
             poolType:  SwapType.USD,
@@ -289,6 +290,16 @@ export namespace SwapPools {
         nativeTokens:    ETHTokenPool,
     });
 
+    export const METIS_POOL_SWAP_TOKEN = makeSwapToken({
+        chainId:      ChainId.METIS,
+        address:     "0xC6f684aE516480A35f337a4dA8b40EB6550e07E0",
+        netName:     "Metis",
+        symbol:      "nUSDLP",
+        poolId:       0,
+        swapAddress: "0x555982d2E211745b96736665e19D9308B615F78e",
+        poolTokens:   [Tokens.NUSD, Tokens.USDC],
+    });
+
     export const ARBITRUM_POOL_SWAP_TOKEN = makeSwapToken({
         chainId:      ChainId.ARBITRUM,
         address:     "0xcFd72be67Ee69A0dd7cF0f846Fc0D98C33d60F16",
@@ -459,18 +470,24 @@ export namespace SwapPools {
             FRAX_Pool,
         ),
         [ChainId.OPTIMISM]: makeSwapTypeMap(
-        {ethPool: [OPTIMISM_ETH_SWAP_TOKEN, OPTIMISM_ETH_SWAP_TOKEN.poolTokens]}
+            {
+                ethPool: [OPTIMISM_ETH_SWAP_TOKEN, OPTIMISM_ETH_SWAP_TOKEN.poolTokens]
+            }
         ),
         [ChainId.CRONOS]: makeSwapTypeMap({}),
         [ChainId.BSC]: makeSwapTypeMap(
-        {usdPool: [BSC_POOL_SWAP_TOKEN, BSC_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps]},
+            {
+                usdPool: [BSC_POOL_SWAP_TOKEN, BSC_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps]
+            },
             HIGH_Pool,
             DOG_Pool,
             JUMP_Pool,
             NFD_Pool,
         ),
         [ChainId.POLYGON]: makeSwapTypeMap(
-        {usdPool: [POLYGON_POOL_SWAP_TOKEN, POLYGON_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps]},
+            {
+                usdPool: [POLYGON_POOL_SWAP_TOKEN, POLYGON_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps]
+            },
             NFD_Pool,
             DOG_Pool,
         ),
@@ -488,7 +505,11 @@ export namespace SwapPools {
                 ethPool: [BOBA_ETH_SWAP_TOKEN,  BOBA_ETH_SWAP_TOKEN.poolTokens]
             },
         ),
-        [ChainId.METIS]: makeSwapTypeMap({}),
+        [ChainId.METIS]: makeSwapTypeMap(
+            {
+                usdPool: [METIS_POOL_SWAP_TOKEN, METIS_POOL_SWAP_TOKEN.poolTokens]
+            }
+        ),
         [ChainId.MOONBEAM]: makeSwapTypeMap(
             {},
             SOLAR_Pool,
@@ -584,6 +605,8 @@ export namespace SwapPools {
                 return FANTOM_POOL_SWAP_TOKEN
             case ChainId.BOBA:
                 return BOBA_POOL_SWAP_TOKEN
+            case ChainId.METIS:
+                return METIS_POOL_SWAP_TOKEN
             case ChainId.ARBITRUM:
                 return ARBITRUM_POOL_SWAP_TOKEN
             case ChainId.AVALANCHE:
