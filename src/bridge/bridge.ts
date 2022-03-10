@@ -472,10 +472,10 @@ export namespace Bridge {
         private async calculateBridgeRate(args: BridgeParams): Promise<BridgeOutputEstimate> {
             let {chainIdTo, amountFrom} = args;
 
-            const toChainZapParams = {chainId: chainIdTo, signerOrProvider: rpcProviderForChain(chainIdTo)};
             let toChainZap: GenericZapBridgeContract;
 
-            if (!isTerraChainId(chainIdTo)) {
+            if (chainIdTo !== ChainId.TERRA) {
+                const toChainZapParams = {chainId: chainIdTo, signerOrProvider: rpcProviderForChain(chainIdTo)};
                 toChainZap = SynapseEntities.GenericZapBridgeContractInstance(toChainZapParams);
             }
 
@@ -484,7 +484,6 @@ export namespace Bridge {
                 tokenIndexFrom, tokenIndexTo,
                 fromChainTokens
             } = this.makeBridgeTokenArgs(args);
-
 
             let {intermediateToken, bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
 
