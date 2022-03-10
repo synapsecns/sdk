@@ -444,6 +444,7 @@ export namespace Bridge {
 
             let signerAddress: string;
             if (signer) {
+                /* c8 ignore next */
                 signerAddress = await signer.getAddress();
             } else if (address && address !== "") {
                 signerAddress = address;
@@ -574,10 +575,10 @@ export namespace Bridge {
             }
 
             let amountToReceive: BigNumber;
+
             try { /* c8 ignore start */
                 amountToReceive = await Promise.resolve(amountToReceive_to_prom)
             } catch (err) {
-                /* c8 ignore next */
                 return rejectPromise(err)
             } /* c8 ignore stop */
 
@@ -1073,16 +1074,17 @@ export namespace Bridge {
             const balProm: Promise<BigNumber> = this.terraProvider.bank.balance(address)
                 .then(([res]) => {
                     let coin = res.get("uusd");
+
+                    let ustBalance: BigNumber = Zero;
+
                     if (coin) {
                         const {amount} = coin.toData();
                         if (amount && (amount !== "")) {
-                            return BigNumber.from(amount);
+                            ustBalance = BigNumber.from(amount);
                         }
-
-                        return Zero
                     }
 
-                    return Zero
+                    return ustBalance
                 })
 
             return this.resolveBalanceFunc(
