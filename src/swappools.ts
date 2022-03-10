@@ -69,7 +69,7 @@ export namespace SwapPools {
             addresses: {[args.chainId]: args.address},
             decimals:  18,
             name:      "Synapse nUSD LP Token" + (args.netName != "BSC" ? ` ${args.netName}` : ""),
-            symbol:    args.symbol ? args.symbol : (args.notLP ?? false) ? "nUSD" : "nUSD-LP",
+            symbol:    args.symbol ?? ((args.notLP ?? false) ? "nUSD" : "nUSD-LP"),
             poolName:  `${args.netName} Stableswap Pool `,
             poolId:    args.poolId,
             poolType:  SwapType.USD,
@@ -568,23 +568,6 @@ export namespace SwapPools {
         const m = bridgeSwappableMap[chainId].swappableTokens;
         return swapGroup in m ? m[swapGroup] : []
     }
-
-    // export const BRIDGEABLE_TOKENS = {
-    //     [ChainId.ETH]:       [Tokens.USDC, Tokens.USDT, Tokens.DAI, Tokens.GOHM, Tokens.SYN, Tokens.FRAX, Tokens.NUSD, Tokens.ETH, Tokens.DOG, Tokens.HIGH],
-    //     [ChainId.BSC]:       [Tokens.BUSD, Tokens.USDC, Tokens.USDT, Tokens.GOHM, Tokens.SYN, Tokens.NUSD, Tokens.DOG, Tokens.JUMP, Tokens.NFD, Tokens.HIGH],
-    //     [ChainId.FANTOM]:    [Tokens.USDC, Tokens.USDT, Tokens.FTM_ETH, Tokens.GOHM, Tokens.SYN, Tokens.NETH, Tokens.NUSD, Tokens.JUMP],                 //  FRAX,
-    //     [ChainId.POLYGON]:   [Tokens.USDC, Tokens.USDT, Tokens.DAI, Tokens.GOHM, Tokens.NUSD, Tokens.SYN, Tokens.DOG, Tokens.NFD],
-    //     [ChainId.BOBA]:      [Tokens.ETH, Tokens.NETH, Tokens.GOHM, Tokens.DAI, Tokens.USDC, Tokens.USDT, Tokens.SYN, Tokens.NUSD],
-    //     [ChainId.MOONBEAM]:  [Tokens.GOHM, Tokens.SOLAR, Tokens.WMOVR, Tokens.WAVAX, Tokens.SYN],                                  // FRAX, , WETHBEAM #temp
-    //     [ChainId.MOONRIVER]: [Tokens.GOHM, Tokens.SOLAR, Tokens.FRAX, Tokens.MOVR, Tokens.SYN],
-    //     [ChainId.ARBITRUM]:  [Tokens.ETH, Tokens.GOHM, Tokens.USDC, Tokens.USDT, Tokens.GMX, Tokens.SYN, Tokens.NETH, Tokens.NUSD],
-    //     [ChainId.AVALANCHE]: [Tokens.USDC, Tokens.USDT, Tokens.DAI, Tokens.WETH_E, Tokens.GMX, Tokens.AVAX, Tokens.GOHM, Tokens.SYN, Tokens.NUSD, Tokens.NFD, Tokens.NETH],
-    //     [ChainId.HARMONY]:   [Tokens.USDC, Tokens.USDT, Tokens.DAI, Tokens.FRAX, Tokens.ONE_ETH, Tokens.SYN, Tokens.NUSD, Tokens.NETH, Tokens.GOHM],
-    //     [ChainId.OPTIMISM]:  [Tokens.ETH, Tokens.NETH, Tokens.GOHM, Tokens.SYN],
-    //     [ChainId.AURORA]:    [Tokens.USDC, Tokens.USDT, Tokens.NUSD, Tokens.SYN],
-    //     [ChainId.CRONOS]:    [Tokens.GOHM, Tokens.SYN],
-    //     [ChainId.METIS]:     [Tokens.GOHM, Tokens.SYN],
-    // }
 
     export function getAllSwappableTokensForNetwork(chainId: number): Token[] {
         let swappableTokens: Token[] = [];
