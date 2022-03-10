@@ -18,7 +18,7 @@ import type {SignerOrProvider} from "@common/types";
 
 
 
-const bridgeConfigV3Address: string = "0x3ee02f08B801B1990AC844d8CD2F119BA6Fb9bcF";
+const bridgeConfigV3Address: string = "0x5217c83ca75559B1f8a8803824E5b7ac233A12a1";
 
 enum ContractKind {bridge="bridge", bridgeZap="bridgeZap"}
 
