@@ -1,5 +1,3 @@
-import "@tests/setup";
-
 import _ from "lodash";
 
 import {

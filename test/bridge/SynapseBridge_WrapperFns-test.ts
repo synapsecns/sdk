@@ -1,5 +1,3 @@
-import "@tests/setup";
-
 import dotenv from "dotenv";
 
 import {expect} from "chai";

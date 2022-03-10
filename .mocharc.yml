@@ -1,0 +1,22 @@
+node-option:
+  - 'es-module-specifier-resolution=node'
+  - 'loader=ts-node/esm'
+
+extensions:
+  - ts
+
+require:
+  - './test/test_setup.ts'
+
+recursive: true
+parallel: true
+jobs: 6
+
+spec:
+  - './test/entities/*-test.ts'
+  - './test/basic/*-test.ts'
+  - './test/swappools/*-test.ts'
+  - './test/token/*-test.ts'
+  - './test/bridge/*-test.ts'
+  - './test/tokenswap/*-test.ts'
+  - './test/erc20/*-test.ts'

@@ -1,16 +1,13 @@
-import "@tests/setup";
-
 import {expect} from "chai";
 import {step} from "mocha-steps";
 
-import {Bridge, ChainId, Networks, Tokens,} from "@sdk";
+import {Bridge, ChainId, Networks, Tokens} from "@sdk";
 
 import {rejectPromise, staticCallPopulatedTransaction} from "@sdk/common/utils";
 
 import {
     bridgeTestPrivkey1,
     DEFAULT_TEST_TIMEOUT,
-    EXECUTORS_TEST_TIMEOUT,
     expectFulfilled,
     expectNotZero,
     expectRejected,
@@ -298,15 +295,20 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
             describe("- checkCanBridge()", function(this: Mocha.Suite) {
                 const canBridgeTestTitle: string = `should${tc.expected.canBridge ? "" : " not"} be able to bridge`;
 
-                it(canBridgeTestTitle, async function(this: Mocha.Context) {
+                it(canBridgeTestTitle, function(this: Mocha.Context, done: Mocha.Done) {
+                    this.timeout(3.5*1000);
+                    this.slow(2*1000);
+
                     let prom = bridgeInstance.checkCanBridge({
                         token: tc.args.tokenFrom,
                         signer: wallet,
                         amount: tc.args.amountFrom,
                     }).then(([canBridge]) => canBridge)
 
-                    expect(prom).to.eventually.not.be.rejected;
-                    return expect(await prom).to.eq(tc.expected.canBridge);
+                    expect(prom).to.eventually
+                        .equal(tc.expected.canBridge)
+                        .and.not.be.rejected
+                        .notify(done);
                 })
             });
 

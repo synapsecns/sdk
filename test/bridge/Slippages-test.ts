@@ -1,5 +1,3 @@
-import "@tests/setup";
-
 import {expect} from "chai";
 
 import {Slippages} from "@sdk";
@@ -66,13 +64,22 @@ describe("Slippages tests", function(this: Mocha.Suite) {
     })
 
     describe("addSlippage", function(this: Mocha.Suite) {
-        const value = 69420;
-        const ret = Slippages.addSlippage(BigNumber.from(value), Slippages.OneTenth);
-        expect(ret).to.equal(BigNumber.from(69489));
+        const mainValue = BigNumber.from(69420);
+        const want1 = BigNumber.from(69489);
+        let ret: BigNumber;
+
+        it(`Slippages.addSlippage(${mainValue.toString()}, Slippages.OneTenth) should return ${want1.toString()}`, function(this: Mocha.Context) {
+            ret = Slippages.addSlippage(mainValue, Slippages.OneTenth);
+            expect(ret).to.equal(want1);
+        })
 
         it("_applySlippage with add=true vs add=false", function(this: Mocha.Context) {
-            const ret1 = Slippages._applySlippage(BigNumber.from(value), Slippages.OneTenth);
-            expect(ret.sub(ret1)).to.equal(BigNumber.from(0x8b));
+            const
+                ret1 = Slippages._applySlippage(mainValue, Slippages.OneTenth),
+                subVal = ret.sub(ret1),
+                want = BigNumber.from('0x8b');
+
+            expect(subVal).to.equal(want);
         })
     })
 

@@ -1,7 +1,4 @@
-import "@tests/setup";
-
 import _ from "lodash";
-
 
 import {
     ChainId,
@@ -10,6 +7,7 @@ import {
     Bridge,
     type Token
 } from "@sdk";
+
 import {tokenSwitch} from "@sdk/internal/utils";
 
 import {

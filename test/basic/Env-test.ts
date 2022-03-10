@@ -1,5 +1,3 @@
-import "@tests/setup";
-
 import path from "path";
 
 import dotenv from "dotenv";

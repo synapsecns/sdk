@@ -1,5 +1,3 @@
-import "@tests/setup";
-
 import {expect} from "chai";
 
 import _ from "lodash";

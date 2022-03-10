@@ -1,5 +1,3 @@
-import "@tests/setup";
-
 import {step} from "mocha-steps";
 
 import {
