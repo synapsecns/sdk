@@ -84,7 +84,7 @@ export namespace SynapseContracts {
 
     export const Metis = new SynapseContract({
         bridge:    "0x06Fea8513FF03a0d3f61324da709D4cf06F42A5c",
-        bridgeZap: "0x244268b9082E05a8BcF18b3b0e83999EA4Fc9fCf",
+        bridgeZap: "0xe37F21EFaF8242d086B79A799EB0fDC3Fb778704",
     });
 
     export const Moonbeam = new SynapseContract(({
