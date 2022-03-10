@@ -244,7 +244,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 return async function (ctx: Mocha.Context): Promise<void | any> {
                     if (approval && tc.args.tokenFrom.isEqual(Tokens.ETH)) return
 
-                    ctx.timeout(EXECUTORS_TEST_TIMEOUT);
+                    ctx.timeout(20*1000);
 
                     let execProm = executeTransaction(prom);
 
@@ -263,7 +263,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 return async function (ctx: Mocha.Context): Promise<void | any> {
                     if (approval && tc.args.tokenFrom.isEqual(Tokens.ETH)) return
 
-                    ctx.timeout(EXECUTORS_TEST_TIMEOUT);
+                    ctx.timeout(5*1000);
 
                     let execProm = callStatic(prom);
 
