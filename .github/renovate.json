@@ -45,5 +45,6 @@
   "baseBranches": ["dev"],
   "enabledManagers": ["npm"],
   "rebaseWhen": "behind-base-branch",
+  "automergeType": "branch",
   "lockFileMaintenance": { "enabled": true }
 }
