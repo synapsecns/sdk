@@ -172,7 +172,7 @@ export namespace BridgeUtils {
     export const isETHLikeToken = (t: Token): boolean =>
         t.isEqual(Tokens.WETH_E) || t.isEqual(Tokens.ONE_ETH) || t.isEqual(Tokens.FTM_ETH)
 
-    export const makeOverrides = (value: BigNumber, withValue: boolean): any => withValue ? {value} : {};
+    export const overrides = (value: BigNumber): any => ({value})
 
     /**
      * Switch t1 with t3 is t1 is t2
