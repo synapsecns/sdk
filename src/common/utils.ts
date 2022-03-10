@@ -1,24 +1,27 @@
 import {ChainId}          from "@chainid";
 import {SynapseContracts} from "./synapse_contracts";
-import {StaticCallResult} from "./types";
 
-import type {Signer}      from "@ethersproject/abstract-signer";
+import {
+    GenericSigner,
+    Resolveable,
+    Deferrable,
+    GenericTxnRequest,
+    GenericTxnResponse,
+    StaticCallResult,
+} from "./types";
 
-import type {
-    PopulatedTransaction,
-    ContractTransaction,
-} from "@ethersproject/contracts";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 import {BytesLike} from "@ethersproject/bytes";
+import type {Signer}  from "@ethersproject/abstract-signer";
+import type {PopulatedTransaction} from "@ethersproject/contracts";
+import {MsgExecuteContract} from "@terra-money/terra.js";
 
 export function rejectPromise(e: any): Promise<never> { return Promise.reject(e instanceof Error ? e : new Error(e)) }
 
-type Resolveable<T> = T | Promise<T>
-
 export function executePopulatedTransaction(
-    populatedTxn: Resolveable<PopulatedTransaction>,
-    signer:       Signer,
-): Promise<ContractTransaction> {
+    populatedTxn: GenericTxnRequest,
+    signer:       GenericSigner,
+): Promise<GenericTxnResponse> {
     return Promise.resolve(populatedTxn)
         .then(txn => signer.sendTransaction(txn))
         .catch(rejectPromise)

@@ -37,7 +37,7 @@ import {
     instanceOfToken
 } from "@token";
 
-import type {NumberMap} from "@common/types";
+import type {GenericSigner, GenericTxnRequest, GenericTxnResponse, NumberMap} from "@common/types";
 
 import {GasUtils}                   from "./gasutils";
 
@@ -69,7 +69,6 @@ import {
 } from "@terra-money/terra.js";
 
 import bech32 from "bech32";
-import {formatUnits} from "@ethersproject/units";
 
 const TEN = BigNumber.from(10);
 
@@ -362,32 +361,26 @@ export namespace Bridge {
 
             const {tokenFrom, amountFrom, addressTo} = args;
 
+            let txSigner: GenericSigner;
             let signerAddress: string;
-            let wrappedTerraWallet: TerraSignerWrapper;
 
-            if (signer instanceof EthersSigner) {
-                signerAddress = await signer.getAddress();
-            } else if (signer instanceof TerraWallet) {
-                wrappedTerraWallet = new TerraSignerWrapper(signer);
-                signerAddress = await wrappedTerraWallet.getAddress();
+            if (signer instanceof TerraWallet) {
+                txSigner = new TerraSignerWrapper(signer);
+            } else {
+                txSigner = signer;
             }
 
+            signerAddress = await txSigner.getAddress();
             args.addressTo = addressTo ?? signerAddress
 
             let checkArgs = {token: tokenFrom, amount: amountFrom, address: toLower(signerAddress)};
 
-            const sendTxn = (txn: PopulatedTransaction | MsgExecuteContract): Promise<ContractTransaction | BlockTxBroadcastResult> => {
-                            if (this.isTerra) {
-                                let msg = txn as MsgExecuteContract;
-                                msg.sender = signerAddress;
-
-                                return wrappedTerraWallet.sendTransaction(txn as MsgExecuteContract)
+            const sendTxn = (txn: GenericTxnRequest): Promise<GenericTxnResponse> => {
+                if (txn instanceof MsgExecuteContract) {
+                    txn.sender = signerAddress;
                             }
 
-                return executePopulatedTransaction(
-                    txn as PopulatedTransaction,
-                    signer as EthersSigner
-                )
+                return executePopulatedTransaction(txn, txSigner)
             }
 
             return this.checkCanBridge(checkArgs)
@@ -397,7 +390,6 @@ export namespace Bridge {
                         : rejectPromise(new CanBridgeError(reasonUnable, amount))
                 )
         }
-
 
         /**
          * Builds an ethers PopulatedTransaction instance for an ERC20 Approve call,
@@ -446,100 +438,6 @@ export namespace Bridge {
             return ERC20.approve(approveArgs, tokenParams, signer)
         }
 
-        async getAllowanceForAddress(args: {
-            address: string,
-            token:   Token,
-        }): Promise<BigNumber> {
-            let { address, token } = args;
-            let tokenAddress = token.address(this.chainId);
-
-            return ERC20.allowanceOf(address, this.zapBridgeAddress, {tokenAddress, chainId: this.chainId})
-        }
-
-        private async resolveApproveFunc(
-            approveRes:    NeedsTokenApproveResult,
-            hasBalanceRes: Promise<CanBridgeResult>,
-            token:         Token
-        ): Promise<CanBridgeResult> {
-            const {needsApproval, currentAllowance} = approveRes;
-
-            let allowanceEth: string;
-            if (currentAllowance) {
-                allowanceEth = formatUnits(currentAllowance, token.decimals(this.chainId)).toString();
-            }
-
-            const errStr: string = `Spend allowance of Bridge too low for token ${token.symbol}; current allowance for Bridge is ${allowanceEth}`;
-
-            return needsApproval
-                ? {canBridge: false, reasonUnable: errStr, amount: currentAllowance}
-                : hasBalanceRes
-        }
-
-        private async checkNeedsApprove({
-            address,
-            token,
-            amount=MAX_APPROVAL_AMOUNT.sub(1)
-        }: CheckCanBridgeParams): Promise<NeedsTokenApproveResult> {
-            const [{spender}, tokenAddress] = this.buildERC20ApproveArgs({token, amount});
-
-            return ERC20.allowanceOf(address, spender, {tokenAddress, chainId: this.chainId})
-                .then(currentAllowance => ({needsApproval: currentAllowance.lt(amount), currentAllowance}))
-        }
-
-        private async resolveBalanceFunc(
-            prom:   Promise<BigNumber>,
-            amount: BigNumberish,
-            token:  Token
-        ): Promise<CanBridgeResult> {
-            return Promise.resolve(prom)
-                .then(balance => {
-                    const
-                        hasBalance         = balance.gte(amount),
-                        balanceEth: string = formatUnits(balance, token.decimals(this.chainId)).toString();
-
-                    return (
-                        hasBalance
-                            ? {canBridge: true}
-                            : {canBridge: false, reasonUnable: `Balance of token ${token.symbol} is too low; current balance is ${balanceEth}`, amount: balance}
-                    )
-                })
-                .catch(rejectPromise)
-        }
-
-        private async checkGasTokenBalance(args: CanBridgeParams): Promise<CanBridgeResult> {
-            const {address, token, amount} = args;
-            const balanceProm: Promise<BigNumber> = this.provider.getBalance(address);
-
-            return this.resolveBalanceFunc(
-                balanceProm,
-                amount,
-                token
-            )
-        }
-
-        private async checkTerraUSTBalance({address, token, amount}: CanBridgeParams): Promise<CanBridgeResult> {
-            const balProm: Promise<BigNumber> = this.terraProvider.bank.balance(address)
-                .then(([res]) => {
-                    let coin = res.get("uusd");
-                    if (coin) {
-                        const {amount} = coin.toData();
-                    if (amount && (amount !== "")) {
-                        return BigNumber.from(amount);
-                        }
-
-                        return Zero
-                    }
-
-                    return Zero
-                })
-
-            return this.resolveBalanceFunc(
-                balProm,
-                amount,
-                token
-            )
-        }
-
         async checkCanBridge(args: CheckCanBridgeParams): Promise<CanBridgeResult> {
             const {token, signer, address} = args;
 
@@ -568,53 +466,6 @@ export namespace Bridge {
                 : this.checkNeedsApprove(checkArgs)
                     .then(approveRes => this.resolveApproveFunc(approveRes, hasBalanceRes, token))
                     .catch(rejectPromise)
-        }
-
-        private async checkERC20Balance(args: CanBridgeParams): Promise<CanBridgeResult> {
-            const
-                {address, amount, token} = args,
-                tokenAddress: string = token.address(this.chainId);
-
-            return this.resolveBalanceFunc(
-                ERC20.balanceOf(address, {tokenAddress, chainId: this.chainId}),
-                amount,
-                token
-            )
-        }
-
-        private buildERC20ApproveArgs(args: {
-            token:   Token | string,
-            amount?: BigNumberish
-        }): [ERC20.ApproveArgs, string] {
-            const {token, amount} = args;
-
-            let tokenAddr: string = instanceOfToken(token)
-                ? token.address(this.chainId)
-                : token as string;
-
-            let spender: string;
-            if (tokenAddr === Tokens.UST.address(this.chainId)) {
-                spender = this.bridgeAddress;
-            } else {
-                spender = this.zapBridgeAddress;
-            }
-
-            return [{
-                spender,
-                amount
-            }, tokenAddr]
-        }
-
-        private async checkSwapSupported(args: BridgeParams): Promise<boolean> {
-            return new Promise<boolean>((resolve, reject) => {
-                let [swapSupported, errReason] = this.swapSupported(args);
-                if (!swapSupported) {
-                    reject(errReason);
-                    return
-                }
-
-                resolve(true);
-            })
         }
 
         private async calculateBridgeRate(args: BridgeParams): Promise<BridgeOutputEstimate> {
@@ -740,43 +591,6 @@ export namespace Bridge {
                 amountToReceive,
                 bridgeFee: fee
             }
-        }
-
-        private checkEasyArgs(
-            args: BridgeTransactionParams,
-            zapBridge: GenericZapBridgeContract,
-            easyDeposits:    ID[],
-            easyRedeems:     ID[],
-            easyDepositETH?: ID[],
-        ): EasyArgsCheck {
-            let
-                castArgs = args as BridgeUtils.BridgeTxParams,
-                isEasy: boolean = false,
-                txn:    Promise<PopulatedTransaction>;
-
-            const params = BridgeUtils.makeEasyParams(castArgs, this.chainId, args.tokenTo);
-
-            switch (true) {
-                case easyRedeems.includes(args.tokenTo.id):
-                    isEasy = true;
-                    txn    = zapBridge.populateTransaction.redeem(...params);
-                    break;
-                case easyDeposits.includes(args.tokenTo.id):
-                    isEasy = true;
-                    txn    = zapBridge.populateTransaction.deposit(...params);
-                    break;
-                case easyDepositETH.includes(args.tokenTo.id):
-                    isEasy = true;
-                    txn    =  zapBridge
-                        .populateTransaction
-                        .depositETH(
-                            ...BridgeUtils.depositETHParams(castArgs),
-                            BridgeUtils.overrides(args.amountFrom)
-                        );
-                    break;
-            }
-
-            return {castArgs, isEasy, txn}
         }
 
         private buildETHMainnetBridgeTxn(
@@ -1116,6 +930,182 @@ export namespace Bridge {
                 tokenIndexFrom,
                 tokenIndexTo
             }
+        }
+
+        private checkEasyArgs(
+            args:            BridgeTransactionParams,
+            zapBridge:       GenericZapBridgeContract,
+            easyDeposits:    ID[],
+            easyRedeems:     ID[],
+            easyDepositETH?: ID[],
+        ): EasyArgsCheck {
+            let
+                castArgs = args as BridgeUtils.BridgeTxParams,
+                isEasy: boolean = false,
+                txn:    Promise<PopulatedTransaction>;
+
+            const params = BridgeUtils.makeEasyParams(castArgs, this.chainId, args.tokenTo);
+
+            switch (true) {
+                case easyRedeems.includes(args.tokenTo.id):
+                    isEasy = true;
+                    txn    = zapBridge.populateTransaction.redeem(...params);
+                    break;
+                case easyDeposits.includes(args.tokenTo.id):
+                    isEasy = true;
+                    txn    = zapBridge.populateTransaction.deposit(...params);
+                    break;
+                case easyDepositETH.includes(args.tokenTo.id):
+                    isEasy = true;
+                    txn    =  zapBridge
+                        .populateTransaction
+                        .depositETH(
+                            ...BridgeUtils.depositETHParams(castArgs),
+                            BridgeUtils.overrides(args.amountFrom)
+                        );
+                    break;
+            }
+
+            return {castArgs, isEasy, txn}
+        }
+
+        private async checkSwapSupported(args: BridgeParams): Promise<boolean> {
+            return new Promise<boolean>((resolve, reject) => {
+                let [swapSupported, errReason] = this.swapSupported(args);
+                if (!swapSupported) {
+                    reject(errReason);
+                    return
+                }
+
+                resolve(true);
+            })
+        }
+
+        private buildERC20ApproveArgs(args: {
+            token:   Token | string,
+            amount?: BigNumberish
+        }): [ERC20.ApproveArgs, string] {
+            const {token, amount} = args;
+
+            let tokenAddr: string = instanceOfToken(token)
+                ? token.address(this.chainId)
+                : token as string;
+
+            let spender: string;
+            if (tokenAddr === Tokens.UST.address(this.chainId)) {
+                spender = this.bridgeAddress;
+            } else {
+                spender = this.zapBridgeAddress;
+            }
+
+            return [{
+                spender,
+                amount
+            }, tokenAddr]
+        }
+
+        async getAllowanceForAddress(args: {
+            address: string,
+            token:   Token,
+        }): Promise<BigNumber> {
+            let { address, token } = args;
+            let tokenAddress = token.address(this.chainId);
+
+            return ERC20.allowanceOf(address, this.zapBridgeAddress, {tokenAddress, chainId: this.chainId})
+        }
+
+        private async resolveApproveFunc(
+            approveRes:    NeedsTokenApproveResult,
+            hasBalanceRes: Promise<CanBridgeResult>,
+            token:         Token
+        ): Promise<CanBridgeResult> {
+            const {needsApproval, currentAllowance} = approveRes;
+            const errStr: string = `Spend allowance of Bridge too low for token ${token.symbol}`;
+
+            return needsApproval
+                ? ({canBridge: false, reasonUnable: errStr, amount: currentAllowance})
+                : hasBalanceRes
+        }
+
+        private async checkNeedsApprove({
+            address,
+            token,
+            amount=MAX_APPROVAL_AMOUNT.sub(1)
+        }: CheckCanBridgeParams): Promise<NeedsTokenApproveResult> {
+            const [{spender}, tokenAddress] = this.buildERC20ApproveArgs({token, amount});
+
+            return ERC20.allowanceOf(address, spender, {tokenAddress, chainId: this.chainId})
+                .then(currentAllowance => ({needsApproval: currentAllowance.lt(amount), currentAllowance}))
+        }
+
+        private async checkGasTokenBalance(args: CanBridgeParams): Promise<CanBridgeResult> {
+            const {signer, address, amount, token} = args;
+
+            let balanceFn: () => Promise<BigNumber>;
+            if (signer) {
+                balanceFn = signer.getBalance;
+            } else if (address) {
+                balanceFn = () => this.provider.getBalance(address);
+            }
+
+            return this.resolveBalanceFunc(
+                balanceFn(),
+                amount,
+                token
+            )
+        }
+
+        private async checkERC20Balance(args: CheckCanBridgeParams): Promise<CanBridgeResult> {
+            const
+                {address, amount, token} = args,
+                [, tokenAddress] = this.buildERC20ApproveArgs(args);
+
+            return this.resolveBalanceFunc(
+                ERC20.balanceOf(address, {tokenAddress, chainId: this.chainId}),
+                amount,
+                token
+            )
+        }
+
+        private async checkTerraUSTBalance({address, token, amount}: CanBridgeParams): Promise<CanBridgeResult> {
+            const balProm: Promise<BigNumber> = this.terraProvider.bank.balance(address)
+                .then(([res]) => {
+                    let coin = res.get("uusd");
+                    if (coin) {
+                        const {amount} = coin.toData();
+                        if (amount && (amount !== "")) {
+                            return BigNumber.from(amount);
+                        }
+
+                        return Zero
+                    }
+
+                    return Zero
+                })
+
+            return this.resolveBalanceFunc(
+                balProm,
+                amount,
+                token
+            )
+        }
+
+        private async resolveBalanceFunc(
+            prom:   Promise<BigNumber>,
+            amount: BigNumberish,
+            token:  Token
+        ): Promise<CanBridgeResult> {
+            return Promise.resolve(prom)
+                .then(balance => {
+                    const hasBalance = balance.gte(amount);
+
+                    const errMsg: string = `Balance of token ${token.symbol} is too low`;
+
+                    return hasBalance
+                        ? {canBridge: true}
+                        : {canBridge: false, error: new Error(errMsg), amount: balance}
+                })
+                .catch(rejectPromise)
         }
     }
 

@@ -11,6 +11,7 @@ import {
     type MsgExecuteContract,
     type BlockTxBroadcastResult
 } from "@terra-money/terra.js";
+import {Deferrable, GenericSigner, Resolveable} from "@common/types";
 
 function tokenReducer(check: Token): Token {
     const ret: Token = find(Tokens.AllTokens, (t => check.isEqual(t)));
@@ -37,7 +38,7 @@ export function validateTerraAddress(address: string): boolean {
     }
 }
 
-export class TerraSignerWrapper {
+export class TerraSignerWrapper implements GenericSigner {
     private _terraWallet: Wallet;
 
     constructor(terraWallet: Wallet) {
@@ -48,9 +49,12 @@ export class TerraSignerWrapper {
         return Promise.resolve(this._terraWallet.key.accAddress)
     }
 
-    sendTransaction(...messages: MsgExecuteContract[]): Promise<BlockTxBroadcastResult> {
-        return this.makeSignedTransaction(...messages)
-            .then(tx => this._terraWallet.lcd.tx.broadcast(tx))
+    sendTransaction(msg: Resolveable<MsgExecuteContract>): Promise<BlockTxBroadcastResult> {
+        return Promise.resolve(msg)
+            .then(m => {
+                return this.makeSignedTransaction(m)
+                    .then(tx => this._terraWallet.lcd.tx.broadcast(tx))
+            })
     }
 
     private async makeSignedTransaction(...messages: MsgExecuteContract[]): Promise<Tx> {
@@ -74,9 +78,5 @@ export class TerraSignerWrapper {
     private accountData(): Promise<{accountNumber: number, sequence: number}> {
         return this._terraWallet.accountNumberAndSequence()
             .then(({account_number, sequence}) => ({accountNumber: account_number, sequence}))
-    }
-
-    private accountNumber(): Promise<number> {
-        return this._terraWallet.accountNumber()
     }
 }
