@@ -16,7 +16,7 @@ import {
     BridgeConfigV3ContractInstance
 } from "@sdk/entities";
 
-import {rpcProviderForChain}   from "@sdk/internal/rpcproviders";
+import {rpcProviderForChain}   from "@sdk/internal";
 import type {SignerOrProvider} from "@sdk/common/types";
 
 import type {BaseContract} from "@ethersproject/contracts";

@@ -1,3 +1,5 @@
+import {expect} from "chai";
+
 import _ from "lodash";
 
 import {
@@ -6,17 +8,16 @@ import {
     type Token, supportedChainIds
 } from "@sdk";
 
+import {tokenSwitch} from "@sdk/internal";
+
 import {
     expectBnEqual,
     expectBoolean,
     expectNull,
     wrapExpect,
-    expectEqual
 } from "@tests/helpers";
 
 import {BigNumber} from "@ethersproject/bignumber";
-import {expect} from "chai";
-import {tokenSwitch} from "@internal/utils";
 
 describe("Token Tests", function(this: Mocha.Suite) {
     describe("valueToWei tests", function(this: Mocha.Suite) {

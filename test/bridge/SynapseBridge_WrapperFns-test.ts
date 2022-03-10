@@ -12,9 +12,9 @@ import {
     type Token
 } from "@sdk";
 
-import {ERC20}                 from "@sdk/bridge/erc20";
-import {contractAddressFor}    from "@sdk/common/utils";
-import {rpcProviderForChain} from "@sdk/internal/rpcproviders";
+import {ERC20}               from "@sdk/bridge/erc20";
+import {contractAddressFor}  from "@sdk/common/utils";
+import {rpcProviderForChain} from "@sdk/internal";
 
 import {
     DEFAULT_TEST_TIMEOUT,

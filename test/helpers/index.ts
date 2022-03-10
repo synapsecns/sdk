@@ -11,7 +11,7 @@ import {
 } from "@ethersproject/bignumber";
 
 import type {Token} from "@sdk";
-import {rpcProviderForChain} from "@sdk/internal/rpcproviders";
+import {rpcProviderForChain} from "@sdk/internal";
 
 const TEN_BN: BigNumber = BigNumber.from(10);
 

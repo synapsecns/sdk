@@ -8,7 +8,7 @@ import {
     type Token
 } from "@sdk";
 
-import {tokenSwitch} from "@sdk/internal/utils";
+import {tokenSwitch} from "@sdk/internal";
 
 import {
     DEFAULT_TEST_TIMEOUT,

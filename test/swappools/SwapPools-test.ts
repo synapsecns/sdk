@@ -6,7 +6,7 @@ import {
     type Token
 } from "@sdk";
 
-import {SwapType} from "@internal/swaptype";
+import {SwapType} from "@internal";
 
 import type {StringMap} from "@sdk/common/types";
 

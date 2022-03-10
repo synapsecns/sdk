@@ -16,8 +16,10 @@ import {
     type BridgeConfigV3Contract
 } from "@contracts";
 
-import {SwapType}            from "@internal/swaptype";
-import {rpcProviderForChain} from "@internal/rpcproviders";
+import {
+    SwapType,
+    rpcProviderForChain
+} from "@internal";
 
 import {
     BigNumber,

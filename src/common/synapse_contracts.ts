@@ -1,4 +1,4 @@
-import {ABIs}    from "@abis/index";
+import {ABIs}    from "@abis";
 import {ChainId} from "@chainid";
 
 import type {ChainIdTypeMap} from "./types";

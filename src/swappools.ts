@@ -10,8 +10,11 @@ import type {
 
 import {BaseToken, type IBaseToken, type Token} from "@token";
 
-import type {ID} from "@internal/distinct";
-import {SwapType} from "@internal/swaptype";
+import {
+    type ID,
+    SwapType
+} from "@internal";
+
 
 export namespace SwapPools {
     function moveFirstToLast(arr: Token[]) {

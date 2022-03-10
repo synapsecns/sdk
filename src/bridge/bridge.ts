@@ -10,10 +10,12 @@ import {SynapseContracts} from "@common/synapse_contracts";
 
 import * as SynapseEntities from "@entities";
 
-import type {ID}               from "@internal/distinct";
-import {SwapType}              from "@internal/swaptype";
-import {rpcProviderForChain}   from "@internal/rpcproviders";
-import {tokenSwitch}           from "@internal/utils";
+import {
+    type ID,
+    SwapType,
+    rpcProviderForChain,
+    tokenSwitch
+} from "@internal";
 
 import type {
     GenericZapBridgeContract,
