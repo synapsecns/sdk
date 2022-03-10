@@ -55,7 +55,7 @@ export namespace SwapPools {
         swapEthAddresses?: AddressMap,
     }
 
-    const makeSwapToken = (args: {
+    interface makeSwapTokenArgs {
         chainId:      number,
         netName:      string,
         address:      string,
@@ -64,50 +64,42 @@ export namespace SwapPools {
         poolTokens:   Token[],
         notLP?:       boolean,
         symbol?:      string
-    }): SwapToken =>
-        new SwapToken({
-            addresses: {[args.chainId]: args.address},
-            decimals:  18,
-            name:      "Synapse nUSD LP Token" + (args.netName != "BSC" ? ` ${args.netName}` : ""),
-            symbol:    args.symbol ?? ((args.notLP ?? false) ? "nUSD" : "nUSD-LP"),
-            poolName:  `${args.netName} Stableswap Pool `,
-            poolId:    args.poolId,
-            poolType:  SwapType.USD,
-            swapAddresses: {
-                [args.chainId]: args.swapAddress,
-            },
-            poolTokens: args.poolTokens,
-        })
+    }
 
-    const makeETHSwapToken = (args: {
-        chainId:         number,
-        netName:         string,
-        address:         string,
-        swapAddress:     string,
+    interface makeETHSwapTokenArgs extends makeSwapTokenArgs {
         swapETHAddress?: string,
-        poolId:          number,
         poolName?:       string,
-        poolTokens:      Token[],
         nativeTokens?:   Token[],
         depositTokens?:  Token[],
-    }): ETHSwapToken =>
+    }
+
+    const makeSwapToken = (args: makeSwapTokenArgs): SwapToken =>
+        new SwapToken({
+            decimals:        18,
+            name:         `Synapse nUSD LP Token${args.netName != "BSC" ? ` ${args.netName}` : ""}`,
+            poolName:     `${args.netName} Stableswap Pool `,
+            symbol:          args.symbol ?? ((args.notLP ?? false) ? "nUSD" : "nUSD-LP"),
+            poolId:          args.poolId,
+            poolTokens:      args.poolTokens,
+            addresses:     {[args.chainId]: args.address},
+            swapAddresses: {[args.chainId]: args.swapAddress},
+            poolType:        SwapType.USD,
+        })
+
+    const makeETHSwapToken = (args: makeETHSwapTokenArgs): ETHSwapToken =>
         new ETHSwapToken({
-            addresses: {[args.chainId]: args.address},
-            decimals:  18,
-            name:      `Synapse ${args.poolName ?? "ETH"} LP Token ${args.netName}`,
-            symbol:    "nETH-LP",
-            poolName:  `${args.netName} ${args.poolName ?? "ETH"} Pool `,
-            poolId:    args.poolId,
-            poolType:  SwapType.ETH,
-            swapAddresses: {
-                [args.chainId]: args.swapAddress,
-            },
-            swapEthAddresses: {
-                [args.chainId]: args.swapETHAddress,
-            },
-            poolTokens:    args.poolTokens,
-            nativeTokens:  args.nativeTokens,
-            depositTokens: args.depositTokens,
+            decimals:         18,
+            name:          `Synapse ${args.poolName ?? "ETH"} LP Token ${args.netName}`,
+            poolName:      `${args.netName} ${args.poolName ?? "ETH"} Pool `,
+            symbol:           args.symbol ?? "nETH-LP",
+            poolId:           args.poolId,
+            addresses:      {[args.chainId]: args.address},
+            swapAddresses:  {[args.chainId]: args.swapAddress},
+            swapEthAddresses: args.swapETHAddress ? {[args.chainId]: args.swapETHAddress} : null,
+            poolTokens:       args.poolTokens,
+            nativeTokens:     args.nativeTokens,
+            depositTokens:    args.depositTokens,
+            poolType:         SwapType.ETH,
         })
 
     export class SwapToken implements SwapPoolToken {
