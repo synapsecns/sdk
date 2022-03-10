@@ -350,7 +350,7 @@ export namespace Bridge {
          */
         async executeBridgeTokenTransaction(
             args:       BridgeTransactionParams,
-            signer:     EthersSigner | TerraWallet,
+            signer:     EthersSigner | TerraWallet | GenericSigner,
             callStatic: boolean=false
         ): Promise<ContractTransaction | BlockTxBroadcastResult> {
             try {
