@@ -60,9 +60,11 @@ jobs:
         env:
           REPORTS_DIR: ${{ github.workspace }}/coverage
           RPC_BATCH_WAIT_TIME_MS: 75
-          HARMONY_RPC_URI:   "https://api.fuzz.fi/"
           ETH_RPC_URI:       ${{ secrets.ETHEREUM_RPC_URI }}
+          OPTIMISM_RPC_URI:  ${{ secrets.OPTIMISM_RPC_URI }}
           POLYGON_RPC_URI:   ${{ secrets.POLYGON_RPC_URI }}
+          FANTOM_RPC_URI:    ${{ secrets.FANTOM_RPC_URI }}
+          ARBITRUM_RPC_URI:  ${{ secrets.ARBITRUM_RPC_URI }}
           INFINITE_APPROVALS_PRIVKEY:          ${{ secrets.INFINITE_APPROVALS_PRIVKEY }}
           INFINITE_APPROVALS_PRIVKEY_ADDRESS:  ${{ secrets.INFINITE_APPROVALS_PRIVKEY_ADDRESS }}
           BRIDGE_INTERACTIONS_PRIVKEY:         ${{ secrets.BRIDGE_INTERACTIONS_PRIVKEY }}
