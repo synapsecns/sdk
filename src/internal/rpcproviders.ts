@@ -106,6 +106,7 @@ function _getChainRpcUri(chainId: number): string {
  * @param chainId chain id of the network for which to return a provider
  */
 export function rpcProviderForChain(chainId: number): Provider {
+    /* c8 ignore next 4 */
     if (isTerraChainId(chainId)) {
         console.error("call `terraRpcProvider(chainId)` for a Terra-compatible RPC provider");
         return null
