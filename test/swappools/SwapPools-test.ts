@@ -98,7 +98,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             makeTestCase(ChainId.POLYGON,   true,  false),
             makeTestCase(ChainId.FANTOM,    true,  true),
             makeTestCase(ChainId.BOBA,      true,  true),
-            makeTestCase(ChainId.METIS,     false, false),
+            makeTestCase(ChainId.METIS,     true,  false),
             makeTestCase(ChainId.MOONBEAM,  false, false),
             makeTestCase(ChainId.MOONRIVER, false, false),
             makeTestCase(ChainId.ARBITRUM,  true,  true),
@@ -167,6 +167,15 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                 wantSwapType: SwapType.USD,
                 wantAddress:  null,
                 wantDecimals: null,
+            },
+            {
+                testName:     "METIS Stableswap Pool",
+                chainId:      ChainId.METIS,
+                swapPool:     SwapPools.METIS_POOL_SWAP_TOKEN,
+                wantSymbol:   "nUSDLP",
+                wantSwapType: SwapType.USD,
+                wantAddress:  "0xC6f684aE516480A35f337a4dA8b40EB6550e07E0",
+                wantDecimals: 18,
             }
         ];
 
@@ -204,7 +213,6 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     })
                 }
             })
-
         }
     })
 })
