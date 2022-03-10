@@ -4,17 +4,16 @@ import {SynapseContracts} from "./synapse_contracts";
 import {
     GenericSigner,
     Resolveable,
-    Deferrable,
     GenericTxnRequest,
     GenericTxnResponse,
     StaticCallResult,
 } from "./types";
 
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
-import {BytesLike} from "@ethersproject/bytes";
+import {arrayify, BytesLike} from "@ethersproject/bytes";
 import type {Signer}  from "@ethersproject/abstract-signer";
 import type {PopulatedTransaction} from "@ethersproject/contracts";
-import {MsgExecuteContract} from "@terra-money/terra.js";
+import bech32 from "bech32";
 
 export function rejectPromise(e: any): Promise<never> { return Promise.reject(e instanceof Error ? e : new Error(e)) }
 
@@ -97,4 +96,9 @@ const CHAINID_CONTRACTS_MAP: {[c: number]: SynapseContracts.SynapseContract} = {
     [ChainId.HARMONY]:   SynapseContracts.Harmony,
 }
 
-export const contractsForChainId = (chainId: number): SynapseContracts.SynapseContract => CHAINID_CONTRACTS_MAP[chainId] ?? null
+export const contractsForChainId = (chainId: number): SynapseContracts.SynapseContract => CHAINID_CONTRACTS_MAP[chainId] ?? nullexport function decodeHexTerraAddress(hexAddr: string): string {
+    let addrAsBytes: number[] = [];
+    arrayify(hexAddr).forEach(b => addrAsBytes.push(b));
+
+    return bech32.encode("terra", addrAsBytes);
+}

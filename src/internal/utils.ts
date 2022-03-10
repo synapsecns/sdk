@@ -11,7 +11,7 @@ import {
     type MsgExecuteContract,
     type BlockTxBroadcastResult
 } from "@terra-money/terra.js";
-import {Deferrable, GenericSigner, Resolveable} from "@common/types";
+import {GenericSigner, Resolveable} from "@common/types";
 
 function tokenReducer(check: Token): Token {
     const ret: Token = find(Tokens.AllTokens, (t => check.isEqual(t)));
