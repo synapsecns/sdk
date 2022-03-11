@@ -1,6 +1,6 @@
 export type {ID, Distinct} from "./distinct";
 
-export {SwapType} from "./swaptype";
+export {SwapType, mintBurnSwapTypes} from "./swaptype";
 
 export {rpcProviderForChain} from "./rpcproviders";
 

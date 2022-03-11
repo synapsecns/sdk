@@ -18,6 +18,7 @@ import {
 
 import {
     SwapType,
+    mintBurnSwapTypes,
     rpcProviderForChain
 } from "@internal";
 
@@ -265,12 +266,6 @@ export namespace TokenSwap {
             tokenIndexTo,
         })).catch(rejectPromise)
     }
-
-    const mintBurnSwapTypes = [
-        SwapType.HIGH, SwapType.DOG, SwapType.JUMP,
-        SwapType.NFD,  SwapType.OHM, SwapType.SOLAR,
-        SwapType.GMX,  SwapType.UST,
-    ];
 
     function _intermediateToken(token: Token, chainId: number): Token {
         const {intermediateToken, bridgeConfigIntermediateToken} = intermediateTokens(chainId, token);
