@@ -30,7 +30,7 @@ export function staticCallPopulatedTransaction(
         .then(txn => {
             return signer.call(txn)
                 .then(()  => StaticCallResult.Success)
-                .catch(() => StaticCallResult.Failure)
+                .catch((err) => StaticCallResult.Failure)
         })
 }
 
