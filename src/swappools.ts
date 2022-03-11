@@ -393,7 +393,8 @@ export namespace SwapPools {
         WAVAX_Pool   = makeSingleTokenPool(Tokens.WAVAX),
         MOVR_Pool    = makeSingleTokenPool(Tokens.MOVR),
         WMOVR_Pool   = makeSingleTokenPool(Tokens.WMOVR),
-        UST_Pool     = makeSingleTokenPool(Tokens.UST);
+        UST_Pool     = makeSingleTokenPool(Tokens.UST),
+        NEWO_Pool    = makeSingleTokenPool(Tokens.NEWO);
 
 
     export interface SwapTypePoolTokens {[swapType: string]: LPToken}
@@ -527,6 +528,7 @@ export namespace SwapPools {
                 ethPool: [ARBITRUM_ETH_SWAP_TOKEN,  ARBITRUM_ETH_SWAP_TOKEN.poolTokens]
             },
             GMX_Pool,
+            NEWO_Pool,
         ),
         [ChainId.AVALANCHE]: makeSwapTypeMap(
             {
@@ -536,6 +538,7 @@ export namespace SwapPools {
             NFD_Pool,
             GMX_Pool,
             AVAX_Pool,
+            NEWO_Pool,
         ),
         [ChainId.AURORA]: makeSwapTypeMap(
             {
