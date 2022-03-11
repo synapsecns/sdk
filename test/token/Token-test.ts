@@ -101,6 +101,16 @@ describe("Token Tests", function(this: Mocha.Suite) {
                 tokenB:   Tokens.GOHM,
                 expected: false,
             },
+            {
+               tokenA:   Tokens.NEWO,
+               tokenB:   Tokens.NEWO,
+               expected: true,
+            },
+            {
+               tokenA:   Tokens.NEWO,
+               tokenB:   Tokens.GOHM,
+               expected: false,
+            },
         ].forEach((tc: TestCase) => {
             it(
                 makeTestTitle(tc),

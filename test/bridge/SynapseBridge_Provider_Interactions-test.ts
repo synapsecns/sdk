@@ -116,7 +116,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 tokenTo:     Tokens.WETH_E,
                 chainIdFrom: ChainId.ARBITRUM,
                 chainIdTo:   ChainId.AVALANCHE,
-                amountFrom:  parseEther("0.006"),
+                amountFrom:  parseEther("0.005"),
             },
             expected: {
                 executeSuccess: true,
@@ -130,7 +130,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 tokenTo:     Tokens.ETH,
                 chainIdFrom: ChainId.AVALANCHE,
                 chainIdTo:   ChainId.ARBITRUM,
-                amountFrom:  parseEther("0.0051"),
+                amountFrom:  parseEther("0.05"),
             },
             expected: {
                 executeSuccess: true,
@@ -305,10 +305,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                         amount: tc.args.amountFrom,
                     }).then(([canBridge]) => canBridge)
 
-                    expect(prom).to.eventually
-                        .equal(tc.expected.canBridge)
-                        .and.not.be.rejected
-                        .notify(done);
+                    expect(prom).to.eventually.equal(tc.expected.canBridge).notify(done);
                 })
             });
 

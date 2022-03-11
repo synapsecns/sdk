@@ -103,7 +103,21 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
                     {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
                 ],
-            }
+            },
+            {
+                chainId:       ChainId.ARBITRUM,
+                chainTokens:   [
+                    {chainId: ChainId.AVALANCHE, token: Tokens.NEWO},
+                    {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
+                ],
+            },
+            {
+                chainId:       ChainId.AVALANCHE,
+                chainTokens:   [
+                    {chainId: ChainId.ARBITRUM,  token: Tokens.NEWO},
+                    {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
+                ],
+            },
         ].forEach((tc: TestCase) => {
             const describeTitle: string = `${Networks.networkName(tc.chainId)} needs certain results`;
 
