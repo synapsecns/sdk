@@ -6,7 +6,7 @@ import {
 
 import {ChainId} from "@chainid";
 
-import {SwapType} from "@internal/swaptype";
+import {SwapType} from "@internal";
 
 export namespace Tokens {
     // Stablecoins
@@ -50,6 +50,7 @@ export namespace Tokens {
             [ChainId.POLYGON]:   6,
             [ChainId.FANTOM]:    6,
             [ChainId.BOBA]:      6,
+            [ChainId.METIS]:     6,
             [ChainId.AVALANCHE]: 6,
             [ChainId.ARBITRUM]:  6,
             [ChainId.AURORA]:    6,
@@ -61,6 +62,7 @@ export namespace Tokens {
             [ChainId.POLYGON]:   "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
             [ChainId.FANTOM]:    "0x04068da6c83afcfa0e13ba15a6696662335d5b75",
             [ChainId.BOBA]:      "0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc",
+            [ChainId.METIS]:     "0xEA32A96608495e54156Ae48931A7c20f0dcc1a21",
             [ChainId.ARBITRUM]:  "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
             [ChainId.AVALANCHE]: "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
             [ChainId.AURORA]:    "0xB12BFcA5A55806AaF64E99521918A4bf0fC40802",
@@ -176,7 +178,7 @@ export namespace Tokens {
             [ChainId.MOONBEAM]: "0x3192Ae73315c3634Ffa217f71CF6CBc30FeE349A",
         },
         swapType: SwapType.ETH,
-    })
+    });
 
     export const WETH_E = new BaseToken({
         name:     "Wrapped Ether",
@@ -186,7 +188,7 @@ export namespace Tokens {
             [ChainId.AVALANCHE]: "0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
         },
         swapType: SwapType.ETH,
-    })
+    });
 
     export const AVWETH = new BaseToken({
         name:     "AAVE Wrapped Ether",
@@ -196,7 +198,7 @@ export namespace Tokens {
             [ChainId.AVALANCHE]: "0x53f7c5869a859f0aec3d334ee8b4cf01e3492f21",
         },
         swapType: SwapType.ETH,
-    })
+    });
 
     export const ONE_ETH = new BaseToken({
         name:     "Harmony ETH",
@@ -206,7 +208,7 @@ export namespace Tokens {
             [ChainId.HARMONY]: "0x6983d1e6def3690c4d616b13597a09e6193ea013",
         },
         swapType: SwapType.ETH,
-    })
+    });
 
     export const FTM_ETH = new BaseToken({
         name:     "Wrapped ETH",
@@ -216,7 +218,7 @@ export namespace Tokens {
             [ChainId.FANTOM]: "0x74b23882a30290451A17c44f4F05243b6b58C76d"
         },
         swapType: SwapType.ETH,
-    })
+    });
 
     // Synapse tokens
 
@@ -276,7 +278,7 @@ export namespace Tokens {
             [ChainId.AVALANCHE]: "",
         },
         swapType: SwapType.AVAX,
-    })
+    });
 
     export const WAVAX = new WrappedToken({
         name:     "Wrapped AVAX",
@@ -288,7 +290,7 @@ export namespace Tokens {
         },
         swapType:        SwapType.AVAX,
         underlyingToken: AVAX,
-    })
+    });
 
     export const MOVR = new BaseToken({
         name:     "Moonriver",
@@ -298,7 +300,7 @@ export namespace Tokens {
             [ChainId.MOONRIVER]: "",
         },
         swapType: SwapType.MOVR,
-    })
+    });
 
     export const WMOVR  = new WrappedToken({
         name:     "Wrapped MOVR",
@@ -310,7 +312,7 @@ export namespace Tokens {
         },
         swapType:        SwapType.MOVR,
         underlyingToken: MOVR,
-    })
+    });
 
     // non-Synapse, non-stablecoin tokens
 
@@ -408,7 +410,7 @@ export namespace Tokens {
             [ChainId.HARMONY]:   "0x1852F70512298d56e9c8FDd905e02581E04ddb2a",
         },
         swapType: SwapType.FRAX,
-    })
+    });
 
     export const SOLAR = new BaseToken({
         name:     "Vested SolarBeam",
@@ -419,7 +421,7 @@ export namespace Tokens {
             [ChainId.MOONRIVER]: "0x76906411D07815491A5E577022757aD941fb5066",
         },
         swapType: SwapType.SOLAR,
-    })
+    });
 
     export const GMX = new BaseToken({
         name:     "GMX",
@@ -433,14 +435,26 @@ export namespace Tokens {
             [ChainId.AVALANCHE]: "0x20A9DC684B4d0407EF8C9A302BEAaA18ee15F656",
         },
         swapType: SwapType.GMX,
-    })
+    });
+
+    export const NEWO = new BaseToken({
+        name:    "New Order",
+        symbol:  "NEWO",
+        decimals: 18,
+        addresses: {
+            [ChainId.ETH]:       "0x98585dFc8d9e7D48F0b1aE47ce33332CF4237D96",
+            [ChainId.ARBITRUM]:  "0x0877154a755B24D499B8e2bD7ecD54d3c92BA433",
+            [ChainId.AVALANCHE]: "0x4Bfc90322dD638F81F034517359BD447f8E0235a",
+        },
+        swapType: SwapType.NEWO,
+    });
 
     export const mintBurnTokens: Token[] = [
         NUSD,  SYN,      NETH,
         HIGH,  DOG,      JUMP,
         FRAX,  SYN_FRAX, NFD,
         GOHM,  SOLAR,    GMX,
-        UST,
+        UST,   NEWO,
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
@@ -451,6 +465,6 @@ export namespace Tokens {
         AVWETH, ONE_ETH, FTM_ETH, SYN, NUSD,
         AVAX, WAVAX, MOVR, WMOVR, GOHM,
         HIGH, JUMP, DOG, NFD, FRAX,
-        SYN_FRAX, SOLAR, GMX,
+        SYN_FRAX, SOLAR, GMX, NEWO,
     ];
 }

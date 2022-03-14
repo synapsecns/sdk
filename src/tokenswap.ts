@@ -1,21 +1,26 @@
+import {
+    ChainId,
+    supportedChainIds
+} from "@chainid";
+import {Networks}      from "@networks";
 import type {Token}    from "@token";
 import {Tokens}        from "@tokens";
 import {SwapPools}     from "@swappools";
 import {rejectPromise} from "@common/utils";
 
-import {SynapseEntities} from "@entities";
+import {BridgeConfigV3ContractInstance} from "@entities";
+
 import {
     SwapContract,
     SwapFactory,
+    type BridgeConfigV3Contract
 } from "@contracts";
 
-import type {BridgeConfigV3Contract} from "@contracts";
-
-import {Networks}                   from "@networks";
-import {ChainId, supportedChainIds} from "@chainid";
-
-import {SwapType}              from "@internal/swaptype";
-import {rpcProviderForChain} from "@internal/rpcproviders";
+import {
+    SwapType,
+    mintBurnSwapTypes,
+    rpcProviderForChain
+} from "@internal";
 
 import {
     BigNumber,
@@ -59,7 +64,7 @@ export namespace UnsupportedSwapErrors {
 }
 
 export namespace TokenSwap {
-    const BRIDGE_CONFIG_INSTANCE: BridgeConfigV3Contract = SynapseEntities.bridgeConfigV3();
+    const BRIDGE_CONFIG_INSTANCE: BridgeConfigV3Contract = BridgeConfigV3ContractInstance();
 
     export interface SwapParams {
         chainId:       number,
@@ -261,12 +266,6 @@ export namespace TokenSwap {
             tokenIndexTo,
         })).catch(rejectPromise)
     }
-
-    const mintBurnSwapTypes = [
-        SwapType.HIGH, SwapType.DOG, SwapType.JUMP,
-        SwapType.NFD,  SwapType.OHM, SwapType.SOLAR,
-        SwapType.GMX,  SwapType.UST,
-    ];
 
     function _intermediateToken(token: Token, chainId: number): Token {
         const {intermediateToken, bridgeConfigIntermediateToken} = intermediateTokens(chainId, token);

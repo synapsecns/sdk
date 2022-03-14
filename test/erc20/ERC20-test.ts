@@ -1,5 +1,3 @@
-import "@tests/setup";
-
 import {
     Tokens,
     ChainId,
@@ -10,11 +8,8 @@ import {SynapseContracts} from "@sdk/common/synapse_contracts";
 
 import {
     DEFAULT_TEST_TIMEOUT,
-    bridgeTestPrivkey1,
     getTestAmount,
-    makeWalletSignerWithProvider,
     expectFulfilled,
-    expectBoolean,
     expectGteZero,
     expectNotZero,
     expectNull,
@@ -42,7 +37,7 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
             return {
                 chainId,
                 amount,
-                address: SynapseContracts.contractsForChainId(chainId).bridge_zap_address,
+                address: SynapseContracts.contractsForChainId(chainId).bridgeZapAddress,
             }
         }
 
@@ -58,7 +53,6 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
         for (const tc of testCases) {
             let {chainId, address: spender, amount} = tc;
 
-            const wallet = makeWalletSignerWithProvider(chainId, bridgeTestPrivkey1)
             const args: ERC20.ApproveArgs = {spender, amount};
 
             it("should build a transaction successfully", async function(this: Mocha.Context) {
@@ -71,19 +65,6 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
                 } catch (e) {
                     return (await expectFulfilled(prom))
                 }
-            })
-
-            it("should do an approve successfully", async function(this: Mocha.Context) {
-                this.timeout(DEFAULT_TEST_TIMEOUT);
-
-                let prom: Promise<boolean> = ERC20.approve(
-                    args,
-                    tokenParams(chainId),
-                    wallet,
-                    true
-                ).then((res: boolean) => res);
-
-                return expectBoolean(await prom, true)
             })
         }
     })
@@ -102,7 +83,7 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
 
             return expectGteZero(await ERC20.allowanceOf(
                 testAddr,
-                SynapseContracts.contractsForChainId(ChainId.BSC).bridge_zap_address,
+                SynapseContracts.contractsForChainId(ChainId.BSC).bridgeZapAddress,
                 tokenParams(ChainId.BSC)
             ))
         })

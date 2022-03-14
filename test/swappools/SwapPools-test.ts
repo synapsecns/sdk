@@ -1,5 +1,3 @@
-import "@tests/setup";
-
 import {
     ChainId,
     Networks,
@@ -8,7 +6,7 @@ import {
     type Token
 } from "@sdk";
 
-import {SwapType} from "@internal/swaptype";
+import {SwapType} from "@internal";
 
 import type {StringMap} from "@sdk/common/types";
 
@@ -31,7 +29,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
 
         const makeWantString = (tc: {want: boolean}, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
 
-        const testCases: TestCase[] = [
+        [
             {
                 chainId:       ChainId.BSC,
                 swapToken:     SwapPools.BSC_POOL_SWAP_TOKEN,
@@ -56,9 +54,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     {token: Tokens.FRAX, want: false},
                 ],
             },
-        ];
-
-        for (const tc of testCases) {
+        ].forEach((tc: TestCase) => {
             const
                 describeTitle: string = `test ${Networks.networkName(tc.chainId)} ${tc.swapToken.name.trimEnd()} pool tokens`,
                 poolSymbols: string[] = tc.swapToken.poolTokens.map((t: Token) => t.symbol);
@@ -76,7 +72,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     )
                 }
             })
-        }
+        })
     })
 
     describe("Test SwapPool getters for network", function(this: Mocha.Suite) {
@@ -100,7 +96,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             makeTestCase(ChainId.POLYGON,   true,  false),
             makeTestCase(ChainId.FANTOM,    true,  true),
             makeTestCase(ChainId.BOBA,      true,  true),
-            makeTestCase(ChainId.METIS,     false, false),
+            makeTestCase(ChainId.METIS,     true,  false),
             makeTestCase(ChainId.MOONBEAM,  false, false),
             makeTestCase(ChainId.MOONRIVER, false, false),
             makeTestCase(ChainId.ARBITRUM,  true,  true),
@@ -169,6 +165,15 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                 wantSwapType: SwapType.USD,
                 wantAddress:  null,
                 wantDecimals: null,
+            },
+            {
+                testName:     "METIS Stableswap Pool",
+                chainId:      ChainId.METIS,
+                swapPool:     SwapPools.METIS_POOL_SWAP_TOKEN,
+                wantSymbol:   "nUSDLP",
+                wantSwapType: SwapType.USD,
+                wantAddress:  "0xC6f684aE516480A35f337a4dA8b40EB6550e07E0",
+                wantDecimals: 18,
             }
         ];
 
@@ -206,7 +211,6 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     })
                 }
             })
-
         }
     })
 })

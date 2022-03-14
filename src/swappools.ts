@@ -2,12 +2,19 @@ import {Tokens} from "@tokens";
 
 import {ChainId, supportedChainIds} from "@chainid";
 
-import type {AddressMap, ChainIdTypeMap, DecimalsMap} from "@common/types";
+import type {
+    AddressMap,
+    ChainIdTypeMap,
+    DecimalsMap
+} from "@common/types";
 
-import {BaseToken, type IBaseToken, type Token,} from "@token";
+import {BaseToken, type IBaseToken, type Token} from "@token";
 
-import type {ID} from "@internal/distinct";
-import {SwapType} from "@internal/swaptype";
+import {
+    type ID,
+    SwapType
+} from "@internal";
+
 
 export namespace SwapPools {
     function moveFirstToLast(arr: Token[]) {
@@ -51,58 +58,51 @@ export namespace SwapPools {
         swapEthAddresses?: AddressMap,
     }
 
-    const makeSwapToken = (args: {
+    interface makeSwapTokenArgs {
         chainId:      number,
         netName:      string,
         address:      string,
         swapAddress:  string,
         poolId:       number,
         poolTokens:   Token[],
-        notLP?:       boolean
-    }): SwapToken =>
-        new SwapToken({
-            addresses: {[args.chainId]: args.address},
-            decimals:  18,
-            name:      "Synapse nUSD LP Token" + (args.netName != "BSC" ? ` ${args.netName}` : ""),
-            symbol:    (args.notLP ?? false) ? "nUSD" : "nUSD-LP",
-            poolName:  `${args.netName} Stableswap Pool `,
-            poolId:    args.poolId,
-            poolType:  SwapType.USD,
-            swapAddresses: {
-                [args.chainId]: args.swapAddress,
-            },
-            poolTokens: args.poolTokens,
-        })
+        notLP?:       boolean,
+        symbol?:      string
+    }
 
-    const makeETHSwapToken = (args: {
-        chainId:         number,
-        netName:         string,
-        address:         string,
-        swapAddress:     string,
+    interface makeETHSwapTokenArgs extends makeSwapTokenArgs {
         swapETHAddress?: string,
-        poolId:          number,
         poolName?:       string,
-        poolTokens:      Token[],
         nativeTokens?:   Token[],
         depositTokens?:  Token[],
-    }): ETHSwapToken =>
+    }
+
+    const makeSwapToken = (args: makeSwapTokenArgs): SwapToken =>
+        new SwapToken({
+            decimals:        18,
+            name:         `Synapse nUSD LP Token${args.netName != "BSC" ? ` ${args.netName}` : ""}`,
+            poolName:     `${args.netName} Stableswap Pool `,
+            symbol:          args.symbol ?? ((args.notLP ?? false) ? "nUSD" : "nUSD-LP"),
+            poolId:          args.poolId,
+            poolTokens:      args.poolTokens,
+            addresses:     {[args.chainId]: args.address},
+            swapAddresses: {[args.chainId]: args.swapAddress},
+            poolType:        SwapType.USD,
+        })
+
+    const makeETHSwapToken = (args: makeETHSwapTokenArgs): ETHSwapToken =>
         new ETHSwapToken({
-            addresses: {[args.chainId]: args.address},
-            decimals:  18,
-            name:      `Synapse ${args.poolName ?? "ETH"} LP Token ${args.netName}`,
-            symbol:    "nETH-LP",
-            poolName:  `${args.netName} ${args.poolName ?? "ETH"} Pool `,
-            poolId:    args.poolId,
-            poolType:  SwapType.ETH,
-            swapAddresses: {
-                [args.chainId]: args.swapAddress,
-            },
-            swapEthAddresses: {
-                [args.chainId]: args.swapETHAddress,
-            },
-            poolTokens:    args.poolTokens,
-            nativeTokens:  args.nativeTokens,
-            depositTokens: args.depositTokens,
+            decimals:         18,
+            name:          `Synapse ${args.poolName ?? "ETH"} LP Token ${args.netName}`,
+            poolName:      `${args.netName} ${args.poolName ?? "ETH"} Pool `,
+            symbol:           args.symbol ?? "nETH-LP",
+            poolId:           args.poolId,
+            addresses:      {[args.chainId]: args.address},
+            swapAddresses:  {[args.chainId]: args.swapAddress},
+            swapEthAddresses: args.swapETHAddress ? {[args.chainId]: args.swapETHAddress} : null,
+            poolTokens:       args.poolTokens,
+            nativeTokens:     args.nativeTokens,
+            depositTokens:    args.depositTokens,
+            poolType:         SwapType.ETH,
         })
 
     export class SwapToken implements SwapPoolToken {
@@ -289,6 +289,16 @@ export namespace SwapPools {
         nativeTokens:    ETHTokenPool,
     });
 
+    export const METIS_POOL_SWAP_TOKEN = makeSwapToken({
+        chainId:      ChainId.METIS,
+        address:     "0xC6f684aE516480A35f337a4dA8b40EB6550e07E0",
+        netName:     "Metis",
+        symbol:      "nUSDLP",
+        poolId:       0,
+        swapAddress: "0x555982d2E211745b96736665e19D9308B615F78e",
+        poolTokens:   [Tokens.NUSD, Tokens.USDC],
+    });
+
     export const ARBITRUM_POOL_SWAP_TOKEN = makeSwapToken({
         chainId:      ChainId.ARBITRUM,
         address:     "0xcFd72be67Ee69A0dd7cF0f846Fc0D98C33d60F16",
@@ -383,7 +393,8 @@ export namespace SwapPools {
         WAVAX_Pool   = makeSingleTokenPool(Tokens.WAVAX),
         MOVR_Pool    = makeSingleTokenPool(Tokens.MOVR),
         WMOVR_Pool   = makeSingleTokenPool(Tokens.WMOVR),
-        UST_Pool     = makeSingleTokenPool(Tokens.UST);
+        UST_Pool     = makeSingleTokenPool(Tokens.UST),
+        NEWO_Pool    = makeSingleTokenPool(Tokens.NEWO);
 
 
     export interface SwapTypePoolTokens {[swapType: string]: LPToken}
@@ -457,20 +468,27 @@ export namespace SwapPools {
             HIGH_Pool,
             DOG_Pool,
             FRAX_Pool,
+            NEWO_Pool,
         ),
         [ChainId.OPTIMISM]: makeSwapTypeMap(
-        {ethPool: [OPTIMISM_ETH_SWAP_TOKEN, OPTIMISM_ETH_SWAP_TOKEN.poolTokens]}
+            {
+                ethPool: [OPTIMISM_ETH_SWAP_TOKEN, OPTIMISM_ETH_SWAP_TOKEN.poolTokens]
+            }
         ),
         [ChainId.CRONOS]: makeSwapTypeMap({}),
         [ChainId.BSC]: makeSwapTypeMap(
-        {usdPool: [BSC_POOL_SWAP_TOKEN, BSC_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps]},
+            {
+                usdPool: [BSC_POOL_SWAP_TOKEN, BSC_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps]
+            },
             HIGH_Pool,
             DOG_Pool,
             JUMP_Pool,
             NFD_Pool,
         ),
         [ChainId.POLYGON]: makeSwapTypeMap(
-        {usdPool: [POLYGON_POOL_SWAP_TOKEN, POLYGON_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps]},
+            {
+                usdPool: [POLYGON_POOL_SWAP_TOKEN, POLYGON_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps]
+            },
             NFD_Pool,
             DOG_Pool,
         ),
@@ -488,7 +506,11 @@ export namespace SwapPools {
                 ethPool: [BOBA_ETH_SWAP_TOKEN,  BOBA_ETH_SWAP_TOKEN.poolTokens]
             },
         ),
-        [ChainId.METIS]: makeSwapTypeMap({}),
+        [ChainId.METIS]: makeSwapTypeMap(
+            {
+                usdPool: [METIS_POOL_SWAP_TOKEN, METIS_POOL_SWAP_TOKEN.poolTokens]
+            }
+        ),
         [ChainId.MOONBEAM]: makeSwapTypeMap(
             {},
             SOLAR_Pool,
@@ -507,6 +529,7 @@ export namespace SwapPools {
                 ethPool: [ARBITRUM_ETH_SWAP_TOKEN,  ARBITRUM_ETH_SWAP_TOKEN.poolTokens]
             },
             GMX_Pool,
+            NEWO_Pool,
         ),
         [ChainId.AVALANCHE]: makeSwapTypeMap(
             {
@@ -516,6 +539,7 @@ export namespace SwapPools {
             NFD_Pool,
             GMX_Pool,
             AVAX_Pool,
+            NEWO_Pool,
         ),
         [ChainId.AURORA]: makeSwapTypeMap(
             {
@@ -544,23 +568,6 @@ export namespace SwapPools {
         return swapGroup in m ? m[swapGroup] : []
     }
 
-    // export const BRIDGEABLE_TOKENS = {
-    //     [ChainId.ETH]:       [Tokens.USDC, Tokens.USDT, Tokens.DAI, Tokens.GOHM, Tokens.SYN, Tokens.FRAX, Tokens.NUSD, Tokens.ETH, Tokens.DOG, Tokens.HIGH],
-    //     [ChainId.BSC]:       [Tokens.BUSD, Tokens.USDC, Tokens.USDT, Tokens.GOHM, Tokens.SYN, Tokens.NUSD, Tokens.DOG, Tokens.JUMP, Tokens.NFD, Tokens.HIGH],
-    //     [ChainId.FANTOM]:    [Tokens.USDC, Tokens.USDT, Tokens.FTM_ETH, Tokens.GOHM, Tokens.SYN, Tokens.NETH, Tokens.NUSD, Tokens.JUMP],                 //  FRAX,
-    //     [ChainId.POLYGON]:   [Tokens.USDC, Tokens.USDT, Tokens.DAI, Tokens.GOHM, Tokens.NUSD, Tokens.SYN, Tokens.DOG, Tokens.NFD],
-    //     [ChainId.BOBA]:      [Tokens.ETH, Tokens.NETH, Tokens.GOHM, Tokens.DAI, Tokens.USDC, Tokens.USDT, Tokens.SYN, Tokens.NUSD],
-    //     [ChainId.MOONBEAM]:  [Tokens.GOHM, Tokens.SOLAR, Tokens.WMOVR, Tokens.WAVAX, Tokens.SYN],                                  // FRAX, , WETHBEAM #temp
-    //     [ChainId.MOONRIVER]: [Tokens.GOHM, Tokens.SOLAR, Tokens.FRAX, Tokens.MOVR, Tokens.SYN],
-    //     [ChainId.ARBITRUM]:  [Tokens.ETH, Tokens.GOHM, Tokens.USDC, Tokens.USDT, Tokens.GMX, Tokens.SYN, Tokens.NETH, Tokens.NUSD],
-    //     [ChainId.AVALANCHE]: [Tokens.USDC, Tokens.USDT, Tokens.DAI, Tokens.WETH_E, Tokens.GMX, Tokens.AVAX, Tokens.GOHM, Tokens.SYN, Tokens.NUSD, Tokens.NFD, Tokens.NETH],
-    //     [ChainId.HARMONY]:   [Tokens.USDC, Tokens.USDT, Tokens.DAI, Tokens.FRAX, Tokens.ONE_ETH, Tokens.SYN, Tokens.NUSD, Tokens.NETH, Tokens.GOHM],
-    //     [ChainId.OPTIMISM]:  [Tokens.ETH, Tokens.NETH, Tokens.GOHM, Tokens.SYN],
-    //     [ChainId.AURORA]:    [Tokens.USDC, Tokens.USDT, Tokens.NUSD, Tokens.SYN],
-    //     [ChainId.CRONOS]:    [Tokens.GOHM, Tokens.SYN],
-    //     [ChainId.METIS]:     [Tokens.GOHM, Tokens.SYN],
-    // }
-
     export function getAllSwappableTokensForNetwork(chainId: number): Token[] {
         let swappableTokens: Token[] = [];
 
@@ -584,6 +591,8 @@ export namespace SwapPools {
                 return FANTOM_POOL_SWAP_TOKEN
             case ChainId.BOBA:
                 return BOBA_POOL_SWAP_TOKEN
+            case ChainId.METIS:
+                return METIS_POOL_SWAP_TOKEN
             case ChainId.ARBITRUM:
                 return ARBITRUM_POOL_SWAP_TOKEN
             case ChainId.AVALANCHE:

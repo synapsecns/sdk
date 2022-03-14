@@ -1,18 +1,10 @@
 export {
-    newSynapseBridgeInstance,
-    newL1BridgeZapInstance,
-    newL2BridgeZapInstance
+    SynapseBridgeContractInstance,
+    L1BridgeZapContractInstance,
+    L2BridgeZapContractInstance
 } from "@entities";
 
-import {SynapseEntities} from "@entities";
-
-export const {
-    synapseBridge,
-    l1BridgeZap,
-    l2BridgeZap,
-} = SynapseEntities;
-
-export {Bridge} from "@bridge/bridge";
+export {Bridge}    from "@bridge/bridge";
 export {Slippages} from "@bridge/slippages";
 
 export {

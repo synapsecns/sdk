@@ -17,6 +17,7 @@
       "@contracts/*":   ["../src/contracts/*"],
       "@chainid":       ["../src/common/chainid"],
       "@networks":      ["../src/common/networks"],
+      "@internal":      ["../src/internal/index.ts"],
       "@internal/*":    ["../src/internal/*"],
       "@swappools":     ["../src/swappools"],
       "@token":         ["../src/token"],

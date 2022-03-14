@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@abis":        ["./src/abis"],
+      "@abis":        ["./src/abis/index.ts"],
       "@abis/*":      ["./src/abis/*"],
       "@bridge":      ["./src/bridge"],
       "@bridge/*":    ["./src/bridge/*"],
@@ -12,6 +12,7 @@
       "@contracts/*": ["./src/contracts/*"],
       "@chainid":     ["./src/common/chainid"],
       "@networks":    ["./src/common/networks"],
+      "@internal":    ["./src/internal/index.ts"],
       "@internal/*":  ["./src/internal/*"],
       "@swappools":   ["./src/swappools"],
       "@token":       ["./src/token"],

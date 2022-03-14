@@ -1,5 +1,3 @@
-import "@tests/setup";
-
 import {step} from "mocha-steps";
 
 import {
@@ -20,7 +18,9 @@ import {
 
 import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
-import {Contract}  from "@ethersproject/contracts";
+import {BaseContract, Contract} from "@ethersproject/contracts";
+import {expect} from "chai";
+import {SwapContract} from "@contracts";
 
 
 describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
@@ -40,18 +40,17 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                 tokenTo:   t2,
                 amountIn:  getTestAmount(t1, c, amt),
                 wantError: wantError ?? false,
-            })
+            });
 
-        const testCases: TestCase[] = [
+        [
             makeTestCase(ChainId.ETH,        Tokens.DAI,        Tokens.USDC),
             makeTestCase(ChainId.ETH,        Tokens.ETH,        Tokens.NETH, null, true),
             makeTestCase(ChainId.OPTIMISM,   Tokens.WETH,       Tokens.NETH),
             makeTestCase(ChainId.BSC,        Tokens.BUSD,       Tokens.USDT),
             makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.BUSD),
-            makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.DAI,  undefined,true),
-        ]
-
-        for (const tc of testCases) {
+            makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.DAI,  null, true),
+            makeTestCase(ChainId.ARBITRUM,   Tokens.NEWO,       Tokens.UST,  null, true),
+        ].forEach((tc: TestCase) => {
             const
                 titleSuffix: string = tc.wantError ? "should fail" : "should pass",
                 tokFrom: string     = tc.tokenFrom.symbol,
@@ -107,10 +106,19 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                     tc.chainId,
                 )
 
-                return tc.wantError
-                    ? await expectRejected(prom)
-                    : expectProperty(await prom, "swapInstance").that.is.instanceof(Contract)
+                try {
+                    let res = await prom;
+                    expect(res).to.have.property("swapInstance");
+                    expect(res.swapInstance).to.be.an.instanceof(BaseContract);
+                    return
+                } catch (e) {
+                    if (tc.wantError) {
+                        return (await expect(prom).to.eventually.be.rejected);
+                    } else {
+                        expect.fail(e);
+                    }
+                }
             })
-        }
+        })
     })
 })

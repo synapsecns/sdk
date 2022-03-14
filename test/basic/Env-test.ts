@@ -1,5 +1,3 @@
-import "@tests/setup";
-
 import path from "path";
 
 import dotenv from "dotenv";
@@ -22,13 +20,6 @@ describe('Test ENV values', function(this: Mocha.Suite) {
     describe("Test setting URIs from ENV", function(this: Mocha.Suite) {
         const valPrefix: string = "carl_";
 
-        type testCase = [number, string, string];
-        const testCases: testCase[] = [
-            [ChainId.AVALANCHE, "AVALANCHE", "AVALANCHE_RPC_URI"],
-            [ChainId.MOONRIVER, "MOONRIVER", "MOONRIVER_RPC_URI"],
-            [ChainId.ETH,       "ETH",       "ETH_RPC_URI"],
-        ];
-
         function loadTestEnv(): void {
             let envData = fs.readFileSync(TEST_ENV_PATH);
             let parsedEnv = dotenv.parse(envData);
@@ -37,7 +28,12 @@ describe('Test ENV values', function(this: Mocha.Suite) {
             }
         }
 
-        for (const tc of testCases) {
+        type testCase = [number, string, string];
+        [
+            [ChainId.AVALANCHE, "AVALANCHE", "AVALANCHE_RPC_URI"],
+            [ChainId.MOONRIVER, "MOONRIVER", "MOONRIVER_RPC_URI"],
+            [ChainId.ETH,       "ETH",       "ETH_RPC_URI"],
+        ].forEach((tc: testCase) => {
             const
                 [chainId, name, envKey] = tc,
                 expectedVal: string = `${valPrefix}${name}`,
@@ -52,6 +48,6 @@ describe('Test ENV values', function(this: Mocha.Suite) {
                     expectEqual(gotVal, expectedVal);
                 }
             )
-        }
+        })
     })
 })

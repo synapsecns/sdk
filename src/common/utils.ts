@@ -1,7 +1,8 @@
 import {ChainId}          from "@chainid";
 import {SynapseContracts} from "./synapse_contracts";
+import {StaticCallResult} from "./types";
 
-import type {Signer} from "@ethersproject/abstract-signer";
+import type {Signer}      from "@ethersproject/abstract-signer";
 
 import type {
     PopulatedTransaction,
@@ -10,14 +11,28 @@ import type {
 
 export const rejectPromise = (e: any): Promise<never> => Promise.reject(e instanceof Error ? e : new Error(e))
 
-export const executePopulatedTransaction = (
-    populatedTxn: Promise<PopulatedTransaction>,
-    signer:       Signer,
-): Promise<ContractTransaction> =>
-    populatedTxn
-        .then((populatedTxn: PopulatedTransaction): Promise<ContractTransaction> => signer.sendTransaction(populatedTxn))
-        .catch(rejectPromise)
+type Resolveable<T> = T | Promise<T>
 
+export function executePopulatedTransaction(
+    populatedTxn: Resolveable<PopulatedTransaction>,
+    signer:       Signer,
+): Promise<ContractTransaction> {
+    return Promise.resolve(populatedTxn)
+        .then(txn => signer.sendTransaction(txn))
+        .catch(rejectPromise)
+}
+
+export function staticCallPopulatedTransaction(
+    populatedTxn: Resolveable<PopulatedTransaction>,
+    signer:       Signer
+): Promise<StaticCallResult> {
+    return Promise.resolve(populatedTxn)
+        .then(txn => {
+            return signer.call(txn)
+                .then(()  => StaticCallResult.Success)
+                .catch((err) => StaticCallResult.Failure)
+        })
+}
 
 export function contractAddressFor(chainId: number, key: string): string {
     const { address } = contractsForChainId(chainId)[key] || "";

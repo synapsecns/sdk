@@ -1,5 +1,3 @@
-import "@tests/setup";
-
 import {
     ChainId,
     Networks,
@@ -27,7 +25,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
             wantB:   Token;
         }
 
-        const testCases: TestCase[] = [
+        [
             {chainId: ChainId.ETH,       token: Tokens.FRAX,     wantA: undefined,   wantB: Tokens.FRAX},
             {chainId: ChainId.ETH,       token: Tokens.SYN_FRAX, wantA: undefined,   wantB: Tokens.FRAX},
             {chainId: ChainId.HARMONY,   token: Tokens.FRAX,     wantA: undefined,   wantB: Tokens.SYN_FRAX},
@@ -36,9 +34,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
             {chainId: ChainId.BSC,       token: Tokens.BUSD,     wantA: Tokens.NUSD, wantB: Tokens.NUSD},
             {chainId: ChainId.AVALANCHE, token: Tokens.GOHM,     wantA: Tokens.GOHM, wantB: Tokens.GOHM},
 
-        ];
-
-        for (const tc of testCases) {
+        ].forEach((tc: TestCase) => {
             const
                 testPrefix: string = `intermediateTokens() with token ${tc.token.symbol} and Chain ID ${tc.chainId} should return`,
                 testWant:   string = `intermediateToken === ${tc.wantA?.symbol ?? 'undefined'}, bridgeConfigIntermediateToken === ${tc.wantB.symbol}`,
@@ -53,7 +49,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
 
                 expectBoolean(tc.wantB.isEqual(got.bridgeConfigIntermediateToken), true);
             })
-        }
+        })
     })
 
     describe("detailedTokenSwapMap test", function(this: Mocha.Suite) {
@@ -75,7 +71,13 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
             chainTokens:   TokenOnChain[],
         }
 
-        const testCases: TestCase[] = [
+        const findTokenMap = (
+            tok:     Token,
+            toksMap: {[p: number]: Token[], token: Token}[]
+        ): {[p: number]: Token[], token: Token} | undefined =>
+            toksMap.find((sm) => sm.token.isEqual(tok));
+
+        [
             {
                 chainId:       ChainId.BSC,
                 chainTokens:   [
@@ -101,17 +103,22 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
                     {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
                 ],
-            }
-        ];
-
-        const findTokenMap = (
-            tok:     Token,
-            toksMap: {[p: number]: Token[], token: Token}[]
-        ): {[p: number]: Token[], token: Token} | undefined =>
-            toksMap.find((sm) => sm.token.isEqual(tok))
-
-
-        for (const tc of testCases) {
+            },
+            {
+                chainId:       ChainId.ARBITRUM,
+                chainTokens:   [
+                    {chainId: ChainId.AVALANCHE, token: Tokens.NEWO},
+                    {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
+                ],
+            },
+            {
+                chainId:       ChainId.AVALANCHE,
+                chainTokens:   [
+                    {chainId: ChainId.ARBITRUM,  token: Tokens.NEWO},
+                    {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
+                ],
+            },
+        ].forEach((tc: TestCase) => {
             const describeTitle: string = `${Networks.networkName(tc.chainId)} needs certain results`;
 
             describe(describeTitle, function(this: Mocha.Suite) {
@@ -122,7 +129,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     wrapExpect(expectUndefined(toksMap, false))
                 )
 
-                for (const tok of tc.chainTokens) {
+                tc.chainTokens.forEach(tok => {
                     const
                         testTitle: string = `should be able to send token ${tok.token.name} to ${Networks.networkName(tok.chainId)}`,
                         tokMap            = findTokenMap(tok.token, toksMap);
@@ -131,8 +138,8 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                         testTitle,
                         wrapExpect(expectProperty(tokMap, tok.chainId.toString()))
                     )
-                }
+                })
             })
-        }
+        })
     })
 })

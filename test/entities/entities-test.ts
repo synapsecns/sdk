@@ -1,5 +1,3 @@
-import "@tests/setup";
-
 import {
     wrapExpect,
     expectNull
@@ -7,18 +5,18 @@ import {
 
 import {
     ChainId,
-    Networks,
-    newSynapseBridgeInstance,
-    newL1BridgeZapInstance,
-    newL2BridgeZapInstance,
-    synapseBridge,
-    l1BridgeZap,
-    l2BridgeZap,
+    Networks
 } from "@sdk";
 
-import {SynapseEntities}       from "@sdk/entities";
-import {SynapseContracts}      from "@sdk/common/synapse_contracts";
-import {rpcProviderForChain} from "@sdk/internal/rpcproviders";
+import {
+    SynapseBridgeContractInstance,
+    L1BridgeZapContractInstance,
+    L2BridgeZapContractInstance,
+    GenericZapBridgeContractInstance,
+    BridgeConfigV3ContractInstance
+} from "@sdk/entities";
+
+import {rpcProviderForChain}   from "@sdk/internal";
 import type {SignerOrProvider} from "@sdk/common/types";
 
 import type {BaseContract} from "@ethersproject/contracts";
@@ -26,58 +24,49 @@ import type {BaseContract} from "@ethersproject/contracts";
 
 describe("Entities tests", function(this: Mocha.Suite) {
     enum EntityKind {
-        SynapseBridge  = "SynapseBridge",
-        L1BridgeZap    = "L1BridgeZap",
-        L2BridgeZap    = "L2BridgeZap",
-        BridgeConfigV3 = "BridgeConfigV3",
+        SynapseBridge    = "SynapseBridge",
+        L1BridgeZap      = "L1BridgeZap",
+        L2BridgeZap      = "L2BridgeZap",
+        GenericZapBridge = "GenericZapBridge",
+        BridgeConfigV3   = "BridgeConfigV3",
     }
 
     interface fnArgs {
-        address:          string,
         chainId:          number,
         signerOrProvider: SignerOrProvider,
     }
+
     interface TestCase {
-        chainId:    number,
-        address?:   string,
-        instanceFn: (args: fnArgs) => BaseContract,
-        entityFn:   (args: fnArgs) => BaseContract,
-        kind:       EntityKind,
+        chainId: number,
+        fn:      (args: fnArgs) => BaseContract,
+        kind:    EntityKind,
     }
 
     function makeTestCase(chainId: number, kind: EntityKind): TestCase {
-        const contracts = SynapseContracts.contractsForChainId(chainId);
-
-        let
-            address:    string,
-            instanceFn: (args: fnArgs) => BaseContract,
-            entityFn:   (args: fnArgs) => BaseContract;
+        let fn: (args: fnArgs) => BaseContract;
 
         switch (kind) {
             case EntityKind.SynapseBridge:
-                address    = contracts.bridge_address;
-                instanceFn = newSynapseBridgeInstance;
-                entityFn   = synapseBridge;
+                fn = SynapseBridgeContractInstance;
                 break;
             case EntityKind.L1BridgeZap:
-                address    = contracts.bridge_zap_address;
-                instanceFn = newL1BridgeZapInstance;
-                entityFn   = l1BridgeZap;
+                fn = L1BridgeZapContractInstance;
                 break;
             case EntityKind.L2BridgeZap:
-                address    = contracts.bridge_zap_address;
-                instanceFn = newL2BridgeZapInstance;
-                entityFn   = l2BridgeZap;
+                fn = L2BridgeZapContractInstance;
+                break;
+            case EntityKind.GenericZapBridge:
+                fn = GenericZapBridgeContractInstance;
                 break;
             case EntityKind.BridgeConfigV3:
-                entityFn   = SynapseEntities.bridgeConfigV3;
+                fn = BridgeConfigV3ContractInstance;
                 break;
         }
 
-        return {chainId, address, instanceFn, entityFn, kind}
+        return {chainId, fn, kind}
     }
 
-    const testCases: TestCase[] = [
+    [
         makeTestCase(ChainId.FANTOM, EntityKind.SynapseBridge),
         makeTestCase(ChainId.FANTOM, EntityKind.L2BridgeZap),
         makeTestCase(ChainId.BSC,    EntityKind.SynapseBridge),
@@ -85,39 +74,18 @@ describe("Entities tests", function(this: Mocha.Suite) {
         makeTestCase(ChainId.ETH,    EntityKind.SynapseBridge),
         makeTestCase(ChainId.ETH,    EntityKind.L1BridgeZap),
         makeTestCase(ChainId.ETH,    EntityKind.BridgeConfigV3),
-    ];
-
-    const makeTestName = (
-        tc:      TestCase,
-        entity:  boolean
-    ): string => `Test ${EntityKind[tc.kind]}${entity ? " entity" : ""} instance`;
-
-    for (const tc of testCases) {
+    ].forEach(tc => {
         describe(Networks.networkName(tc.chainId), function(this: Mocha.Suite) {
             const
                 provider                = rpcProviderForChain(tc.chainId),
-                newInstanceArgs: fnArgs = {address: tc.address, chainId: tc.chainId, signerOrProvider: provider};
+                newInstanceArgs: fnArgs = {chainId: tc.chainId, signerOrProvider: provider};
 
-            let instance: BaseContract = null;
-            let wantNull: boolean = true;
-            if (tc.instanceFn) {
-                instance = tc.instanceFn(newInstanceArgs);
-                wantNull = false;
-            }
-
-            let entityInstance = tc.entityFn(newInstanceArgs);
+            let instance: BaseContract = tc.fn(newInstanceArgs);
 
             it(
-                makeTestName(tc, false),
-                wrapExpect(expectNull(instance, wantNull))
-            )
-
-            it(
-                makeTestName(tc, true),
-                wrapExpect(expectNull(entityInstance, false))
+                `Test ${EntityKind[tc.kind]} instance`,
+                wrapExpect(expectNull(instance, false))
             )
         })
-
-
-    }
+    })
 })

@@ -8,3 +8,8 @@ export type StringMap   = ChainIdTypeMap<string>
 export type DecimalsMap = ChainIdTypeMap<number>
 
 export type AddressMap  = StringMap
+
+export enum StaticCallResult {
+    Success,
+    Failure
+}
