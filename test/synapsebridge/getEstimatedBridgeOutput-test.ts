@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import {
     ChainId,
     Networks,
@@ -15,7 +17,7 @@ import {
     expectPromiseResolve,
     expectZero,
     expectNotZero,
-    valueIfUndefined
+    valueIfUndefined, makeWalletSignerWithProvider, bridgeTestPrivkey1, expectRejected
 } from "@tests/helpers";
 
 import {
@@ -53,7 +55,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         return makeBridgeSwapTestCase(c1, t1, c2, t2, expected, getTestAmount(t1, c1, amt))
     }
 
-    function makeTestName(tc: TestCase): [string, string] {
+    function makeTestName(tc: TestCase): [string, string, string] {
         let {
             args: {
                 amountFrom,
@@ -81,9 +83,10 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
 
         const
             bridgeOutputTestTitle: string = `getEstimatedBridgeOutput ${testParamsTitle} should return ${titleSuffix}`,
+            transactionTestTitle: string = `buildBridgeTokenTransaction ${testParamsTitle} ${passFailSuffix}`,
             approveTestTitle:      string = `buildApproveTransaction ${testParamsTitle} ${passFailSuffix}`;
 
-        return [bridgeOutputTestTitle, approveTestTitle]
+        return [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle]
     }
 
     [
@@ -180,7 +183,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         makeTestCase(Tokens.NEWO,    Tokens.NEWO,    ChainId.AURORA,    ChainId.HARMONY,   undefined, false, true),
         makeTestCase(Tokens.NEWO,    Tokens.NEWO,    ChainId.ETH,       ChainId.BSC,       undefined, false, true),
     ].forEach((tc: TestCase) => {
-        const [bridgeOutputTestTitle, approveTestTitle] = makeTestName(tc)
+        const [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc)
 
         let amountTo: BigNumber;
 
@@ -231,6 +234,32 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
             let prom = bridgeInstance.buildApproveTransaction({token:  tokenFrom, amount: amountFrom});
 
             return (await expectFulfilled(prom))
+        });
+
+        const undefEmptyArr = [
+            "", "", undefined, "", undefined,
+            undefined, "", "", undefined, undefined, ""
+        ];
+
+
+        it(transactionTestTitle, async function(this: Mocha.Context) {
+            this.timeout(DEFAULT_TEST_TIMEOUT);
+
+            let {args: { chainIdFrom }, args, expected: {noAddrTo}} = tc;
+
+            const
+                bridgeInstance    = new Bridge.SynapseBridge({ network: chainIdFrom }),
+                addressTo: string = noAddrTo
+                    ? _.shuffle(undefEmptyArr)[0]
+                    : makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey1).address;
+
+            let prom = bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo});
+
+            return (await (
+                tc.expected.wantError
+                    ? expectRejected(prom)
+                    : expectPromiseResolve(prom, !noAddrTo)
+            ))
         });
     });
 });
