@@ -6,7 +6,7 @@ import {
 
 import {ChainId} from "@chainid";
 
-import {SwapType} from "@internal";
+import {SwapType} from "@internal/index";
 
 export namespace Tokens {
     // Stablecoins

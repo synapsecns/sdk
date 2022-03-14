@@ -13,7 +13,7 @@ import {BaseToken, type IBaseToken, type Token} from "@token";
 import {
     type ID,
     SwapType
-} from "@internal";
+} from "@internal/index";
 
 
 export namespace SwapPools {

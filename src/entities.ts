@@ -12,7 +12,7 @@ import {
 
 import {ChainId}             from "@chainid";
 import {contractAddressFor}  from "@common/utils";
-import {rpcProviderForChain} from "@internal";
+import {rpcProviderForChain} from "@internal/index";
 
 import type {SignerOrProvider} from "@common/types";
 

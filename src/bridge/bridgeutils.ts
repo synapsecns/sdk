@@ -9,7 +9,7 @@ import type {GenericZapBridgeContract, L2BridgeZapContract} from "@contracts";
 
 import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
-import {tokenSwitch} from "@internal";
+import {tokenSwitch} from "@internal/index";
 
 
 export namespace BridgeUtils {

@@ -15,7 +15,7 @@ import {
     SwapType,
     rpcProviderForChain,
     tokenSwitch
-} from "@internal";
+} from "@internal/index";
 
 import type {
     GenericZapBridgeContract,

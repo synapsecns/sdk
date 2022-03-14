@@ -20,7 +20,7 @@ import {
     SwapType,
     mintBurnSwapTypes,
     rpcProviderForChain
-} from "@internal";
+} from "@internal/index";
 
 import {
     BigNumber,
