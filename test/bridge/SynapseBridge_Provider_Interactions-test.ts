@@ -124,20 +124,20 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
             },
             callStatic:         true,
         },
-        {
-            args: {
-                tokenFrom:   Tokens.WETH_E,
-                tokenTo:     Tokens.ETH,
-                chainIdFrom: ChainId.AVALANCHE,
-                chainIdTo:   ChainId.ARBITRUM,
-                amountFrom:  parseEther("0.05"),
-            },
-            expected: {
-                executeSuccess: true,
-                canBridge:      true,
-            },
-            callStatic:         true,
-        },
+        // {
+        //     args: {
+        //         tokenFrom:   Tokens.WETH_E,
+        //         tokenTo:     Tokens.ETH,
+        //         chainIdFrom: ChainId.AVALANCHE,
+        //         chainIdTo:   ChainId.ARBITRUM,
+        //         amountFrom:  parseEther("0.05"),
+        //     },
+        //     expected: {
+        //         executeSuccess: false,
+        //         canBridge:      false,
+        //     },
+        //     callStatic:         true,
+        // },
         {
             args: {
                 tokenFrom:   Tokens.ETH,
