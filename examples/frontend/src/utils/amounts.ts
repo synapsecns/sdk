@@ -10,8 +10,8 @@ export function valueWei(ether: BigNumberish, decimals: number): BigNumber {
 }
 
 interface RoundingOptions {
-    round:     boolean,
-    places?:   number,
+    round:          boolean,
+    places?:        number,
 }
 
 const PLACES: number = 6;
