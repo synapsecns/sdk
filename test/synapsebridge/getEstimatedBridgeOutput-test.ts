@@ -83,7 +83,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
 
         const
             bridgeOutputTestTitle: string = `getEstimatedBridgeOutput ${testParamsTitle} should return ${titleSuffix}`,
-            transactionTestTitle: string = `buildBridgeTokenTransaction ${testParamsTitle} ${passFailSuffix}`,
+            transactionTestTitle: string  = `buildBridgeTokenTransaction ${testParamsTitle} ${passFailSuffix}`,
             approveTestTitle:      string = `buildApproveTransaction ${testParamsTitle} ${passFailSuffix}`;
 
         return [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle]
@@ -241,11 +241,10 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
             undefined, "", "", undefined, undefined, ""
         ];
 
-
         it(transactionTestTitle, async function(this: Mocha.Context) {
             this.timeout(DEFAULT_TEST_TIMEOUT);
 
-            let {args: { chainIdFrom }, args, expected: {noAddrTo}} = tc;
+            let {args: { chainIdFrom }, args, expected: {wantError, noAddrTo}} = tc;
 
             const
                 bridgeInstance    = new Bridge.SynapseBridge({ network: chainIdFrom }),
@@ -256,7 +255,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
             let prom = bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo});
 
             return (await (
-                tc.expected.wantError
+                wantError
                     ? expectRejected(prom)
                     : expectPromiseResolve(prom, !noAddrTo)
             ))
