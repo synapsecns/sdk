@@ -166,7 +166,7 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             return makeBridgeSwapTestCase(c1, t1, c2, t2, expected, getTestAmount(t1, c1, amt))
         }
 
-        function makeTestName(tc: TestCase): [string, string, string] {
+        function makeTestName(tc: TestCase): [string, string] {
             let {
                 args: {
                     amountFrom,
@@ -194,10 +194,9 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
 
             const
                 bridgeOutputTestTitle: string = `getEstimatedBridgeOutput ${testParamsTitle} should return ${titleSuffix}`,
-                transactionTestTitle:  string = `buildBridgeTokenTransaction ${testParamsTitle} ${passFailSuffix}`,
                 approveTestTitle:      string = `buildApproveTransaction ${testParamsTitle} ${passFailSuffix}`;
 
-            return [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle]
+            return [bridgeOutputTestTitle, approveTestTitle]
         }
 
         [
@@ -294,7 +293,7 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
             makeTestCase(Tokens.NEWO,    Tokens.NEWO,    ChainId.AURORA,    ChainId.HARMONY,   undefined, false, true),
             makeTestCase(Tokens.NEWO,    Tokens.NEWO,    ChainId.ETH,       ChainId.BSC,       undefined, false, true),
         ].forEach((tc: TestCase) => {
-            const [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc)
+            const [bridgeOutputTestTitle, approveTestTitle] = makeTestName(tc)
 
             let amountTo: BigNumber;
 
@@ -345,84 +344,6 @@ describe("SynapseBridge - Bridge/Swap tests", function(this: Mocha.Suite) {
                 let prom = bridgeInstance.buildApproveTransaction({token:  tokenFrom, amount: amountFrom});
 
                 return (await expectFulfilled(prom))
-            })
-
-            const undefEmptyArr = [
-                "", "", undefined, "", undefined,
-                undefined, "", "", undefined, undefined, ""
-            ];
-
-            describe("build bride token transaction tests", function(this: Mocha.Suite) {
-                let builtTxn: PopulatedTransaction;
-
-                const shouldCheckTxnData: boolean = !tc.expected.wantError && !tc.expected.noAddrTo;
-
-                step(transactionTestTitle, async function(this: Mocha.Context) {
-                    this.timeout(DEFAULT_TEST_TIMEOUT);
-
-                    let {args: { chainIdFrom }, args, expected: {noAddrTo}} = tc;
-
-                    const
-                        bridgeInstance    = new Bridge.SynapseBridge({ network: chainIdFrom }),
-                        addressTo: string = noAddrTo
-                            ? _.shuffle(undefEmptyArr)[0]
-                            : makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey1).address;
-
-                    let prom = bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo});
-
-                    if (shouldCheckTxnData) {
-                        Promise.resolve(prom).then(built => builtTxn = built);
-                    }
-
-                    return (await (
-                        tc.expected.wantError
-                            ? expectRejected(prom)
-                            : expectPromiseResolve(prom, !noAddrTo)
-                    ))
-                })
-
-                const redeemDepositCheckTokens: Token[] = [
-                    Tokens.GOHM, Tokens.NEWO, Tokens.HIGH,
-                    Tokens.SYN,  Tokens.FRAX, Tokens.DOG,
-                ];
-
-                if (shouldCheckTxnData && redeemDepositCheckTokens.includes(tc.args.tokenFrom)) {
-                    let txnInfo: TransactionDescription;
-                    const
-                        l1BridgeZapInterface = L1BridgeZapFactory.createInterface(),
-                        l2BridgeZapInterface = L2BridgeZapFactory.createInterface();
-
-                    const
-                        netFrom: string = Networks.networkName(tc.args.chainIdFrom),
-                        netTo:   string = Networks.networkName(tc.args.chainIdTo);
-
-                    const
-                        netTokenFrom: string = `${tc.args.tokenFrom.name} on ${netFrom}`,
-                        netTokenTo:   string = `${tc.args.tokenTo.name} on ${netTo}`;
-
-                    const testTitlePrefix: string = `build transaction for ${netTokenFrom} to ${netTokenTo} should be a call to`;
-                    let wantTxFn: string;
-
-                    if (tc.args.chainIdFrom === ChainId.ETH) {
-                        if (tc.args.tokenFrom.isEqual(Tokens.SYN)) {
-                            wantTxFn = "redeem";
-                        } else {
-                            wantTxFn = "deposit";
-                        }
-                    } else {
-                        wantTxFn = "redeem";
-                    }
-
-                    const testTitle: string = `${testTitlePrefix} ${wantTxFn}()`
-
-                    step(testTitle, function(this: Mocha.Context) {
-                        txnInfo = tc.args.chainIdFrom === ChainId.ETH
-                            ? l1BridgeZapInterface.parseTransaction({data: builtTxn.data || ""})
-                            : l2BridgeZapInterface.parseTransaction({data: builtTxn.data || ""});
-
-                        expect(txnInfo.name).to.equal(wantTxFn);
-                    });
-                }
             });
         });
     });
