@@ -170,7 +170,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                 testName:     "METIS Stableswap Pool",
                 chainId:      ChainId.METIS,
                 swapPool:     SwapPools.METIS_POOL_SWAP_TOKEN,
-                wantSymbol:   "nUSDLP",
+                wantSymbol:   "nUSD-LP",
                 wantSwapType: SwapType.USD,
                 wantAddress:  "0xC6f684aE516480A35f337a4dA8b40EB6550e07E0",
                 wantDecimals: 18,
