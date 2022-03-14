@@ -442,6 +442,7 @@ export namespace Tokens {
         symbol:  "NEWO",
         decimals: 18,
         addresses: {
+            [ChainId.ETH]:       "0x98585dFc8d9e7D48F0b1aE47ce33332CF4237D96",
             [ChainId.ARBITRUM]:  "0x0877154a755B24D499B8e2bD7ecD54d3c92BA433",
             [ChainId.AVALANCHE]: "0x4Bfc90322dD638F81F034517359BD447f8E0235a",
         },

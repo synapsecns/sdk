@@ -468,6 +468,7 @@ export namespace SwapPools {
             HIGH_Pool,
             DOG_Pool,
             FRAX_Pool,
+            NEWO_Pool,
         ),
         [ChainId.OPTIMISM]: makeSwapTypeMap(
             {
