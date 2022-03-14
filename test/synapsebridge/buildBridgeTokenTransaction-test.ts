@@ -2,8 +2,8 @@ import {PopulatedTransaction} from "@ethersproject/contracts";
 import {step} from "mocha-steps";
 import {
     bridgeTestPrivkey1,
-    DEFAULT_TEST_TIMEOUT, expectFulfilled, expectNotZero,
-    expectPromiseResolve,
+    DEFAULT_TEST_TIMEOUT,
+    expectFulfilled,
     getTestAmount,
     makeWalletSignerWithProvider
 } from "@tests/helpers";
@@ -14,7 +14,6 @@ import {L1BridgeZapFactory, L2BridgeZapFactory} from "@contracts";
 import {expect} from "chai";
 import {BridgeSwapTestCase, makeBridgeSwapTestCase} from "./bridge_test_utils";
 import {formatUnits} from "@ethersproject/units";
-import {BigNumber} from "@ethersproject/bignumber";
 
 
 describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Mocha.Suite) {
@@ -54,8 +53,8 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
 
         const
             testPrefix:      string = "buildBridgeTokenTransaction()",
-            testParamsTitle: string = `with params ${amt} ${tokFrom} on ${netFrom} to ${tokTo} on ${netTo}`,
-            testWant:        string = `should return a transaction which calls function ${wantFn}()`;
+            testParamsTitle: string = `with params ${tokFrom} on ${netFrom} -> ${tokTo} on ${netTo}`,
+            testWant:        string = `should be a transaction which calls ${wantFn}()`;
 
         return `${testPrefix} ${testParamsTitle} ${testWant}`
     }
