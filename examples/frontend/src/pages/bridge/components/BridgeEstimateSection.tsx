@@ -11,7 +11,6 @@ import {SetStateFunction, valueEther} from "@utils";
 import DarkRoundedItem from "@components/DarkRoundedItem";
 import {NetworkMenuContext} from "@pages/bridge/contexts/NetworkMenuContext";
 import {Networks} from "@synapseprotocol/sdk";
-import {parseUnits} from "@ethersproject/units";
 
 interface BridgeEstimateSectionProps {
     amountIn:   BigNumber,
