@@ -832,15 +832,15 @@ export namespace Bridge {
                             )
                 default:
                     if (chainIdTo === ChainId.ETH) {
-                        if (this.isL2ETHChain) {
+                        if (this.isL2ETHChain && args.tokenFrom.swapType === SwapType.ETH) {
                             if (args.tokenFrom.isEqual(Tokens.NETH)) {
                                 return zapBridge
                                     .populateTransaction
                                     .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.NETH))
+                            } else {
+                                let useSwapETH = !BridgeUtils.isETHLikeToken(args.tokenFrom);
+                                return easySwapAndRedeem(Tokens.NETH, useSwapETH)
                             }
-
-                            let useSwapETH = !BridgeUtils.isETHLikeToken(args.tokenFrom);
-                            return easySwapAndRedeem(Tokens.NETH, useSwapETH)
                         } else if (args.tokenFrom.isEqual(Tokens.NUSD)) {
                             return zapBridge
                                 .populateTransaction
