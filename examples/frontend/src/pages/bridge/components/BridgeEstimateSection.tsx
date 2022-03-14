@@ -25,14 +25,8 @@ const LabeledItem = ({title, value}) => (
 )
 
 function fixWeiValue(wei: BigNumber, tokenDecimals: number): BigNumber {
-    console.log("=== fixWeiValue ===");
-    console.log({ wei: wei.toString(), tokenDecimals });
     const mul = BigNumber.from(10).pow(18 - tokenDecimals);
-    console.log({ mul: mul.toString() });
-    const ret = wei.mul(mul);
-    console.log({ ret: ret.toString() });
-
-    return ret
+    return wei.mul(mul);
 }
 
 function formatValue(t: Token, networkTo: Networks.Network | number, value: string, fixWei: boolean = false): string {
