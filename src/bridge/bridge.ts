@@ -1,9 +1,6 @@
 import {toLower} from "lodash-es";
 
-import {
-    ChainId,
-    isTerraChainId
-}  from "@chainid";
+import {ChainId}  from "@chainid";
 import {Networks} from "@networks";
 
 import {executePopulatedTransaction, rejectPromise} from "@common/utils";

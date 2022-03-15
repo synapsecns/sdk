@@ -18,9 +18,8 @@ import {
 
 import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
-import {BaseContract, Contract} from "@ethersproject/contracts";
+import {BaseContract} from "@ethersproject/contracts";
 import {expect} from "chai";
-import {SwapContract} from "@contracts";
 
 
 describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {

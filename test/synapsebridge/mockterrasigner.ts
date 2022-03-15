@@ -1,7 +1,9 @@
+import {terraRpcProvider} from "@sdk/internal";
+import {rejectPromise}    from "@sdk/common/utils";
+
 import {GenericSigner, Resolveable} from "@sdk/common/types";
+
 import {BlockTxBroadcastResult, isTxError, MsgExecuteContract, Tx, TxError, Wallet} from "@terra-money/terra.js";
-import {terraRpcProvider} from "@internal";
-import {rejectPromise} from "@common/utils";
 
 export class MockTerraSignerWrapper implements GenericSigner {
     private _terraWallet: Wallet;

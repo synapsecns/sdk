@@ -51,7 +51,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 testTitle: string = `Should return ${expected.toString()} on Chain ID ${network}`;
 
             it(testTitle, async function(this: Mocha.Context) {
-                this.timeout(3.75*1000);
+                this.timeout(DEFAULT_TEST_TIMEOUT);
                 this.slow(750);
 
                 let prom = bridgeInstance.bridgeVersion();

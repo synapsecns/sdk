@@ -2,16 +2,23 @@ import {expect} from "chai";
 
 import {shuffle} from "lodash-es";
 
+import {Bridge, ChainId, Networks, type Token} from "@sdk";
+import {rpcProviderForChain, terraRpcProvider} from "@sdk/internal";
+
+import {bridgeInteractionsPrivkey} from "../synapsebridge/bridge_test_utils";
+
 import {Zero}   from "@ethersproject/constants";
-import {Wallet} from "@ethersproject/wallet";
+import {Wallet as EvmWallet} from "@ethersproject/wallet";
 
 import {
     BigNumber,
     type BigNumberish
 } from "@ethersproject/bignumber";
 
-import type {Token} from "@sdk";
-import {rpcProviderForChain} from "@sdk/internal";
+import {
+    RawKey,
+    Wallet as TerraWallet
+} from "@terra-money/terra.js";
 
 const TEN_BN: BigNumber = BigNumber.from(10);
 
@@ -40,7 +47,7 @@ export const getTestAmount = (
 export const makeWalletSignerWithProvider = (
     chainId: number,
     privKey: string
-): Wallet => new Wallet(privKey, rpcProviderForChain(chainId));
+): EvmWallet => new EvmWallet(privKey, rpcProviderForChain(chainId));
 
 export const
     DEFAULT_TEST_TIMEOUT   = makeTimeout(10),
@@ -115,15 +122,37 @@ export function wrapExpect(expectFn: Chai.Assertion): Mocha.Func {
     }
 }
 
-export async function wrapExpectAsync(expectFn: Chai.Assertion, prom: Promise<any>, wantResolve: boolean=true): Promise<void|any> {
-    try {
-        await prom;
-        expect(expectFn)
-        return
-    } catch (err) {
-        return (await (wantResolve
-            ? expectFulfilled(prom)
-            : expectRejected(prom)
-        ))
+export interface WalletArgs {
+    wallet:         EvmWallet | TerraWallet;
+    address:        string;
+    evmAddress:     string;
+    terraAddress:   string;
+    bridgeInstance: Bridge.SynapseBridge;
+}
+
+export async function buildWalletArgs(chainId: number, privkey: string=bridgeInteractionsPrivkey.privkey): Promise<WalletArgs> {
+    const
+        _terra = chainId === ChainId.TERRA,
+        _evmChainId = _terra ? ChainId.ETH : chainId,
+        evmWallet:   EvmWallet   = makeWalletSignerWithProvider(_evmChainId, privkey),
+        terraWallet: TerraWallet = terraRpcProvider(ChainId.TERRA).wallet(new RawKey(
+            Buffer.from(
+                process.env["BRIDGE_INTERACTIONS_PRIVKEY_TERRA"] || "",
+                "hex"
+            )
+        ));
+
+    const
+        wallet       = _terra ? terraWallet : evmWallet,
+        evmAddress   = (await evmWallet.getAddress()),
+        terraAddress = terraWallet.key.accAddress,
+        address      = _terra ? terraAddress : evmAddress;
+
+    return {
+        wallet,
+        address,
+        evmAddress,
+        terraAddress,
+        bridgeInstance: new Bridge.SynapseBridge({ network: Networks.fromChainId(chainId) })
     }
 }

@@ -1,3 +1,5 @@
+import {shuffle} from "lodash-es";
+
 import {
     ChainId,
     Networks,
@@ -5,6 +7,8 @@ import {
     Bridge,
     type Token
 } from "@sdk";
+
+import {isTerraChainId} from "@chainid";
 
 import {terraRpcProvider, tokenSwitch} from "@sdk/internal";
 
@@ -30,8 +34,7 @@ import {BigNumber}   from "@ethersproject/bignumber";
 
 import {expect} from "chai";
 import {Zero} from "@ethersproject/constants";
-import {shuffle} from "lodash-es";
-import {isTerraChainId} from "@chainid";
+
 import {RawKey} from "@terra-money/terra.js";
 
 
@@ -256,6 +259,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
 
         it(approveTestTitle, async function(this: Mocha.Context) {
             if (tc.expected.wantError) return
+            if (tc.args.chainIdFrom === ChainId.TERRA) return
 
             this.timeout(DEFAULT_TEST_TIMEOUT);
             this.slow(1000);

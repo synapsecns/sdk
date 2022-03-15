@@ -1,6 +1,8 @@
-import {BridgeSwapTestCase, makeBridgeSwapTestCase} from "./bridge_test_utils";
 import {Bridge, ChainId, Networks, Tokens} from "@sdk";
+
 import {expectEqual} from "@tests/helpers";
+
+import {BridgeSwapTestCase, makeBridgeSwapTestCase} from "./bridge_test_utils";
 
 describe("SynapseBridge - checkSwapSupported tests", function(this: Mocha.Suite) {
     type TestCase = BridgeSwapTestCase<boolean>

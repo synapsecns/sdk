@@ -2,13 +2,15 @@ import {expect} from "chai";
 import {step} from "mocha-steps";
 
 import {Bridge, ChainId, Networks, type Token, Tokens} from "@sdk";
-import {SynapseBridgeFactory} from "@sdk/contracts";
-import {GenericSigner, GenericTxnResponse, StaticCallResult} from "@sdk/common/types";
+
 import {TerraSignerWrapper} from "@sdk/internal/utils";
-import {terraRpcProvider} from "@sdk/internal/rpcproviders";
 import {CanBridgeError}   from "@sdk/bridge/bridgeutils";
 import {ERC20}              from "@sdk/bridge/erc20";
 import {SynapseContracts}   from "@sdk/common/synapse_contracts";
+
+import {SynapseBridgeFactory} from "@sdk/contracts";
+
+import {GenericSigner, GenericTxnResponse, StaticCallResult} from "@sdk/common/types";
 import {decodeHexTerraAddress, rejectPromise, staticCallPopulatedTransaction} from "@sdk/common/utils";
 
 import {
@@ -17,7 +19,8 @@ import {
     expectNothingFromPromise,
     expectNotZero,
     expectRejected,
-    makeWalletSignerWithProvider,
+    WalletArgs,
+    buildWalletArgs,
     RunLiveBridgeTests,
     SHORT_TEST_TIMEOUT,
 } from "@tests/helpers";
@@ -35,7 +38,7 @@ import {TransactionResponse} from "@ethersproject/providers";
 import {TransactionDescription} from "@ethersproject/abi";
 
 
-import {BlockTxBroadcastResult, MsgExecuteContract, RawKey, Wallet as TerraWallet} from "@terra-money/terra.js";
+import {BlockTxBroadcastResult, MsgExecuteContract, Wallet as TerraWallet} from "@terra-money/terra.js";
 
 
 function executeTransaction(prom: Promise<TransactionResponse>): Promise<void> {
@@ -64,40 +67,6 @@ interface EstimateOutputs {
     bridgeArgs:     Bridge.BridgeTransactionParams,
 }
 
-interface WalletArgs {
-    wallet:         EvmWallet | TerraWallet;
-    address:        string;
-    evmAddress:     string;
-    terraAddress:   string;
-    bridgeInstance: Bridge.SynapseBridge;
-}
-
-async function buildWalletArgs(chainId: number, privkey: string=bridgeInteractionsPrivkey.privkey): Promise<WalletArgs> {
-    const
-        _terra = chainId === ChainId.TERRA,
-        _evmChainId = _terra ? ChainId.ETH : chainId,
-        evmWallet:   EvmWallet   = makeWalletSignerWithProvider(_evmChainId, privkey),
-        terraWallet: TerraWallet = terraRpcProvider(ChainId.TERRA).wallet(new RawKey(
-            Buffer.from(
-                process.env["BRIDGE_INTERACTIONS_PRIVKEY_TERRA"] || "",
-                "hex"
-            )
-        ));
-
-    const
-        wallet       = _terra ? terraWallet : evmWallet,
-        evmAddress   = (await evmWallet.getAddress()),
-        terraAddress = terraWallet.key.accAddress,
-        address      = _terra ? terraAddress : evmAddress;
-
-    return {
-        wallet,
-        address,
-        evmAddress,
-        terraAddress,
-        bridgeInstance: new Bridge.SynapseBridge({ network: Networks.fromChainId(chainId) })
-    }
-}
 
 describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Suite) {
     interface TestOpts {
@@ -345,8 +314,8 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 const canBridgeTestTitle: string = `should${tc.expected.canBridge ? "" : " not"} be able to bridge`;
 
                 it(canBridgeTestTitle, function(this: Mocha.Context, done: Mocha.Done) {
-                    this.timeout(3.5*1000);
-                    this.slow(2*1000);
+                    this.timeout(5.5*1000);
+                    this.slow(2.75*1000);
 
                     let prom = bridgeInstance.checkCanBridge({
                         token: tc.args.tokenFrom,
