@@ -104,8 +104,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         c1: number, c2: number,
         succeeds: boolean, canBridge: boolean,
         amountFrom: BigNumber
-    ): TestCase
-        {
+    ): TestCase {
         const {args, expected} = makeTc(t1, t2, c1, c2, succeeds, canBridge, amountFrom);
         return {
             args, expected,
@@ -118,8 +117,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         c1: number, c2: number,
         succeeds: boolean, canBridge: boolean,
         amountFrom: BigNumber
-    ): TestCase
-        {
+    ): TestCase {
         const {args, expected} = makeTc(t1, t2, c1, c2, succeeds, canBridge, amountFrom);
         return {
             args, expected,
@@ -147,7 +145,8 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         makeCallStaticTc(Tokens.ETH,    Tokens.WETH,   ChainId.BOBA,      ChainId.ETH,       false, false,  failAmt),
         makeCallStaticTc(Tokens.ETH,    Tokens.NETH,   ChainId.ETH,       ChainId.OPTIMISM,  false, false,  failAmt),
         makeSignerSendTc(Tokens.ETH,    Tokens.NETH,   ChainId.ETH,       ChainId.OPTIMISM,  false, false,  failAmt),
-        makeSignerSendTc(Tokens.NUSD,   Tokens.USDT,   ChainId.POLYGON,   ChainId.FANTOM,    false, false,  BigNumber.from("666000000000000000000")),
+        makeSignerSendTc(Tokens.NUSD,   Tokens.USDT,   ChainId.POLYGON,   ChainId.FANTOM,    false, false,  failAmt),
+        makeSignerSendTc(Tokens.DAI,    Tokens.USDT,   ChainId.AVALANCHE, ChainId.FANTOM,    false, false,  BigNumber.from("666000000000000000000")),
         makeCallStaticTc(Tokens.ETH,    Tokens.WETH_E, ChainId.ARBITRUM,  ChainId.AVALANCHE, true,  true,   BigNumber.from("6000000000000000")),
     ];
 
@@ -160,7 +159,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
     ];
 
     const liveTestCases: TestCase[] = [
-    //     makeUSTTest(ChainId.TERRA,    ChainId.HARMONY, true, true,  BigNumber.from("2000000"),false),
+    //     makeUSTTest(ChainId.TERRA,    ChainId.HARMONY, true, true,  BigNumber.from("2000000"), false),
     //     makeUSTTest(ChainId.HARMONY,  ChainId.BSC,     true, true,  BigNumber.from("8000000"), false),
     //     makeUSTTest(ChainId.BSC,      ChainId.TERRA,   true, true,  BigNumber.from("4500000"), false),
     ];
@@ -212,12 +211,13 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
                     let execProm = executeTransaction(prom as Promise<TransactionResponse>);
 
-                    return (await (approval
-                        ? expectNothingFromPromise(execProm)
-                        : (tc.expected.executeSuccess
+            if (approval) {
+                return (await expectNothingFromPromise(execProm))
+            }
+
+            return (await (tc.expected.executeSuccess
                             ? expectFulfilled(execProm)
                             : expectRejected(execProm)
-                        )
                     ))
                 }
             }
@@ -477,7 +477,8 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
                         return await executeTxnFunc(
                             tc,
-                                _wallet.sendTransaction(approvalTxn)
+                                _wallet.sendTransaction(approvalTxn),
+                                true
                         )(this)
                 });
 
@@ -506,8 +507,10 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 describe("Test Magic Executors", function(this: Mocha.Suite) {
                 step(approvalTxnTestTitle, async function(this: Mocha.Context) {
                     if (!needsApproval) {
+                            if (!(tc.args.tokenFrom.isEqual(Tokens.DAI) && tc.args.chainIdFrom === ChainId.AVALANCHE)) {
                         return
                     }
+                        }
 
                     this.slow(1.5*1000);
 
@@ -642,7 +645,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
             before(async function(this: Mocha.Context) {
                 walletArgs  = await buildWalletArgs(ChainId.TERRA);
                 terraWallet = walletArgs.wallet as TerraWallet;
-            })
+            });
 
             step("get another output estimate", function(this: Mocha.Context, done: Mocha.Done) {
                 this.timeout(5*1000);
@@ -692,6 +695,6 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
                 expect(prom).to.eventually.be.rejected.notify(done);
             });
-        })
-    })
-})
+        });
+    });
+});
