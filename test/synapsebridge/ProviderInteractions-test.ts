@@ -280,7 +280,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
                 wallet         = walletArgs.wallet;
                 bridgeInstance = walletArgs.bridgeInstance;
-            })
+            });
 
             let
                 outputEstimate: Bridge.BridgeOutputEstimate,
