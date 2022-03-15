@@ -382,11 +382,15 @@ export namespace Bridge {
             }
 
             return this.checkCanBridge(checkArgs)
-                .then(({canBridge, reasonUnable, amount}) =>
-                    canBridge
-                        ? this.buildBridgeTokenTransaction(args).then(sendTxn).catch(rejectPromise)
-                        : rejectPromise(new CanBridgeError(reasonUnable, amount))
-                )
+                .then(({canBridge, reasonUnable, amount}) => {
+                    if (!canBridge) {
+                        return rejectPromise(new CanBridgeError(reasonUnable, amount))
+                    }
+
+                    return this.buildBridgeTokenTransaction(args)
+                        .then(sendTxn)
+                        .catch(rejectPromise)
+                })
         }
 
         /**
@@ -460,9 +464,11 @@ export namespace Bridge {
                 ? this.checkGasTokenBalance(checkArgs)
                 : this.checkERC20Balance(checkArgs);
 
-            return isGasTokenTransfer
-                ? hasBalanceRes
-                : this.checkNeedsApprove(checkArgs)
+            if (isGasTokenTransfer) {
+                return hasBalanceRes
+            }
+
+            return this.checkNeedsApprove(checkArgs)
                     .then(approveRes => this.resolveApproveFunc(approveRes, hasBalanceRes, token))
                     .catch(rejectPromise)
         }
@@ -1058,7 +1064,7 @@ export namespace Bridge {
         private async checkERC20Balance(args: CheckCanBridgeParams): Promise<CanBridgeResult> {
             const
                 {address, amount, token} = args,
-                [, tokenAddress] = this.buildERC20ApproveArgs(args);
+                tokenAddress = token.address(this.chainId);
 
             return this.resolveBalanceFunc(
                 ERC20.balanceOf(address, {tokenAddress, chainId: this.chainId}),
@@ -1098,13 +1104,13 @@ export namespace Bridge {
         ): Promise<CanBridgeResult> {
             return Promise.resolve(prom)
                 .then(balance => {
-                    const hasBalance = balance.gte(amount);
-
                     const errMsg: string = `Balance of token ${token.symbol} is too low`;
 
-                    return hasBalance
-                        ? {canBridge: true}
-                        : {canBridge: false, error: new Error(errMsg), amount: balance}
+                    if (balance.gte(amount)) {
+                        return {canBridge: true}
+                    }
+
+                    return {canBridge: false, error: new Error(errMsg), amount: balance}
                 })
                 .catch(rejectPromise)
         }
