@@ -8,6 +8,7 @@ import type {
     PopulatedTransaction,
     ContractTransaction,
 } from "@ethersproject/contracts";
+import {BigNumber} from "@ethersproject/bignumber";
 
 export const rejectPromise = (e: any): Promise<never> => Promise.reject(e instanceof Error ? e : new Error(e))
 
@@ -32,6 +33,20 @@ export function staticCallPopulatedTransaction(
                 .then(()  => StaticCallResult.Success)
                 .catch((err) => StaticCallResult.Failure)
         })
+}
+
+/**
+ * "Fixes" a value into units of Wei; should be used when tokens
+ * have a decimals value which isn't 18
+ * (such as USDC/USDT on chains which aren't BSC) and you need to do
+ * calculations using proper units of Wei instead of, for example in the case of
+ * USDC/USDT, Szabo (10^-6)
+ * @param amt
+ * @param decimals
+ */
+export function fixWeiValue(amt: BigNumber, decimals: number): BigNumber {
+    const multiplier = BigNumber.from(10).pow(18 - decimals);
+    return amt.mul(multiplier)
 }
 
 export function contractAddressFor(chainId: number, key: string): string {

@@ -10,13 +10,21 @@ require:
 
 recursive: true
 parallel: true
-jobs: 6
+jobs: 7
 
 spec:
-  - './test/entities/*-test.ts'
-  - './test/basic/*-test.ts'
-  - './test/swappools/*-test.ts'
-  - './test/token/*-test.ts'
-  - './test/bridge/*-test.ts'
-  - './test/tokenswap/*-test.ts'
-  - './test/erc20/*-test.ts'
+  # sync/non-network-based tests
+  - 'test/entities/*-test.ts'
+  - 'test/basic/*-test.ts'
+  - 'test/swappools/*-test.ts'
+  - 'test/token/*-test.ts'
+  - 'test/tokenswap/TokenSwap-test.ts'
+  - 'test/synapsebridge/buildBridgeTokenTransaction-test.ts'
+  - 'test/synapsebridge/checkSwapSupported-test.ts'
+  - 'test/synapsebridge/Slippages-test.ts'
+  # async/network-based tests
+  - 'test/synapsebridge/getEstimatedBridgeOutput-test.ts'
+  - 'test/synapsebridge/ContractWrapperFunctions-test.ts'
+  - 'test/synapsebridge/ProviderInteractions-test.ts'
+  - 'test/tokenswap/SwapRate-test.ts'
+  - 'test/erc20/*-test.ts'

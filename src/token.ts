@@ -15,17 +15,49 @@ export interface IBaseToken extends Distinct {
     readonly symbol:    string;
     readonly addresses: AddressMap;
     readonly swapType:  SwapType;
+    /**
+     * Returns the on-chain address of a Token respective to the passed chain ID; will return null
+     * if the Token is not supported on the passed chain ID.
+     * @param chainId
+     */
     address:  (chainId: number) => string | null;
+    /**
+     * Returns the on-chain decimals value of a Token respective to the passed chain ID; will return null
+     * if the Token is not supported on the passed chain ID.
+     * @param chainId
+     */
     decimals: (chainId: number) => number | null;
 }
 
 export interface Token extends IBaseToken {
     isWrappedToken:   boolean;
     underlyingToken?: Token;
+    /**
+     * Returns true if `other` has the same ID field as this Token.
+     * @param other
+     */
     isEqual:          (other: Token) => boolean;
     canSwap:          (other: Token) => boolean;
-    valueToWei:       (amt: BigNumberish, chainId: number) => BigNumber;
     wrapperAddress:   (chainId: number) => string | null;
+    /**
+     * Formats the passed Wei(ish) amount to units of Ether and returns that value as a BigNumber.
+     * @param amt
+     * @param chainId
+     */
+    weiToEther:       (amt: BigNumberish, chainId: number) => BigNumber;
+    /**
+     * Returns the passed Ether amount as a value in units of Wei as determined
+     * by the Token's decimals value for the passed chain ID.
+     * @param amt
+     * @param chainId
+     */
+    etherToWei:       (amt: BigNumberish, chainId: number) => BigNumber;
+    /**
+     * @deprecated use {@link etherToWei}
+     * @param amt
+     * @param chainId
+     */
+    valueToWei:       (amt: BigNumberish, chainId: number) => BigNumber;
 }
 
 export function instanceOfToken(object: any): object is Token {
@@ -124,12 +156,24 @@ export class BaseToken implements Token {
         return this.id === other.id
     }
 
-    valueToWei(ether: BigNumberish, chainId: number): BigNumber {
-        let etherStr: string = ether instanceof BigNumber
-            ? ether.toString()
-            : BigNumber.from(ether).toString();
+    weiToEther(amt: BigNumberish, chainId: number): BigNumber {
+        const
+            decimals   = this.decimals(chainId) || 18,
+            multiplier = BigNumber.from(10).pow(18 - decimals);
+
+        return BigNumber.from(amt).mul(multiplier)
+    }
+
+    etherToWei(amt: BigNumberish, chainId: number): BigNumber {
+        let etherStr: string = amt instanceof BigNumber
+            ? amt.toString()
+            : BigNumber.from(amt).toString();
 
         return parseUnits(etherStr, this.decimals(chainId))
+    }
+
+    valueToWei(ether: BigNumberish, chainId: number): BigNumber {
+        return this.etherToWei(ether, chainId)
     }
 
     canSwap(other: Token): boolean {

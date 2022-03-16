@@ -32,7 +32,7 @@ export const getTestAmount = (
     t: Token,
     c: number,
     amt?: BigNumberish
-): BigNumber => t.valueToWei(amt ?? _.shuffle(testAmounts)[0], c);
+): BigNumber => t.etherToWei(amt ?? _.shuffle(testAmounts)[0], c);
 
 export const makeWalletSignerWithProvider = (
     chainId: number,

@@ -293,7 +293,6 @@ export namespace SwapPools {
         chainId:      ChainId.METIS,
         address:     "0xC6f684aE516480A35f337a4dA8b40EB6550e07E0",
         netName:     "Metis",
-        symbol:      "nUSDLP",
         poolId:       0,
         swapAddress: "0x555982d2E211745b96736665e19D9308B615F78e",
         poolTokens:   [Tokens.NUSD, Tokens.USDC],

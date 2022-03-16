@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {ChainId} from "@chainid";
 import type {ChainIdTypeMap} from "@common/types";
 
@@ -77,13 +78,16 @@ export namespace GasUtils {
                     bridgeGasLimit
                 } = makeGasParams(chainId);
 
-                if (maxFeePerGas) {
-                    tx.maxFeePerGas = maxFeePerGas;
-                } else if (gasPrice) {
-                    tx.gasPrice = gasPrice;
-                }
+                tx.chainId = chainId;
 
-                if (maxPriorityFee) tx.maxPriorityFeePerGas = maxPriorityFee;
+                if (gasPrice) {
+                    tx.gasPrice = gasPrice;
+                } else if (maxFeePerGas) {
+                    tx.maxFeePerGas = maxFeePerGas;
+                    if (maxPriorityFee) {
+                        tx.maxPriorityFeePerGas = maxPriorityFee;
+                    }
+                }
 
                 switch (gasLimitKind) {
                     case "bridge":

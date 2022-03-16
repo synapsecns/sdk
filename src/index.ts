@@ -32,7 +32,11 @@ export {
     type NetworkSwappableTokensMap
 } from "@swappools";
 
-export {TokenSwap, UnsupportedSwapErrors} from "@tokenswap";
+import {TokenSwap, UnsupportedSwapErrors} from "@tokenswap";
+
+import detailedTokenSwapMap = TokenSwap.detailedTokenSwapMap;
+
+export {TokenSwap, UnsupportedSwapErrors, detailedTokenSwapMap};
 
 export {
     type RPCEndpointsConfig,
