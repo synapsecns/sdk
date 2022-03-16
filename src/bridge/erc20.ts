@@ -112,9 +112,7 @@ export namespace ERC20 {
         tokenParams: ERC20TokenParams,
         signer:      Signer
     ): Promise<TransactionResponse> {
-        let erc20 = new ERC20(tokenParams);
-
-        return erc20.approve(approveArgs, signer)
+        return new ERC20(tokenParams).approve(approveArgs, signer)
     }
 
     export async function buildApproveTransaction(
