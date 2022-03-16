@@ -6,6 +6,7 @@ import {parseUnits} from "@ethersproject/units";
 import {BigNumber}  from "@ethersproject/bignumber";
 
 import type {PopulatedTransaction} from "@ethersproject/contracts";
+import {rpcProviderForChain} from "@internal";
 
 export namespace GasUtils {
     type GasParams = {
@@ -63,12 +64,21 @@ export namespace GasUtils {
 
     export const makeGasParams = (chainId: number): GasParams => CHAIN_GAS_PARAMS[chainId] ?? {};
 
-    export const populateGasParams = (
+    async function checkEIP1559(chainId: number): Promise<boolean> {
+        const provider = rpcProviderForChain(chainId);
+        const {maxFeePerGas} = await provider.getFeeData();
+
+        return maxFeePerGas !== null && typeof maxFeePerGas !== 'undefined'
+    }
+
+    export async function populateGasParams(
         chainId:      number,
         txn:          PopulatedTransaction|Promise<PopulatedTransaction>,
         gasLimitKind: string
-    ): Promise<PopulatedTransaction> =>
-        Promise.resolve(txn)
+    ): Promise<PopulatedTransaction> {
+        const supportsEIP1559 = await checkEIP1559(chainId);
+
+        return Promise.resolve(txn)
             .then((tx: PopulatedTransaction): PopulatedTransaction => {
                 let {
                     maxFeePerGas,
@@ -80,13 +90,15 @@ export namespace GasUtils {
 
                 tx.chainId = chainId;
 
-                if (gasPrice) {
-                    tx.gasPrice = gasPrice;
-                } else if (maxFeePerGas) {
-                    tx.maxFeePerGas = maxFeePerGas;
-                    if (maxPriorityFee) {
-                        tx.maxPriorityFeePerGas = maxPriorityFee;
+                if (supportsEIP1559) {
+                    if (gasPrice) tx.maxFeePerGas = gasPrice;
+                    else if (maxFeePerGas) {
+                        tx.maxFeePerGas = maxFeePerGas;
+                        if (maxPriorityFee) tx.maxPriorityFeePerGas = maxPriorityFee;
                     }
+                } else {
+                    if (gasPrice) tx.gasPrice = gasPrice;
+                    else if (maxFeePerGas) tx.gasPrice = maxFeePerGas;
                 }
 
                 switch (gasLimitKind) {
@@ -100,4 +112,5 @@ export namespace GasUtils {
 
                 return tx
             })
+    }
 }
