@@ -9,11 +9,15 @@ interface UseSynapseBridgeArgs {
     chainId: number;
 }
 
-export function useSynapseBridge({chainId}: UseSynapseBridgeArgs) {
+export function useSynapseBridge(chainId: number) {
     const [instance, setInstance] = useState(newBridgeInstance(chainId));
     useEffect(() => {
         setInstance(newBridgeInstance(chainId))
     }, [chainId])
 
-    return [instance] as const
+    function resetInstance(cid: number) {
+        setInstance(newBridgeInstance(cid));
+    }
+
+    return [instance, resetInstance] as const
 }

@@ -36,9 +36,14 @@ export function useGetBridgeEstimate(args: UseGetBridgeEstimateArgs) {
     const {amountIn} = args;
 
     const
-        [synapseBridge] = useSynapseBridge({chainId: selectedNetworkFrom.chainId}),
+        [synapseBridge, resetInstance] = useSynapseBridge(selectedNetworkFrom.chainId),
         [amountOut, setAmountOut] = useState<BigNumber>(null),
         [bridgeFee, setBridgeFee] = useState<BigNumber>(null);
+
+    useEffect(() => {
+        resetInstance(selectedNetworkFrom.chainId);
+    }, [selectedNetworkFrom])
+
 
     useEffect(() => {
         if (typeof amountIn !== "undefined" && !amountIn.eq(0)) {

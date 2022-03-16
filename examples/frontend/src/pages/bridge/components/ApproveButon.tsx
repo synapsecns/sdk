@@ -6,8 +6,8 @@ import {
     getSigner,
     SetStateFunction,
 } from "@utils";
-import {useSynapseBridge} from "@hooks";
 
+import {Bridge} from "@synapseprotocol/sdk";
 import {NetworkMenuContext} from "../contexts/NetworkMenuContext";
 import {TokenMenuContext} from "../contexts/TokenMenuContext";
 
@@ -19,14 +19,11 @@ import Button, {
 import {useActionButtonOnClick} from "../hooks/useActionButtonOnClick";
 
 export default function ApproveButon(props: {amountFrom: BigNumber, approved: boolean, setApproved: SetStateFunction<boolean>}) {
-    const {status, ethereum} = useMetaMask();
+    const {status, ethereum, chainId} = useMetaMask();
 
     const {amountFrom, setApproved} = props;
 
-    const {selectedNetworkFrom} = useContext(NetworkMenuContext);
     const {selectedTokenFrom}   = useContext(TokenMenuContext);
-
-    const [synapseBridge] = useSynapseBridge({chainId: selectedNetworkFrom.chainId});
 
     const [disabled, setDisabled] = useState<boolean>(true);
 
@@ -46,10 +43,11 @@ export default function ApproveButon(props: {amountFrom: BigNumber, approved: bo
                 setButtonProps({
                     text:    APPROVE_TEXT,
                     onClick: executeTxn((): Promise<ethers.providers.TransactionResponse> => {
+                        const synapseBridge = new Bridge.SynapseBridge({network: BigNumber.from(chainId).toNumber()});
                         return synapseBridge.executeApproveTransaction({
-                            token:  selectedTokenFrom,
+                            token: selectedTokenFrom,
                             // amount: amountFrom,
-                        }, getSigner(ethereum));
+                        }, getSigner(ethereum))
                     })
                 });
             }
@@ -60,12 +58,13 @@ export default function ApproveButon(props: {amountFrom: BigNumber, approved: bo
         if (buttonProps.text === APPROVE_TEXT) {
             setButtonProps({
                 text: APPROVE_TEXT,
-                onClick: executeTxn((): Promise<ethers.providers.TransactionResponse> =>
-                    synapseBridge.executeApproveTransaction({
-                        token:  selectedTokenFrom,
+                onClick: executeTxn((): Promise<ethers.providers.TransactionResponse> => {
+                    const synapseBridge = new Bridge.SynapseBridge({network: BigNumber.from(chainId).toNumber()});
+                    return synapseBridge.executeApproveTransaction({
+                        token: selectedTokenFrom,
                         // amount: amountFrom,
                     }, getSigner(ethereum))
-                ),
+                }),
             });
         }
     }, [amountFrom, selectedTokenFrom])

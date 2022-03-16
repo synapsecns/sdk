@@ -12,7 +12,7 @@ import {TokenMenuContext} from "../contexts/TokenMenuContext";
 
 import {useActionButtonOnClick} from "../hooks/useActionButtonOnClick";
 
-import {useSynapseBridge} from "@hooks";
+import {Bridge} from "@synapseprotocol/sdk";
 
 import Button, {
     ButtonProps,
@@ -20,14 +20,12 @@ import Button, {
 } from "@components/Button";
 
 export default function BridgeButton(props: {approved: boolean, amountFrom: BigNumber, amountOut: BigNumber}) {
-    const {account, status, ethereum} = useMetaMask();
+    const {account, status, ethereum, chainId} = useMetaMask();
 
     const {amountFrom, amountOut: amountTo, approved} = props;
 
-    const {selectedNetworkFrom, selectedNetworkTo} = useContext(NetworkMenuContext);
+    const {selectedNetworkTo} = useContext(NetworkMenuContext);
     const {selectedTokenFrom, selectedTokenTo}     = useContext(TokenMenuContext);
-
-    const [synapseBridge] = useSynapseBridge({chainId: selectedNetworkFrom.chainId});
 
     const [disabled, setDisabled] = useState<boolean>(true);
 
@@ -46,16 +44,18 @@ export default function BridgeButton(props: {approved: boolean, amountFrom: BigN
                 setDisabled(false);
                 setButtonProps({
                     text:    BRIDGE_TEXT,
-                    onClick: executeTxn((): Promise<ethers.providers.TransactionResponse> =>
-                        synapseBridge.executeBridgeTokenTransaction({
-                            tokenFrom:  selectedTokenFrom,
-                            tokenTo:    selectedTokenTo,
-                            amountFrom: valueWei(amountFrom, selectedTokenFrom.decimals(selectedNetworkFrom.chainId)),
+                    onClick: executeTxn((): Promise<ethers.providers.TransactionResponse> => {
+                        const chainIdFrom = BigNumber.from(chainId).toNumber();
+                        const synapseBridge = new Bridge.SynapseBridge({network: chainIdFrom})
+                        return synapseBridge.executeBridgeTokenTransaction({
+                            tokenFrom: selectedTokenFrom,
+                            tokenTo: selectedTokenTo,
+                            amountFrom: valueWei(amountFrom, selectedTokenFrom.decimals(chainIdFrom)),
                             amountTo,
                             chainIdTo: selectedNetworkTo.chainId,
                             addressTo: account,
                         }, getSigner(ethereum))
-                    )
+                    })
                 });
             }
         }
@@ -65,16 +65,18 @@ export default function BridgeButton(props: {approved: boolean, amountFrom: BigN
         if (buttonProps.text === BRIDGE_TEXT) {
             setButtonProps({
                 text:    BRIDGE_TEXT,
-                onClick: executeTxn((): Promise<ethers.providers.TransactionResponse> =>
-                    synapseBridge.executeBridgeTokenTransaction({
-                        tokenFrom:  selectedTokenFrom,
-                        tokenTo:    selectedTokenTo,
-                        amountFrom: valueWei(amountFrom, selectedTokenFrom.decimals(selectedNetworkFrom.chainId)),
+                onClick: executeTxn((): Promise<ethers.providers.TransactionResponse> => {
+                    const chainIdFrom = BigNumber.from(chainId).toNumber();
+                    const synapseBridge = new Bridge.SynapseBridge({network: chainIdFrom})
+                    return synapseBridge.executeBridgeTokenTransaction({
+                        tokenFrom: selectedTokenFrom,
+                        tokenTo: selectedTokenTo,
+                        amountFrom: valueWei(amountFrom, selectedTokenFrom.decimals(chainIdFrom)),
                         amountTo,
                         chainIdTo: selectedNetworkTo.chainId,
                         addressTo: account,
                     }, getSigner(ethereum))
-                )
+                })
             });
         }
     }, [amountFrom, selectedTokenFrom, selectedTokenTo, selectedNetworkTo, amountTo, account])

@@ -15,7 +15,7 @@ import {BigNumber} from "ethers";
 
 import {BridgeDirections} from "./Directions";
 
-export const AMOUNTS_FROM_OPTIONS: AmountDropdownItem[] = [5, 10, 50, 75, 100, 500, 1000].map((n) => {
+export const AMOUNTS_FROM_OPTIONS: AmountDropdownItem[] = [5, 10, 25, 50, 75, 100, 500, 1000].map((n) => {
     let amount = BigNumber.from(n);
 
     return {
@@ -41,17 +41,18 @@ export default function SourceGrid(props: SourceNetworkGridProps) {
 
     const {status, chainId} = useMetaMask();
 
-    const [connectedNetwork,] = useState<Networks.Network>(
-        status === "connected" ? Networks.fromChainId(BigNumber.from(chainId).toNumber()) : null
-    );
+    // const [connectedNetwork,] = useState<Networks.Network>(
+    //     status === "connected" ? Networks.fromChainId(BigNumber.from(chainId).toNumber()) : null
+    // );
+
+    console.log({status, chainId});
 
     const {
         NetworkMenu,
         networkMenuProps
     } = useNetworkMenu({
         networks:  allNetworks,
-        direction: BridgeDirections.FROM,
-        startIdx:  allNetworks.findIndex((n) => n.chainId === (connectedNetwork !== null ? connectedNetwork.chainId : ChainId.AVALANCHE))
+        direction: BridgeDirections.FROM
     });
 
     useEffect(() => {
@@ -60,7 +61,15 @@ export default function SourceGrid(props: SourceNetworkGridProps) {
                 BigNumber.from(chainId).eq(n.chainId)
             ))
         }
-    }, [status])
+    }, [status, chainId])
+
+    useEffect(() => {
+        if (status === "connected") {
+            networkMenuProps.setSelected(networkMenuProps.dropdownItems.find(n =>
+                BigNumber.from(chainId).eq(n.chainId)
+            ))
+        }
+    }, [chainId, status]);
 
     const {
         TokenMenu,
