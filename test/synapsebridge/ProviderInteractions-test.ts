@@ -68,7 +68,7 @@ async function buildWalletArgs(chainId: number, privkey: string=bridgeTestPrivke
     }
 }
 
-describe("SynapseBridge - Provider Interactions tests", async function(this: Mocha.Suite) {
+describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Suite) {
 
     interface TestOpts {
         executeSuccess: boolean,
@@ -149,7 +149,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 tokenTo:     Tokens.USDC,
                 chainIdFrom: ChainId.AVALANCHE,
                 chainIdTo:   ChainId.ETH,
-                amountFrom:  Tokens.USDT.etherToWei("8.91", ChainId.AVALANCHE),
+                amountFrom:  BigNumber.from(8910000),
             },
             expected: {
                 executeSuccess: false,
@@ -157,6 +157,21 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 bridgeFeeTc:    true
             },
             callStatic:         false,
+        },
+        {
+            args: {
+                tokenFrom:   Tokens.USDT,
+                tokenTo:     Tokens.USDC,
+                chainIdFrom: ChainId.AVALANCHE,
+                chainIdTo:   ChainId.ETH,
+                amountFrom:  BigNumber.from(8910000),
+            },
+            expected: {
+                executeSuccess: false,
+                canBridge:      false,
+                bridgeFeeTc:    true
+            },
+            callStatic:         true,
         },
         {
             args: {
@@ -317,6 +332,10 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                     ctx.timeout(5*1000);
 
                     let execProm = callStatic(prom);
+
+                    if (approval) {
+                        return (await expectNothingFromPromise(execProm))
+                    }
 
                     return (await (tc.expected.executeSuccess
                             ? expectFulfilled(execProm)
