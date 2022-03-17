@@ -144,6 +144,8 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
         makeTestCase(Tokens.SDT,     Tokens.SDT,     ChainId.AVALANCHE, ChainId.HARMONY,     redeem),
         makeTestCase(Tokens.SDT,     Tokens.SDT,     ChainId.FANTOM,    ChainId.HARMONY,     redeem),
         makeTestCase(Tokens.SDT,     Tokens.SDT,     ChainId.AVALANCHE, ChainId.FANTOM,      redeem),
+        makeTestCase(Tokens.LUNA,    Tokens.LUNA,    ChainId.ARBITRUM,  ChainId.OPTIMISM,    redeem),
+        makeTestCase(Tokens.LUNA,    Tokens.LUNA,    ChainId.OPTIMISM,  ChainId.ARBITRUM,    redeem),
     ].forEach((tc: TestCase) => {
         const testTitle = makeTestName(tc);
         describe(testTitle, function(this: Mocha.Suite) {

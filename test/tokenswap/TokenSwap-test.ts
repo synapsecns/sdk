@@ -33,6 +33,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
             {chainId: ChainId.ARBITRUM,  token: Tokens.NETH,     wantA: Tokens.NETH, wantB: Tokens.NETH},
             {chainId: ChainId.BSC,       token: Tokens.BUSD,     wantA: Tokens.NUSD, wantB: Tokens.NUSD},
             {chainId: ChainId.AVALANCHE, token: Tokens.GOHM,     wantA: Tokens.GOHM, wantB: Tokens.GOHM},
+            {chainId: ChainId.OPTIMISM,  token: Tokens.LUNA,     wantA: Tokens.LUNA, wantB: Tokens.LUNA},
 
         ].forEach((tc: TestCase) => {
             const

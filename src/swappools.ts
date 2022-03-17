@@ -408,8 +408,8 @@ export namespace SwapPools {
         WMOVR_Pool   = makeSingleTokenPool(Tokens.WMOVR),
         UST_Pool     = makeSingleTokenPool(Tokens.UST),
         NEWO_Pool    = makeSingleTokenPool(Tokens.NEWO),
-        SDT_Pool     = makeSingleTokenPool(Tokens.SDT);
-
+        SDT_Pool     = makeSingleTokenPool(Tokens.SDT),
+        LUNA_Pool    = makeSingleTokenPool(Tokens.LUNA);
 
     export interface SwapTypePoolTokens {[swapType: string]: LPToken}
 
@@ -487,7 +487,8 @@ export namespace SwapPools {
         [ChainId.OPTIMISM]: makeSwapTypeMap(
             {
                 ethPool: [OPTIMISM_ETH_SWAP_TOKEN, OPTIMISM_ETH_SWAP_TOKEN.poolTokens]
-            }
+            },
+            LUNA_Pool,
         ),
         [ChainId.CRONOS]: makeSwapTypeMap({}),
         [ChainId.BSC]: makeSwapTypeMap(
@@ -545,6 +546,7 @@ export namespace SwapPools {
             },
             GMX_Pool,
             NEWO_Pool,
+            LUNA_Pool,
         ),
         [ChainId.AVALANCHE]: makeSwapTypeMap(
             {
