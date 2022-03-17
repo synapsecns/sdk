@@ -276,9 +276,9 @@ export namespace Bridge {
                 });
 
                 let fixedAmountFrom: BigNumber = amountFrom;
-                const tokenInDecimals: number = tokenFrom.decimals(this.chainId);
-                if (tokenInDecimals !== 18) {
-                    fixedAmountFrom = fixWeiValue(amountFrom, tokenInDecimals);
+                const decimals: number = tokenFrom.decimals(chainIdTo);
+                if (decimals !== 18) {
+                    fixedAmountFrom = fixWeiValue(amountFrom, decimals);
                 }
 
                 validAmtFrom = bridgeFee.lt(fixedAmountFrom);
