@@ -1,8 +1,4 @@
-import {
-    type Token,
-    BaseToken,
-    WrappedToken,
-} from "@token";
+import {BaseToken, type Token, WrappedToken,} from "@token";
 
 import {ChainId} from "@chainid";
 
@@ -449,12 +445,24 @@ export namespace Tokens {
         swapType: SwapType.NEWO,
     });
 
+    export const SDT = new BaseToken({
+        name:     "Stake DAO Token",
+        symbol:   "SDT",
+        decimals: 18,
+        addresses: {
+            [ChainId.FANTOM]:    "0xE3c82A836Ec85311a433fBd9486EfAF4b1AFbF48",
+            [ChainId.AVALANCHE]: "0xCCBf7c451F81752F7d2237F2c18C371E6e089E69",
+            [ChainId.HARMONY]:   "0xE3c82A836Ec85311a433fBd9486EfAF4b1AFbF48",
+        },
+        swapType: SwapType.SDT,
+    });
+
     export const mintBurnTokens: Token[] = [
         NUSD,  SYN,      NETH,
         HIGH,  DOG,      JUMP,
         FRAX,  SYN_FRAX, NFD,
         GOHM,  SOLAR,    GMX,
-        UST,   NEWO,
+        UST,   NEWO,     SDT,
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
@@ -466,5 +474,6 @@ export namespace Tokens {
         AVAX, WAVAX, MOVR, WMOVR, GOHM,
         HIGH, JUMP, DOG, NFD, FRAX,
         SYN_FRAX, SOLAR, GMX, NEWO,
+        SDT,
     ];
 }

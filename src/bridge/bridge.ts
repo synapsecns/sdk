@@ -738,7 +738,7 @@ export namespace Bridge {
                 easyRedeems:    ID[] = [
                     Tokens.SYN.id,  Tokens.HIGH.id, Tokens.DOG.id,
                     Tokens.FRAX.id, Tokens.UST.id,  Tokens.GOHM.id,
-                    Tokens.NEWO.id,
+                    Tokens.NEWO.id, Tokens.SDT.id,
                 ];
 
             BridgeUtils.DepositIfChainTokens.forEach((args) => {
