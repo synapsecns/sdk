@@ -8,7 +8,7 @@ import {rejectPromise, staticCallPopulatedTransaction} from "@sdk/common/utils";
 import {
     bridgeTestPrivkey1,
     DEFAULT_TEST_TIMEOUT,
-    expectFulfilled,
+    expectFulfilled, expectNothingFromPromise,
     expectNotZero,
     expectRejected,
     makeWalletSignerWithProvider,
@@ -73,6 +73,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
     interface TestOpts {
         executeSuccess: boolean,
         canBridge:      boolean,
+        bridgeFeeTc:    boolean,
     }
 
     interface TestCase extends BridgeSwapTestCase<TestOpts> {
@@ -93,6 +94,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
             expected: {
                 executeSuccess: false,
                 canBridge:      false,
+                bridgeFeeTc:    false
             },
             callStatic:         false,
         },
@@ -107,6 +109,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
             expected: {
                 executeSuccess: false,
                 canBridge:      false,
+                bridgeFeeTc:    false
             },
             callStatic:         true,
         },
@@ -121,36 +124,24 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
             expected: {
                 executeSuccess: true,
                 canBridge:      true,
+                bridgeFeeTc:    false
             },
             callStatic:         true,
         },
-        // {
-        //     args: {
-        //         tokenFrom:   Tokens.WETH_E,
-        //         tokenTo:     Tokens.ETH,
-        //         chainIdFrom: ChainId.AVALANCHE,
-        //         chainIdTo:   ChainId.ARBITRUM,
-        //         amountFrom:  parseEther("0.05"),
-        //     },
-        //     expected: {
-        //         executeSuccess: false,
-        //         canBridge:      false,
-        //     },
-        //     callStatic:         true,
-        // },
         {
             args: {
-                tokenFrom:   Tokens.ETH,
-                tokenTo:     Tokens.NETH,
-                chainIdFrom: ChainId.ETH,
-                chainIdTo:   ChainId.OPTIMISM,
-                amountFrom:  executeFailAmt,
+                tokenFrom:   Tokens.NUSD,
+                tokenTo:     Tokens.NUSD,
+                chainIdFrom: ChainId.AVALANCHE,
+                chainIdTo:   ChainId.ETH,
+                amountFrom:  parseEther("8.91"),
             },
             expected: {
                 executeSuccess: false,
                 canBridge:      false,
+                bridgeFeeTc:    true
             },
-            callStatic:         true,
+            callStatic:         false,
         },
         {
             args: {
@@ -163,6 +154,22 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
             expected: {
                 executeSuccess: false,
                 canBridge:      false,
+                bridgeFeeTc:    false
+            },
+            callStatic:         true,
+        },
+        {
+            args: {
+                tokenFrom:   Tokens.ETH,
+                tokenTo:     Tokens.NETH,
+                chainIdFrom: ChainId.ETH,
+                chainIdTo:   ChainId.OPTIMISM,
+                amountFrom:  executeFailAmt,
+            },
+            expected: {
+                executeSuccess: false,
+                canBridge:      false,
+                bridgeFeeTc:    false
             },
             callStatic:         false,
         },
@@ -177,6 +184,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
             expected: {
                 executeSuccess: false,
                 canBridge:      false,
+                bridgeFeeTc:    false
             },
             callStatic:         false,
         },
@@ -245,6 +253,37 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
 
                     let execProm = executeTransaction(prom);
 
+                    if (approval) {
+                        return (await expectNothingFromPromise(execProm));
+                    }
+
+                    if (tc.expected.bridgeFeeTc) {
+                        return (await expect(execProm).to.eventually.be.rejectedWith("input amount must be greater than bridge fee"));
+                    }
+
+                    return (await (tc.expected.executeSuccess
+                            ? expectFulfilled(execProm)
+                            : expectRejected(execProm)
+                    ))
+                }
+            }
+
+            function executeBuiltTxnFunc(
+                tc:       TestCase,
+                prom:     Promise<TxnResponse>,
+                approval: boolean=false
+            ): (ctx: Mocha.Context) => PromiseLike<any> {
+                return async function (ctx: Mocha.Context): Promise<void | any> {
+                    if (approval && tc.args.tokenFrom.isEqual(Tokens.ETH)) return
+
+                    ctx.timeout(20*1000);
+
+                    let execProm = executeTransaction(prom);
+
+                    if (approval) {
+                        return (await expectNothingFromPromise(execProm));
+                    }
+
                     return (await (tc.expected.executeSuccess
                             ? expectFulfilled(execProm)
                             : expectRejected(execProm)
@@ -284,7 +323,9 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
 
                 const {outputEstimate: estimate, bridgeArgs: bridgeParams} = await prom;
 
-                expectNotZero(estimate.amountToReceive);
+                if (!tc.expected.bridgeFeeTc) {
+                    expectNotZero(estimate.amountToReceive);
+                }
 
                 outputEstimate = estimate;
                 doBridgeArgs = bridgeParams;
@@ -348,7 +389,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                             approval
                         )(this)
                     } else {
-                        return await executeTxnFunc(
+                        return await executeBuiltTxnFunc(
                             tc,
                             wallet.sendTransaction(approvalTxn),
                             approval
@@ -363,7 +404,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                             staticCallPopulatedTransaction(bridgeTxn, wallet)
                         )(this)
                     } else {
-                        return await executeTxnFunc(
+                        return await executeBuiltTxnFunc(
                             tc,
                             wallet.sendTransaction(bridgeTxn)
                         )(this)
@@ -383,7 +424,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                 });
 
                 step(bridgeTxnTestTitle, async function (this: Mocha.Context) {
-                    return await executeTxnFunc(
+                    await executeTxnFunc(
                         tc,
                         bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet)
                     )(this)
