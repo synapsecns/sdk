@@ -1,8 +1,4 @@
-import {
-    type Token,
-    BaseToken,
-    WrappedToken,
-} from "@token";
+import {BaseToken, type Token, WrappedToken,} from "@token";
 
 import {ChainId} from "@chainid";
 
@@ -449,12 +445,23 @@ export namespace Tokens {
         swapType: SwapType.NEWO,
     });
 
+    export const LUNA = new BaseToken({
+        name:     "LUNA",
+        symbol:   "LUNA",
+        decimals: 18,
+        addresses: {
+            [ChainId.OPTIMISM]: "0x931B8f17764362A3325D30681009f0eDd6211231",
+            [ChainId.ARBITRUM]: "0x1A4dA80967373fd929961e976b4b53ceeC063a15",
+        },
+        swapType: SwapType.LUNA,
+    })
+
     export const mintBurnTokens: Token[] = [
         NUSD,  SYN,      NETH,
         HIGH,  DOG,      JUMP,
         FRAX,  SYN_FRAX, NFD,
         GOHM,  SOLAR,    GMX,
-        UST,   NEWO,
+        UST,   NEWO,     LUNA,
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
@@ -466,5 +473,6 @@ export namespace Tokens {
         AVAX, WAVAX, MOVR, WMOVR, GOHM,
         HIGH, JUMP, DOG, NFD, FRAX,
         SYN_FRAX, SOLAR, GMX, NEWO,
+        LUNA,
     ];
 }

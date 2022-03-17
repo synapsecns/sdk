@@ -14,10 +14,12 @@ export enum SwapType {
     MOVR    = "MOVR",
     UST     = "UST",
     NEWO    = "NEWO",
+    LUNA    = "LUNA",
 }
 
 export const mintBurnSwapTypes = [
     SwapType.HIGH, SwapType.DOG, SwapType.JUMP,
     SwapType.NFD,  SwapType.OHM, SwapType.SOLAR,
     SwapType.GMX,  SwapType.UST, SwapType.NEWO,
+    SwapType.LUNA,
 ];
