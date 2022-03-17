@@ -145,6 +145,21 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
         },
         {
             args: {
+                tokenFrom:   Tokens.USDT,
+                tokenTo:     Tokens.USDC,
+                chainIdFrom: ChainId.AVALANCHE,
+                chainIdTo:   ChainId.ETH,
+                amountFrom:  Tokens.USDT.etherToWei("8.91", ChainId.AVALANCHE),
+            },
+            expected: {
+                executeSuccess: false,
+                canBridge:      false,
+                bridgeFeeTc:    true
+            },
+            callStatic:         false,
+        },
+        {
+            args: {
                 tokenFrom:   Tokens.ETH,
                 tokenTo:     Tokens.NETH,
                 chainIdFrom: ChainId.ETH,
