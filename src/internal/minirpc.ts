@@ -128,12 +128,20 @@ export class MiniRpcProvider implements ExternalProvider {
     }
 
     private async _processBatch() {
-        const currentBatch = this._pendingBatch;
+        let currentBatch = this._pendingBatch;
 
         this._pendingBatch    = null;
         this._batchAggregator = null;
 
+        if (currentBatch === null) {
+            currentBatch = [];
+        }
+
         const requests: JsonRPCRequest[] = currentBatch.map(req => req.request);
+
+        if (requests.length === 0) {
+            return
+        }
 
         return fetchJson(this._url, JSON.stringify(requests))
             .then(result =>
