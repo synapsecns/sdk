@@ -76,6 +76,8 @@ describe("SynapseBridge - checkSwapSupported tests", function(this: Mocha.Suite)
         makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.NEWO,   ChainId.ETH,       Tokens.NEWO,   true),
         makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.NEWO,   ChainId.ETH,       Tokens.NEWO,   true),
         makeBridgeSwapTestCase(ChainId.ETH,       Tokens.NEWO,   ChainId.HARMONY,   Tokens.NEWO,   false),
+        makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.LUNA,   ChainId.ETH,       Tokens.LUNA,   false),
+        makeBridgeSwapTestCase(ChainId.OPTIMISM,  Tokens.LUNA,   ChainId.ARBITRUM,  Tokens.LUNA,   true),
     ].forEach((tc: TestCase) => {
         const {args, expected} = tc;
 
