@@ -3,7 +3,8 @@ import {Networks} from "@networks";
 
 import {
     rejectPromise,
-    executePopulatedTransaction
+    executePopulatedTransaction,
+    fixWeiValue
 } from "@common/utils";
 
 import {SynapseContracts} from "@common/synapse_contracts";
@@ -257,12 +258,39 @@ export namespace Bridge {
             }
 
             const
-                {tokenFrom, amountFrom, addressTo} = args,
+                {tokenFrom, tokenTo, chainIdTo, amountFrom, addressTo} = args,
                 signerAddress = await signer.getAddress();
 
             args.addressTo = addressTo ?? signerAddress
 
             const checkArgs = {signer, token: tokenFrom, amount: amountFrom};
+
+            let validAmtFrom: boolean;
+
+            try {
+                const {bridgeFee}: BridgeOutputEstimate = await this.calculateBridgeRate({
+                    tokenFrom,
+                    tokenTo,
+                    chainIdTo,
+                    amountFrom,
+                });
+
+                let fixedAmountFrom: BigNumber = amountFrom;
+                const tokenInDecimals: number = tokenFrom.decimals(this.chainId);
+                if (tokenInDecimals !== 18) {
+                    fixedAmountFrom = fixWeiValue(amountFrom, tokenInDecimals);
+                }
+
+                validAmtFrom = bridgeFee.lt(fixedAmountFrom);
+            } catch (e) {
+                console.error(e);
+                validAmtFrom = true; // TODO: should executeBridgeTokenTransaction just reject entirely?
+            }
+
+            if (!validAmtFrom) {
+                const err = new Error("input amount must be greater than bridge fee");
+                return rejectPromise(err)
+            }
 
             return this.checkCanBridge(checkArgs)
                 .then(canBridgeRes => {
