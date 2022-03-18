@@ -316,9 +316,9 @@ export namespace SwapPools {
         chainId:      ChainId.METIS,
         address:     "0x9C1340Bf093d057fA29819575517fb9fE2f04AcE",
         netName:     "Metis",
-        poolId:       0,
+        poolId:       1,
         swapAddress: "0x09fEC30669d63A13c666d2129230dD5588E2e240",
-        poolTokens:   WETHTokenPool,
+        poolTokens:   ETHTokensPool(Tokens.METIS_ETH),
     });
 
     export const ARBITRUM_POOL_SWAP_TOKEN = makeSwapToken({

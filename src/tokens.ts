@@ -162,7 +162,6 @@ export namespace Tokens {
             [ChainId.ETH]:      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
             [ChainId.OPTIMISM]: "0x121ab82b49B2BC4c7901CA46B8277962b4350204",
             [ChainId.BOBA]:     "0xd203De32170130082896b4111eDF825a4774c18E",
-            [ChainId.METIS]:    "0x420000000000000000000000000000000000000A",
             [ChainId.ARBITRUM]: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
         },
         swapType: SwapType.ETH
@@ -214,6 +213,16 @@ export namespace Tokens {
         decimals: 18,
         addresses: {
             [ChainId.FANTOM]: "0x74b23882a30290451A17c44f4F05243b6b58C76d"
+        },
+        swapType: SwapType.ETH,
+    });
+
+    export const METIS_ETH = new BaseToken({
+        name:     "Wrapped ETH",
+        symbol:   "ETH",
+        decimals:  18,
+        addresses: {
+            [ChainId.METIS]: "0x420000000000000000000000000000000000000A",
         },
         swapType: SwapType.ETH,
     });
@@ -484,10 +493,10 @@ export namespace Tokens {
     export const AllTokens: Token[] = [
         DAI, BUSD, USDC, USDT, UST,
         ETH, NETH, WETH, WETHBEAM, WETH_E,
-        AVWETH, ONE_ETH, FTM_ETH, SYN, NUSD,
-        AVAX, WAVAX, MOVR, WMOVR, GOHM,
-        HIGH, JUMP, DOG, NFD, FRAX,
-        SYN_FRAX, SOLAR, GMX, NEWO,
-        SDT, LUNA,
+        AVWETH, ONE_ETH, FTM_ETH, METIS_ETH,
+        SYN, NUSD, AVAX, WAVAX, MOVR, WMOVR,
+        GOHM, HIGH, JUMP, DOG, NFD, FRAX,
+        SYN_FRAX, SOLAR, GMX, NEWO, SDT,
+        LUNA,
     ];
 }
