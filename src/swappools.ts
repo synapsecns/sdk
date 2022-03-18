@@ -533,8 +533,8 @@ export namespace SwapPools {
         ),
         [ChainId.METIS]: makeSwapTypeMap(
             {
-                usdPool: [METIS_POOL_SWAP_TOKEN, METIS_POOL_SWAP_TOKEN.poolTokens],
-                ethPool: [METIS_ETH_SWAP_TOKEN,  METIS_ETH_SWAP_TOKEN.poolTokens]
+                usdPool: [METIS_POOL_SWAP_TOKEN, METIS_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+                ethPool: [METIS_ETH_SWAP_TOKEN,  METIS_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps]
             }
         ),
         [ChainId.MOONBEAM]: makeSwapTypeMap(
