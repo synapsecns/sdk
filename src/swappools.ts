@@ -30,12 +30,14 @@ export namespace SwapPools {
     }
 
     export interface SwapPoolToken extends IBaseToken, LPToken {
-        readonly baseToken:      BaseToken,
-        readonly poolId:         number,
-        readonly poolName:       string,
-        readonly poolType:       string,
-        readonly nativeTokens?:  Token[],
-        readonly depositTokens?: Token[],
+        readonly baseToken:      BaseToken;
+        readonly poolId:         number;
+        readonly poolName:       string;
+        readonly poolType:       string;
+        readonly nativeTokens?:  Token[];
+        readonly depositTokens?: Token[];
+        readonly swapAddress:    (chainId: number) => string;
+        readonly swapETHAddress: (chainId: number) => string | null;
 
         readonly poolTokensForBridgeSwaps: Token[]
     }
@@ -163,6 +165,14 @@ export namespace SwapPools {
         get poolTokensForBridgeSwaps(): Token[] {
             return moveFirstToLast(this.poolTokens);
         }
+
+        swapAddress(chainId: number): string {
+            return this.swapAddresses[chainId];
+        }
+
+        swapETHAddress(chainId: number): string | null {
+            return null
+        }
     }
 
     export class ETHSwapToken extends SwapToken {
@@ -197,6 +207,10 @@ export namespace SwapPools {
             return this.depositTokens?.length > 0
                 ? moveFirstToLast(this.depositTokens)
                 : super.poolTokensForBridgeSwaps
+        }
+
+        swapETHAddress(chainId: number): string | null {
+            return this.swapEthAddresses[chainId] || null
         }
     }
 
