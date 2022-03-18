@@ -1,6 +1,6 @@
 import {Slippages} from "./slippages";
 
-import {Tokens}    from "@tokens";
+import {Tokens} from "@tokens";
 import {ChainId}   from "@chainid";
 import {SwapPools} from "@swappools";
 
@@ -17,6 +17,7 @@ export namespace BridgeUtils {
         ChainId.OPTIMISM,
         ChainId.FANTOM,
         ChainId.BOBA,
+        ChainId.METIS,
         ChainId.MOONBEAM,
         ChainId.ARBITRUM,
         ChainId.AVALANCHE,
@@ -170,7 +171,7 @@ export namespace BridgeUtils {
     }
 
     export const isETHLikeToken = (t: Token): boolean =>
-        t.isEqual(Tokens.WETH_E) || t.isEqual(Tokens.ONE_ETH) || t.isEqual(Tokens.FTM_ETH)
+        [Tokens.WETH_E.id, Tokens.ONE_ETH.id, Tokens.FTM_ETH.id, Tokens.METIS_ETH.id].includes(t.id)
 
     export const overrides = (value: BigNumber): any => ({value})
 
