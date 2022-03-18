@@ -303,7 +303,7 @@ describe("SynapseBridge - Provider Interactions tests", async function(this: Moc
                         token: tc.args.tokenFrom,
                         signer: wallet,
                         amount: tc.args.amountFrom,
-                    }).then(([canBridge]) => canBridge)
+                    }).then(({canBridge}) => canBridge)
 
                     expect(prom).to.eventually.equal(tc.expected.canBridge).notify(done);
                 })
