@@ -4,7 +4,8 @@ import {ChainId, supportedChainIds} from "@chainid";
 
 import type {
     AddressMap,
-    ChainIdTypeMap
+    ChainIdTypeMap,
+    NumberMap
 } from "@common/types";
 
 import {BaseToken, type IBaseToken, type Token} from "@token";
@@ -45,7 +46,7 @@ export namespace SwapPools {
     interface SwapTokenArgs {
         name:           string;
         symbol:         string;
-        decimals:       number | DecimalsMap;
+        decimals:       number | NumberMap;
         addresses:      AddressMap;
         poolId:         number;
         poolName:       string;

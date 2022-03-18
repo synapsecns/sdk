@@ -388,7 +388,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                     approveTitle: string = "approval transaction should be populated successfully",
                     bridgeTitle:  string = "bridge transaction should be populated successfully";
 
-                describe("- build transactions", async function(this: Mocha.Suite) {
+                describe("- build transactions", function(this: Mocha.Suite) {
                     step(approveTitle, function(this: Mocha.Context, done: Mocha.Done) {
                         if (tc.args.tokenFrom.isEqual(Tokens.ETH)) {
                             done();
@@ -399,16 +399,16 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                             return
                         }
 
-                    this.timeout(DEFAULT_TEST_TIMEOUT);
+                        this.timeout(DEFAULT_TEST_TIMEOUT);
 
                         let prom = bridgeInstance.buildApproveTransaction({token: tc.args.tokenFrom});
                         Promise.resolve(prom).then(t => approvalTxn = t);
 
                         expect(prom).to.eventually.be.fulfilled.notify(done);
-                });
+                    });
 
                     step(bridgeTitle, function(this: Mocha.Context, done: Mocha.Done) {
-                    this.timeout(DEFAULT_TEST_TIMEOUT);
+                        this.timeout(DEFAULT_TEST_TIMEOUT);
 
                         let prom = bridgeInstance.buildBridgeTokenTransaction(doBridgeArgs);
                         Promise.resolve(prom).then(t => bridgeTxn = t);
@@ -430,7 +430,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                                 } catch (e) {
                                     expect.fail();
                                 }
-                });
+                            });
 
                             it("tx data should have a 'name' property equal to 'redeemV2'", function(this: Mocha.Context) {
                                 expect(decoded).to.have.property("name", "redeemV2");
@@ -453,20 +453,20 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                             });
                         });
                     }
-                        });
+                });
 
                 const execOnTerra: boolean = tc.args.chainIdFrom === ChainId.TERRA && !tc.callStatic;
 
                 if (!execOnTerra) {
                     describe("- execute transactions", function(this: Mocha.Suite) {
-                step(approvalTxnTestTitle, async function(this: Mocha.Context) {
-                    if (!needsApproval) {
-                        return
-                    }
+                        step(approvalTxnTestTitle, async function(this: Mocha.Context) {
+                            if (!needsApproval) {
+                                return
+                            }
 
                             const _wallet = getGenericSigner(wallet, tc.callStatic, tc.expected.executeSuccess);
 
-                        this.slow(SHORT_TEST_TIMEOUT);
+                            this.slow(SHORT_TEST_TIMEOUT);
 
                             if (tc.callStatic && tc.args.chainIdFrom !== ChainId.TERRA) {
                                 return await executeStaticCallFunc(
@@ -475,15 +475,15 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                                 )(this)
                             }
 
-                        return await executeTxnFunc(
-                            tc,
+                            return await executeTxnFunc(
+                                tc,
                                 _wallet.sendTransaction(approvalTxn),
                                 true
-                        )(this)
-                });
+                            )(this)
+                        });
 
-                step(bridgeTxnTestTitle, async function(this: Mocha.Context) {
-                        this.slow(SHORT_TEST_TIMEOUT);
+                        step(bridgeTxnTestTitle, async function(this: Mocha.Context) {
+                            this.slow(SHORT_TEST_TIMEOUT);
 
                             const _wallet = getGenericSigner(wallet, tc.callStatic, tc.expected.executeSuccess);
 
@@ -494,50 +494,47 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                                 )(this)
                             }
 
-                        return await executeTxnFunc(
-                            tc,
-                            _wallet.sendTransaction(bridgeTxn)
-                        )(this)
-                });
-            });
+                            return await executeTxnFunc(
+                                tc,
+                                _wallet.sendTransaction(bridgeTxn)
+                            )(this)
+                        });
+                    });
                 }
             });
 
             if (!tc.callStatic) {
                 describe("Test Magic Executors", function(this: Mocha.Suite) {
-                step(approvalTxnTestTitle, async function(this: Mocha.Context) {
-                    if (!needsApproval) {
+                    step(approvalTxnTestTitle, async function(this: Mocha.Context) {
+                        if (!needsApproval) {
                             if (!(tc.args.tokenFrom.isEqual(Tokens.DAI) && tc.args.chainIdFrom === ChainId.AVALANCHE)) {
-                        return
-                    }
+                                return
+                            }
                         }
 
-                    this.slow(1.5*1000);
+                        this.slow(1.5*1000);
 
-                    return await executeTxnFunc(
-                        tc,
-                        bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet as EvmWallet),
-                        true
-                    )(this)
-                });
+                        return await executeTxnFunc(
+                            tc,
+                            bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet as EvmWallet),
+                            true
+                        )(this)
+                    });
 
-                step(bridgeTxnTestTitle, async function (this: Mocha.Context) {
-                    this.slow(SHORT_TEST_TIMEOUT);
+                    step(bridgeTxnTestTitle, async function (this: Mocha.Context) {
+                        this.slow(SHORT_TEST_TIMEOUT);
 
                         const _wallet = getGenericSigner(wallet, tc.callStatic, tc.expected.executeSuccess);
 
-                        let prom: Promise<GenericTxnResponse> = bridgeInstance
-                            .executeBridgeTokenTransaction(
-                                doBridgeArgs,
-                                _wallet
-                            );
+                        let prom: Promise<GenericTxnResponse> =
+                            bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, _wallet);
 
-                    return await executeTxnFunc(
-                        tc,
-                        prom
-                    )(this)
+                        return await executeTxnFunc(
+                            tc,
+                            prom
+                        )(this)
+                    });
                 });
-            });
             }
         });
     });
@@ -593,8 +590,8 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
             const wantErrMsg: string = `${bridgeArgs.addressTo} passed as BridgeTransactionParams.addressTo is not a valid Terra address`;
 
             return expect(prom).to.eventually
-                    .be.rejectedWith(wantErrMsg)
-                    .and.be.an.instanceOf(CanBridgeError)
+                .be.rejectedWith(wantErrMsg)
+                .and.be.an.instanceOf(CanBridgeError)
                 .notify(done);
         });
 
@@ -621,8 +618,8 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
             const wantErrMsg: string = `${bridgeArgs.addressTo} passed as BridgeTransactionParams.addressTo is not a valid EVM address`;
 
             return expect(prom).to.eventually
-                    .be.rejectedWith(wantErrMsg)
-                    .and.be.an.instanceOf(CanBridgeError)
+                .be.rejectedWith(wantErrMsg)
+                .and.be.an.instanceOf(CanBridgeError)
                 .notify(done);
         });
 
@@ -673,7 +670,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
                 expect(prom).to.eventually
                     .be.rejectedWith(wantErrMsg)
-                        .and.be.an.instanceOf(CanBridgeError)
+                    .and.be.an.instanceof(CanBridgeError)
                     .notify(done);
             });
 

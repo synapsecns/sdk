@@ -384,7 +384,8 @@ export namespace Bridge {
             return this.checkCanBridge(checkArgs)
                 .then(({canBridge, reasonUnable, amount}) => {
                     if (!canBridge) {
-                        return rejectPromise(new CanBridgeError(reasonUnable, amount))
+                        const rejection = new CanBridgeError(reasonUnable, amount);
+                        return rejectPromise(rejection)
                     }
 
                     return this.buildBridgeTokenTransaction(args)
@@ -1110,7 +1111,7 @@ export namespace Bridge {
                         return {canBridge: true}
                     }
 
-                    return {canBridge: false, error: new Error(errMsg), amount: balance}
+                    return {canBridge: false, reasonUnable: errMsg, amount: balance}
                 })
                 .catch(rejectPromise)
         }

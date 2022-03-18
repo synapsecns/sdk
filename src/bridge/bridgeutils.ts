@@ -14,13 +14,11 @@ import {BigNumber, type BigNumberish} from "@ethersproject/bignumber";
 export class CanBridgeError extends Error {
     readonly amount: BigNumberish;
 
-    constructor(message: Error | string, amount?: BigNumberish) {
-        const msg: string = message instanceof Error ? message.message : message;
-
-        super(msg)
+    constructor(message: string, amount?: BigNumberish) {
+        super(message)
 
         this.name = this.constructor.name // dafuq
-        this.message = msg;
+        this.message = message;
 
         if (amount) {
             this.amount = amount;
