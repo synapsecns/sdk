@@ -6,7 +6,7 @@ import {
     type Token
 } from "@sdk";
 
-import {SwapType} from "@internal";
+import {rpcProviderForChain, SwapType} from "@internal";
 
 import type {StringMap} from "@sdk/common/types";
 
@@ -18,6 +18,8 @@ import {
     expectProperty,
     wrapExpect,
 } from "@tests/helpers";
+import {SwapContract, SwapFactory} from "@contracts";
+import {expect} from "chai";
 
 describe("SwapPools Tests", function(this: Mocha.Suite) {
     describe("Pool tokens tests", function(this: Mocha.Suite) {
@@ -107,13 +109,17 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
 
         const makeShouldHaveString = (want: boolean): string => `${want ? "should" : "should not"} have a(n)`
 
-        const makeTestTitles = (tc: TestCase): [string, string] => {
+        const makeTestTitles = (tc: TestCase): [string, string, string, string] => {
             const testPrefix: string = `${Networks.networkName(tc.chainId)}`;
-            const
-                stableSwapTestTitle: string = `${testPrefix} ${makeShouldHaveString(tc.wantStableSwapPool)} stableswap pool token`,
-                ethSwapTestTitle:    string = `${testPrefix} ${makeShouldHaveString(tc.wantEthSwapPool)} ethswap pool token`;
+            const swapContractStr = (t: string): string => `swap contract should have ${t} at index 0`;
 
-            return [stableSwapTestTitle, ethSwapTestTitle]
+            const
+                stableSwapTestTitle:         string = `${testPrefix} ${makeShouldHaveString(tc.wantStableSwapPool)} stableswap pool token`,
+                ethSwapTestTitle:            string = `${testPrefix} ${makeShouldHaveString(tc.wantEthSwapPool)} ethswap pool token`,
+                stableSwapContractTestTitle: string = `${testPrefix} ${swapContractStr("nUSD")}`,
+                ethSwapContractTestTitle:    string = `${testPrefix} ${swapContractStr("nETH")}`;
+
+            return [stableSwapTestTitle, ethSwapTestTitle, stableSwapContractTestTitle, ethSwapContractTestTitle]
         }
 
         const testFn = (tc: TestCase, stableSwap: boolean): ((this: Mocha.Context) => void) => {
@@ -128,13 +134,48 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             }
         }
 
-        for (const tc of testCases) {
-            const [stableSwapTestTitle, ethSwapTestTitle] = makeTestTitles(tc);
+        const swapContractTestFn = (tc: TestCase, stableSwap: boolean): ((this: Mocha.Context, done: Mocha.Done) => void) => {
+            return function(this: Mocha.Context, done: Mocha.Done) {
+                this.timeout(6.5*1000);
+                this.slow(3.5*1000);
 
-            it(stableSwapTestTitle, testFn(tc, true))
-            it(ethSwapTestTitle,    testFn(tc, false))
+                const getPoolFn: (chainId: number) => SwapPools.SwapPoolToken = stableSwap
+                    ? SwapPools.stableswapPoolForNetwork
+                    : SwapPools.ethSwapPoolForNetwork;
+
+                const t: Token = stableSwap
+                    ? Tokens.NUSD
+                    : Tokens.NETH;
+
+                const swapContract = SwapFactory.connect(
+                    getPoolFn(tc.chainId).swapAddress(tc.chainId),
+                    rpcProviderForChain(tc.chainId)
+                );
+
+                const prom = swapContract.getToken(0).then(addr => addr.toLowerCase());
+                const wantAddr = t.address(tc.chainId).toLowerCase();
+
+                expect(prom).to.eventually.equal(wantAddr).notify(done);
+            }
         }
-    })
+
+        testCases.forEach(tc => {
+            const [
+                stableSwapTestTitle,         ethSwapTestTitle,
+                stableSwapContractTestTitle, ethSwapContractTestTitle
+            ] = makeTestTitles(tc);
+
+            it(stableSwapTestTitle, testFn(tc, true));
+            if (tc.wantStableSwapPool && tc.chainId !== ChainId.ETH) {
+                it(stableSwapContractTestTitle, swapContractTestFn(tc, true));
+            }
+
+            it(ethSwapTestTitle, testFn(tc, false));
+            if (tc.wantEthSwapPool) {
+                it(ethSwapContractTestTitle, swapContractTestFn(tc, false));
+            }
+        });
+    });
 
     describe("SwapPoolToken properties tests", function(this: Mocha.Suite) {
         interface TestCase {
