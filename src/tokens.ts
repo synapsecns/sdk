@@ -15,8 +15,8 @@ export namespace Tokens {
      * The DAI stablecoin, available on Arbitrum, Avalanche, Binance Smart Chain, Ethereum, and Polygon.
      */
     export const DAI = new BaseToken({
-        name:         'Dai',
-        symbol:       'DAI',
+        name:         "Dai",
+        symbol:       "DAI",
         decimals:     18,
         addresses: {
             [ChainId.ETH]:       "0x6b175474e89094c44da98b954eedeac495271d0f",
@@ -32,8 +32,8 @@ export namespace Tokens {
     });
 
     export const BUSD = new BaseToken({
-        name:        'Binance USD',
-        symbol:      'BUSD',
+        name:        "Binance USD",
+        symbol:      "BUSD",
         decimals:    18,
         addresses: {
             [ChainId.BSC]: "0xe9e7cea3dedca5984780bafc599bd69add087d56",
@@ -125,14 +125,14 @@ export namespace Tokens {
     // ETH, ETH wrappers, and nETH :D
 
     export const ETH = new BaseToken({
-        name:        'Ethereum',
-        symbol:      'ETH',
+        name:        "Ethereum",
+        symbol:      "ETH",
         decimals:    18,
         addresses: {
-            [ChainId.ETH]:      '',
-            [ChainId.OPTIMISM]: '',
-            [ChainId.BOBA]:     '',
-            [ChainId.ARBITRUM]: ''
+            [ChainId.ETH]:      "",
+            [ChainId.OPTIMISM]: "",
+            [ChainId.BOBA]:     "",
+            [ChainId.ARBITRUM]: ""
         },
         swapType: SwapType.ETH,
         isETH:    true,
@@ -142,8 +142,8 @@ export namespace Tokens {
      * nETH is a token involved in the bridge.
      */
     export const NETH = new BaseToken({
-        name:        'Synapse nETH',
-        symbol:      'nETH',
+        name:        "Synapse nETH",
+        symbol:      "nETH",
         decimals:    18,
         addresses: {
             [ChainId.OPTIMISM]:  "0x809DC529f07651bD43A172e8dB6f4a7a0d771036",
@@ -158,8 +158,8 @@ export namespace Tokens {
     });
 
     export const WETH = new BaseToken({
-        name:         'Wrapped ETH',
-        symbol:       'WETH', // SHOULD BE WETH
+        name:         "Wrapped ETH",
+        symbol:       "WETH",
         decimals:     18,
         addresses: {
             [ChainId.ETH]:      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
@@ -223,13 +223,13 @@ export namespace Tokens {
     // Synapse tokens
 
     export const SYN = new BaseToken({
-        name:        'Synapse',
-        symbol:      'SYN',
+        name:        "Synapse",
+        symbol:      "SYN",
         decimals:    18,
         addresses: {
             [ChainId.ETH]:       "0x0f2d719407fdbeff09d87557abb7232601fd9f29",
             [ChainId.OPTIMISM]:  "0x5A5fFf6F753d7C11A56A52FE47a177a87e431655",
-            [ChainId.CRONOS]:   "0xFD0F80899983b8D46152aa1717D76cba71a31616",
+            [ChainId.CRONOS]:    "0xFD0F80899983b8D46152aa1717D76cba71a31616",
             [ChainId.BSC]:       "0xa4080f1778e69467e905b8d6f72f6e441f9e9484",
             [ChainId.POLYGON]:   "0xf8f9efc0db77d8881500bb06ff5d6abc3070e695",
             [ChainId.FANTOM]:    "0xE55e19Fb4F2D85af758950957714292DAC1e25B2",
@@ -249,8 +249,8 @@ export namespace Tokens {
      * nUSD is a token involved in the bridge.
      */
     export const NUSD = new BaseToken({
-        name:        'Synapse nUSD',
-        symbol:      'nUSD',
+        name:        "Synapse nUSD",
+        symbol:      "nUSD",
         decimals:    18,
         addresses: {
             [ChainId.ETH]:       "0x1B84765dE8B7566e4cEAF4D0fD3c5aF52D3DdE4F",
@@ -321,19 +321,19 @@ export namespace Tokens {
         symbol:   "gOHM",
         decimals: 18,
         addresses: {
-            [ChainId.ETH]:       '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f',
-            [ChainId.OPTIMISM]:  '0x0b5740c6b4a97f90eF2F0220651Cca420B868FfB',
-            [ChainId.CRONOS]:    '0xbB0A63A6CA2071c6C4bcAC11a1A317b20E3E999C',
-            [ChainId.BSC]:       '0x88918495892BAF4536611E38E75D771Dc6Ec0863',
-            [ChainId.POLYGON]:   '0xd8cA34fd379d9ca3C6Ee3b3905678320F5b45195',
-            [ChainId.FANTOM]:    '0x91fa20244Fb509e8289CA630E5db3E9166233FDc',
-            [ChainId.BOBA]:      '0xd22C0a4Af486C7FA08e282E9eB5f30F9AaA62C95',
-            [ChainId.METIS]:     '0xFB21B70922B9f6e3C6274BcD6CB1aa8A0fe20B80',
-            [ChainId.MOONBEAM]:  '0xD2666441443DAa61492FFe0F37717578714a4521',
-            [ChainId.MOONRIVER]: '0x3bF21Ce864e58731B6f28D68d5928BcBEb0Ad172',
-            [ChainId.ARBITRUM]:  '0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1',
-            [ChainId.AVALANCHE]: '0x321E7092a180BB43555132ec53AaA65a5bF84251',
-            [ChainId.HARMONY]:   '0x67C10C397dD0Ba417329543c1a40eb48AAa7cd00',
+            [ChainId.ETH]:       "0x0ab87046fBb341D058F17CBC4c1133F25a20a52f",
+            [ChainId.OPTIMISM]:  "0x0b5740c6b4a97f90eF2F0220651Cca420B868FfB",
+            [ChainId.CRONOS]:    "0xbB0A63A6CA2071c6C4bcAC11a1A317b20E3E999C",
+            [ChainId.BSC]:       "0x88918495892BAF4536611E38E75D771Dc6Ec0863",
+            [ChainId.POLYGON]:   "0xd8cA34fd379d9ca3C6Ee3b3905678320F5b45195",
+            [ChainId.FANTOM]:    "0x91fa20244Fb509e8289CA630E5db3E9166233FDc",
+            [ChainId.BOBA]:      "0xd22C0a4Af486C7FA08e282E9eB5f30F9AaA62C95",
+            [ChainId.METIS]:     "0xFB21B70922B9f6e3C6274BcD6CB1aa8A0fe20B80",
+            [ChainId.MOONBEAM]:  "0xD2666441443DAa61492FFe0F37717578714a4521",
+            [ChainId.MOONRIVER]: "0x3bF21Ce864e58731B6f28D68d5928BcBEb0Ad172",
+            [ChainId.ARBITRUM]:  "0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1",
+            [ChainId.AVALANCHE]: "0x321E7092a180BB43555132ec53AaA65a5bF84251",
+            [ChainId.HARMONY]:   "0x67C10C397dD0Ba417329543c1a40eb48AAa7cd00",
         },
         swapType: SwapType.OHM,
     });
@@ -365,8 +365,8 @@ export namespace Tokens {
         symbol:  "DOG",
         decimals: 18,
         addresses: {
-            [ChainId.ETH]: "0xBAac2B4491727D78D2b78815144570b9f2Fe8899",
-            [ChainId.BSC]: "0xaa88c603d142c371ea0eac8756123c5805edee03",
+            [ChainId.ETH]:     "0xBAac2B4491727D78D2b78815144570b9f2Fe8899",
+            [ChainId.BSC]:     "0xaa88c603d142c371ea0eac8756123c5805edee03",
             [ChainId.POLYGON]: "0xeee3371b89fc43ea970e908536fcddd975135d8a",
         },
         swapType: SwapType.DOG
@@ -387,8 +387,8 @@ export namespace Tokens {
     // FRAX/synFrax
 
     export const FRAX = new BaseToken({
-        name:     'Frax',
-        symbol:   'FRAX',
+        name:     "Frax",
+        symbol:   "FRAX",
         decimals: 18,
         addresses: {
             [ChainId.ETH]:       "0x853d955acef822db058eb8505911ed77f175b99e",
@@ -400,8 +400,8 @@ export namespace Tokens {
     });
 
     export const SYN_FRAX = new BaseToken({
-        name:      'Synapse Frax',
-        symbol:    'synFRAX',
+        name:      "Synapse Frax",
+        symbol:    "synFRAX",
         decimals:  18,
         addresses: {
             [ChainId.FANTOM]:    "0x1852F70512298d56e9c8FDd905e02581E04ddb2a",
