@@ -407,7 +407,8 @@ export namespace SwapPools {
         MOVR_Pool    = makeSingleTokenPool(Tokens.MOVR),
         WMOVR_Pool   = makeSingleTokenPool(Tokens.WMOVR),
         UST_Pool     = makeSingleTokenPool(Tokens.UST),
-        NEWO_Pool    = makeSingleTokenPool(Tokens.NEWO);
+        NEWO_Pool    = makeSingleTokenPool(Tokens.NEWO),
+        SDT_Pool     = makeSingleTokenPool(Tokens.SDT);
 
 
     export interface SwapTypePoolTokens {[swapType: string]: LPToken}
@@ -512,6 +513,7 @@ export namespace SwapPools {
             },
             JUMP_Pool,
             FRAX_Pool,
+            SDT_Pool,
         ),
         [ChainId.BOBA]: makeSwapTypeMap(
             {
@@ -553,6 +555,7 @@ export namespace SwapPools {
             GMX_Pool,
             AVAX_Pool,
             NEWO_Pool,
+            SDT_Pool,
         ),
         [ChainId.AURORA]: makeSwapTypeMap(
             {
@@ -566,6 +569,7 @@ export namespace SwapPools {
                 ethPool: [HARMONY_ONEETH_TOKEN,    HARMONY_ONEETH_TOKEN.poolTokensForBridgeSwaps]
             },
             FRAX_Pool,
+            SDT_Pool,
         )
     }
 
