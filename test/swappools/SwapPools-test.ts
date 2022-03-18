@@ -98,7 +98,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             makeTestCase(ChainId.POLYGON,   true,  false),
             makeTestCase(ChainId.FANTOM,    true,  true),
             makeTestCase(ChainId.BOBA,      true,  true),
-            makeTestCase(ChainId.METIS,     true,  false),
+            makeTestCase(ChainId.METIS,     true,  true),
             makeTestCase(ChainId.MOONBEAM,  false, false),
             makeTestCase(ChainId.MOONRIVER, false, false),
             makeTestCase(ChainId.ARBITRUM,  true,  true),
