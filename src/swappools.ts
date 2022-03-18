@@ -30,14 +30,14 @@ export namespace SwapPools {
     }
 
     export interface SwapPoolToken extends IBaseToken, LPToken {
-        readonly baseToken:      BaseToken;
-        readonly poolId:         number;
-        readonly poolName:       string;
-        readonly poolType:       string;
-        readonly nativeTokens?:  Token[];
-        readonly depositTokens?: Token[];
-        readonly swapAddress:    (chainId: number) => string;
-        readonly swapETHAddress: (chainId: number) => string | null;
+        readonly baseToken:       BaseToken;
+        readonly poolId:          number;
+        readonly poolName:        string;
+        readonly poolType:        string;
+        readonly nativeTokens?:   Token[];
+        readonly depositTokens?:  Token[];
+        readonly swapAddress:     (chainId: number) => string;
+        readonly swapETHAddress:  (chainId: number) => string | null;
 
         readonly poolTokensForBridgeSwaps: Token[]
     }
@@ -167,7 +167,7 @@ export namespace SwapPools {
         }
 
         swapAddress(chainId: number): string {
-            return this.swapAddresses[chainId];
+            return this.swapAddresses[chainId]
         }
 
         swapETHAddress(chainId: number): string | null {
@@ -310,6 +310,15 @@ export namespace SwapPools {
         poolId:       0,
         swapAddress: "0x555982d2E211745b96736665e19D9308B615F78e",
         poolTokens:   [Tokens.NUSD, Tokens.USDC],
+    });
+
+    export const METIS_ETH_SWAP_TOKEN = makeETHSwapToken({
+        chainId:      ChainId.METIS,
+        address:     "0x9C1340Bf093d057fA29819575517fb9fE2f04AcE",
+        netName:     "Metis",
+        poolId:       0,
+        swapAddress: "0x09fEC30669d63A13c666d2129230dD5588E2e240",
+        poolTokens:   WETHTokenPool,
     });
 
     export const ARBITRUM_POOL_SWAP_TOKEN = makeSwapToken({
@@ -521,7 +530,8 @@ export namespace SwapPools {
         ),
         [ChainId.METIS]: makeSwapTypeMap(
             {
-                usdPool: [METIS_POOL_SWAP_TOKEN, METIS_POOL_SWAP_TOKEN.poolTokens]
+                usdPool: [METIS_POOL_SWAP_TOKEN, METIS_POOL_SWAP_TOKEN.poolTokens],
+                ethPool: [METIS_ETH_SWAP_TOKEN,  METIS_ETH_SWAP_TOKEN.poolTokens]
             }
         ),
         [ChainId.MOONBEAM]: makeSwapTypeMap(
@@ -627,6 +637,8 @@ export namespace SwapPools {
                 return FANTOM_ETH_SWAP_TOKEN
             case ChainId.BOBA:
                 return BOBA_ETH_SWAP_TOKEN
+            case ChainId.METIS:
+                return METIS_ETH_SWAP_TOKEN
             case ChainId.ARBITRUM:
                 return ARBITRUM_ETH_SWAP_TOKEN
             case ChainId.AVALANCHE:

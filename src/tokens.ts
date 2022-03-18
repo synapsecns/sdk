@@ -150,6 +150,7 @@ export namespace Tokens {
             [ChainId.FANTOM]:    "0x67C10C397dD0Ba417329543c1a40eb48AAa7cd00",
             [ChainId.BOBA]:      "0x96419929d7949D6A801A6909c145C8EEf6A40431",
             [ChainId.MOONBEAM]:  "0x3192Ae73315c3634Ffa217f71CF6CBc30FeE349A",
+            [ChainId.METIS]:     "0x931B8f17764362A3325D30681009f0eDd6211231",
             [ChainId.ARBITRUM]:  "0x3ea9B0ab55F34Fb188824Ee288CeaEfC63cf908e",
             [ChainId.AVALANCHE]: "0x19E1ae0eE35c0404f835521146206595d37981ae",
             [ChainId.HARMONY]:   "0x0b5740c6b4a97f90eF2F0220651Cca420B868FfB",
@@ -165,6 +166,7 @@ export namespace Tokens {
             [ChainId.ETH]:      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
             [ChainId.OPTIMISM]: "0x121ab82b49B2BC4c7901CA46B8277962b4350204",
             [ChainId.BOBA]:     "0xd203De32170130082896b4111eDF825a4774c18E",
+            [ChainId.METIS]:    "0x420000000000000000000000000000000000000A",
             [ChainId.ARBITRUM]: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
         },
         swapType: SwapType.ETH
