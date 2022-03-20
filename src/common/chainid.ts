@@ -18,6 +18,8 @@ export const ChainId = {
     "HARMONY":      1666600000,
 } as const;
 
+export type ChainId = ValueOf<typeof ChainId> | number
+
 export const TerraChainNames: {[cid: number]: string} = {
     [ChainId.TERRA]: "columbus-5"
 }

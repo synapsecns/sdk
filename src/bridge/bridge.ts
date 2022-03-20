@@ -492,12 +492,13 @@ export namespace Bridge {
 
             let {intermediateToken, bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
 
-            const TEN = BigNumber.from(10);
-
-            const fromCoinDecimals = tokenFrom.decimals(this.chainId);
-            const involvesUST = [tokenFrom.swapType, tokenTo.swapType].includes(SwapType.UST);
-            const intermediateTokenAddr = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase();
             const
+                TEN = BigNumber.from(10),
+                fromCoinDecimals = tokenFrom.decimals(this.chainId);
+
+            const
+                involvesUST             = [tokenFrom.swapType, tokenTo.swapType].includes(SwapType.UST),
+                intermediateTokenAddr   = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase(),
                 bridgeFeeMultiplier     = involvesUST ? TEN.pow(12) : 1,
                 amountFromFixedDecimals = involvesUST ? amountFrom : amountFrom.mul(TEN.pow(18-fromCoinDecimals));
 
@@ -545,10 +546,6 @@ export namespace Bridge {
 
             try { /* c8 ignore start */
                 bridgeFee = await bridgeFeeRequest;
-                if (bridgeFee === null) {
-                    console.error("calculateSwapFee returned null");
-                    return rejectPromise("calculateSwapFee returned null")
-                }
             } catch (e) {
                 console.error(`Error in bridge fee request: ${e}`);
                 return rejectPromise(e)

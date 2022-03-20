@@ -25,7 +25,8 @@ import {
 } from "@tests/helpers";
 
 import {
-    type BridgeSwapTestCase, bridgeSwapTestPrivkey,
+    type BridgeSwapTestCase,
+    bridgeSwapTestPrivkey,
     makeBridgeSwapTestCase
 }  from "./bridge_test_utils";
 
@@ -44,9 +45,9 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         evmWallet   = chainId => makeWalletSignerWithProvider(chainId, bridgeSwapTestPrivkey.privkey);
 
     interface Expected {
-        notZero:   boolean,
-        wantError: boolean,
-        noAddrTo:  boolean,
+        notZero:   boolean;
+        wantError: boolean;
+        noAddrTo:  boolean;
     }
 
     type TestCase = BridgeSwapTestCase<Expected>
@@ -55,15 +56,11 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         t1: Token, t2: Token,
         c1: number, c2: number,
         amt?:      string,
-        notZero?:  boolean,
-        wantErr?:  boolean,
-        noAddrTo?: boolean,
+        notZero:   boolean = true,
+        wantError: boolean = false,
+        noAddrTo:  boolean = false,
     ): TestCase => {
-        const expected: Expected = {
-            notZero:   valueIfUndefined(notZero,  true),
-            wantError: valueIfUndefined(wantErr,  false),
-            noAddrTo:  valueIfUndefined(noAddrTo, false),
-        };
+        const expected: Expected = {notZero, wantError, noAddrTo};
 
         return makeBridgeSwapTestCase(c1, t1, c2, t2, expected, getTestAmount(t1, c1, amt))
     }

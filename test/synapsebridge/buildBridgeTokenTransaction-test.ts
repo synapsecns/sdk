@@ -145,7 +145,7 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
         makeTestCase(Tokens.NUSD,      Tokens.NUSD,      ChainId.POLYGON,   ChainId.BSC,         redeem),
         makeTestCase(Tokens.UST,       Tokens.UST,       ChainId.BSC,       ChainId.POLYGON,     redeem),
         makeTestCase(Tokens.UST,       Tokens.UST,       ChainId.POLYGON,   ChainId.ETH,         redeem),
-        makeTestCase(Tokens.UST,     Tokens.UST,     ChainId.BSC,       ChainId.TERRA,       redeemV2),
+        makeTestCase(Tokens.UST,       Tokens.UST,       ChainId.BSC,       ChainId.TERRA,       redeemV2),
         makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.ARBITRUM,  ChainId.AVALANCHE,   redeem),
         makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.ETH,       ChainId.AVALANCHE,   deposit),
         makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.AVALANCHE, ChainId.ETH,         redeem),
@@ -162,21 +162,12 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
         const testTitle = makeTestName(tc);
         describe(testTitle, function(this: Mocha.Suite) {
             let
-                walletArgs:     WalletArgs,
-                wallet:         EvmWallet | TerraWallet,
-                bridgeInstance: Bridge.SynapseBridge;
-
-            before(async function(this: Mocha.Context) {
-                this.timeout(DEFAULT_TEST_TIMEOUT);
-
-                walletArgs = await buildWalletArgs(
+                walletArgs = buildWalletArgs(
                     tc.args.chainIdFrom,
                     bridgeSwapTestPrivkey.privkey
-                );
-
-                wallet         = walletArgs.wallet;
+                ),
+                wallet         = walletArgs.wallet,
                 bridgeInstance = walletArgs.bridgeInstance;
-            })
 
             let builtTxn: PopulatedTransaction;
 
@@ -195,13 +186,13 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
                 Promise.resolve(prom).then(built => builtTxn = built as PopulatedTransaction);
 
                 return (await expectFulfilled(prom))
-            })
+            });
 
             let txnInfo: TransactionDescription;
             const
                 synapseBridgeInterface = SynapseBridgeFactory.createInterface(),
-                l1BridgeZapInterface = L1BridgeZapFactory.createInterface(),
-                l2BridgeZapInterface = L2BridgeZapFactory.createInterface();
+                l1BridgeZapInterface   = L1BridgeZapFactory.createInterface(),
+                l2BridgeZapInterface   = L2BridgeZapFactory.createInterface();
 
 
             step(`tx should be a call to function ${tc.expected.wantFn}()`, function(this: Mocha.Context) {

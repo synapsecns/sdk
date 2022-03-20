@@ -130,7 +130,7 @@ export interface WalletArgs {
     bridgeInstance: Bridge.SynapseBridge;
 }
 
-export async function buildWalletArgs(chainId: number, privkey: string=bridgeInteractionsPrivkey.privkey): Promise<WalletArgs> {
+export function buildWalletArgs(chainId: number, privkey: string=bridgeInteractionsPrivkey.privkey): WalletArgs {
     const
         _terra = chainId === ChainId.TERRA,
         _evmChainId = _terra ? ChainId.ETH : chainId,
@@ -144,7 +144,7 @@ export async function buildWalletArgs(chainId: number, privkey: string=bridgeInt
 
     const
         wallet       = _terra ? terraWallet : evmWallet,
-        evmAddress   = (await evmWallet.getAddress()),
+        evmAddress   = evmWallet.address,
         terraAddress = terraWallet.key.accAddress,
         address      = _terra ? terraAddress : evmAddress;
 
