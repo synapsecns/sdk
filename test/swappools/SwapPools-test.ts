@@ -18,8 +18,10 @@ import {
     expectProperty,
     wrapExpect,
 } from "@tests/helpers";
-import {SwapContract, SwapFactory} from "@contracts";
+import {SwapFactory} from "@contracts";
 import {expect} from "chai";
+import {BridgeUtils} from "@bridge/bridgeutils";
+import chainSupportsGasToken = BridgeUtils.chainSupportsGasToken;
 
 describe("SwapPools Tests", function(this: Mocha.Suite) {
     describe("Pool tokens tests", function(this: Mocha.Suite) {
@@ -109,7 +111,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
 
         const makeShouldHaveString = (want: boolean): string => `${want ? "should" : "should not"} have a(n)`
 
-        const makeTestTitles = (tc: TestCase): [string, string, string, string] => {
+        const makeTestTitles = (tc: TestCase): [string, string, string, string, string] => {
             const testPrefix: string = `${Networks.networkName(tc.chainId)}`;
             const swapContractStr = (t: string): string => `swap contract should have ${t} at index 0`;
 
@@ -119,7 +121,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                 stableSwapContractTestTitle: string = `${testPrefix} ${swapContractStr("nUSD")}`,
                 ethSwapContractTestTitle:    string = `${testPrefix} ${swapContractStr("nETH")}`;
 
-            return [stableSwapTestTitle, ethSwapTestTitle, stableSwapContractTestTitle, ethSwapContractTestTitle]
+            return [testPrefix, stableSwapTestTitle, ethSwapTestTitle, stableSwapContractTestTitle, ethSwapContractTestTitle]
         }
 
         const testFn = (tc: TestCase, stableSwap: boolean): ((this: Mocha.Context) => void) => {
@@ -159,8 +161,16 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             }
         }
 
+        const ethSwapAddressChains: number[] = [
+            ChainId.OPTIMISM,
+            ChainId.BOBA,
+            ChainId.ARBITRUM,
+            ChainId.AVALANCHE
+        ];
+
         testCases.forEach(tc => {
             const [
+                testPrefix,
                 stableSwapTestTitle,         ethSwapTestTitle,
                 stableSwapContractTestTitle, ethSwapContractTestTitle
             ] = makeTestTitles(tc);
@@ -168,11 +178,25 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             it(stableSwapTestTitle, testFn(tc, true));
             if (tc.wantStableSwapPool && tc.chainId !== ChainId.ETH) {
                 it(stableSwapContractTestTitle, swapContractTestFn(tc, true));
+                it(`${testPrefix} StableSwapToken's .swapETHAddress() should return null`, function(this: Mocha.Context) {
+                    expect(SwapPools.stableswapPoolForNetwork(tc.chainId).swapETHAddress(tc.chainId)).to.be.null;
+                });
             }
 
             it(ethSwapTestTitle, testFn(tc, false));
             if (tc.wantEthSwapPool) {
                 it(ethSwapContractTestTitle, swapContractTestFn(tc, false));
+
+                const ethSwapPool = SwapPools.ethSwapPoolForNetwork(tc.chainId);
+                if (ethSwapAddressChains.includes(tc.chainId)) {
+                    it(`${testPrefix} ETHSwapToken's .swapETHAddress() should not return null`, function(this: Mocha.Context) {
+                        expect(ethSwapPool.swapETHAddress(tc.chainId)).to.not.be.null;
+                    });
+                } else {
+                    it(`${testPrefix} ETHSwapToken's .swapETHAddress() should return null`, function(this: Mocha.Context) {
+                        expect(ethSwapPool.swapETHAddress(tc.chainId)).to.be.null;
+                    });
+                }
             }
         });
     });
