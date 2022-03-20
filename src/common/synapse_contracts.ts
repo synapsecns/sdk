@@ -32,8 +32,10 @@ export namespace SynapseContracts {
             this.bridge.abi = ABIs.SynapseBridge;
 
             if (bridgeZap) {
-                this.bridgeZap = {address: bridgeZap};
-                this.bridgeZap.abi = mainnet ? ABIs.L1BridgeZap : ABIs.L1BridgeZap;
+                this.bridgeZap = {
+                    address: bridgeZap,
+                    abi:     mainnet ? ABIs.L1BridgeZap : ABIs.L2BridgeZap,
+                };
             }
         }
 
