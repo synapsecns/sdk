@@ -488,47 +488,49 @@ export namespace Bridge {
 
             let {intermediateToken, bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
 
+            const fromCoinDecimals = tokenFrom.decimals(this.chainId);
+
             const
-                intermediateTokenAddr = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase(),
-                multiplier            = BigNumber.from(10).pow(18-tokenFrom.decimals(this.chainId)),
-                feeRequestAmountFrom  = amountFrom.mul(multiplier);
+                intermediateTokenAddr   = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase(),
+                multiplier              = BigNumber.from(10).pow(18-fromCoinDecimals),
+                amountFromFixedDecimals = amountFrom.mul(multiplier);
 
             const bridgeFeeRequest: Promise<BigNumber> = this.bridgeConfigInstance["calculateSwapFee(string,uint256,uint256)"](
                 intermediateTokenAddr,
                 chainIdTo,
-                feeRequestAmountFrom
+                amountFromFixedDecimals
             );
 
-            const checkEthy = (c1: number, c2: number, t: Token): boolean =>
+            const checkEthBridge = (c1: number, c2: number, t: Token): boolean =>
                 c1 === ChainId.ETH && BridgeUtils.isL2ETHChain(c2) && t.swapType === SwapType.ETH
 
             const
-                ethToEth:   boolean = checkEthy(this.chainId, chainIdTo,    tokenTo),
-                ethFromEth: boolean = checkEthy(chainIdTo,    this.chainId, tokenFrom);
+                ethToEth:   boolean = checkEthBridge(this.chainId, chainIdTo,    tokenTo),
+                ethFromEth: boolean = checkEthBridge(chainIdTo,    this.chainId, tokenFrom);
 
             let amountToReceive_from_prom: Promise<BigNumber>;
-            switch (true) {
-                case amountFrom.eq(Zero):
-                    amountToReceive_from_prom = Promise.resolve(Zero);
-                    break;
-                case ethToEth:
-                case Tokens.isMintBurnToken(tokenFrom):
-                case tokenFrom.isWrappedToken:
-                    amountToReceive_from_prom = Promise.resolve(amountFrom);
-                    break;
-                case this.chainId === ChainId.ETH:
-                    let liquidityAmounts = fromChainTokens.map((t) => tokenFrom.isEqual(t) ? amountFrom : Zero);
-                    amountToReceive_from_prom = this.zapBridgeInstance.calculateTokenAmount(liquidityAmounts, true);
 
-                    break;
-                default:
-                    amountToReceive_from_prom = BridgeUtils.calculateSwapL2Zap(
-                        this.networkZapBridgeInstance,
-                        intermediateToken.address(this.chainId),
-                        tokenIndexFrom,
-                        0,
-                        amountFrom
-                    );
+            if (amountFrom.isZero()) {
+                amountToReceive_from_prom = Promise.resolve(Zero);
+            } else if (ethToEth || Tokens.isMintBurnToken(tokenFrom) || tokenFrom.isWrappedToken) {
+                amountToReceive_from_prom = Promise.resolve(amountFromFixedDecimals);
+            } else if (this.chainId === ChainId.ETH) {
+                let liquidityAmounts = fromChainTokens.map((t) =>
+                    tokenFrom.isEqual(t) ? amountFrom : Zero
+                );
+
+                amountToReceive_from_prom = this.zapBridgeInstance.calculateTokenAmount(
+                    liquidityAmounts,
+                    true
+                );
+            } else {
+                amountToReceive_from_prom = BridgeUtils.calculateSwapL2Zap(
+                    this.networkZapBridgeInstance,
+                    intermediateToken.address(this.chainId),
+                    tokenIndexFrom,
+                    0,
+                    amountFromFixedDecimals
+                );
             }
 
             let amountToReceive_from = await amountToReceive_from_prom;
@@ -548,28 +550,25 @@ export namespace Bridge {
             amountToReceive_from = BridgeUtils.subBigNumSafe(amountToReceive_from, bridgeFee);
 
             let amountToReceive_to_prom: Promise<BigNumber>;
-            switch (true) {
-                case amountToReceive_from.isZero():
-                    amountToReceive_to_prom = Promise.resolve(Zero);
-                    break;
-                case ethFromEth:
-                case Tokens.isMintBurnToken(tokenTo):
-                case tokenTo.isWrappedToken:
-                    amountToReceive_to_prom = Promise.resolve(amountToReceive_from);
-                    break;
-                case chainIdTo === ChainId.ETH:
-                    amountToReceive_to_prom = (toChainZap as L1BridgeZapContract)
-                        .calculateRemoveLiquidityOneToken(amountToReceive_from, tokenIndexTo);
 
-                    break;
-                default:
-                    amountToReceive_to_prom = BridgeUtils.calculateSwapL2Zap(
-                        toChainZap,
-                        intermediateToken.address(chainIdTo),
-                        0,
-                        tokenIndexTo,
-                        amountToReceive_from
+            if (amountToReceive_from.isZero()) {
+                amountToReceive_to_prom = Promise.resolve(Zero);
+            } else if (ethFromEth || Tokens.isMintBurnToken(tokenTo) || tokenTo.isWrappedToken) {
+                amountToReceive_to_prom = Promise.resolve(amountToReceive_from);
+            } else if (chainIdTo === ChainId.ETH) {
+                amountToReceive_to_prom =
+                    (toChainZap as L1BridgeZapContract).calculateRemoveLiquidityOneToken(
+                        amountToReceive_from,
+                        tokenIndexTo
                     );
+            } else {
+                amountToReceive_to_prom = BridgeUtils.calculateSwapL2Zap(
+                    toChainZap,
+                    intermediateToken.address(chainIdTo),
+                    0,
+                    tokenIndexTo,
+                    amountToReceive_from
+                );
             }
 
             let amountToReceive: BigNumber;
