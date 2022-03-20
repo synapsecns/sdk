@@ -36,46 +36,46 @@ export namespace SwapPools {
         readonly poolType:        string;
         readonly nativeTokens?:   Token[];
         readonly depositTokens?:  Token[];
-        readonly swapAddress:     (chainId: number) => string;
-        readonly swapETHAddress:  (chainId: number) => string | null;
+        readonly swapAddress:     string;
+        readonly swapETHAddress:  string | null;
 
         readonly poolTokensForBridgeSwaps: Token[]
     }
 
     interface SwapTokenArgs {
-        name:           string,
-        symbol:         string,
-        decimals:       number | DecimalsMap,
-        addresses:      AddressMap,
-        poolId:         number,
-        poolName:       string,
-        poolType:       SwapType,
-        poolTokens:     Token[],
-        swapAddresses:  AddressMap,
+        name:           string;
+        symbol:         string;
+        decimals:       number | DecimalsMap;
+        addresses:      AddressMap;
+        poolId:         number;
+        poolName:       string;
+        poolType:       SwapType;
+        poolTokens:     Token[];
+        swapAddress:    string;
     }
 
     interface ETHSwapTokenArgs extends SwapTokenArgs {
-        nativeTokens?:     Token[],
-        depositTokens?:    Token[],
-        swapEthAddresses?: AddressMap,
+        nativeTokens?:     Token[];
+        depositTokens?:    Token[];
+        swapEthAddress?:   string;
     }
 
     interface makeSwapTokenArgs {
-        chainId:      number,
-        netName:      string,
-        address:      string,
-        swapAddress:  string,
-        poolId:       number,
-        poolTokens:   Token[],
-        notLP?:       boolean,
-        symbol?:      string
+        chainId:      number;
+        netName:      string;
+        address:      string;
+        swapAddress:  string;
+        poolId:       number;
+        poolTokens:   Token[];
+        notLP?:       boolean;
+        symbol?:      string;
     }
 
     interface makeETHSwapTokenArgs extends makeSwapTokenArgs {
-        swapETHAddress?: string,
-        poolName?:       string,
-        nativeTokens?:   Token[],
-        depositTokens?:  Token[],
+        swapETHAddress?: string;
+        poolName?:       string;
+        nativeTokens?:   Token[];
+        depositTokens?:  Token[];
     }
 
     const makeSwapToken = (args: makeSwapTokenArgs): SwapToken =>
@@ -87,7 +87,7 @@ export namespace SwapPools {
             poolId:          args.poolId,
             poolTokens:      args.poolTokens,
             addresses:     {[args.chainId]: args.address},
-            swapAddresses: {[args.chainId]: args.swapAddress},
+            swapAddress:     args.swapAddress,
             poolType:        SwapType.USD,
         })
 
@@ -99,8 +99,8 @@ export namespace SwapPools {
             symbol:           args.symbol ?? "nETH-LP",
             poolId:           args.poolId,
             addresses:      {[args.chainId]: args.address},
-            swapAddresses:  {[args.chainId]: args.swapAddress},
-            swapEthAddresses: args.swapETHAddress ? {[args.chainId]: args.swapETHAddress} : null,
+            swapAddress:      args.swapAddress,
+            swapEthAddress:   args.swapETHAddress,
             poolTokens:       args.poolTokens,
             nativeTokens:     args.nativeTokens,
             depositTokens:    args.depositTokens,
@@ -116,7 +116,7 @@ export namespace SwapPools {
 
         readonly poolTokens: Token[];
 
-        private readonly swapAddresses: AddressMap = {};
+        readonly swapAddress: string;
 
         constructor(args: SwapTokenArgs) {
             this.baseToken = new BaseToken({
@@ -130,7 +130,7 @@ export namespace SwapPools {
             this.poolId = args.poolId;
             this.poolName = args.poolName;
             this.poolType = args.poolType;
-            this.swapAddresses = args.swapAddresses;
+            this.swapAddress = args.swapAddress;
             this.poolTokens = args.poolTokens;
         }
 
@@ -166,11 +166,7 @@ export namespace SwapPools {
             return moveFirstToLast(this.poolTokens);
         }
 
-        swapAddress(chainId: number): string {
-            return this.swapAddresses[chainId]
-        }
-
-        swapETHAddress(chainId: number): string | null {
+        get swapETHAddress(): string | null {
             return null
         }
     }
@@ -179,11 +175,11 @@ export namespace SwapPools {
         readonly nativeTokens:  Token[];
         readonly depositTokens: Token[];
 
-        private readonly swapEthAddresses?: AddressMap;
+        private readonly _swapETHAddress: string | null = null;
 
         constructor(args: ETHSwapTokenArgs) {
             let {
-                swapEthAddresses,
+                swapEthAddress,
                 nativeTokens,
                 depositTokens,
                 ...constructorArgs
@@ -191,9 +187,10 @@ export namespace SwapPools {
 
             super(constructorArgs);
 
-            if (args.swapEthAddresses) {
-                this.swapEthAddresses = args.swapEthAddresses;
+            if (swapEthAddress) {
+                this._swapETHAddress = args.swapEthAddress;
             }
+
             if (args.nativeTokens) {
                 this.nativeTokens = args.nativeTokens;
             }
@@ -209,13 +206,8 @@ export namespace SwapPools {
                 : super.poolTokensForBridgeSwaps
         }
 
-        swapETHAddress(chainId: number): string | null {
-            if (this.swapEthAddresses) {
-                const addr = this.swapEthAddresses[chainId];
-                return addr || null
-            }
-
-            return null
+        get swapETHAddress(): string | null {
+            return this._swapETHAddress
         }
     }
 

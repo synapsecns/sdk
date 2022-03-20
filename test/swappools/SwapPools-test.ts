@@ -1,3 +1,5 @@
+import {expect} from "chai"
+
 import {
     ChainId,
     Networks,
@@ -6,9 +8,9 @@ import {
     type Token
 } from "@sdk";
 
-import {rpcProviderForChain, SwapType} from "@internal";
-
+import {SwapFactory} from "@sdk/contracts";
 import type {StringMap} from "@sdk/common/types";
+import {rpcProviderForChain, SwapType} from "@sdk/internal";
 
 import {
     expectNull,
@@ -18,10 +20,6 @@ import {
     expectProperty,
     wrapExpect,
 } from "@tests/helpers";
-import {SwapFactory} from "@contracts";
-import {expect} from "chai";
-import {BridgeUtils} from "@bridge/bridgeutils";
-import chainSupportsGasToken = BridgeUtils.chainSupportsGasToken;
 
 describe("SwapPools Tests", function(this: Mocha.Suite) {
     describe("Pool tokens tests", function(this: Mocha.Suite) {
@@ -150,7 +148,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     : Tokens.NETH;
 
                 const swapContract = SwapFactory.connect(
-                    getPoolFn(tc.chainId).swapAddress(tc.chainId),
+                    getPoolFn(tc.chainId).swapAddress,
                     rpcProviderForChain(tc.chainId)
                 );
 
@@ -179,7 +177,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             if (tc.wantStableSwapPool && tc.chainId !== ChainId.ETH) {
                 it(stableSwapContractTestTitle, swapContractTestFn(tc, true));
                 it(`${testPrefix} StableSwapToken's .swapETHAddress() should return null`, function(this: Mocha.Context) {
-                    expect(SwapPools.stableswapPoolForNetwork(tc.chainId).swapETHAddress(tc.chainId)).to.be.null;
+                    expect(SwapPools.stableswapPoolForNetwork(tc.chainId).swapETHAddress).to.be.null;
                 });
             }
 
@@ -190,11 +188,11 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                 const ethSwapPool = SwapPools.ethSwapPoolForNetwork(tc.chainId);
                 if (ethSwapAddressChains.includes(tc.chainId)) {
                     it(`${testPrefix} ETHSwapToken's .swapETHAddress() should not return null`, function(this: Mocha.Context) {
-                        expect(ethSwapPool.swapETHAddress(tc.chainId)).to.not.be.null;
+                        expect(ethSwapPool.swapETHAddress).to.not.be.null;
                     });
                 } else {
                     it(`${testPrefix} ETHSwapToken's .swapETHAddress() should return null`, function(this: Mocha.Context) {
-                        expect(ethSwapPool.swapETHAddress(tc.chainId)).to.be.null;
+                        expect(ethSwapPool.swapETHAddress).to.be.null;
                     });
                 }
             }
