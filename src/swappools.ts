@@ -210,7 +210,12 @@ export namespace SwapPools {
         }
 
         swapETHAddress(chainId: number): string | null {
-            return this.swapEthAddresses[chainId] || null
+            if (this.swapEthAddresses) {
+                const addr = this.swapEthAddresses[chainId];
+                return addr || null
+            }
+
+            return null
         }
     }
 
