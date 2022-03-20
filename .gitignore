@@ -13,3 +13,5 @@ yarn-error.log
 keys/
 
 coverage/
+
+rebase.sh
