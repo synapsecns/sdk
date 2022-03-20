@@ -44,17 +44,12 @@ jobs:
 
     if: ${{ !contains(github.event.head_commit.message, '[ci notest]') }}
 
+    env:
+      COVERAGE_DIR: ${{ github.workspace }}/coverage
+
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "yarn"
-
-      - run: yarn install
-
-      - name: Set coveralls flag value
+      - name: Set coveralls run flag
         id: coveralls_flag
         run: |
           FLAGVAL=node-${{ matrix.node-version }}
@@ -63,17 +58,26 @@ jobs:
           fi
           echo ::set-output name=coveralls_flag::${FLAGVAL}
 
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "yarn"
+
+      - run: yarn install
+
       - name: Run Tests (Node ${{ matrix.node-version }})
         run: yarn -s run test:coverage
         env:
-          REPORTS_DIR: ${{ github.workspace }}/coverage
-          RPC_BATCH_WAIT_TIME_MS: 75
-          ETH_RPC_URI:       ${{ secrets.ETHEREUM_RPC_URI }}
-          OPTIMISM_RPC_URI:  ${{ secrets.OPTIMISM_RPC_URI }}
-          POLYGON_RPC_URI:   ${{ secrets.POLYGON_RPC_URI }}
-          FANTOM_RPC_URI:    ${{ secrets.FANTOM_RPC_URI }}
-          ARBITRUM_RPC_URI:  ${{ secrets.ARBITRUM_RPC_URI }}
-          HARMONY_RPC_URI:   "https://api.fuzz.fi"
+          RPC_BATCH_INTERVAL: 75
+          REPORTS_DIR:        ${{ env.COVERAGE_DIR }}
+          ETH_RPC_URI:        ${{ secrets.ETHEREUM_RPC_URI }}
+          OPTIMISM_RPC_URI:   ${{ secrets.OPTIMISM_RPC_URI }}
+          POLYGON_RPC_URI:    ${{ secrets.POLYGON_RPC_URI }}
+          FANTOM_RPC_URI:     ${{ secrets.FANTOM_RPC_URI }}
+          ARBITRUM_RPC_URI:   ${{ secrets.ARBITRUM_RPC_URI }}
+          HARMONY_RPC_URI:    "https://api.fuzz.fi"
           INFINITE_APPROVALS_PRIVKEY:          ${{ secrets.INFINITE_APPROVALS_PRIVKEY }}
           INFINITE_APPROVALS_PRIVKEY_ADDRESS:  ${{ secrets.INFINITE_APPROVALS_PRIVKEY_ADDRESS }}
           BRIDGE_INTERACTIONS_PRIVKEY:         ${{ secrets.BRIDGE_INTERACTIONS_PRIVKEY }}
@@ -82,13 +86,13 @@ jobs:
       - name: Generate Coverage report
         run: yarn -s run coverage:report
         env:
-          REPORTS_DIR: ${{ github.workspace }}/coverage
+          REPORTS_DIR: ${{ env.COVERAGE_DIR }}
 
       - name: Coveralls - Process coverage
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: ${{ github.workspace }}/coverage/lcov.info
+          path-to-lcov: ${{ env.COVERAGE_DIR }}/lcov.info
           flag-name:    ${{ steps.coveralls_flag.outputs.coveralls_flag }}
           parallel:     true
 
