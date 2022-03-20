@@ -15,9 +15,10 @@ import {
     getTestAmount,
     expectFulfilled,
     expectPromiseResolve,
-    expectZero,
-    expectNotZero,
-    valueIfUndefined, makeWalletSignerWithProvider, bridgeTestPrivkey1, expectRejected
+    valueIfUndefined,
+    makeWalletSignerWithProvider,
+    bridgeTestPrivkey1,
+    expectRejected
 } from "@tests/helpers";
 
 import {
@@ -27,6 +28,8 @@ import {
 
 import {formatUnits} from "@ethersproject/units";
 import {BigNumber}   from "@ethersproject/bignumber";
+import {expect} from "chai";
+import {Zero} from "@ethersproject/constants";
 
 
 describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.Suite) {
@@ -124,7 +127,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         makeTestCase(Tokens.GOHM,      Tokens.GOHM,      ChainId.CRONOS,    ChainId.AURORA,    undefined, false, true),
         makeTestCase(Tokens.USDC,      Tokens.USDC,      ChainId.AURORA,    ChainId.AVALANCHE, "69"),
         makeTestCase(Tokens.USDC,      Tokens.NUSD,      ChainId.BSC,       ChainId.AURORA,    "69"),
-        makeTestCase(Tokens.USDC,      Tokens.NUSD,      ChainId.AURORA,    ChainId.ETH,       "69", false),
+        makeTestCase(Tokens.USDC,      Tokens.NUSD,      ChainId.AURORA,    ChainId.ETH,       "69"),
         makeTestCase(Tokens.USDC,      Tokens.NUSD,      ChainId.AURORA,    ChainId.ETH,       "31337"),
         makeTestCase(Tokens.USDC,      Tokens.USDC,      ChainId.AURORA,    ChainId.AVALANCHE, "0", false),
         makeTestCase(Tokens.USDC,      Tokens.NUSD,      ChainId.BSC,       ChainId.AURORA,    "0", false),
@@ -177,8 +180,8 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.ETH,       ChainId.BSC,       undefined, false, true),
         makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.ETH,       ChainId.ARBITRUM),
         makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.ETH,       ChainId.AVALANCHE),
-        makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.ARBITRUM,  ChainId.ETH),
-        makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.AVALANCHE, ChainId.ETH),
+        makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.ARBITRUM,  ChainId.ETH,       "800"),
+        makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.AVALANCHE, ChainId.ETH,       "800"),
         makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.AURORA,    ChainId.HARMONY,   undefined, false, true),
         makeTestCase(Tokens.NEWO,      Tokens.SDT,       ChainId.FANTOM,    ChainId.AVALANCHE, undefined, false, true),
         makeTestCase(Tokens.SDT,       Tokens.SDT,       ChainId.AVALANCHE, ChainId.HARMONY),
@@ -197,6 +200,8 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         makeTestCase(Tokens.METIS_ETH, Tokens.WETH_E,    ChainId.METIS,     ChainId.AVALANCHE),
         makeTestCase(Tokens.ONE_ETH,   Tokens.METIS_ETH, ChainId.HARMONY,   ChainId.METIS),
         makeTestCase(Tokens.FTM_ETH,   Tokens.METIS_ETH, ChainId.FANTOM,    ChainId.METIS),
+        makeTestCase(Tokens.USDC,      Tokens.USDC,      ChainId.FANTOM,    ChainId.METIS,    "100"),
+        makeTestCase(Tokens.USDC,      Tokens.USDC,      ChainId.ETH,       ChainId.METIS,    "100"),
     ].forEach((tc: TestCase) => {
         const [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc)
 
@@ -209,15 +214,25 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
 
             const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
 
-            let prom: Promise<BigNumber> = bridgeInstance.estimateBridgeTokenOutput(testArgs).then(res => res.amountToReceive);
+            let prom: Promise<Bridge.BridgeOutputEstimate> = bridgeInstance.estimateBridgeTokenOutput(testArgs);
+
+            let amountToReceive: BigNumber;
 
             try {
-                amountTo = await prom;
-                return (notZero ? expectNotZero : expectZero)(amountTo)
+                const {amountToReceive: amt} = await prom;
+                amountToReceive = amt;
             } catch (e) {
                 return (await expectPromiseResolve(prom, !wantError))
             }
-        })
+
+            amountTo = amountToReceive;
+
+            if (notZero) {
+                return expect(amountToReceive).to.be.gt(Zero);
+            } else {
+                return expect(amountToReceive).to.equal(Zero)
+            }
+        });
 
         it(approveTestTitle, async function(this: Mocha.Context) {
             if (tc.expected.wantError) return
