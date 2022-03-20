@@ -17,7 +17,6 @@ on:
       - 'scripts/**'
       - 'examples/**'
       - 'tsconfig.build.json'
-
   push:
     branches:
       - master
@@ -55,6 +54,15 @@ jobs:
 
       - run: yarn install
 
+      - name: Set coveralls flag value
+        id: coveralls_flag
+        run: |
+          FLAGVAL=node-v${{ matrix.node-version }}
+          if [[ ${{ github.event_name }} == 'pull_request' ]]; then
+            FLAGVAL=${FLAGVAL}-pr_${{ github.event.pull_request.number }}
+          fi
+          echo ::set-output name=coveralls_flag::${FLAGVAL}
+
       - name: Run Tests (Node v${{ matrix.node-version }})
         run: yarn -s run test:coverage
         env:
@@ -81,7 +89,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ${{ github.workspace }}/coverage/lcov.info
-          flag-name:    node-v${{ matrix.node-version }}
+          flag-name:    ${{ steps.coveralls_flag.outputs.coveralls_flag }}
           parallel:     true
 
   send-coverage:
