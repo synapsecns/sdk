@@ -55,7 +55,7 @@
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@ethereum-waffle/chai": "3.4.3",
+    "@ethereum-waffle/chai": "3.4.4",
     "@typechain/ethers-v5": "9.0.0",
     "@types/chai-as-promised": "7.1.5",
     "@types/chai-things": "0.0.35",
