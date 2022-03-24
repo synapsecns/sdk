@@ -36,7 +36,7 @@ import {
 
 import type {GenericSigner, GenericTxnRequest, GenericTxnResponse, NumberMap} from "@common/types";
 
-import {GasUtils}                   from "./gasutils";
+import {GasUtils} from "./gasutils";
 
 import {
     BridgeUtils,
@@ -196,12 +196,12 @@ export namespace Bridge {
             if (!this.isTerra) {
                 const factoryParams = {chainId: this.chainId, signerOrProvider: (this._provider as Provider)};
 
-            this.bridgeInstance = SynapseEntities.SynapseBridgeContractInstance(factoryParams);
+                this.bridgeInstance = SynapseEntities.SynapseBridgeContractInstance(factoryParams);
 
-            if (this.zapBridgeAddress && this.zapBridgeAddress !== "") {
-                this.networkZapBridgeInstance = SynapseEntities.GenericZapBridgeContractInstance(factoryParams);
+                if (this.zapBridgeAddress && this.zapBridgeAddress !== "") {
+                    this.networkZapBridgeInstance = SynapseEntities.GenericZapBridgeContractInstance(factoryParams);
+                }
             }
-        }
         }
 
         private get provider(): Provider {
@@ -326,14 +326,11 @@ export namespace Bridge {
                 }
             } else {
                 newTxn = this.chainId === ChainId.ETH
-                ? this.buildETHMainnetBridgeTxn(args, tokenArgs)
-                : this.buildL2BridgeTxn(args, tokenArgs);
+                    ? this.buildETHMainnetBridgeTxn(args, tokenArgs)
+                    : this.buildL2BridgeTxn(args, tokenArgs);
             }
 
-            return newTxn
-                .then(txn =>
-                    GasUtils.populateGasParams(this.chainId, txn, "bridge")
-                )
+            return newTxn.then(txn => GasUtils.populateGasParams(this.chainId, txn, "bridge"))
         }
 
         /**
