@@ -512,7 +512,7 @@ export namespace Bridge {
 
             if (amountFrom.isZero()) {
                 amountToReceive_from_prom = Promise.resolve(Zero);
-            } else if (ethToEth || Tokens.isMintBurnToken(tokenFrom) || tokenFrom.isWrappedToken) {
+            } else if (ethToEth || Tokens.isMintBurnToken(tokenFrom) || tokenFrom.isWrapperToken) {
                 amountToReceive_from_prom = Promise.resolve(amountFromFixedDecimals);
             } else if (this.chainId === ChainId.ETH) {
                 let liquidityAmounts = fromChainTokens.map((t) =>
@@ -553,7 +553,7 @@ export namespace Bridge {
 
             if (amountToReceive_from.isZero()) {
                 amountToReceive_to_prom = Promise.resolve(Zero);
-            } else if (ethFromEth || Tokens.isMintBurnToken(tokenTo) || tokenTo.isWrappedToken) {
+            } else if (ethFromEth || Tokens.isMintBurnToken(tokenTo) || tokenTo.isWrapperToken) {
                 amountToReceive_to_prom = Promise.resolve(amountToReceive_from);
             } else if (chainIdTo === ChainId.ETH) {
                 amountToReceive_to_prom =

@@ -201,7 +201,7 @@ export namespace BridgeUtils {
                 compare = Tokens.WETH;
                 break;
             default:
-                compare = t2.isWrappedToken ? t2.underlyingToken : compare;
+                compare = t2.isWrapperToken ? t2.underlyingToken : compare;
                 break;
         }
 

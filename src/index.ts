@@ -20,7 +20,7 @@ export {
 export {
     type Token,
     BaseToken,
-    WrappedToken
+    WrapperToken
 } from "@token";
 
 export {Tokens} from "@tokens";

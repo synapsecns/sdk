@@ -174,6 +174,42 @@ describe("Token Tests", function(this: Mocha.Suite) {
                 expect(got).to.equal(tc.want);
             });
         });
+    });
+
+    describe("gas token wrapper tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            token: Token,
+            want:  Token | undefined;
+        }
+
+        function makeTestCase(t1: Token, t2?: Token): TestCase {
+            return {
+                token: t1,
+                want:  t2
+            }
+        }
+
+        const testCases: TestCase[] = [
+            makeTestCase(Tokens.AVAX, Tokens.WAVAX),
+            makeTestCase(Tokens.MOVR, Tokens.WMOVR),
+            makeTestCase(Tokens.ETH,  Tokens.WETH),
+            makeTestCase(Tokens.NUSD)
+        ];
+
+        testCases.forEach(tc => {
+            const testTitle: string = `${tc.token.symbol} should${tc.want ? '' : " not"} return a wrapper token`;
+
+            it(testTitle, function(this: Mocha.Context) {
+                const got = Tokens.gasTokenWrapper(tc.token);
+
+                if (tc.token.isGasToken) {
+                    expect(got).to.exist;
+                    expect(got.isEqual(tc.want)).to.be.true;
+                } else {
+                    expect(got).to.not.exist;
+                }
+            });
+        })
     })
 
     describe("Test all tokens", function(this: Mocha.Suite) {

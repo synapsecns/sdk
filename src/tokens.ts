@@ -1,4 +1,4 @@
-import {BaseToken, type Token, WrappedToken,} from "@token";
+import {BaseToken, type Token, WrapperToken,} from "@token";
 
 import {ChainId} from "@chainid";
 
@@ -130,8 +130,9 @@ export namespace Tokens {
             [ChainId.BOBA]:     "",
             [ChainId.ARBITRUM]: ""
         },
-        swapType: SwapType.ETH,
-        isETH:    true,
+        swapType:   SwapType.ETH,
+        isETH:      true,
+        isGasToken: true,
     });
 
     /**
@@ -284,10 +285,11 @@ export namespace Tokens {
         addresses: {
             [ChainId.AVALANCHE]: "",
         },
-        swapType: SwapType.AVAX,
+        swapType:   SwapType.AVAX,
+        isGasToken: true,
     });
 
-    export const WAVAX = new WrappedToken({
+    export const WAVAX = new WrapperToken({
         name:     "Wrapped AVAX",
         symbol:   "wAVAX",
         decimals: 18,
@@ -306,10 +308,11 @@ export namespace Tokens {
         addresses: {
             [ChainId.MOONRIVER]: "",
         },
-        swapType: SwapType.MOVR,
+        swapType:   SwapType.MOVR,
+        isGasToken: true,
     });
 
-    export const WMOVR  = new WrappedToken({
+    export const WMOVR  = new WrapperToken({
         name:     "Wrapped MOVR",
         symbol:   "wMOVR",
         decimals: 18,
@@ -490,6 +493,20 @@ export namespace Tokens {
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
+
+    export const gasTokenWrapper = (gasToken: Token): Token => {
+        let wrapperToken: Token;
+
+        if (gasToken.isEqual(AVAX)) {
+            wrapperToken = WAVAX;
+        } else if (gasToken.isEqual(MOVR)) {
+            wrapperToken = WMOVR;
+        } else if (gasToken.isEqual(ETH)) {
+            wrapperToken = WETH;
+        }
+
+        return wrapperToken
+    }
 
     export const AllTokens: Token[] = [
         DAI, BUSD, USDC, USDT, UST,
