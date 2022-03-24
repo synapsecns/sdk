@@ -25,7 +25,13 @@ const LabeledItem = ({title, value}) => (
 )
 
 function fixWeiValue(wei: BigNumber, tokenDecimals: number): BigNumber {
-    const mul = BigNumber.from(10).pow(18 - tokenDecimals);
+    if (tokenDecimals === 18) {
+        return wei
+    }
+
+    const TEN = BigNumber.from(10);
+    const mul = TEN.pow(18).div(TEN.pow(tokenDecimals));
+
     return wei.mul(mul);
 }
 
@@ -48,14 +54,8 @@ function formatValue(
         ? fixWeiValue(valueBn, tokenDecimals)
         : valueBn;
 
-    // if a token has a .decimals() value of 6,
-    // rounding the resultant value to 6 decimal places will
-    // cause `valueEther()` to return 0.
-    roundingPlaces = fixWei
-        ? (tokenDecimals <= roundingPlaces ? roundingPlaces / 2 : roundingPlaces)
-        : roundingPlaces;
-
     const ether: string = valueEther(weiValue, {round: true, places: roundingPlaces});
+
     return `${ether} ${t.symbol}`
 }
 
@@ -65,10 +65,6 @@ export default function BridgeEstimateSection(props: BridgeEstimateSectionProps)
 
     const [estimate, fee, tokenFrom, tokenTo] = useGetBridgeEstimate(props);
 
-    useEffect(() => {
-        setAmountOut(estimate);
-    }, [estimate])
-
     const [formattedEstimate, setFormattedEstimate] = useState<string>(BigNumber.from(0).toString());
     const [formattedFee,      setFormattedFee]      = useState<string>(BigNumber.from(0).toString());
 
@@ -76,9 +72,9 @@ export default function BridgeEstimateSection(props: BridgeEstimateSectionProps)
         if (!estimate) {
             return
         }
-        // pass `true` here so that `formatValue()` will "fix" the Wei value
-        // passed to `valueEther()` if the passed token has a .decimals() value on the passed network
-        // which isn't 18.
+
+        setAmountOut(estimate);
+
         setFormattedEstimate(formatValue(
             tokenTo,
             selectedNetworkTo,
@@ -92,9 +88,7 @@ export default function BridgeEstimateSection(props: BridgeEstimateSectionProps)
         if (!fee) {
             return
         }
-        // no need to pass a boolean value here, since
-        // bridge fees are -- usually... -- based in denominations
-        // of tokens with a .decimals() value of 18.
+
         setFormattedFee(formatValue(
             tokenFrom,
             selectedNetworkTo,

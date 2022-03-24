@@ -10,6 +10,17 @@ import {useSynapseBridge} from "./useSynapseBridge";
 import {asError} from "@utils";
 import {NetworkMenuContext} from "@pages/bridge/contexts/NetworkMenuContext";
 import {TokenMenuContext} from "@pages/bridge/contexts/TokenMenuContext";
+import {parseEther, parseUnits} from "@ethersproject/units";
+
+const unitNames = {
+    wei:    0,
+    kwei:   3,
+    mwei:   6,
+    gwei:   9,
+    szabo:  12,
+    finney: 15,
+    ether:  18,
+}
 
 interface UseGetBridgeEstimateArgs {
     amountIn:      BigNumber,
@@ -20,6 +31,18 @@ function getBridgeEstimate(
     synapseBridge: Bridge.SynapseBridge
 ): Promise<Bridge.BridgeOutputEstimate> {
     return synapseBridge.estimateBridgeTokenOutput(args)
+}
+
+function fixAmt(ether: BigNumber, token: Token, chainId: number): BigNumber {
+    const decimals = token.decimals(chainId) ?? 18;
+
+    if (decimals === 18) {
+        return parseEther(ether.toString())
+    }
+
+    const unit = unitNames[decimals];
+
+    return parseUnits(ether.toString(), unit)
 }
 
 export function useGetBridgeEstimate(args: UseGetBridgeEstimateArgs) {
@@ -47,11 +70,19 @@ export function useGetBridgeEstimate(args: UseGetBridgeEstimateArgs) {
 
     useEffect(() => {
         if (typeof amountIn !== "undefined" && !amountIn.eq(0)) {
+
+            const
+                chainIdFrom = selectedNetworkFrom.chainId,
+                chainIdTo = selectedNetworkTo.chainId,
+                tokenFrom = selectedTokenFrom,
+                tokenTo = selectedTokenTo;
+
+            const amtFrom = tokenFrom.etherToWei(amountIn, chainIdFrom);
             let estimateArgs = {
-                chainIdTo:  selectedNetworkTo.chainId,
-                tokenFrom:  selectedTokenFrom,
-                tokenTo:    selectedTokenTo,
-                amountFrom: selectedTokenFrom.valueToWei(amountIn, selectedNetworkFrom.chainId)
+                chainIdTo:  chainIdTo,
+                tokenFrom:  tokenFrom,
+                tokenTo:    tokenTo,
+                amountFrom: amtFrom,
             };
 
             getBridgeEstimate(estimateArgs, synapseBridge)
