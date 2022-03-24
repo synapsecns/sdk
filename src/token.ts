@@ -30,7 +30,9 @@ export interface IBaseToken extends Distinct {
 }
 
 export interface Token extends IBaseToken {
-    isWrappedToken:   boolean;
+    isGasToken:       boolean,
+
+    isWrapperToken:   boolean;
     underlyingToken?: Token;
     /**
      * Returns true if `other` has the same ID field as this Token.
@@ -61,36 +63,35 @@ export interface Token extends IBaseToken {
 }
 
 export function instanceOfToken(object: any): object is Token {
-    return 'name' in object
-        && 'isWrappedToken' in object
-        && 'valueToWei' in object
-        && 'swapType' in object
+    return object instanceof BaseToken || object instanceof WrapperToken
 }
 
 export interface BaseTokenArgs {
-    name:              string,
-    symbol:            string,
-    decimals:          number | DecimalsMap,
-    addresses:         AddressMap,
-    swapType:          SwapType,
-    isETH?:            boolean,
-    wrapperAddresses?: AddressMap,
+    name:              string;
+    symbol:            string;
+    decimals:          number | DecimalsMap;
+    addresses:         AddressMap;
+    swapType:          SwapType;
+    isETH?:            boolean;
+    isGasToken?:       boolean;
+    wrapperAddresses?: AddressMap;
 }
 
-export interface WrappedTokenArgs extends BaseTokenArgs {
-    underlyingToken: BaseToken,
+export interface WrapperTokenArgs extends BaseTokenArgs {
+    underlyingToken: BaseToken;
 }
 
 /**
  * Token represents an ERC20 token on Ethereum-based blockchains.
  */
 export class BaseToken implements Token {
-    readonly id:        ID;
-    readonly name:      string;
-    readonly symbol:    string;
-    readonly addresses: AddressMap = {};
-    readonly swapType:  SwapType;
-    readonly isETH:     boolean;
+    readonly id:         ID;
+    readonly name:       string;
+    readonly symbol:     string;
+    readonly addresses:  AddressMap = {};
+    readonly swapType:   SwapType;
+    readonly isETH:      boolean;
+    readonly isGasToken: boolean;
 
     private readonly wrapperAddresses: AddressMap = {};
 
@@ -126,11 +127,12 @@ export class BaseToken implements Token {
         }
 
         this.isETH = args.isETH ?? false;
+        this.isGasToken = args.isGasToken ?? false;
 
         this.id = Symbol(this.symbol);
     }
 
-    get isWrappedToken(): boolean {
+    get isWrapperToken(): boolean {
         return false
     }
 
@@ -181,16 +183,16 @@ export class BaseToken implements Token {
     }
 }
 
-export class WrappedToken extends BaseToken {
+export class WrapperToken extends BaseToken {
     readonly underlyingToken: BaseToken;
 
-    constructor(args: WrappedTokenArgs) {
+    constructor(args: WrapperTokenArgs) {
         super(args);
 
         this.underlyingToken = args.underlyingToken;
     }
 
-    get isWrappedToken(): boolean {
+    get isWrapperToken(): boolean {
         return true
     }
 }
