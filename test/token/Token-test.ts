@@ -142,6 +142,40 @@ describe("Token Tests", function(this: Mocha.Suite) {
         })
     });
 
+    describe("decimals tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            token:   Token,
+            chainId: number,
+            want:    number,
+        }
+
+        function makeTestCase(t: Token, c: number, d: number): TestCase {
+            return {
+                token:   t,
+                chainId: c,
+                want:    d
+            }
+        }
+
+        const testCases: TestCase[] = [
+            makeTestCase(Tokens.USDC, ChainId.BSC,        18),
+            makeTestCase(Tokens.USDC, ChainId.FANTOM,     6),
+            makeTestCase(Tokens.USDC, ChainId.METIS,      6),
+            makeTestCase(Tokens.USDT, ChainId.BSC,        18),
+            makeTestCase(Tokens.USDT, ChainId.FANTOM,     6),
+        ];
+
+        testCases.forEach(tc => {
+            const testTitle: string = `${tc.token.symbol} should have decimals === ${tc.want} on chain ${tc.chainId}`;
+
+            it(testTitle, function(this: Mocha.Context) {
+                const got = tc.token.decimals(tc.chainId);
+
+                expect(got).to.equal(tc.want);
+            });
+        });
+    })
+
     describe("Test all tokens", function(this: Mocha.Suite) {
         Tokens.AllTokens.forEach(t => {
             let supportedNets = Object.keys(t.addresses).map(c => Number(c));
