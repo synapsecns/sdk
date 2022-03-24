@@ -35,6 +35,8 @@ export function staticCallPopulatedTransaction(
         })
 }
 
+const pow10 = (exp: number): BigNumber => BigNumber.from(10).pow(exp);
+
 /**
  * "Fixes" a value into units of Wei; should be used when tokens
  * have a decimals value which isn't 18
@@ -45,7 +47,7 @@ export function staticCallPopulatedTransaction(
  * @param decimals
  */
 export function fixWeiValue(amt: BigNumber, decimals: number): BigNumber {
-    const multiplier = BigNumber.from(10).pow(18 - decimals);
+    const multiplier = pow10(18).div(pow10(decimals))
     return amt.mul(multiplier)
 }
 
