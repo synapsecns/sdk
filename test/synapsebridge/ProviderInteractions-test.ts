@@ -216,9 +216,9 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
             }
 
             return (await (tc.expected.executeSuccess
-                            ? expectFulfilled(execProm)
-                            : expectRejected(execProm)
-                    ))
+                    ? expectFulfilled(execProm)
+                    : expectRejected(execProm)
+            ))
         }
     }
 
@@ -534,15 +534,16 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
     });
 
     describe("* Validation tests", function(this: Mocha.Suite) {
-        let
+        const
+            chainIdFrom = ChainId.BSC,
             walletArgs = buildWalletArgs(
-                ChainId.BSC,
+                chainIdFrom,
                 bridgeInteractionsPrivkey.privkey
             ),
-            bridgeInstance = walletArgs.bridgeInstance,
-            outEstimate:    Bridge.BridgeOutputEstimate;
+            bridgeInstance = walletArgs.bridgeInstance;
 
-        const chainIdFrom = ChainId.BSC;
+        let
+            outEstimate:    Bridge.BridgeOutputEstimate;
 
         const params: Bridge.BridgeParams = {
             tokenFrom:   Tokens.UST,

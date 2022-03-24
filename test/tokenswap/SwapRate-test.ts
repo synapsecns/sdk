@@ -78,7 +78,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                 return tc.wantError
                     ? await expectRejected(prom)
                     : expectProperty(await prom, "amountOut").that.is.gt(Zero.toNumber())
-            })
+            });
 
             step(testTitle2, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
@@ -95,7 +95,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                         ? expectRejected(prom)
                         : expectFulfilled(prom)
                 ))
-            })
+            });
 
             step(testTitle3, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
@@ -118,7 +118,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                         expect.fail(e);
                     }
                 }
-            })
-        })
-    })
-})
+            });
+        });
+    });
+});

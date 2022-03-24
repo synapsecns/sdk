@@ -64,7 +64,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                 poolSymbols: string[] = tc.swapToken.poolTokens.map((t: Token) => t.symbol);
 
             describe(describeTitle, function(this: Mocha.Suite) {
-                for (const tok of tc.tokens) {
+                tc.tokens.forEach(tok => {
                     const
                         wantTok: boolean  = tok.want,
                         tokSymbol: string = tok.token.symbol,
@@ -73,11 +73,11 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     it(
                         testTitle,
                         wrapExpect(expectIncludes(poolSymbols, tokSymbol, wantTok))
-                    )
-                }
-            })
-        })
-    })
+                    );
+                });
+            });
+        });
+    });
 
     describe("Test SwapPool getters for network", function(this: Mocha.Suite) {
         interface TestCase {
@@ -245,27 +245,27 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
         const wantValStr = (tc: TestCase, wantVal: any|null): string =>
             `${wantVal === null ? "'null'" : "'"+wantVal+"'"} for Chain ID ${tc.chainId}`
 
-        for (const tc of testCases) {
+        testCases.forEach(tc => {
             describe(`${tc.testName} Properties Tests`, function(this: Mocha.Suite) {
                 it(`property 'symbol' should equal ${tc.wantSymbol}`, function(this: Mocha.Context) {
                     expectEqual(tc.swapPool.symbol, tc.wantSymbol);
-                })
+                });
 
                 it(`property 'swapType' should equal ${tc.wantSwapType}`, function(this: Mocha.Context) {
                     expectEqual(tc.swapPool.swapType, tc.wantSwapType);
-                })
+                });
 
                 it(`function address() should return ${wantValStr(tc, tc.wantAddress)}`, function(this: Mocha.Context) {
                     expectNull(tc.swapPool.address(tc.chainId), tc.wantAddress === null);
-                })
+                });
 
                 it(`function decimals() should return ${wantValStr(tc, tc.wantDecimals)}`, function(this: Mocha.Context) {
                     expectNull(tc.swapPool.decimals(tc.chainId), tc.wantDecimals === null);
-                })
+                });
 
                 it(`property 'id' should return ${tc.wantSymbol}`, function(this: Mocha.Context) {
                     expectEqual(tc.swapPool.id.description, tc.wantSymbol);
-                })
+                });
 
                 if (tc.wantAddress !== null) {
                     it(`property 'addresses' should contain ${tc.wantAddress}`, function(this: Mocha.Context) {
@@ -273,9 +273,9 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
 
                         expectProperty(addrsMap, `${tc.chainId}`);
                         expectEqual(addrsMap[tc.chainId], tc.wantAddress);
-                    })
+                    });
                 }
-            })
-        }
-    })
-})
+            });
+        });
+    });
+});

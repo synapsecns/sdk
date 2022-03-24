@@ -50,7 +50,7 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
             makeTestCase(ChainId.AVALANCHE, getTestAmount(Tokens.NUSD, ChainId.AVALANCHE)),
         ];
 
-        for (const tc of testCases) {
+        testCases.forEach(tc => {
             let {chainId, address: spender, amount} = tc;
 
             const args: ERC20.ApproveArgs = {spender, amount};
@@ -65,9 +65,9 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
                 } catch (e) {
                     return (await expectFulfilled(prom))
                 }
-            })
-        }
-    })
+            });
+        });
+    });
 
     describe("Balance of test", function(this: Mocha.Suite) {
         it("should have an nUSD balance greater than zero", async function(this: Mocha.Context) {
@@ -75,8 +75,8 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
             this.slow(750);
 
             return expectNotZero(await ERC20.balanceOf(testAddr, tokenParams(ChainId.BSC)))
-        })
-    })
+        });
+    });
 
     describe("allowanceOf test", function(this: Mocha.Suite) {
         it("synapsebridgezap should have an nUSD allowance gte zero", async function(this: Mocha.Context) {
@@ -88,6 +88,6 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
                 SynapseContracts.contractsForChainId(ChainId.BSC).bridgeZapAddress,
                 tokenParams(ChainId.BSC)
             ))
-        })
-    })
-})
+        });
+    });
+});
