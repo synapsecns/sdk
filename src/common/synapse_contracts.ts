@@ -91,17 +91,17 @@ export namespace SynapseContracts {
 
     export const Moonbeam = new SynapseContract(({
         bridge:    "0x84A420459cd31C3c34583F67E0f0fB191067D32f",
-        bridgeZap: "0x73783F028c60D463bc604cc53852C37C31dEC5e9",
-    }))
+        bridgeZap: "0xadA10A7474f4c71A829b55D2cB4232C281383fd5",
+    }));
 
     export const Moonriver = new SynapseContract(({
         bridge:    "0xaeD5b25BE1c3163c907a471082640450F928DDFE",
         bridgeZap: "0xfA28DdB74b08B2b6430f5F61A1Dd5104268CC29e",
-    }))
+    }));
 
     export const Arbitrum = new SynapseContract({
         bridge:    "0x6F4e8eBa4D337f874Ab57478AcC2Cb5BACdc19c9",
-        bridgeZap: "0x26532682E1830cDACcCbb7e385Cff6de14dD08D8",
+        bridgeZap: "0x37f9aE2e0Ea6742b9CAD5AbCfB6bBC3475b3862B",
     });
 
     export const Avalanche = new SynapseContract({
