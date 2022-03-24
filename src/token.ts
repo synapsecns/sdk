@@ -169,7 +169,7 @@ export class BaseToken implements Token {
             ? amt.toString()
             : BigNumber.from(amt).toString();
 
-        return parseUnits(etherStr, this.decimals(chainId))
+        return parseUnits(etherStr, this.decimals(chainId) ?? 18)
     }
 
     valueToWei(ether: BigNumberish, chainId: number): BigNumber {
