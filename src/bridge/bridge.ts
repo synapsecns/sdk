@@ -957,14 +957,14 @@ export namespace Bridge {
         [ChainId.AURORA]:    5,
     };
 
-    export function getRequiredConfirmationsForBridge(network: Networks.Network | number): number {
+    export function getRequiredConfirmationsForBridge(network: Networks.Network | number): number | null {
         let chainId: number = network instanceof Networks.Network ? network.chainId : network;
 
         if (chainId in REQUIRED_CONFS) {
             return REQUIRED_CONFS[chainId]
         }
 
-        return 1
+        return null
     }
 
     export function bridgeSwapSupported(args: TokenSwap.BridgeSwapSupportedParams): TokenSwap.SwapSupportedResult {
