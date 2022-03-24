@@ -30,6 +30,5 @@ export const supportedChainIds = (): number[] =>
         .filter(c => c !== null);
 
 
-
 export const terraChainIdName = (chainId: number) => TerraChainNames[chainId];
 export const isTerraChainId   = (chainId: number) => Object.keys(TerraChainNames).includes(chainId.toString());
