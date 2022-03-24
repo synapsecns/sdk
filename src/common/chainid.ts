@@ -17,7 +17,7 @@ export const ChainId = {
     "HARMONY":      1666600000,
 } as const;
 
-export type ChainId = ValueOf<typeof ChainId>
+export type ChainId = ValueOf<typeof ChainId> | number
 
 export const supportedChainIds = (): number[] =>
     Object.values(ChainId)

@@ -46,7 +46,7 @@ export namespace Networks {
         readonly id:              ID;
         readonly name:            string;
         readonly chainCurrency:   string;
-        readonly chainId:         number;
+        readonly chainId:         ChainId;
         readonly tokens:          Token[];
         readonly tokenAddresses:  string[];
 
@@ -204,7 +204,7 @@ export namespace Networks {
      * @param {Network | number} network Either a {@link Network} instance, or the Chain ID of a supported network.
      * @param {Token} token A {@link Token} object.
      */
-    export const networkSupportsToken = (network: Network | number, token: Token): boolean =>
+    export const networkSupportsToken = (network: Network | ChainId, token: Token): boolean =>
         (network instanceof Network
             ? network
             : fromChainId(network)

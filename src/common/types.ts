@@ -4,7 +4,7 @@ import type {Provider} from "@ethersproject/providers";
 
 export type SignerOrProvider = Signer | Provider;
 
-export type ChainIdTypeMap<T> = {[k in keyof ChainId]?: T}
+export type ChainIdTypeMap<T> = {[k in ChainId]?: T}
 
 
 export type StringMap   = ChainIdTypeMap<string>

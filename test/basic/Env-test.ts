@@ -29,11 +29,13 @@ describe('Test ENV values', function(this: Mocha.Suite) {
         }
 
         type testCase = [number, string, string];
-        [
+        const testCases: testCase[] = [
             [ChainId.AVALANCHE, "AVALANCHE", "AVALANCHE_RPC_URI"],
             [ChainId.MOONRIVER, "MOONRIVER", "MOONRIVER_RPC_URI"],
             [ChainId.ETH,       "ETH",       "ETH_RPC_URI"],
-        ].forEach((tc: testCase) => {
+        ];
+
+        testCases.forEach((tc: testCase) => {
             const
                 [chainId, name, envKey] = tc,
                 expectedVal: string = `${valPrefix}${name}`,

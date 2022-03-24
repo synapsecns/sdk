@@ -13,7 +13,7 @@ import {tokenSwitch} from "@internal/index";
 
 
 export namespace BridgeUtils {
-    export const L2_ETH_CHAINS = [
+    export const L2_ETH_CHAINS: number[] = [
         ChainId.OPTIMISM,
         ChainId.FANTOM,
         ChainId.BOBA,
@@ -24,7 +24,7 @@ export namespace BridgeUtils {
         ChainId.HARMONY,
     ];
 
-    export const GAS_TOKEN_CHAINS = [
+    export const GAS_TOKEN_CHAINS: number[] = [
         ChainId.ETH,
         ChainId.OPTIMISM,
         ChainId.BOBA,
