@@ -150,24 +150,30 @@ export namespace BridgeUtils {
         amountFrom: BigNumber,
     }
 
-    export const makeEasyParams = (
+    export type EasyParams       = [string, number, string, BigNumber]
+    export type EasySubParams    = [string, number, string]
+    export type DepositETHParams = [string, number, BigNumber]
+
+    export function makeEasyParams(
         args: BridgeTxParams,
         chainId: number,
         t: Token
-    ): [string, number, string, BigNumber] =>
-        [args.addressTo, args.chainIdTo, t.address(chainId), args.amountFrom]
+    ): EasyParams {
+        return [args.addressTo, args.chainIdTo, t.address(chainId), args.amountFrom]
+    }
 
-    export const makeEasySubParams = (
+    export function makeEasySubParams(
         args:    BridgeTxParams,
         chainId: number,
         t:       Token
-    ): [string, number, string] => {
+    ): EasySubParams {
         let x = makeEasyParams(args, chainId, t);
         return [x[0], x[1], x[2]]
     }
 
-    export const depositETHParams = (args: BridgeTxParams): [string, number, BigNumber] =>
-        [args.addressTo, args.chainIdTo, args.amountFrom];
+    export function depositETHParams(args: BridgeTxParams): DepositETHParams {
+        return [args.addressTo, args.chainIdTo, args.amountFrom]
+    }
 
     export async function calculateSwapL2Zap(
         zapBridge:         GenericZapBridgeContract,
