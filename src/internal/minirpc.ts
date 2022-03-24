@@ -56,6 +56,7 @@ export class MiniRpcProvider implements ExternalProvider {
         this._batchInterval = batchWaitTimeMs;
     }
 
+    /* c8 ignore start */
     /**
      * Amount of time, in milliseconds, between batch RPC calls
      */
@@ -71,11 +72,14 @@ export class MiniRpcProvider implements ExternalProvider {
     set batchInterval(interval: number) {
         this._batchInterval = interval;
     }
+    /* c8 ignore stop */
 
+    /* c8 ignore next 3 */
     get url(): string {
         return this._url
     }
 
+    /* c8 ignore start */
     /**
      * @internal
      */
@@ -93,6 +97,7 @@ export class MiniRpcProvider implements ExternalProvider {
     get path(): string {
         return this._path
     }
+    /* c8 ignore stop */
 
     async request(request: RPCRequest): Promise<any> {
         if (request.method === 'eth_chainId') {

@@ -35,10 +35,10 @@ export namespace BridgeUtils {
     export const chainSupportsGasToken = (chainId: number): boolean => GAS_TOKEN_CHAINS.includes(chainId);
 
     interface DepositIfChainArgs {
-        chainId:     number,
-        tokens:      Token[],
-        depositEth:  boolean,
-        altChainId?: number,
+        chainId:     number;
+        tokens:      Token[];
+        depositEth:  boolean;
+        altChainId?: number;
     }
 
     export const DepositIfChainTokens: DepositIfChainArgs[] = [
@@ -50,11 +50,11 @@ export namespace BridgeUtils {
     ]
 
     interface BridgeTxArgs {
-        slippageCustom:            string,
-        slippageSelected:          string,
-        infiniteApproval:          boolean,
-        transactionDeadline:       number,
-        bridgeTransactionDeadline: number,
+        slippageCustom:            string;
+        slippageSelected:          string;
+        infiniteApproval:          boolean;
+        transactionDeadline:       number;
+        bridgeTransactionDeadline: number;
     }
 
     export function getBridgeTxArgs(): BridgeTxArgs {
@@ -68,18 +68,18 @@ export namespace BridgeUtils {
     }
 
     interface BridgeSlippages {
-        slippageSelected: string,
-        transactionDeadline: number,
-        bridgeTransactionDeadline: number,
-        minToSwapOrigin: BigNumber,
-        minToSwapDest: BigNumber,
-        minToSwapDestFromOrigin: BigNumber,
-        minToSwapOriginMediumSlippage: BigNumber,
-        minToSwapDestMediumSlippage: BigNumber,
-        minToSwapDestFromOriginMediumSlippage: BigNumber,
-        minToSwapOriginHighSlippage: BigNumber,
-        minToSwapDestHighSlippage: BigNumber,
-        minToSwapDestFromOriginHighSlippage: BigNumber,
+        slippageSelected:                      string;
+        transactionDeadline:                   number;
+        bridgeTransactionDeadline:             number;
+        minToSwapOrigin:                       BigNumber;
+        minToSwapDest:                         BigNumber;
+        minToSwapDestFromOrigin:               BigNumber;
+        minToSwapOriginMediumSlippage:         BigNumber;
+        minToSwapDestMediumSlippage:           BigNumber;
+        minToSwapDestFromOriginMediumSlippage: BigNumber;
+        minToSwapOriginHighSlippage:           BigNumber;
+        minToSwapDestHighSlippage:             BigNumber;
+        minToSwapDestFromOriginHighSlippage:   BigNumber;
     }
 
     export function getSlippages(amountFrom: BigNumber, amountTo: BigNumber): BridgeSlippages {
