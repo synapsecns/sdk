@@ -96,7 +96,10 @@ const CHAINID_CONTRACTS_MAP: {[c: number]: SynapseContracts.SynapseContract} = {
     [ChainId.HARMONY]:   SynapseContracts.Harmony,
 }
 
-export const contractsForChainId = (chainId: number): SynapseContracts.SynapseContract => CHAINID_CONTRACTS_MAP[chainId] ?? nullexport function decodeHexTerraAddress(hexAddr: string): string {
+export const contractsForChainId = (chainId: number): SynapseContracts.SynapseContract => CHAINID_CONTRACTS_MAP[chainId] ?? null
+
+
+export function decodeHexTerraAddress(hexAddr: string): string {
     let addrAsBytes: number[] = [];
     arrayify(hexAddr).forEach(b => addrAsBytes.push(b));
 
