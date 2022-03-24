@@ -948,6 +948,7 @@ export namespace Bridge {
         [ChainId.POLYGON]:   128,
         [ChainId.FANTOM]:    5,
         [ChainId.BOBA]:      1,
+        [ChainId.METIS]:     6,
         [ChainId.MOONBEAM]:  21,
         [ChainId.MOONRIVER]: 21,
         [ChainId.METIS]:     6,
