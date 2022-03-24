@@ -216,6 +216,33 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 makeTestCase(ChainId.MOONRIVER, Tokens.SYN,  addr1, Zero),
                 makeTestCase(ChainId.HARMONY,   Tokens.NUSD, addr5, Zero),
             ].forEach(runTestCase);
-        })
-    })
+        });
+    });
+
+    describe("REQUIRED_CONFS tests", function(this: Mocha.Suite) {
+        interface TC {
+            chainId: number;
+            want:    number | null;
+        }
+
+        const testCases: TC[] = [
+            {chainId: ChainId.METIS,  want: 6},
+            {chainId: ChainId.AURORA, want: 5},
+            {chainId: 43113,          want: null}
+        ];
+
+        testCases.forEach(tc => {
+           const testTitle: string = `getRequiredConfirmationsForBridge(${tc.chainId}) should return ${tc.want ? `'${tc.want}'` : 'null'}`;
+
+           it(testTitle, function(this: Mocha.Context) {
+               const got = Bridge.getRequiredConfirmationsForBridge(tc.chainId);
+
+               if (tc.want !== null) {
+                   expect(got).to.equal(tc.want);
+               } else {
+                   expect(got).to.be.null;
+               }
+           });
+        });
+    });
 })
