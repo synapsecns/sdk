@@ -38,6 +38,7 @@ import {GasUtils}                   from "./gasutils";
 import {BridgeUtils}                from "./bridgeutils";
 import {ERC20, MAX_APPROVAL_AMOUNT} from "./erc20";
 
+import {id as makeKappa}         from "@ethersproject/hash";
 import {Zero}                    from "@ethersproject/constants";
 import {formatUnits}             from "@ethersproject/units";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
@@ -976,8 +977,18 @@ export namespace Bridge {
     }
 
     export interface BridgeTransactionCompleteParams {
-        chainIdFrom:              number;
         chainIdTo:                number;
         transactionHashChainFrom: string;
+    }
+
+    export function checkBridgeTransactionComplete(args: BridgeTransactionCompleteParams): Promise<boolean> {
+        const
+            {chainIdTo, transactionHashChainFrom} = args,
+            kappa = makeKappa(transactionHashChainFrom),
+            bridgeInstance = new SynapseBridge({network: chainIdTo});
+
+        return bridgeInstance.kappaExists(kappa)
+            .then(res => res)
+            .catch(rejectPromise)
     }
 }

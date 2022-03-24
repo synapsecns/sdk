@@ -245,4 +245,31 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
            });
         });
     });
+
+    describe("checkBridgeTransactionComplete tests", function(this: Mocha.Suite) {
+       interface TestCase {
+           chainIdTo:                number;
+           transactionHashChainFrom: string;
+           want:                     boolean;
+       }
+
+       const testCases: TestCase[] = [
+           {chainIdTo: ChainId.AURORA, transactionHashChainFrom: "0x77a776395f347c313efcb660e50e3ea45846b80d90fa19f33f8b53a42cc46fb4", want: true},
+           {chainIdTo: ChainId.BSC,    transactionHashChainFrom: "0x53da6395da3a7f7efba5581387466de06983be8806978416441ba8202600684e", want: false}
+       ];
+
+       testCases.forEach(tc => {
+          const testTitle: string = `Bridge transaction ${tc.transactionHashChainFrom} ${tc.want ? 'should' : 'should NOT'} be marked completed on Chain ID ${tc.chainIdTo}`;
+
+          it(testTitle, async function(this: Mocha.Context) {
+              const got = await Bridge.checkBridgeTransactionComplete(tc);
+
+              if (tc.want) {
+                  return expect(got).to.be.true;
+              } else {
+                  return expect(got).to.be.false;
+              }
+          });
+       });
+    });
 })
