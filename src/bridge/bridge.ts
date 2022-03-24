@@ -529,7 +529,7 @@ export namespace Bridge {
                     intermediateToken.address(this.chainId),
                     tokenIndexFrom,
                     0,
-                    amountFromFixedDecimals
+                    amountFrom
                 );
             }
 

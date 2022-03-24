@@ -76,7 +76,7 @@ export namespace SynapseContracts {
 
     export const Fantom = new SynapseContract({
         bridge:    "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
-        bridgeZap: "0x64B4097bCCD27D49BC2A081984C39C3EeC427a2d",
+        bridgeZap: "0xB003e75f7E0B5365e814302192E99b4EE08c0DEd",
     });
 
     export const Boba = new SynapseContract({
