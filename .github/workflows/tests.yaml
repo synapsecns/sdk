@@ -33,6 +33,24 @@ on:
       - 'tsconfig.build.json'
 
 jobs:
+  prebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - if:  github.event_name == 'push'
+        id:  push_commit_msg
+        run: echo ::set-output name=push_msg::$(git log --format=%B -n 1 HEAD)
+
+      - if:  github.event_name == 'pull_request'
+        id:  pull_commit_msg
+        run: echo ::set-output name=pull_msg::$(git log --format=%B -n 1 HEAD^2)
+
+    outputs:
+      commit_message: $( [ -z "${{ steps.pull_commit_msg.outputs.pull_msg }}" ] && echo "${{ steps.push_commit_message.outputs.push_msg }}" || echo "${{ steps.pull_commit_msg.outputs.pull_msg }}" )
+
   test:
     strategy:
       matrix:
@@ -42,7 +60,10 @@ jobs:
         platform:
           - ubuntu-latest
 
-    if: ${{ !contains(github.event.head_commit.message, '[ci notest]') }}
+    needs:
+      - prebuild
+
+    if: ${{ !contains(needs.prebuild.outputs.commit_message, '[ci notest]') }}
 
     env:
       COVERAGE_DIR: ${{ github.workspace }}/coverage
