@@ -26,9 +26,9 @@ import {
 describe("SwapPools Tests", function(this: Mocha.Suite) {
     describe("Pool tokens tests", function(this: Mocha.Suite) {
         interface TestCase {
-            chainId:   number,
-            swapToken: SwapPools.SwapPoolToken,
-            tokens:    {token: Token, want: boolean}[]
+            chainId:   number;
+            swapToken: SwapPools.SwapPoolToken;
+            tokens:    {token: Token, want: boolean}[];
         }
 
         const makeWantString = (tc: {want: boolean}, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
@@ -70,10 +70,13 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                         tokSymbol: string = tok.token.symbol,
                         testTitle: string = `pool symbols ${makeWantString(tok)} symbol ${tokSymbol}`;
 
-                    it(
-                        testTitle,
-                        wrapExpect(expectIncludes(poolSymbols, tokSymbol, wantTok))
-                    );
+                    it(testTitle,function(this: Mocha.Context) {
+                        if (wantTok) {
+                            expect(poolSymbols).to.include(tokSymbol);
+                        } else {
+                            expect(poolSymbols).to.not.include(tokSymbol);
+                        }
+                    });
                 });
             });
         });
@@ -81,9 +84,9 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
 
     describe("Test SwapPool getters for network", function(this: Mocha.Suite) {
         interface TestCase {
-            chainId:            number,
-            wantStableSwapPool: boolean,
-            wantEthSwapPool:    boolean,
+            chainId:            number;
+            wantStableSwapPool: boolean;
+            wantEthSwapPool:    boolean;
         }
 
         const makeTestCase = (c: number, s: boolean, e: boolean): TestCase => ({
@@ -203,13 +206,13 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
 
     describe("SwapPoolToken properties tests", function(this: Mocha.Suite) {
         interface TestCase {
-            testName:     string,
-            chainId:      number,
-            swapPool:     SwapPools.SwapPoolToken,
-            wantSymbol:   string,
-            wantSwapType: SwapType,
-            wantAddress:  string|null,
-            wantDecimals: number|null
+            testName:     string;
+            chainId:      number;
+            swapPool:     SwapPools.SwapPoolToken;
+            wantSymbol:   string;
+            wantSwapType: SwapType;
+            wantAddress:  string|null;
+            wantDecimals: number|null;
         }
 
         const testCases: TestCase[] = [

@@ -56,9 +56,9 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
                 let prom = bridgeInstance.bridgeVersion();
                 return expect(await prom).to.equal(expected);
-            })
-        })
-    })
+            });
+        });
+    });
 
     describe(".WETH_ADDRESS", function(this: Mocha.Suite) {
         ALL_CHAIN_IDS.forEach(network => {
@@ -86,9 +86,9 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
                 let prom = bridgeInstance.WETH_ADDRESS();
                 return expect(await prom).to.equal(expected);
-            })
-        })
-    })
+            });
+        });
+    });
 
     describe(".getAllowanceForAddress", function(this: Mocha.Suite) {
         interface TestCase {
@@ -152,7 +152,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 } catch (err) {
                     return (await expectFulfilled(prom))
                 }
-            })
+            });
         }
 
         describe("- infinite approval", function(this: Mocha.Suite) {

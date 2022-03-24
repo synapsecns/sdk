@@ -1,14 +1,13 @@
 import {expect} from "chai";
 import {step} from "mocha-steps";
 
-import {Bridge, ChainId, Networks, Token, Tokens} from "@sdk";
+import {ChainId, Networks, Token, Tokens} from "@sdk";
 
 import {
     buildWalletArgs,
     DEFAULT_TEST_TIMEOUT,
     expectFulfilled,
-    getTestAmount,
-    WalletArgs
+    getTestAmount
 } from "@tests/helpers";
 
 import {L1BridgeZapFactory, L2BridgeZapFactory, SynapseBridgeFactory} from "@sdk/contracts";
@@ -21,8 +20,6 @@ import {
 
 import {PopulatedTransaction}   from "@ethersproject/contracts";
 import {TransactionDescription} from "@ethersproject/abi";
-import {Wallet as EvmWallet}    from "@ethersproject/wallet";
-import {Wallet as TerraWallet}  from "@terra-money/terra.js/dist/client/lcd/Wallet";
 
 
 describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Mocha.Suite) {
@@ -54,8 +51,8 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
         } = tc;
 
         const
-            netFrom         = Networks.networkName(chainFrom),
-            netTo           = Networks.networkName(chainTo);
+            netFrom = Networks.networkName(chainFrom),
+            netTo   = Networks.networkName(chainTo);
 
         const
             testPrefix:      string = "buildBridgeTokenTransaction()",
@@ -160,13 +157,10 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
         makeTestCase(Tokens.NETH,      Tokens.WETH_E,    ChainId.METIS,     ChainId.AVALANCHE,   redeemAndSwap),
     ].forEach((tc: TestCase) => {
         const testTitle = makeTestName(tc);
+
         describe(testTitle, function(this: Mocha.Suite) {
-            let
-                walletArgs = buildWalletArgs(
-                    tc.args.chainIdFrom,
-                    bridgeSwapTestPrivkey.privkey
-                ),
-                wallet         = walletArgs.wallet,
+            const
+                walletArgs = buildWalletArgs(tc.args.chainIdFrom, bridgeSwapTestPrivkey.privkey),
                 bridgeInstance = walletArgs.bridgeInstance;
 
             let builtTxn: PopulatedTransaction;
@@ -201,7 +195,7 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
                 if (tc.args.chainIdTo === ChainId.TERRA) {
                     txnInfo = synapseBridgeInterface.parseTransaction(txData);
                 } else {
-                txnInfo = tc.args.chainIdFrom === ChainId.ETH
+                    txnInfo = tc.args.chainIdFrom === ChainId.ETH
                         ? l1BridgeZapInterface.parseTransaction(txData)
                         : l2BridgeZapInterface.parseTransaction(txData);
                 }
