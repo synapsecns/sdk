@@ -25,6 +25,8 @@ import {
 } from "@tests/helpers";
 
 import {Web3Provider} from "@ethersproject/providers";
+import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+import {fixWeiValue} from "@common/utils";
 
 const makeWantString = (tc: {want: boolean}, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
 
@@ -184,5 +186,35 @@ describe("Basic tests", function(this: Mocha.Suite) {
             expect(Networks.networkSupportsToken(ChainId.ETH, Tokens.BUSD)).to.be.false;
             expect(Networks.networkSupportsToken(Networks.ETH, Tokens.BUSD)).to.be.false;
         })
-    })
-})
+    });
+
+    describe("fixWeiValue tests", function(this: Mocha.Suite) {
+        const
+            strBn = (n: BigNumberish): string => BigNumber.from(n).toString(),
+            bnStr = (s: string): BigNumber => BigNumber.from(s);
+
+        interface TestCase {
+            amount:   BigNumberish;
+            decimals: number;
+            want:     BigNumber;
+        }
+
+        const testCases: TestCase[] = [
+            {amount: "77000",                decimals: 3,    want: bnStr("77000000000000000000")},
+            {amount: "100000000",            decimals: 6,    want: bnStr("100000000000000000000")},
+            {amount: "42000000000000",       decimals: 11,   want: bnStr("420000000000000000000")},
+            {amount: "104000000000000",      decimals: 12,   want: bnStr("104000000000000000000")},
+            {amount: "77000000000000000000", decimals: 18,   want: bnStr("77000000000000000000")}
+        ];
+
+        testCases.forEach(tc => {
+            const testTitle: string = `fixWeiValue(${strBn(tc.amount)}, ${tc.decimals}) should return ${strBn(tc.want)}`;
+
+            it(testTitle, function(this: Mocha.Context) {
+                const got = fixWeiValue(BigNumber.from(tc.amount), tc.decimals);
+
+                expect(got).to.equal(tc.want);
+            });
+        });
+    });
+});
