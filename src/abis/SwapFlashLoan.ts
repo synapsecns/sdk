@@ -997,91 +997,6 @@ const ABI = {
       "type": "function"
     }
   ],
-  "userdoc": {
-    "kind": "user",
-    "methods": {
-      "addLiquidity(uint256[],uint256,uint256)": {
-        "notice": "Add liquidity to the pool with the given amounts of tokens"
-      },
-      "calculateRemoveLiquidity(uint256)": {
-        "notice": "A simple method to calculate amount of each underlying tokens that is returned upon burning given amount of LP tokens"
-      },
-      "calculateRemoveLiquidityOneToken(uint256,uint8)": {
-        "notice": "Calculate the amount of underlying token available to withdraw when withdrawing via only single token"
-      },
-      "calculateSwap(uint8,uint8,uint256)": {
-        "notice": "Calculate amount of tokens you receive on swap"
-      },
-      "calculateTokenAmount(uint256[],bool)": {
-        "notice": "A simple method to calculate prices from deposits or withdrawals, excluding fees but including slippage. This is helpful as an input into the various \"min\" parameters on calls to fight front-running"
-      },
-      "flashLoan(address,address,uint256,bytes)": {
-        "notice": "Borrow the specified token from this pool for this transaction only. This function will call `IFlashLoanReceiver(receiver).executeOperation` and the `receiver` must return the full amount of the token and the associated fee by the end of the callback transaction. If the conditions are not met, this call is reverted."
-      },
-      "getA()": {
-        "notice": "Return A, the amplification coefficient * n * (n - 1)"
-      },
-      "getAPrecise()": {
-        "notice": "Return A in its raw precision form"
-      },
-      "getAdminBalance(uint256)": {
-        "notice": "This function reads the accumulated amount of admin fees of the token with given index"
-      },
-      "getToken(uint8)": {
-        "notice": "Return address of the pooled token at given index. Reverts if tokenIndex is out of range."
-      },
-      "getTokenBalance(uint8)": {
-        "notice": "Return current balance of the pooled token at given index"
-      },
-      "getTokenIndex(address)": {
-        "notice": "Return the index of the given token address. Reverts if no matching token is found."
-      },
-      "getVirtualPrice()": {
-        "notice": "Get the virtual price, to help calculate profit"
-      },
-      "initialize(address[],uint8[],string,string,uint256,uint256,uint256,address)": {
-        "notice": "Initializes this Swap contract with the given parameters. This will also clone a LPToken contract that represents users' LP positions. The owner of LPToken will be this contract - which means only this contract is allowed to mint/burn tokens."
-      },
-      "pause()": {
-        "notice": "Pause the contract. Revert if already paused."
-      },
-      "rampA(uint256,uint256)": {
-        "notice": "Start ramping up or down A parameter towards given futureA and futureTime Checks if the change is too rapid, and commits the new A value only when it falls under the limit range."
-      },
-      "removeLiquidity(uint256,uint256[],uint256)": {
-        "notice": "Burn LP tokens to remove liquidity from the pool. Withdraw fee that decays linearly over period of 4 weeks since last deposit will apply."
-      },
-      "removeLiquidityImbalance(uint256[],uint256,uint256)": {
-        "notice": "Remove liquidity from the pool, weighted differently than the pool's current balances. Withdraw fee that decays linearly over period of 4 weeks since last deposit will apply."
-      },
-      "removeLiquidityOneToken(uint256,uint8,uint256,uint256)": {
-        "notice": "Remove liquidity from the pool all in one token. Withdraw fee that decays linearly over period of 4 weeks since last deposit will apply."
-      },
-      "setAdminFee(uint256)": {
-        "notice": "Update the admin fee. Admin fee takes portion of the swap fee."
-      },
-      "setFlashLoanFees(uint256,uint256)": {
-        "notice": "Updates the flash loan fee parameters. This function can only be called by the owner."
-      },
-      "setSwapFee(uint256)": {
-        "notice": "Update the swap fee to be applied on swaps"
-      },
-      "stopRampA()": {
-        "notice": "Stop ramping A immediately. Reverts if ramp A is already stopped."
-      },
-      "swap(uint8,uint8,uint256,uint256,uint256)": {
-        "notice": "Swap two tokens using this pool"
-      },
-      "unpause()": {
-        "notice": "Unpause the contract. Revert if already unpaused."
-      },
-      "withdrawAdminFees()": {
-        "notice": "Withdraw all admin fees to the contract owner"
-      }
-    },
-    "notice": "This contract is responsible for custody of closely pegged assets (eg. group of stablecoins) and automatic market making system. Users become an LP (Liquidity Provider) by depositing their tokens in desired ratios for an exchange of the pool token that represents their share of the pool. Users can burn pool tokens and withdraw their share of token(s). Each time a swap between the pooled tokens happens, a set fee incurs which effectively gets distributed to the LPs. In case of emergencies, admin can pause additional deposits, swaps, or single-asset withdraws - which stops the ratio of the tokens in the pool from changing. Users can always withdraw their tokens via multi-asset withdraws.",
-    "version": 1
-  },
   "devdoc": {
     "details": "Most of the logic is stored as a library `SwapUtils` for the sake of reducing contract's deployment size.",
     "kind": "dev",
@@ -1219,7 +1134,7 @@ const ABI = {
         "params": {
           "amount": "the amount of LP tokens to burn",
           "deadline": "latest timestamp to accept this transaction",
-          "minAmounts": "the minimum amounts of each token in the pool        acceptable for this burn. Useful as a front-running mitigation"
+          "minAmounts": "the minimum amounts of each token in the pool acceptable for this burn. Useful as a front-running mitigation"
         },
         "returns": {
           "_0": "amounts of tokens user received"
@@ -1279,6 +1194,91 @@ const ABI = {
       }
     },
     "title": "Swap - A StableSwap implementation in solidity.",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "addLiquidity(uint256[],uint256,uint256)": {
+        "notice": "Add liquidity to the pool with the given amounts of tokens"
+      },
+      "calculateRemoveLiquidity(uint256)": {
+        "notice": "A simple method to calculate amount of each underlying tokens that is returned upon burning given amount of LP tokens"
+      },
+      "calculateRemoveLiquidityOneToken(uint256,uint8)": {
+        "notice": "Calculate the amount of underlying token available to withdraw when withdrawing via only single token"
+      },
+      "calculateSwap(uint8,uint8,uint256)": {
+        "notice": "Calculate amount of tokens you receive on swap"
+      },
+      "calculateTokenAmount(uint256[],bool)": {
+        "notice": "A simple method to calculate prices from deposits or withdrawals, excluding fees but including slippage. This is helpful as an input into the various \"min\" parameters on calls to fight front-running"
+      },
+      "flashLoan(address,address,uint256,bytes)": {
+        "notice": "Borrow the specified token from this pool for this transaction only. This function will call `IFlashLoanReceiver(receiver).executeOperation` and the `receiver` must return the full amount of the token and the associated fee by the end of the callback transaction. If the conditions are not met, this call is reverted."
+      },
+      "getA()": {
+        "notice": "Return A, the amplification coefficient * n * (n - 1)"
+      },
+      "getAPrecise()": {
+        "notice": "Return A in its raw precision form"
+      },
+      "getAdminBalance(uint256)": {
+        "notice": "This function reads the accumulated amount of admin fees of the token with given index"
+      },
+      "getToken(uint8)": {
+        "notice": "Return address of the pooled token at given index. Reverts if tokenIndex is out of range."
+      },
+      "getTokenBalance(uint8)": {
+        "notice": "Return current balance of the pooled token at given index"
+      },
+      "getTokenIndex(address)": {
+        "notice": "Return the index of the given token address. Reverts if no matching token is found."
+      },
+      "getVirtualPrice()": {
+        "notice": "Get the virtual price, to help calculate profit"
+      },
+      "initialize(address[],uint8[],string,string,uint256,uint256,uint256,address)": {
+        "notice": "Initializes this Swap contract with the given parameters. This will also clone a LPToken contract that represents users' LP positions. The owner of LPToken will be this contract - which means only this contract is allowed to mint/burn tokens."
+      },
+      "pause()": {
+        "notice": "Pause the contract. Revert if already paused."
+      },
+      "rampA(uint256,uint256)": {
+        "notice": "Start ramping up or down A parameter towards given futureA and futureTime Checks if the change is too rapid, and commits the new A value only when it falls under the limit range."
+      },
+      "removeLiquidity(uint256,uint256[],uint256)": {
+        "notice": "Burn LP tokens to remove liquidity from the pool. Withdraw fee that decays linearly over period of 4 weeks since last deposit will apply."
+      },
+      "removeLiquidityImbalance(uint256[],uint256,uint256)": {
+        "notice": "Remove liquidity from the pool, weighted differently than the pool's current balances. Withdraw fee that decays linearly over period of 4 weeks since last deposit will apply."
+      },
+      "removeLiquidityOneToken(uint256,uint8,uint256,uint256)": {
+        "notice": "Remove liquidity from the pool all in one token. Withdraw fee that decays linearly over period of 4 weeks since last deposit will apply."
+      },
+      "setAdminFee(uint256)": {
+        "notice": "Update the admin fee. Admin fee takes portion of the swap fee."
+      },
+      "setFlashLoanFees(uint256,uint256)": {
+        "notice": "Updates the flash loan fee parameters. This function can only be called by the owner."
+      },
+      "setSwapFee(uint256)": {
+        "notice": "Update the swap fee to be applied on swaps"
+      },
+      "stopRampA()": {
+        "notice": "Stop ramping A immediately. Reverts if ramp A is already stopped."
+      },
+      "swap(uint8,uint8,uint256,uint256,uint256)": {
+        "notice": "Swap two tokens using this pool"
+      },
+      "unpause()": {
+        "notice": "Unpause the contract. Revert if already unpaused."
+      },
+      "withdrawAdminFees()": {
+        "notice": "Withdraw all admin fees to the contract owner"
+      }
+    },
+    "notice": "This contract is responsible for custody of closely pegged assets (eg. group of stablecoins) and automatic market making system. Users become an LP (Liquidity Provider) by depositing their tokens in desired ratios for an exchange of the pool token that represents their share of the pool. Users can burn pool tokens and withdraw their share of token(s). Each time a swap between the pooled tokens happens, a set fee incurs which effectively gets distributed to the LPs. In case of emergencies, admin can pause additional deposits, swaps, or single-asset withdraws - which stops the ratio of the tokens in the pool from changing. Users can always withdraw their tokens via multi-asset withdraws.",
     "version": 1
   }
 }

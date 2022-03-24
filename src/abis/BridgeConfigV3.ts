@@ -823,25 +823,6 @@ const ABI = {
     {
       "inputs": [
         {
-          "internalType": "string",
-          "name": "tokenID",
-          "type": "string"
-        }
-      ],
-      "name": "removeTokenMapping",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "bytes32",
           "name": "role",
           "type": "bytes32"

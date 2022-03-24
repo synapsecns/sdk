@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from "ethers";
-import { Provider } from "@ethersproject/providers";
+import type { Provider } from "@ethersproject/providers";
 import type { L2BridgeZap, L2BridgeZapInterface } from "../L2BridgeZap";
 
 const _abi = [

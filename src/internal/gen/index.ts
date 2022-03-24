@@ -8,7 +8,7 @@ export type { L2BridgeZap } from "./L2BridgeZap";
 export type { SwapFlashLoan } from "./SwapFlashLoan";
 export type { SynapseBridge } from "./SynapseBridge";
 export type { SynapseERC20 } from "./SynapseERC20";
-
+export * as factories from "./factories";
 export { BridgeConfigV3__factory } from "./factories/BridgeConfigV3__factory";
 export { ERC20__factory } from "./factories/ERC20__factory";
 export { L1BridgeZap__factory } from "./factories/L1BridgeZap__factory";
