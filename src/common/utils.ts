@@ -10,7 +10,7 @@ import type {
 } from "@ethersproject/contracts";
 import {BigNumber} from "@ethersproject/bignumber";
 
-export const rejectPromise = (e: any): Promise<never> => Promise.reject(e instanceof Error ? e : new Error(e))
+export function rejectPromise(e: any): Promise<never> { return Promise.reject(e instanceof Error ? e : new Error(e)) }
 
 type Resolveable<T> = T | Promise<T>
 
@@ -35,7 +35,7 @@ export function staticCallPopulatedTransaction(
         })
 }
 
-const pow10 = (exp: number): BigNumber => BigNumber.from(10).pow(exp);
+function pow10(exp: number): BigNumber { return BigNumber.from(10).pow(exp) }
 
 /**
  * "Fixes" a value into units of Wei; should be used when tokens
