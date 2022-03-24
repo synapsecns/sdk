@@ -633,7 +633,7 @@ export namespace Bridge {
                 easyRedeems:    ID[] = [Tokens.SYN.id,  Tokens.UST.id],
                 easyDeposits:   ID[] = [
                     Tokens.HIGH.id, Tokens.DOG.id,  Tokens.FRAX.id,
-                    Tokens.GOHM.id, Tokens.NEWO.id,
+                    Tokens.GOHM.id, Tokens.NEWO.id, Tokens.SDT.id,
                 ],
                 easyDepositETH: ID[] = [Tokens.NETH.id];
 

@@ -461,6 +461,7 @@ export namespace Tokens {
         symbol:   "SDT",
         decimals: 18,
         addresses: {
+            [ChainId.ETH]:       "0x73968b9a57c6e53d41345fd57a6e6ae27d6cdb2f",
             [ChainId.FANTOM]:    "0xE3c82A836Ec85311a433fBd9486EfAF4b1AFbF48",
             [ChainId.AVALANCHE]: "0xCCBf7c451F81752F7d2237F2c18C371E6e089E69",
             [ChainId.HARMONY]:   "0xE3c82A836Ec85311a433fBd9486EfAF4b1AFbF48",
