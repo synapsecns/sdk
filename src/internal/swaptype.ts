@@ -1,24 +1,30 @@
-export enum SwapType {
-    USD     = "USD",
-    SYN     = "SYN",
-    ETH     = "ETH",
-    HIGH    = "HIGHSTREET",
-    DOG     = "DOG",
-    JUMP    = "JUMP",
-    FRAX    = "FRAX",
-    NFD     = "NFD",
-    OHM     = "OHM",
-    GMX     = "GMX",
-    SOLAR   = "SOLAR",
-    AVAX    = "AVAX",
-    MOVR    = "MOVR",
-    UST     = "UST",
-    NEWO    = "NEWO",
-    SDT     = "SDT",
-    LUNA    = "LUNA",
-}
+import type {ValueOf} from "./generic_types";
 
-export const mintBurnSwapTypes = [
+export const SwapType = {
+    USD:     "USD",
+    SYN:     "SYN",
+    ETH:     "ETH",
+    HIGH:    "HIGHSTREET",
+    DOG:     "DOG",
+    JUMP:    "JUMP",
+    FRAX:    "FRAX",
+    NFD:     "NFD",
+    OHM:     "OHM",
+    GMX:     "GMX",
+    SOLAR:   "SOLAR",
+    AVAX:    "AVAX",
+    MOVR:    "MOVR",
+    UST:     "UST",
+    NEWO:    "NEWO",
+    SDT:     "SDT",
+    LUNA:    "LUNA",
+} as const;
+
+export type SwapType = ValueOf<typeof SwapType>
+
+export type SwapTypeMap<T> = {[k in SwapType]?: T}
+
+export const mintBurnSwapTypes: SwapType[] = [
     SwapType.HIGH, SwapType.DOG,  SwapType.JUMP,
     SwapType.NFD,  SwapType.OHM,  SwapType.SOLAR,
     SwapType.GMX,  SwapType.UST,  SwapType.NEWO,

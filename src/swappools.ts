@@ -12,6 +12,7 @@ import {BaseToken, type IBaseToken, type Token} from "@token";
 
 import {
     type ID,
+    type SwapTypeMap,
     SwapType
 } from "@internal/index";
 
@@ -417,7 +418,7 @@ export namespace SwapPools {
         SDT_Pool     = makeSingleTokenPool(Tokens.SDT),
         LUNA_Pool    = makeSingleTokenPool(Tokens.LUNA);
 
-    export interface SwapTypePoolTokens {[swapType: string]: LPToken}
+    export type SwapTypePoolTokens = SwapTypeMap<LPToken>
 
     interface SwapTypeMapArgs {
         usdPool?:   [SwapToken, Token[]],
@@ -426,17 +427,11 @@ export namespace SwapPools {
     }
 
     interface BridgeTokenMapping {
-        swappableTokens: {
-            [swapGroup: string]: Token[]
-        }
-        swappableSwapGroups: {
-            [swapGroup: string]: LPToken
-        }
+        swappableTokens:     SwapTypeMap<Token[]>;
+        swappableSwapGroups: SwapTypeMap<LPToken>;
     }
 
-    interface ChainSwapTypePoolsMap {
-        [chainId: number]: BridgeTokenMapping
-    }
+    type ChainSwapTypePoolsMap = ChainIdTypeMap<BridgeTokenMapping>
 
     const makeSwapTypeMap = (base: SwapTypeMapArgs, ...pools: LPToken[]): BridgeTokenMapping => {
         let m: BridgeTokenMapping = {
