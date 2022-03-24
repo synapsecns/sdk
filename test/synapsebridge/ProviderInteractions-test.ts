@@ -108,7 +108,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         const {args, expected} = makeTc(t1, t2, c1, c2, succeeds, canBridge, amountFrom);
         return {
             args, expected,
-            callStatic:         true,
+            callStatic: true,
         }
     }
 
@@ -121,7 +121,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         const {args, expected} = makeTc(t1, t2, c1, c2, succeeds, canBridge, amountFrom);
         return {
             args, expected,
-            callStatic:         false,
+            callStatic: false,
         }
     }
 
@@ -539,7 +539,6 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 ChainId.BSC,
                 bridgeInteractionsPrivkey.privkey
             ),
-            wallet         = walletArgs.wallet,
             bridgeInstance = walletArgs.bridgeInstance,
             outEstimate:    Bridge.BridgeOutputEstimate;
 
@@ -551,18 +550,6 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
             chainIdTo:   ChainId.TERRA,
             amountFrom:  Tokens.UST.valueToWei("10", chainIdFrom),
         };
-
-        // before(async function(this: Mocha.Context) {
-        //     this.timeout(DEFAULT_TEST_TIMEOUT);
-        //
-        //     walletArgs = await buildWalletArgs(
-        //         ChainId.BSC,
-        //         bridgeInteractionsPrivkey.privkey
-        //     );
-        //
-        //     wallet         = walletArgs.wallet;
-        //     bridgeInstance = walletArgs.bridgeInstance;
-        // });
 
         step("- get output estimate", function(this: Mocha.Context, done: Mocha.Done) {
             this.timeout(5*1000);
@@ -632,14 +619,9 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 };
 
             let
-                terraWallet: TerraWallet,
-                walletArgs:  WalletArgs,
+                walletArgs = buildWalletArgs(ChainId.TERRA),
+                terraWallet = walletArgs.wallet as TerraWallet,
                 estimate: Bridge.BridgeOutputEstimate;
-
-            before(async function(this: Mocha.Context) {
-                walletArgs  = await buildWalletArgs(ChainId.TERRA);
-                terraWallet = walletArgs.wallet as TerraWallet;
-            });
 
             step("get another output estimate", function(this: Mocha.Context, done: Mocha.Done) {
                 this.timeout(5*1000);
