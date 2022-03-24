@@ -960,7 +960,11 @@ export namespace Bridge {
     export function getRequiredConfirmationsForBridge(network: Networks.Network | number): number {
         let chainId: number = network instanceof Networks.Network ? network.chainId : network;
 
-        return REQUIRED_CONFS[chainId] ?? -1
+        if (chainId in REQUIRED_CONFS) {
+            return REQUIRED_CONFS[chainId]
+        }
+
+        return 1
     }
 
     export function bridgeSwapSupported(args: TokenSwap.BridgeSwapSupportedParams): TokenSwap.SwapSupportedResult {
