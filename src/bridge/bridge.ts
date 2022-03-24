@@ -186,6 +186,10 @@ export namespace Bridge {
             return this.bridgeInstance.WETH_ADDRESS()
         }
 
+        kappaExists(kappa: string): Promise<boolean> {
+            return this.bridgeInstance.kappaExists(kappa)
+        }
+
         /**
          * Returns whether a swap/bridge from this Bridge's chain to another chain between two tokens
          * is supported.
@@ -969,5 +973,11 @@ export namespace Bridge {
 
     export function bridgeSwapSupported(args: TokenSwap.BridgeSwapSupportedParams): TokenSwap.SwapSupportedResult {
         return TokenSwap.bridgeSwapSupported(args)
+    }
+
+    export interface BridgeTransactionCompleteParams {
+        chainIdFrom:              number;
+        chainIdTo:                number;
+        transactionHashChainFrom: string;
     }
 }
