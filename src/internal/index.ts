@@ -5,3 +5,5 @@ export {SwapType, mintBurnSwapTypes} from "./swaptype";
 export {rpcProviderForChain} from "./rpcproviders";
 
 export {tokenSwitch} from "./utils";
+
+export type {ValueOf} from "./generic_types";
