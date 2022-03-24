@@ -416,7 +416,8 @@ export namespace SwapPools {
         UST_Pool     = makeSingleTokenPool(Tokens.UST),
         NEWO_Pool    = makeSingleTokenPool(Tokens.NEWO),
         SDT_Pool     = makeSingleTokenPool(Tokens.SDT),
-        LUNA_Pool    = makeSingleTokenPool(Tokens.LUNA);
+        LUNA_Pool    = makeSingleTokenPool(Tokens.LUNA),
+        USDB_Pool    = makeSingleTokenPool(Tokens.USDB);
 
     export type SwapTypePoolTokens = SwapTypeMap<LPToken>
 
@@ -485,6 +486,7 @@ export namespace SwapPools {
             FRAX_Pool,
             NEWO_Pool,
             SDT_Pool,
+            USDB_Pool,
         ),
         [ChainId.OPTIMISM]: makeSwapTypeMap(
             {
@@ -501,6 +503,7 @@ export namespace SwapPools {
             DOG_Pool,
             JUMP_Pool,
             NFD_Pool,
+            USDB_Pool,
         ),
         [ChainId.POLYGON]: makeSwapTypeMap(
             {
@@ -508,6 +511,7 @@ export namespace SwapPools {
             },
             NFD_Pool,
             DOG_Pool,
+            USDB_Pool,
         ),
         [ChainId.FANTOM]: makeSwapTypeMap(
             {
@@ -517,6 +521,7 @@ export namespace SwapPools {
             JUMP_Pool,
             FRAX_Pool,
             SDT_Pool,
+            USDB_Pool,
         ),
         [ChainId.BOBA]: makeSwapTypeMap(
             {
@@ -541,6 +546,7 @@ export namespace SwapPools {
             SOLAR_Pool,
             FRAX_Pool,
             MOVR_Pool,
+            USDB_Pool,
         ),
         [ChainId.ARBITRUM]: makeSwapTypeMap(
             {
@@ -561,6 +567,7 @@ export namespace SwapPools {
             AVAX_Pool,
             NEWO_Pool,
             SDT_Pool,
+            USDB_Pool,
         ),
         [ChainId.AURORA]: makeSwapTypeMap(
             {

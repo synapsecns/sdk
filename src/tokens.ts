@@ -483,13 +483,28 @@ export namespace Tokens {
         swapType: SwapType.LUNA,
     });
 
+    export const USDB = new BaseToken({
+        name:     "USD Balance",
+        symbol:   "USDB",
+        decimals: 18,
+        addresses: {
+            [ChainId.ETH]:       "0x02b5453d92b730f29a86a0d5ef6e930c4cf8860b",
+            [ChainId.BSC]:       "0xc8699abbba90c7479dedccef19ef78969a2fc608",
+            [ChainId.POLYGON]:   "0xfa1fbb8ef55a4855e5688c0ee13ac3f202486286",
+            [ChainId.FANTOM]:    "0x6fc9383486c163fa48becdec79d6058f984f62ca",
+            [ChainId.MOONRIVER]: "0x3e193c39626bafb41ebe8bdd11ec7cca9b3ec0b2",
+            [ChainId.AVALANCHE]: "0x5ab7084cb9d270c2cb052dd30dbecbca42f8620c"
+        },
+        swapType: SwapType.USDB
+    });
+
     export const mintBurnTokens: Token[] = [
         NUSD,  SYN,      NETH,
         HIGH,  DOG,      JUMP,
         FRAX,  SYN_FRAX, NFD,
         GOHM,  SOLAR,    GMX,
         UST,   NEWO,     SDT,
-        LUNA,
+        LUNA,  USDB,
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
@@ -515,6 +530,6 @@ export namespace Tokens {
         SYN, NUSD, AVAX, WAVAX, MOVR, WMOVR,
         GOHM, HIGH, JUMP, DOG, NFD, FRAX,
         SYN_FRAX, SOLAR, GMX, NEWO, SDT,
-        LUNA,
+        LUNA, USDB,
     ];
 }

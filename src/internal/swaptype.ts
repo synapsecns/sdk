@@ -18,6 +18,7 @@ export const SwapType = {
     NEWO:    "NEWO",
     SDT:     "SDT",
     LUNA:    "LUNA",
+    USDB:    "USDB",
 } as const;
 
 export type SwapType = ValueOf<typeof SwapType>
@@ -28,5 +29,5 @@ export const mintBurnSwapTypes: SwapType[] = [
     SwapType.HIGH, SwapType.DOG,  SwapType.JUMP,
     SwapType.NFD,  SwapType.OHM,  SwapType.SOLAR,
     SwapType.GMX,  SwapType.UST,  SwapType.NEWO,
-    SwapType.SDT,  SwapType.LUNA,
+    SwapType.SDT,  SwapType.LUNA, SwapType.USDB,
 ];
