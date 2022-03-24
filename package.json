@@ -45,7 +45,7 @@
     "@ethersproject/bytes": "^5.5.0",
     "@ethersproject/constants": "^5.5.0",
     "@ethersproject/contracts": "^5.5.0",
-    "@ethersproject/providers": "^5.5.0",
+    "@ethersproject/providers": "^5.5.3",
     "@ethersproject/transactions": "^5.5.0",
     "@ethersproject/units": "^5.5.0",
     "@ethersproject/wallet": "^5.5.0",
@@ -59,6 +59,8 @@
   "devDependencies": {
     "@ethereum-waffle/chai": "3.4.4",
     "@typechain/ethers-v5": "10.0.0",
+    "@ethersproject/hdnode": "^5.5.0",
+    "@ethersproject/random": "^5.5.1",
     "@types/chai-as-promised": "7.1.5",
     "@types/chai-things": "0.0.35",
     "@types/isomorphic-fetch": "0.0.36",
