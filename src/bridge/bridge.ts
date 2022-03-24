@@ -536,7 +536,8 @@ export namespace Bridge {
             let amountToReceive_from = await amountToReceive_from_prom;
 
             let bridgeFee: BigNumber;
-            try {
+
+            try { /* c8 ignore start */
                 bridgeFee = await bridgeFeeRequest;
                 if (bridgeFee === null) {
                     console.error("calculateSwapFee returned null");
@@ -545,7 +546,7 @@ export namespace Bridge {
             } catch (e) {
                 console.error(`Error in bridge fee request: ${e}`);
                 return rejectPromise(e)
-            }
+            } /* c8 ignore stop */
 
             amountToReceive_from = BridgeUtils.subBigNumSafe(amountToReceive_from, bridgeFee);
 
@@ -572,11 +573,11 @@ export namespace Bridge {
             }
 
             let amountToReceive: BigNumber;
-            try {
+            try { /* c8 ignore start */
                 amountToReceive = await Promise.resolve(amountToReceive_to_prom)
             } catch (err) {
                 return rejectPromise(err)
-            }
+            } /* c8 ignore stop */
 
             return {amountToReceive, bridgeFee}
         }
@@ -942,12 +943,14 @@ export namespace Bridge {
     const REQUIRED_CONFS: ChainIdTypeMap<number> = {
         [ChainId.ETH]:       7,
         [ChainId.OPTIMISM]:  1,
+        [ChainId.CRONOS]:    1,
         [ChainId.BSC]:       14,
         [ChainId.POLYGON]:   128,
         [ChainId.FANTOM]:    5,
         [ChainId.BOBA]:      1,
         [ChainId.MOONBEAM]:  21,
         [ChainId.MOONRIVER]: 21,
+        [ChainId.METIS]:     5,
         [ChainId.ARBITRUM]:  40,
         [ChainId.AVALANCHE]: 5,
         [ChainId.HARMONY]:   1,
@@ -958,8 +961,6 @@ export namespace Bridge {
 
         return REQUIRED_CONFS[chainId] ?? -1
     }
-
-
 
     export function bridgeSwapSupported(args: TokenSwap.BridgeSwapSupportedParams): TokenSwap.SwapSupportedResult {
         return TokenSwap.bridgeSwapSupported(args)
