@@ -951,7 +951,6 @@ export namespace Bridge {
         [ChainId.METIS]:     6,
         [ChainId.MOONBEAM]:  21,
         [ChainId.MOONRIVER]: 21,
-        [ChainId.METIS]:     6,
         [ChainId.ARBITRUM]:  40,
         [ChainId.AVALANCHE]: 5,
         [ChainId.HARMONY]:   1,
