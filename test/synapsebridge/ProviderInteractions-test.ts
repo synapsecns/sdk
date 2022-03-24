@@ -68,7 +68,7 @@ async function buildWalletArgs(chainId: number, privkey: string=bridgeTestPrivke
     }
 }
 
-describe("SynapseBridge - Provider Interactions tests", async function(this: Mocha.Suite) {
+describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Suite) {
 
     interface TestOpts {
         executeSuccess: boolean,
