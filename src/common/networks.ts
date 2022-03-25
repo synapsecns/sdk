@@ -61,6 +61,10 @@ export namespace Networks {
             this.id = Symbol(`${this.name}:${this.chainId}`);
         }
 
+        get isEvmChain(): boolean {
+            return this.chainId !== ChainId.TERRA
+        }
+
         /**
          * Returns true if the Bridge Zap contract for this network
          * is a L2BridgeZap contract.
@@ -68,7 +72,7 @@ export namespace Networks {
          * Bridge Zap contract is a NerveBridgeZap contract.
          */
         get zapIsL2BridgeZap(): boolean {
-            return this.chainId !== ChainId.ETH
+            return this.isEvmChain && this.chainId !== ChainId.ETH
         }
 
         /**
@@ -166,6 +170,12 @@ export namespace Networks {
         chainCurrency: "AVAX",
     });
 
+    export const TERRA = new Network({
+        name:          "Terra",
+        chainId:       ChainId.TERRA,
+        chainCurrency: "TERRA",
+    });
+
     export const AURORA = new Network({
         name:          "Aurora",
         chainId:       ChainId.AURORA,
@@ -191,6 +201,7 @@ export namespace Networks {
         [ChainId.MOONRIVER]:  MOONRIVER,
         [ChainId.ARBITRUM]:   ARBITRUM,
         [ChainId.AVALANCHE]:  AVALANCHE,
+        [ChainId.TERRA]:      TERRA,
         [ChainId.AURORA]:     AURORA,
         [ChainId.HARMONY]:    HARMONY,
     }

@@ -18,9 +18,8 @@ import {
 
 import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
-import {BaseContract, Contract} from "@ethersproject/contracts";
+import {BaseContract} from "@ethersproject/contracts";
 import {expect} from "chai";
-import {SwapContract} from "@contracts";
 
 
 describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
@@ -64,6 +63,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
 
             step(testTitle1, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
+                this.slow(750);
 
                 let prom: Promise<TokenSwap.EstimatedSwapRate> = Promise.resolve(TokenSwap.calculateSwapRate({
                     chainId:   tc.chainId,
@@ -78,7 +78,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                 return tc.wantError
                     ? await expectRejected(prom)
                     : expectProperty(await prom, "amountOut").that.is.gt(Zero.toNumber())
-            })
+            });
 
             step(testTitle2, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
@@ -95,7 +95,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                         ? expectRejected(prom)
                         : expectFulfilled(prom)
                 ))
-            })
+            });
 
             step(testTitle3, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
@@ -118,7 +118,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                         expect.fail(e);
                     }
                 }
-            })
-        })
-    })
-})
+            });
+        });
+    });
+});

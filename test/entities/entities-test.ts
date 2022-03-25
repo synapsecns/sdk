@@ -85,7 +85,7 @@ describe("Entities tests", function(this: Mocha.Suite) {
             it(
                 `Test ${EntityKind[tc.kind]} instance`,
                 wrapExpect(expectNull(instance, false))
-            )
-        })
-    })
-})
+            );
+        });
+    });
+});

@@ -1,23 +1,26 @@
 import {ChainId}          from "@chainid";
 import {SynapseContracts} from "./synapse_contracts";
-import {StaticCallResult} from "./types";
 
-import type {Signer}      from "@ethersproject/abstract-signer";
+import {
+    GenericSigner,
+    Resolveable,
+    GenericTxnRequest,
+    GenericTxnResponse,
+    StaticCallResult,
+} from "./types";
 
-import type {
-    PopulatedTransaction,
-    ContractTransaction,
-} from "@ethersproject/contracts";
-import {BigNumber} from "@ethersproject/bignumber";
+import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+import {arrayify, BytesLike} from "@ethersproject/bytes";
+import type {Signer}  from "@ethersproject/abstract-signer";
+import type {PopulatedTransaction} from "@ethersproject/contracts";
+import bech32 from "bech32";
 
 export function rejectPromise(e: any): Promise<never> { return Promise.reject(e instanceof Error ? e : new Error(e)) }
 
-type Resolveable<T> = T | Promise<T>
-
 export function executePopulatedTransaction(
-    populatedTxn: Resolveable<PopulatedTransaction>,
-    signer:       Signer,
-): Promise<ContractTransaction> {
+    populatedTxn: GenericTxnRequest,
+    signer:       GenericSigner,
+): Promise<GenericTxnResponse> {
     return Promise.resolve(populatedTxn)
         .then(txn => signer.sendTransaction(txn))
         .catch(rejectPromise)
@@ -25,14 +28,32 @@ export function executePopulatedTransaction(
 
 export function staticCallPopulatedTransaction(
     populatedTxn: Resolveable<PopulatedTransaction>,
-    signer:       Signer
+    signer:       Signer,
+    successFn?:   (result: BytesLike, tx?: {data: string, value?: BigNumberish}) => boolean
 ): Promise<StaticCallResult> {
     return Promise.resolve(populatedTxn)
-        .then(txn => {
-            return signer.call(txn)
-                .then(()  => StaticCallResult.Success)
-                .catch((err) => StaticCallResult.Failure)
+        .then(txn => signer.call(txn)
+            .then((res): number  => {
+                let successRes = StaticCallResult.Success;
+                /* c8 ignore start */
+                if (successFn && (txn.data && txn.data !== "0x")) {
+                    try {
+                        let {data="", value} = txn;
+                        successRes = successFn(res, {data, value})
+                            ? StaticCallResult.Success
+                            : StaticCallResult.Failure
+                    } catch {}
+                }
+                /* c8 ignore stop */
+
+                return successRes
         })
+            .catch((err) => {
+                // console.error(err);
+                return StaticCallResult.Failure
+            })
+        )
+        .catch(rejectPromise)
 }
 
 function pow10(exp: number): BigNumber { return BigNumber.from(10).pow(exp) }
@@ -70,8 +91,17 @@ const CHAINID_CONTRACTS_MAP: {[c: number]: SynapseContracts.SynapseContract} = {
     [ChainId.MOONRIVER]: SynapseContracts.Moonriver,
     [ChainId.ARBITRUM]:  SynapseContracts.Arbitrum,
     [ChainId.AVALANCHE]: SynapseContracts.Avalanche,
+    [ChainId.TERRA]:     SynapseContracts.Terra,
     [ChainId.AURORA]:    SynapseContracts.Aurora,
     [ChainId.HARMONY]:   SynapseContracts.Harmony,
 }
 
 export const contractsForChainId = (chainId: number): SynapseContracts.SynapseContract => CHAINID_CONTRACTS_MAP[chainId] ?? null
+
+
+export function decodeHexTerraAddress(hexAddr: string): string {
+    let addrAsBytes: number[] = [];
+    arrayify(hexAddr).forEach(b => addrAsBytes.push(b));
+
+    return bech32.encode("terra", addrAsBytes);
+}

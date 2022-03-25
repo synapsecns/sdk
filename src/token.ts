@@ -1,4 +1,4 @@
-import type {AddressMap, DecimalsMap} from "@common/types";
+import type {AddressMap, NumberMap} from "@common/types";
 
 import type {ID, Distinct, SwapType} from "@internal/index";
 
@@ -69,7 +69,7 @@ export function instanceOfToken(object: any): object is Token {
 export interface BaseTokenArgs {
     name:              string;
     symbol:            string;
-    decimals:          number | DecimalsMap;
+    decimals:          number | NumberMap;
     addresses:         AddressMap;
     swapType:          SwapType;
     isETH?:            boolean;
@@ -95,7 +95,7 @@ export class BaseToken implements Token {
 
     private readonly wrapperAddresses: AddressMap = {};
 
-    protected readonly _decimals: DecimalsMap = {};
+    protected readonly _decimals: NumberMap = {};
 
     /**
      * Creates a new Token object with the defined arguments.

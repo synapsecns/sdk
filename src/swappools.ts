@@ -5,7 +5,7 @@ import {ChainId, supportedChainIds} from "@chainid";
 import type {
     AddressMap,
     ChainIdTypeMap,
-    DecimalsMap
+    NumberMap
 } from "@common/types";
 
 import {BaseToken, type IBaseToken, type Token} from "@token";
@@ -46,7 +46,7 @@ export namespace SwapPools {
     interface SwapTokenArgs {
         name:           string;
         symbol:         string;
-        decimals:       number | DecimalsMap;
+        decimals:       number | NumberMap;
         addresses:      AddressMap;
         poolId:         number;
         poolName:       string;
@@ -569,6 +569,14 @@ export namespace SwapPools {
             SDT_Pool,
             USDB_Pool,
         ),
+        [ChainId.TERRA]: {
+            swappableTokens: {
+                [SwapType.UST]: UST_Pool.poolTokens,
+            },
+            swappableSwapGroups: {
+                [SwapType.UST]: UST_Pool,
+            },
+        },
         [ChainId.AURORA]: makeSwapTypeMap(
             {
                 usdPool: [AURORA_POOL_SWAP_TOKEN, AURORA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],

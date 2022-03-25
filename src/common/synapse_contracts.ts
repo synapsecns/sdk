@@ -3,7 +3,7 @@ import {ChainId} from "@chainid";
 
 import type {ChainIdTypeMap} from "./types";
 
-import {ContractInterface} from "@ethersproject/contracts";
+import type {ContractInterface} from "@ethersproject/contracts";
 
 
 export namespace SynapseContracts {
@@ -16,26 +16,32 @@ export namespace SynapseContracts {
         bridge:     string,
         bridgeZap?: string,
         mainnet?:   boolean,
+        isTerra?:     boolean,
     }
 
     export class SynapseContract {
         readonly bridge:      abiAndAddress;
         readonly bridgeZap?:  abiAndAddress;
+        readonly isTerra:       boolean;
 
         constructor({
             bridge,
             bridgeZap=null,
-            mainnet=false
+            mainnet=false,
+            isTerra=false,
         }: SynapseContractArgs) {
+            this.isTerra = isTerra;
 
             this.bridge = {address: bridge};
+            if (!this.isTerra) {
             this.bridge.abi = ABIs.SynapseBridge;
+            }
 
             if (bridgeZap) {
-                this.bridgeZap = {
-                    address: bridgeZap,
-                    abi:     mainnet ? ABIs.L1BridgeZap : ABIs.L2BridgeZap,
-                };
+                this.bridgeZap = {address: bridgeZap};
+                if (!this.isTerra) {
+                    this.bridgeZap.abi = mainnet ? ABIs.L1BridgeZap : ABIs.L2BridgeZap;
+                }
             }
         }
 
@@ -44,7 +50,7 @@ export namespace SynapseContracts {
         }
 
         get bridgeZapAddress(): string {
-            return this.bridgeZap.address
+            return this.bridgeZap?.address ?? ""
         }
     }
 
@@ -109,6 +115,11 @@ export namespace SynapseContracts {
         bridgeZap: "0xE85429C97589AD793Ca11A8BC3477C03d27ED140",
     });
 
+    export const Terra = new SynapseContract({
+        isTerra:    true,
+        bridge:    "terra1cz4tl2l67sknlm8h4n836qxydau9thscrkrkg0",
+    });
+
     export const Aurora = new SynapseContract({
         bridge:    "0xaeD5b25BE1c3163c907a471082640450F928DDFE",
         bridgeZap: "0x2D8Ee8d6951cB4Eecfe4a79eb9C2F973C02596Ed",
@@ -132,6 +143,7 @@ export namespace SynapseContracts {
         [ChainId.MOONRIVER]: Moonriver,
         [ChainId.ARBITRUM]:  Arbitrum,
         [ChainId.AVALANCHE]: Avalanche,
+        [ChainId.TERRA]:     Terra,
         [ChainId.AURORA]:    Aurora,
         [ChainId.HARMONY]:   Harmony,
     }

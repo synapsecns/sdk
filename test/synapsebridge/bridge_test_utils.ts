@@ -15,35 +15,36 @@ const makeTestPrivkeyEnvKeys = (name: string): [string, string] => {
 }
 
 export interface TestPrivKey {
-    address: string;
-    privkey: string;
+    privkey:  string;
+    address:  string;
 }
 
 function loadTestPrivkey(name: string): TestPrivKey {
     const [privkeyEnv, addrEnv] = makeTestPrivkeyEnvKeys(name);
 
     return {
-        address: process.env[addrEnv]    || "",
-        privkey: process.env[privkeyEnv] || "",
+        address:  process.env[addrEnv]    || "",
+        privkey:  process.env[privkeyEnv] || "",
     }
 }
 
 export const
     infiniteApprovalsPrivkey:  TestPrivKey = loadTestPrivkey("INFINITE_APPROVALS"),
-    bridgeInteractionsPrivkey: TestPrivKey = loadTestPrivkey("BRIDGE_INTERACTIONS");
+    bridgeInteractionsPrivkey: TestPrivKey = loadTestPrivkey("BRIDGE_INTERACTIONS"),
+    bridgeSwapTestPrivkey:     TestPrivKey = loadTestPrivkey("BRIDGE_SWAPTEST");
 
 export interface BridgeSwapTestArgs {
-    chainIdFrom: number,
-    chainIdTo:   number,
-    tokenFrom:   Token,
-    tokenTo:     Token,
-    amountFrom:  BigNumber,
-    execute?:    boolean,
+    chainIdFrom: number;
+    chainIdTo:   number;
+    tokenFrom:   Token;
+    tokenTo:     Token;
+    amountFrom:  BigNumber;
+    execute?:    boolean;
 }
 
 export interface BridgeSwapTestCase<T> {
-    args:     BridgeSwapTestArgs,
-    expected: T,
+    args:     BridgeSwapTestArgs;
+    expected: T;
 }
 
 export function makeBridgeSwapTestCase<T>(

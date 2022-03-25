@@ -19,11 +19,8 @@ import {rpcProviderForChain} from "@sdk/internal";
 import {
     DEFAULT_TEST_TIMEOUT,
     EXECUTORS_TEST_TIMEOUT,
-    expectBnEqual,
-    expectEqual,
     expectFulfilled,
     getActualWei,
-    wrapExpectAsync
 } from "@tests/helpers";
 
 import {infiniteApprovalsPrivkey} from "./bridge_test_utils";
@@ -49,22 +46,24 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
         ALL_CHAIN_IDS.forEach(network => {
             const
-                provider          = rpcProviderForChain(network),
+                provider          = network === ChainId.TERRA ? null : rpcProviderForChain(network),
                 bridgeInstance    = new Bridge.SynapseBridge({ network, provider}),
                 testTitle: string = `Should return ${expected.toString()} on Chain ID ${network}`;
 
             it(testTitle, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
+                this.slow(750);
+
                 let prom = bridgeInstance.bridgeVersion();
-                return wrapExpectAsync(expectBnEqual(await prom, expected), prom)
-            })
-        })
-    })
+                return expect(await prom).to.equal(expected);
+            });
+        });
+    });
 
     describe(".WETH_ADDRESS", function(this: Mocha.Suite) {
         ALL_CHAIN_IDS.forEach(network => {
             const
-                provider = rpcProviderForChain(network),
+                provider = network === ChainId.TERRA ? null : rpcProviderForChain(network),
                 bridgeInstance = new Bridge.SynapseBridge({ network, provider }),
                 expected: string = ((): string => {
                     switch (network) {
@@ -82,12 +81,14 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 testTitle: string = `Should return ${expected} for Chain ID ${network}`;
 
             it(testTitle, async function(this: Mocha.Context) {
-                this.timeout(DEFAULT_TEST_TIMEOUT);
+                this.timeout(3.75*1000);
+                this.slow(750);
+
                 let prom = bridgeInstance.WETH_ADDRESS();
-                return wrapExpectAsync(expectEqual(await prom, expected), prom)
-            })
-        })
-    })
+                return expect(await prom).to.equal(expected);
+            });
+        });
+    });
 
     describe(".getAllowanceForAddress", function(this: Mocha.Suite) {
         interface TestCase {
@@ -130,6 +131,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
             it(title, async function (this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
+                this.slow(750);
 
                 let bridgeInstance = new Bridge.SynapseBridge({network, provider});
 
@@ -150,12 +152,13 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 } catch (err) {
                     return (await expectFulfilled(prom))
                 }
-            })
+            });
         }
 
         describe("- infinite approval", function(this: Mocha.Suite) {
             step("Ensure infinite approval test address has infinite approval", async function(this: Mocha.Context) {
                 this.timeout(EXECUTORS_TEST_TIMEOUT);
+                this.slow(750);
 
                 dotenv.config();
 

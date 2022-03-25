@@ -1,19 +1,25 @@
-import {PopulatedTransaction} from "@ethersproject/contracts";
+import {expect} from "chai";
 import {step} from "mocha-steps";
+
+import {ChainId, Networks, Token, Tokens} from "@sdk";
+
 import {
-    bridgeTestPrivkey1,
+    buildWalletArgs,
     DEFAULT_TEST_TIMEOUT,
     expectFulfilled,
-    getTestAmount,
-    makeWalletSignerWithProvider
+    getTestAmount
 } from "@tests/helpers";
-import {Bridge, ChainId, Networks, Token, Tokens} from "@sdk";
 
+import {L1BridgeZapFactory, L2BridgeZapFactory, SynapseBridgeFactory} from "@sdk/contracts";
+
+import {
+    bridgeSwapTestPrivkey,
+    BridgeSwapTestCase,
+    makeBridgeSwapTestCase
+} from "./bridge_test_utils";
+
+import {PopulatedTransaction}   from "@ethersproject/contracts";
 import {TransactionDescription} from "@ethersproject/abi";
-import {L1BridgeZapFactory, L2BridgeZapFactory} from "@contracts";
-import {expect} from "chai";
-import {BridgeSwapTestCase, makeBridgeSwapTestCase} from "./bridge_test_utils";
-import {formatUnits} from "@ethersproject/units";
 
 
 describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Mocha.Suite) {
@@ -36,8 +42,6 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
     function makeTestName(tc: TestCase): string {
         let {
             args: {
-                amountFrom,
-                tokenFrom,
                 tokenFrom: { symbol: tokFrom },
                 tokenTo:   { symbol: tokTo   },
                 chainIdFrom: chainFrom,
@@ -47,9 +51,8 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
         } = tc;
 
         const
-            amt             = formatUnits(amountFrom, tokenFrom.decimals(chainFrom)),
-            netFrom         = Networks.networkName(chainFrom),
-            netTo           = Networks.networkName(chainTo);
+            netFrom = Networks.networkName(chainFrom),
+            netTo   = Networks.networkName(chainTo);
 
         const
             testPrefix:      string = "buildBridgeTokenTransaction()",
@@ -61,6 +64,7 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
 
     const
         redeem                  = "redeem",
+        redeemV2                = "redeemV2",
         deposit                 = "deposit",
         depositETH              = "depositETH",
         redeemAndSwap           = "redeemAndSwap",
@@ -138,6 +142,7 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
         makeTestCase(Tokens.NUSD,      Tokens.NUSD,      ChainId.POLYGON,   ChainId.BSC,         redeem),
         makeTestCase(Tokens.UST,       Tokens.UST,       ChainId.BSC,       ChainId.POLYGON,     redeem),
         makeTestCase(Tokens.UST,       Tokens.UST,       ChainId.POLYGON,   ChainId.ETH,         redeem),
+        makeTestCase(Tokens.UST,       Tokens.UST,       ChainId.BSC,       ChainId.TERRA,       redeemV2),
         makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.ARBITRUM,  ChainId.AVALANCHE,   redeem),
         makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.ETH,       ChainId.AVALANCHE,   deposit),
         makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.AVALANCHE, ChainId.ETH,         redeem),
@@ -152,7 +157,12 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
         makeTestCase(Tokens.NETH,      Tokens.WETH_E,    ChainId.METIS,     ChainId.AVALANCHE,   redeemAndSwap),
     ].forEach((tc: TestCase) => {
         const testTitle = makeTestName(tc);
+
         describe(testTitle, function(this: Mocha.Suite) {
+            const
+                walletArgs = buildWalletArgs(tc.args.chainIdFrom, bridgeSwapTestPrivkey.privkey),
+                bridgeInstance = walletArgs.bridgeInstance;
+
             let builtTxn: PopulatedTransaction;
 
             const amountTo = tc.args.amountFrom.sub(5);
@@ -160,28 +170,35 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
             step("build transaction", async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                let {args: { chainIdFrom }, args} = tc;
+                let {args} = tc;
 
-                const
-                    bridgeInstance    = new Bridge.SynapseBridge({ network: chainIdFrom }),
-                    addressTo: string = makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey1).address;
+                const addressTo: string = tc.args.chainIdTo === ChainId.TERRA
+                    ? walletArgs.terraAddress
+                    : walletArgs.evmAddress;
 
                 let prom = bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo});
-                Promise.resolve(prom).then(built => builtTxn = built);
+                Promise.resolve(prom).then(built => builtTxn = built as PopulatedTransaction);
 
                 return (await expectFulfilled(prom))
-            })
+            });
 
             let txnInfo: TransactionDescription;
             const
-                l1BridgeZapInterface = L1BridgeZapFactory.createInterface(),
-                l2BridgeZapInterface = L2BridgeZapFactory.createInterface();
+                synapseBridgeInterface = SynapseBridgeFactory.createInterface(),
+                l1BridgeZapInterface   = L1BridgeZapFactory.createInterface(),
+                l2BridgeZapInterface   = L2BridgeZapFactory.createInterface();
 
 
             step(`tx should be a call to function ${tc.expected.wantFn}()`, function(this: Mocha.Context) {
-                txnInfo = tc.args.chainIdFrom === ChainId.ETH
-                    ? l1BridgeZapInterface.parseTransaction({data: builtTxn.data || ""})
-                    : l2BridgeZapInterface.parseTransaction({data: builtTxn.data || ""});
+                const txData = {data: builtTxn.data || ""};
+
+                if (tc.args.chainIdTo === ChainId.TERRA) {
+                    txnInfo = synapseBridgeInterface.parseTransaction(txData);
+                } else {
+                    txnInfo = tc.args.chainIdFrom === ChainId.ETH
+                        ? l1BridgeZapInterface.parseTransaction(txData)
+                        : l2BridgeZapInterface.parseTransaction(txData);
+                }
 
                 expect(txnInfo.name).to.equal(tc.expected.wantFn);
             });

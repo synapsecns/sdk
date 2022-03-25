@@ -15,7 +15,7 @@ import {
 import {
     type RPCEndpointsConfig,
     configureRPCEndpoints,
-    rpcProviderForChain
+    rpcProviderForChain, terraRpcProvider
 } from "@sdk/internal/rpcproviders";
 
 import {
@@ -32,7 +32,7 @@ const makeWantString = (tc: {want: boolean}, suffix: string="include"): string =
 
 
 describe("Basic tests", function(this: Mocha.Suite) {
-    const numChains: number = 14;
+    const numChains: number = 15;
 
     describe("Check networks", function(this: Mocha.Suite) {
         const
@@ -53,32 +53,37 @@ describe("Basic tests", function(this: Mocha.Suite) {
 
     describe("Test configureRPCEndpoints", function(this: Mocha.Suite) {
         const rpcConfig: RPCEndpointsConfig = {
-            [ChainId.BSC]:  {endpoint:"https://bsc-dataseed2.defibit.io"},
-            [ChainId.BOBA]: {endpoint:"https://mainnet.boba.network/", batchInterval: 100},
+            [ChainId.BSC]:   {endpoint: "https://bsc-dataseed2.defibit.io"},
+            [ChainId.BOBA]:  {endpoint: "https://mainnet.boba.network/", batchInterval: 100},
+            [ChainId.TERRA]: {endpoint: "https://terra.stakesystems.io"},
         }
 
         let
             previousBscEndpoint:  string,
             previousBobaEndpoint: string,
+            previousTerraEndpoint: string,
             previousEthEndpoint:  string;
 
         step("Populate current RPC endpoints", function(this: Mocha.Context) {
             previousBscEndpoint  = (rpcProviderForChain(ChainId.BSC)  as Web3Provider).connection.url;
             previousBobaEndpoint = (rpcProviderForChain(ChainId.BOBA) as Web3Provider).connection.url;
             previousEthEndpoint  = (rpcProviderForChain(ChainId.ETH)  as Web3Provider).connection.url;
+            previousTerraEndpoint = (terraRpcProvider(ChainId.TERRA).config.URL);
         })
 
 
-        it("configureRPCEndponts should only reconfigure BSC and Boba", function(this: Mocha.Context) {
+        it("configureRPCEndponts should only reconfigure BSC, Boba and Terra RPC endpoints", function(this: Mocha.Context) {
             configureRPCEndpoints(rpcConfig);
 
             const
                 checkBscEndpoint:   string = (rpcProviderForChain(ChainId.BSC)  as Web3Provider).connection.url,
                 checkBobaEndpoint:  string = (rpcProviderForChain(ChainId.BOBA) as Web3Provider).connection.url,
-                checkEthEndpoint:   string = (rpcProviderForChain(ChainId.ETH)  as Web3Provider).connection.url;
+                checkEthEndpoint:   string = (rpcProviderForChain(ChainId.ETH)  as Web3Provider).connection.url,
+                checkTerraEndpoint: string = (terraRpcProvider(ChainId.TERRA).config.URL);
 
             expect(checkBscEndpoint).to.not.equal(previousBscEndpoint);
             expect(checkBobaEndpoint).to.not.equal(previousBobaEndpoint);
+            expect(checkTerraEndpoint).to.not.equal(previousTerraEndpoint);
             expect(checkEthEndpoint).to.equal(previousEthEndpoint);
         })
     })

@@ -57,13 +57,13 @@ export namespace ERC20 {
             return this.instance.connect(provider);
         }
 
-        async approve(args: ApproveArgs, signer: Signer,
-        ): Promise<ContractTransaction> {
+        async approve(args: ApproveArgs, signer: Signer): Promise<ContractTransaction> {
             const
                 contract   = this.connectContract(signer),
-                approveTxn = this._buildApproveTransaction(args, contract);
+                approveTxn = await this._buildApproveTransaction(args, contract);
 
             return executePopulatedTransaction(approveTxn, signer)
+                .then(res => res as ContractTransaction)
         }
 
         async buildApproveTransaction(

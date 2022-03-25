@@ -1,10 +1,9 @@
+import {toLower} from "lodash-es";
+
 import {ChainId}  from "@chainid";
 import {Networks} from "@networks";
 
-import {
-    rejectPromise,
-    executePopulatedTransaction
-} from "@common/utils";
+import {executePopulatedTransaction, rejectPromise} from "@common/utils";
 
 import {SynapseContracts} from "@common/synapse_contracts";
 
@@ -14,14 +13,17 @@ import {
     type ID,
     SwapType,
     rpcProviderForChain,
-    tokenSwitch
+    terraRpcProvider,
+    tokenSwitch,
+    TerraSignerWrapper,
+    validateTerraAddress
 } from "@internal/index";
 
 import type {
+    BridgeConfigV3Contract,
     GenericZapBridgeContract,
     L1BridgeZapContract,
-    SynapseBridgeContract,
-    BridgeConfigV3Contract
+    SynapseBridgeContract
 } from "@contracts";
 
 import {Tokens}    from "@tokens";
@@ -32,24 +34,39 @@ import {
     instanceOfToken
 } from "@token";
 
-import type {ChainIdTypeMap} from "@common/types";
+import type {GenericSigner, GenericTxnRequest, GenericTxnResponse, NumberMap} from "@common/types";
 
-import {GasUtils}                   from "./gasutils";
-import {BridgeUtils}                from "./bridgeutils";
+import {GasUtils} from "./gasutils";
+
+import {
+    BridgeUtils,
+    CanBridgeError
+} from "./bridgeutils";
+
 import {ERC20, MAX_APPROVAL_AMOUNT} from "./erc20";
 
 import {id as makeKappa}         from "@ethersproject/hash";
 import {Zero}                    from "@ethersproject/constants";
-import {formatUnits}             from "@ethersproject/units";
+import {isAddress}   from "@ethersproject/address";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 
-import type {Signer}   from "@ethersproject/abstract-signer";
-import type {Provider} from "@ethersproject/providers";
+import {
+    Signer as EthersSigner
+} from "@ethersproject/abstract-signer";
 
-import type {
-    ContractTransaction,
-    PopulatedTransaction,
-} from "@ethersproject/contracts";
+import type {Provider} from "@ethersproject/providers";
+import type {ContractTransaction, PopulatedTransaction} from "@ethersproject/contracts";
+
+import {
+    MsgExecuteContract,
+    LCDClient,
+    Wallet as TerraWallet,
+    BlockTxBroadcastResult
+} from "@terra-money/terra.js";
+
+import bech32 from "bech32";
+
+const TEN = BigNumber.from(10);
 
 /**
  * Bridge provides a wrapper around common Synapse Bridge interactions, such as output estimation, checking supported swaps/bridges,
@@ -114,7 +131,7 @@ export namespace Bridge {
 
     interface CheckCanBridgeParams {
         address?: string;
-        signer?:  Signer;
+        signer?:  EthersSigner;
         token:    Token;
         amount:   BigNumberish;
     }
@@ -129,13 +146,14 @@ export namespace Bridge {
     export class SynapseBridge {
         protected network: Networks.Network;
         protected chainId: number;
-        protected provider: Provider;
+        protected _provider: Provider | LCDClient;
 
         private readonly bridgeAddress: string;
 
         private readonly bridgeInstance:           SynapseBridgeContract;
         private readonly networkZapBridgeInstance: GenericZapBridgeContract;
 
+        private readonly isTerra:      boolean;
         private readonly isL2Zap:      boolean;
         private readonly isL2ETHChain: boolean;
 
@@ -158,32 +176,55 @@ export namespace Bridge {
 
             this.network = network instanceof Networks.Network ? network : Networks.fromChainId(network);
             this.chainId = this.network.chainId;
-            this.provider = provider ?? rpcProviderForChain(this.chainId);
 
             this.requiredConfirmations = getRequiredConfirmationsForBridge(this.network);
 
+            this.isTerra = this.chainId === ChainId.TERRA;
             this.isL2Zap = this.network.zapIsL2BridgeZap;
             this.isL2ETHChain = BridgeUtils.isL2ETHChain(this.chainId);
 
-            const
-                factoryParams = {chainId: this.chainId, signerOrProvider: this.provider},
-                contractAddrs = SynapseContracts.contractsForChainId(this.chainId);
+            this._provider = provider ?? (this.isTerra
+                ? terraRpcProvider(this.chainId)
+                : rpcProviderForChain(this.chainId)
+            );
+
+            const contractAddrs = SynapseContracts.contractsForChainId(this.chainId);
 
             this.bridgeAddress    = contractAddrs.bridgeAddress;
             this.zapBridgeAddress = contractAddrs.bridgeZapAddress;
 
-            this.bridgeInstance = SynapseEntities.SynapseBridgeContractInstance(factoryParams);
+            if (!this.isTerra) {
+                const factoryParams = {chainId: this.chainId, signerOrProvider: (this._provider as Provider)};
 
-            if (this.zapBridgeAddress && this.zapBridgeAddress !== "") {
-                this.networkZapBridgeInstance = SynapseEntities.GenericZapBridgeContractInstance(factoryParams);
+                this.bridgeInstance = SynapseEntities.SynapseBridgeContractInstance(factoryParams);
+
+                if (this.zapBridgeAddress && this.zapBridgeAddress !== "") {
+                    this.networkZapBridgeInstance = SynapseEntities.GenericZapBridgeContractInstance(factoryParams);
+                }
             }
         }
 
+        private get provider(): Provider {
+            return this._provider as Provider
+        }
+
+        private get terraProvider(): LCDClient {
+            return this._provider as LCDClient
+        }
+
         bridgeVersion(): Promise<BigNumber> {
+            if (this.isTerra) {
+                return Promise.resolve(BigNumber.from(6))
+            }
+
             return this.bridgeInstance.bridgeVersion()
         }
 
         WETH_ADDRESS(): Promise<string> {
+            if (this.isTerra) {
+                return Promise.resolve("0x0000000000000000000000000000000000000000")
+            }
+
             return this.bridgeInstance.WETH_ADDRESS()
         }
 
@@ -231,7 +272,7 @@ export namespace Bridge {
          * @return {Promise<PopulatedTransaction>} Populated transaction instance which can be sent via ones choice
          * of web3/ethers/etc.
          */
-        async buildBridgeTokenTransaction(args: BridgeTransactionParams): Promise<PopulatedTransaction> {
+        async buildBridgeTokenTransaction(args: BridgeTransactionParams): Promise<PopulatedTransaction | MsgExecuteContract> {
             const
                 {addressTo} = args,
                 tokenArgs = this.makeBridgeTokenArgs(args),
@@ -239,61 +280,114 @@ export namespace Bridge {
 
             if ((!addressTo) || addressTo === "") {
                 return rejectPromise(
-                    new Error("BridgeTransactionParams.addressTo cannot be empty string or undefined")
+                    new CanBridgeError("BridgeTransactionParams.addressTo cannot be empty string or undefined")
+                )
+            }
+
+            if (args.chainIdTo === ChainId.TERRA && !validateTerraAddress(args.addressTo)) {
+                return rejectPromise(
+                    new CanBridgeError(`${args.addressTo} passed as BridgeTransactionParams.addressTo is not a valid Terra address`)
+                )
+            } else if (args.chainIdTo !== ChainId.TERRA && !isAddress(args.addressTo)) {
+                return rejectPromise(
+                    new CanBridgeError(`${args.addressTo} passed as BridgeTransactionParams.addressTo is not a valid EVM address`)
                 )
             }
 
             args = {...args, tokenFrom, tokenTo};
 
-            let newTxn: Promise<PopulatedTransaction> = this.chainId === ChainId.ETH
-                ? this.buildETHMainnetBridgeTxn(args, tokenArgs)
-                : this.buildL2BridgeTxn(args, tokenArgs);
+            let newTxn: Promise<PopulatedTransaction>;
 
-            return newTxn
-                .then(txn =>
-                    GasUtils.populateGasParams(this.chainId, txn, "bridge")
-                )
+            if (args.tokenFrom.isEqual(Tokens.UST)) {
+                if (this.isTerra) {
+                    return this.buildTerraBridgeTxn(args)
+                }
+
+                const redeemArgs: [BigNumberish, string, BigNumberish] = [
+                    args.chainIdTo,
+                    Tokens.UST.address(this.chainId),
+                    args.amountFrom
+                ];
+
+                if (args.chainIdTo === ChainId.TERRA) {
+                    newTxn = this.bridgeInstance
+                        .populateTransaction
+                        .redeemV2(
+                            bech32.decode(args.addressTo).words,
+                            ...redeemArgs
+                        );
+                } else {
+                    newTxn = this.bridgeInstance
+                        .populateTransaction
+                        .redeem(
+                            args.addressTo,
+                            ...redeemArgs
+                        );
+                }
+            } else {
+                newTxn = this.chainId === ChainId.ETH
+                    ? this.buildETHMainnetBridgeTxn(args, tokenArgs)
+                    : this.buildL2BridgeTxn(args, tokenArgs);
+            }
+
+            return newTxn.then(txn => GasUtils.populateGasParams(this.chainId, txn, "bridge"))
         }
 
         /**
          * Starts the Bridge process between this Bridge (the source chain) and the bridge contract on the destination chain.
          * Note that this function **does** send a signed transaction.
          * @param {BridgeTransactionParams} args Parameters for the bridge transaction.
-         * @param {Signer} signer Some instance which implements the Ethersjs {@link Signer} interface.
+         * @param {EthersSigner} signer Some instance which implements the Ethersjs {@link EthersSigner} interface.
          * @param {boolean} callStatic (Optional, default: false) if true, uses provider.callStatic instead of actually sending the signed transaction.
          * @return {Promise<ContractTransaction>}
          */
         async executeBridgeTokenTransaction(
             args:       BridgeTransactionParams,
-            signer:     Signer,
+            signer:     EthersSigner | TerraWallet | GenericSigner,
             callStatic: boolean=false
-        ): Promise<ContractTransaction> {
+        ): Promise<ContractTransaction | BlockTxBroadcastResult> {
             try {
                 await this.checkSwapSupported(args);
             } catch (e) {
+                /* c8 ignore next 2 */
                 return rejectPromise(e);
             }
 
-            const
-                {tokenFrom, amountFrom, addressTo} = args,
-                signerAddress = await signer.getAddress();
+            const {tokenFrom, amountFrom, addressTo} = args;
 
+            let txSigner: GenericSigner;
+            let signerAddress: string;
+
+            if (signer instanceof TerraWallet) {
+                txSigner = new TerraSignerWrapper(signer);
+            } else {
+                txSigner = signer;
+            }
+
+            signerAddress = await txSigner.getAddress();
             args.addressTo = addressTo ?? signerAddress
 
-            const checkArgs = {signer, token: tokenFrom, amount: amountFrom};
+            let checkArgs = {token: tokenFrom, amount: amountFrom, address: toLower(signerAddress)};
+
+            const sendTxn = (txn: GenericTxnRequest): Promise<GenericTxnResponse> => {
+                if (txn instanceof MsgExecuteContract) {
+                    txn.sender = signerAddress;
+                            }
+
+                return executePopulatedTransaction(txn, txSigner)
+            }
 
             return this.checkCanBridge(checkArgs)
-                .then(canBridgeRes => {
-                    const {canBridge, reasonUnable} = canBridgeRes;
-
+                .then(({canBridge, reasonUnable, amount}) => {
                     if (!canBridge) {
-                        return rejectPromise(reasonUnable)
+                        const rejection = new CanBridgeError(reasonUnable, amount);
+                        return rejectPromise(rejection)
                     }
 
                     return this.buildBridgeTokenTransaction(args)
-                        .then(txn => executePopulatedTransaction(txn, signer))
+                        .then(sendTxn)
+                        .catch(rejectPromise)
                 })
-                .catch(rejectPromise)
         }
 
         /**
@@ -329,12 +423,12 @@ export namespace Bridge {
          * @param {Token|string} args.token {@link Token} instance or valid on-chain address of the token the user will be sending
          * to the bridge on the source chain.
          * @param {BigNumberish} args.amount Optional, a specific amount of args.token to approve. By default, this function
-         * @param {Signer} signer Valid ethers Signer instance for building a fully and properly populated
+         * @param {EthersSigner} signer Valid ethers Signer instance for building a fully and properly populated
          * transaction.
          */
         async executeApproveTransaction(
             args:       {token: Token | string, amount?: BigNumberish},
-            signer:     Signer,
+            signer:     EthersSigner,
         ): Promise<ContractTransaction> {
             const
                 [approveArgs, tokenAddress] = this.buildERC20ApproveArgs(args),
@@ -343,146 +437,48 @@ export namespace Bridge {
             return ERC20.approve(approveArgs, tokenParams, signer)
         }
 
-        async getAllowanceForAddress(args: {
-            address: string,
-            token:   Token,
-        }): Promise<BigNumber> {
-            let { address, token } = args;
-            let tokenAddress = token.address(this.chainId);
-
-            return ERC20.allowanceOf(address, this.zapBridgeAddress, {tokenAddress, chainId: this.chainId})
-        }
-
-        private async resolveApproveFunc(
-            approveRes:    NeedsTokenApproveResult,
-            hasBalanceRes: Promise<CanBridgeResult>,
-            token:         Token
-        ): Promise<CanBridgeResult> {
-            const {needsApproval, currentAllowance} = approveRes;
-
-            let allowanceEth: string;
-            if (currentAllowance) {
-                allowanceEth = formatUnits(currentAllowance, token.decimals(this.chainId)).toString();
-            }
-
-            const errStr: string = `Spend allowance of Bridge too low for token ${token.symbol}; current allowance for Bridge is ${allowanceEth}`;
-
-            return needsApproval
-                ? {canBridge: false, reasonUnable: errStr, amount: currentAllowance}
-                : hasBalanceRes
-        }
-
-        private async checkNeedsApprove({
-            address,
-            token,
-            amount=MAX_APPROVAL_AMOUNT.sub(1)
-        }: CheckCanBridgeParams): Promise<NeedsTokenApproveResult> {
-            const [{spender}, tokenAddress] = this.buildERC20ApproveArgs({token, amount});
-
-            return ERC20.allowanceOf(address, spender, {tokenAddress, chainId: this.chainId})
-                .then(currentAllowance => ({needsApproval: currentAllowance.lt(amount), currentAllowance}))
-        }
-
-        private async resolveBalanceFunc(
-            prom:   Promise<BigNumber>,
-            amount: BigNumberish,
-            token:  Token
-        ): Promise<CanBridgeResult> {
-            return Promise.resolve(prom)
-                .then(balance => {
-                    const
-                        hasBalance         = balance.gte(amount),
-                        balanceEth: string = formatUnits(balance, token.decimals(this.chainId)).toString();
-
-                    return (
-                        hasBalance
-                            ? {canBridge: true}
-                            : {canBridge: false, reasonUnable: `Balance of token ${token.symbol} is too low; current balance is ${balanceEth}`, amount: balance}
-                    ) as CanBridgeResult
-                })
-                .catch(rejectPromise)
-        }
-
-        private async checkGasTokenBalance(args: CanBridgeParams): Promise<CanBridgeResult> {
-            const {address, token, amount} = args;
-
-            const balanceProm: Promise<BigNumber> = this.provider.getBalance(address);
-
-            return this.resolveBalanceFunc(
-                balanceProm,
-                amount,
-                token
-            )
-        }
-
         async checkCanBridge(args: CheckCanBridgeParams): Promise<CanBridgeResult> {
             const {token, signer, address} = args;
 
-            const signerAddress: string = (address && address !== "")
-                ? address
-                : (await signer.getAddress());
+            let signerAddress: string;
+            if (signer) {
+                /* c8 ignore next */
+                signerAddress = await signer.getAddress();
+            } else if (address && address !== "") {
+                signerAddress = address;
+            }
 
             const checkArgs: CanBridgeParams = {...args, address: signerAddress};
+            const
+                isTerraTx:          boolean = this.isTerra && token.isEqual(Tokens.UST),
+                isGasTokenTransfer: boolean = (this.network.chainCurrency === token.symbol) && BridgeUtils.chainSupportsGasToken(this.chainId);
 
-            const isGasTokenTransfer: boolean =
-                (this.network.chainCurrency === token.symbol) && BridgeUtils.chainSupportsGasToken(this.chainId);
+            if (isTerraTx) {
+                return this.checkTerraUSTBalance(checkArgs);
+            }
 
             let hasBalanceRes: Promise<CanBridgeResult> = isGasTokenTransfer
                 ? this.checkGasTokenBalance(checkArgs)
                 : this.checkERC20Balance(checkArgs);
 
-            return isGasTokenTransfer
-                ? hasBalanceRes
-                : this.checkNeedsApprove(checkArgs)
+            if (isGasTokenTransfer) {
+                return hasBalanceRes
+            }
+
+            return this.checkNeedsApprove(checkArgs)
                     .then(approveRes => this.resolveApproveFunc(approveRes, hasBalanceRes, token))
                     .catch(rejectPromise)
-        }
-
-        private async checkERC20Balance(args: CanBridgeParams): Promise<CanBridgeResult> {
-            const
-                {address, amount, token} = args,
-                tokenAddress: string = token.address(this.chainId);
-
-            return this.resolveBalanceFunc(
-                ERC20.balanceOf(address, {tokenAddress, chainId: this.chainId}),
-                amount,
-                token
-            )
-        }
-
-        private buildERC20ApproveArgs(args: {
-            token:   Token | string,
-            amount?: BigNumberish
-        }): [ERC20.ApproveArgs, string] {
-            const {token, amount} = args;
-
-            let tokenAddr: string = instanceOfToken(token)
-                ? token.address(this.chainId)
-                : token as string;
-
-            return [{
-                spender: this.zapBridgeAddress,
-                amount
-            }, tokenAddr]
-        }
-
-        private async checkSwapSupported(args: BridgeParams): Promise<boolean> {
-            return new Promise<boolean>((resolve, reject) => {
-                let [swapSupported, errReason] = this.swapSupported(args);
-                if (!swapSupported) {
-                    reject(errReason);
-                    return
-                }
-
-                resolve(true);
-            })
         }
 
         private async calculateBridgeRate(args: BridgeParams): Promise<BridgeOutputEstimate> {
             let {chainIdTo, amountFrom} = args;
 
-            const toChainZapParams = {chainId: chainIdTo, signerOrProvider: rpcProviderForChain(chainIdTo)};
-            const toChainZap: GenericZapBridgeContract = SynapseEntities.GenericZapBridgeContractInstance(toChainZapParams);
+            let toChainZap: GenericZapBridgeContract;
+
+            if (chainIdTo !== ChainId.TERRA) {
+                const toChainZapParams = {chainId: chainIdTo, signerOrProvider: rpcProviderForChain(chainIdTo)};
+                toChainZap = SynapseEntities.GenericZapBridgeContractInstance(toChainZapParams);
+            }
 
             const {
                 tokenFrom, tokenTo,
@@ -490,15 +486,17 @@ export namespace Bridge {
                 fromChainTokens
             } = this.makeBridgeTokenArgs(args);
 
-
             let {intermediateToken, bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
 
-            const fromCoinDecimals = tokenFrom.decimals(this.chainId);
+            const
+                TEN = BigNumber.from(10),
+                fromCoinDecimals = tokenFrom.decimals(this.chainId);
 
             const
+                involvesUST             = [tokenFrom.swapType, tokenTo.swapType].includes(SwapType.UST),
                 intermediateTokenAddr   = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase(),
-                multiplier              = BigNumber.from(10).pow(18-fromCoinDecimals),
-                amountFromFixedDecimals = amountFrom.mul(multiplier);
+                bridgeFeeMultiplier     = involvesUST ? TEN.pow(12) : 1,
+                amountFromFixedDecimals = involvesUST ? amountFrom : amountFrom.mul(TEN.pow(18-fromCoinDecimals));
 
             const bridgeFeeRequest: Promise<BigNumber> = this.bridgeConfigInstance["calculateSwapFee(string,uint256,uint256)"](
                 intermediateTokenAddr,
@@ -544,10 +542,6 @@ export namespace Bridge {
 
             try { /* c8 ignore start */
                 bridgeFee = await bridgeFeeRequest;
-                if (bridgeFee === null) {
-                    console.error("calculateSwapFee returned null");
-                    return rejectPromise("calculateSwapFee returned null")
-                }
             } catch (e) {
                 console.error(`Error in bridge fee request: ${e}`);
                 return rejectPromise(e)
@@ -578,50 +572,24 @@ export namespace Bridge {
             }
 
             let amountToReceive: BigNumber;
+
             try { /* c8 ignore start */
                 amountToReceive = await Promise.resolve(amountToReceive_to_prom)
             } catch (err) {
                 return rejectPromise(err)
             } /* c8 ignore stop */
 
-            return {amountToReceive, bridgeFee}
-        }
-
-        private checkEasyArgs(
-            args: BridgeTransactionParams,
-            zapBridge: GenericZapBridgeContract,
-            easyDeposits:    ID[],
-            easyRedeems:     ID[],
-            easyDepositETH?: ID[],
-        ): EasyArgsCheck {
-            let
-                castArgs = args as BridgeUtils.BridgeTxParams,
-                isEasy: boolean = false,
-                txn:    Promise<PopulatedTransaction>;
-
-            const params = BridgeUtils.makeEasyParams(castArgs, this.chainId, args.tokenTo);
-
-            switch (true) {
-                case easyRedeems.includes(args.tokenTo.id):
-                    isEasy = true;
-                    txn    = zapBridge.populateTransaction.redeem(...params);
-                    break;
-                case easyDeposits.includes(args.tokenTo.id):
-                    isEasy = true;
-                    txn    = zapBridge.populateTransaction.deposit(...params);
-                    break;
-                case easyDepositETH.includes(args.tokenTo.id):
-                    isEasy = true;
-                    txn    =  zapBridge
-                        .populateTransaction
-                        .depositETH(
-                            ...BridgeUtils.depositETHParams(castArgs),
-                            BridgeUtils.overrides(args.amountFrom)
-                        );
-                    break;
+            let fee = bridgeFee;
+            if (fee) {
+                fee = fee.mul(bridgeFeeMultiplier);
+            } else {
+                fee = Zero;
             }
 
-            return {castArgs, isEasy, txn}
+            return {
+                amountToReceive,
+                bridgeFee: fee
+            }
         }
 
         private buildETHMainnetBridgeTxn(
@@ -909,6 +877,25 @@ export namespace Bridge {
             }
         }
 
+        private buildTerraBridgeTxn({
+            addressTo,
+            chainIdTo,
+            amountFrom
+        }: BridgeTransactionParams): Promise<MsgExecuteContract> {
+            return Promise.resolve(new MsgExecuteContract(
+                null,
+                this.bridgeAddress,
+                {
+                    deposit: {
+                        to_address: toLower(addressTo),
+                        chain_id:  `${chainIdTo}`,
+                        denom:     "uusd"
+                    }
+                },
+                { uusd: amountFrom.toNumber() }
+            ))
+        }
+
         private makeBridgeTokenArgs(args: BridgeParams): BridgeTokenArgs {
             let {tokenFrom, tokenTo, chainIdTo} = args;
 
@@ -943,9 +930,187 @@ export namespace Bridge {
                 tokenIndexTo
             }
         }
+
+        private checkEasyArgs(
+            args:            BridgeTransactionParams,
+            zapBridge:       GenericZapBridgeContract,
+            easyDeposits:    ID[],
+            easyRedeems:     ID[],
+            easyDepositETH?: ID[],
+        ): EasyArgsCheck {
+            let
+                castArgs = args as BridgeUtils.BridgeTxParams,
+                isEasy: boolean = false,
+                txn:    Promise<PopulatedTransaction>;
+
+            const params = BridgeUtils.makeEasyParams(castArgs, this.chainId, args.tokenTo);
+
+            switch (true) {
+                case easyRedeems.includes(args.tokenTo.id):
+                    isEasy = true;
+                    txn    = zapBridge.populateTransaction.redeem(...params);
+                    break;
+                case easyDeposits.includes(args.tokenTo.id):
+                    isEasy = true;
+                    txn    = zapBridge.populateTransaction.deposit(...params);
+                    break;
+                case easyDepositETH.includes(args.tokenTo.id):
+                    isEasy = true;
+                    txn    =  zapBridge
+                        .populateTransaction
+                        .depositETH(
+                            ...BridgeUtils.depositETHParams(castArgs),
+                            BridgeUtils.overrides(args.amountFrom)
+                        );
+                    break;
+            }
+
+            return {castArgs, isEasy, txn}
+        }
+
+        private async checkSwapSupported(args: BridgeParams): Promise<boolean> {
+            return new Promise<boolean>((resolve, reject) => {
+                let [swapSupported, errReason] = this.swapSupported(args);
+                if (!swapSupported) {
+                    reject(errReason);
+                    return
+                }
+
+                resolve(true);
+            })
+        }
+
+        private buildERC20ApproveArgs(args: {
+            token:   Token | string,
+            amount?: BigNumberish
+        }): [ERC20.ApproveArgs, string] {
+            const {token, amount} = args;
+
+            let tokenAddr: string = instanceOfToken(token)
+                ? token.address(this.chainId)
+                : token as string;
+
+            let spender: string;
+            if (tokenAddr === Tokens.UST.address(this.chainId)) {
+                spender = this.bridgeAddress;
+            } else {
+                spender = this.zapBridgeAddress;
+            }
+
+            return [{
+                spender,
+                amount
+            }, tokenAddr]
+        }
+
+        async getAllowanceForAddress(args: {
+            address: string,
+            token:   Token,
+        }): Promise<BigNumber> {
+            let { address, token } = args;
+            let tokenAddress = token.address(this.chainId);
+
+            return ERC20.allowanceOf(address, this.zapBridgeAddress, {tokenAddress, chainId: this.chainId})
+        }
+
+        private async resolveApproveFunc(
+            approveRes:    NeedsTokenApproveResult,
+            hasBalanceRes: Promise<CanBridgeResult>,
+            token:         Token
+        ): Promise<CanBridgeResult> {
+            const {needsApproval, currentAllowance} = approveRes;
+            const errStr: string = `Spend allowance of Bridge too low for token ${token.symbol}`;
+
+            return needsApproval
+                ? ({canBridge: false, reasonUnable: errStr, amount: currentAllowance})
+                : hasBalanceRes
+        }
+
+        private async checkNeedsApprove({
+            address,
+            token,
+            amount=MAX_APPROVAL_AMOUNT.sub(1)
+        }: CheckCanBridgeParams): Promise<NeedsTokenApproveResult> {
+            const [{spender}, tokenAddress] = this.buildERC20ApproveArgs({token, amount});
+
+            return ERC20.allowanceOf(address, spender, {tokenAddress, chainId: this.chainId})
+                .then(currentAllowance => ({needsApproval: currentAllowance.lt(amount), currentAllowance}))
+        }
+
+        private async checkGasTokenBalance(args: CanBridgeParams): Promise<CanBridgeResult> {
+            const {signer, address, amount, token} = args;
+
+            let balanceFn: () => Promise<BigNumber>;
+            if (signer) {
+                /* c8 ignore next */
+                balanceFn = signer.getBalance;
+            } else if (address) {
+                balanceFn = () => this.provider.getBalance(address);
+            }
+
+            return this.resolveBalanceFunc(
+                balanceFn(),
+                amount,
+                token
+            )
+        }
+
+        private async checkERC20Balance(args: CheckCanBridgeParams): Promise<CanBridgeResult> {
+            const
+                {address, amount, token} = args,
+                tokenAddress = token.address(this.chainId);
+
+            return this.resolveBalanceFunc(
+                ERC20.balanceOf(address, {tokenAddress, chainId: this.chainId}),
+                amount,
+                token
+            )
+        }
+
+        private async checkTerraUSTBalance({address, token, amount}: CanBridgeParams): Promise<CanBridgeResult> {
+            const balProm: Promise<BigNumber> = this.terraProvider.bank.balance(address)
+                .then(([res]) => {
+                    let coin = res.get("uusd");
+
+                    let ustBalance: BigNumber = Zero;
+
+                    if (coin) {
+                        const {amount} = coin.toData();
+                        if (amount && (amount !== "")) {
+                            ustBalance = BigNumber.from(amount);
+                        }
+                    }
+
+                    return ustBalance
+                })
+
+            return this.resolveBalanceFunc(
+                balProm,
+                amount,
+                token
+            )
+        }
+
+        private async resolveBalanceFunc(
+            prom:   Promise<BigNumber>,
+            amount: BigNumberish,
+            token:  Token
+        ): Promise<CanBridgeResult> {
+            return Promise.resolve(prom)
+                .then(balance => {
+                    const errMsg: string = `Balance of token ${token.symbol} is too low`;
+
+                    if (balance.gte(amount)) {
+                        return {canBridge: true}
+                    }
+
+                    return {canBridge: false, reasonUnable: errMsg, amount: balance}
+                })
+                .catch(rejectPromise)
+        }
     }
 
-    const REQUIRED_CONFS: ChainIdTypeMap<number> = {
+    const REQUIRED_CONFS: NumberMap = {
         [ChainId.ETH]:       7,
         [ChainId.OPTIMISM]:  1,
         [ChainId.CRONOS]:    6,
@@ -958,6 +1123,8 @@ export namespace Bridge {
         [ChainId.MOONRIVER]: 21,
         [ChainId.ARBITRUM]:  40,
         [ChainId.AVALANCHE]: 5,
+        [ChainId.TERRA]:     1,
+        [ChainId.AURORA]:    5,
         [ChainId.HARMONY]:   1,
         [ChainId.AURORA]:    5,
     };
@@ -972,6 +1139,7 @@ export namespace Bridge {
         return null
     }
 
+    /* c8 ignore next */
     export function bridgeSwapSupported(args: TokenSwap.BridgeSwapSupportedParams): TokenSwap.SwapSupportedResult {
         return TokenSwap.bridgeSwapSupported(args)
     }

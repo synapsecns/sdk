@@ -1,4 +1,4 @@
-import _ from "lodash";
+import {shuffle} from "lodash-es";
 
 import {
     ChainId,
@@ -8,35 +8,46 @@ import {
     type Token
 } from "@sdk";
 
-import {tokenSwitch} from "@sdk/internal";
+import {isTerraChainId} from "@chainid";
+
+import {terraRpcProvider, tokenSwitch} from "@sdk/internal";
 
 import {
     DEFAULT_TEST_TIMEOUT,
     getTestAmount,
     expectFulfilled,
     expectPromiseResolve,
+    expectZero,
+    expectNotZero,
     valueIfUndefined,
     makeWalletSignerWithProvider,
-    bridgeTestPrivkey1,
     expectRejected
 } from "@tests/helpers";
 
 import {
     type BridgeSwapTestCase,
+    bridgeSwapTestPrivkey,
     makeBridgeSwapTestCase
 }  from "./bridge_test_utils";
 
 import {formatUnits} from "@ethersproject/units";
 import {BigNumber}   from "@ethersproject/bignumber";
+
 import {expect} from "chai";
 import {Zero} from "@ethersproject/constants";
 
+import {RawKey} from "@terra-money/terra.js";
+
 
 describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.Suite) {
+    const
+        terraWallet = new RawKey(Buffer.from(bridgeSwapTestPrivkey.privkey, "hex")),
+        evmWallet   = chainId => makeWalletSignerWithProvider(chainId, bridgeSwapTestPrivkey.privkey);
+
     interface Expected {
-        notZero:   boolean,
-        wantError: boolean,
-        noAddrTo:  boolean,
+        notZero:   boolean;
+        wantError: boolean;
+        noAddrTo:  boolean;
     }
 
     type TestCase = BridgeSwapTestCase<Expected>
@@ -45,15 +56,11 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         t1: Token, t2: Token,
         c1: number, c2: number,
         amt?:      string,
-        notZero?:  boolean,
-        wantErr?:  boolean,
-        noAddrTo?: boolean,
+        notZero:   boolean = true,
+        wantError: boolean = false,
+        noAddrTo:  boolean = false,
     ): TestCase => {
-        const expected: Expected = {
-            notZero:   valueIfUndefined(notZero,  true),
-            wantError: valueIfUndefined(wantErr,  false),
-            noAddrTo:  valueIfUndefined(noAddrTo, false),
-        };
+        const expected: Expected = {notZero, wantError, noAddrTo};
 
         return makeBridgeSwapTestCase(c1, t1, c2, t2, expected, getTestAmount(t1, c1, amt))
     }
@@ -211,6 +218,10 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         makeTestCase(Tokens.USDT,      Tokens.USDC,      ChainId.ARBITRUM,  ChainId.METIS,    "100"),
         makeTestCase(Tokens.USDT,      Tokens.USDT,      ChainId.ARBITRUM,  ChainId.AVALANCHE,"100"),
         makeTestCase(Tokens.USDC,      Tokens.NUSD,      ChainId.ARBITRUM,  ChainId.METIS,    "100"),
+        makeTestCase(Tokens.UST,       Tokens.UST,       ChainId.BSC,       ChainId.POLYGON,  "2500"),
+        makeTestCase(Tokens.UST,       Tokens.UST,       ChainId.POLYGON,   ChainId.ETH,      "2500"),
+        makeTestCase(Tokens.UST,       Tokens.UST,       ChainId.BSC,       ChainId.TERRA,    "2500"),
+        makeTestCase(Tokens.UST,       Tokens.UST,       ChainId.TERRA,     ChainId.ETH,      "2500"),
     ].forEach((tc: TestCase) => {
         const [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc)
 
@@ -219,13 +230,13 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         it(bridgeOutputTestTitle, async function(this: Mocha.Context) {
             this.timeout(DEFAULT_TEST_TIMEOUT)
 
-            let {args: { chainIdFrom, ...testArgs }, expected: {notZero, wantError}} = tc;
+            let {args: {chainIdFrom: network, ...testArgs}, expected: {notZero, wantError}} = tc;
 
-            const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
+            const bridgeInstance = new Bridge.SynapseBridge({network});
 
-            let prom: Promise<Bridge.BridgeOutputEstimate> = bridgeInstance.estimateBridgeTokenOutput(testArgs);
-
-            let amountToReceive: BigNumber;
+            let
+                prom: Promise<Bridge.BridgeOutputEstimate> = bridgeInstance.estimateBridgeTokenOutput(testArgs),
+                amountToReceive: BigNumber;
 
             try {
                 const {amountToReceive: amt} = await prom;
@@ -236,41 +247,41 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
 
             amountTo = amountToReceive;
 
-            if (notZero) {
-                return expect(amountToReceive).to.be.gt(Zero);
-            } else {
-                return expect(amountToReceive).to.equal(Zero)
-            }
+            return notZero
+                ? expect(amountToReceive).to.be.gt(Zero)
+                : expect(amountToReceive).to.equal(Zero);
         });
 
         it(approveTestTitle, async function(this: Mocha.Context) {
             if (tc.expected.wantError) return
+            if (tc.args.chainIdFrom === ChainId.TERRA) return
 
             this.timeout(DEFAULT_TEST_TIMEOUT);
+            this.slow(1000);
 
             let {
                 args: {
-                    chainIdFrom,
-                    tokenFrom,
-                    amountFrom,
-                },
+                    chainIdFrom: network,
+                    tokenFrom:   token,
+                    amountFrom:  amount
+                }
             } = tc;
 
-            const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
+            const bridgeInstance = new Bridge.SynapseBridge({network});
 
-            switch (tokenSwitch(tokenFrom)) {
+            switch (tokenSwitch(token)) {
                 case Tokens.ETH:
-                    tokenFrom = Tokens.WETH;
+                    token = Tokens.WETH;
                     break;
                 case Tokens.AVAX:
-                    tokenFrom = Tokens.WAVAX;
+                    token = Tokens.WAVAX;
                     break;
                 case Tokens.MOVR:
-                    tokenFrom = Tokens.WMOVR;
+                    token = Tokens.WMOVR;
                     break;
             }
 
-            let prom = bridgeInstance.buildApproveTransaction({token:  tokenFrom, amount: amountFrom});
+            let prom = bridgeInstance.buildApproveTransaction({token, amount});
 
             return (await expectFulfilled(prom))
         });
@@ -286,17 +297,25 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
             let {args: { chainIdFrom }, args, expected: {wantError, noAddrTo}} = tc;
 
             const
-                bridgeInstance    = new Bridge.SynapseBridge({ network: chainIdFrom }),
-                addressTo: string = noAddrTo
-                    ? _.shuffle(undefEmptyArr)[0]
-                    : makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey1).address;
+                wantResolve: boolean = !noAddrTo,
+                bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
+
+            let addressTo: string;
+
+            if (noAddrTo) {
+                addressTo = shuffle(undefEmptyArr)[0];
+            } else {
+                addressTo = isTerraChainId(tc.args.chainIdTo)
+                    ? terraRpcProvider().wallet(terraWallet).key.accAddress
+                    : evmWallet(tc.args.chainIdTo).address;
+            }
 
             let prom = bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo});
 
             return (await (
                 wantError
                     ? expectRejected(prom)
-                    : expectPromiseResolve(prom, !noAddrTo)
+                    : expectPromiseResolve(prom, wantResolve)
             ))
         });
     });

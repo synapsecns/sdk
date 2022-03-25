@@ -1,49 +1,64 @@
 import {expect} from "chai";
 import {step} from "mocha-steps";
 
-import {Bridge, ChainId, Networks, Tokens} from "@sdk";
+import {Bridge, ChainId, Networks, type Token, Tokens} from "@sdk";
 
-import {rejectPromise, staticCallPopulatedTransaction} from "@sdk/common/utils";
+import {TerraSignerWrapper} from "@sdk/internal/utils";
+import {CanBridgeError}   from "@sdk/bridge/bridgeutils";
+import {ERC20}              from "@sdk/bridge/erc20";
+import {SynapseContracts}   from "@sdk/common/synapse_contracts";
+
+import {SynapseBridgeFactory} from "@sdk/contracts";
+
+import {GenericSigner, GenericTxnResponse, StaticCallResult} from "@sdk/common/types";
+import {decodeHexTerraAddress, rejectPromise, staticCallPopulatedTransaction} from "@sdk/common/utils";
 
 import {
-    bridgeTestPrivkey1,
     DEFAULT_TEST_TIMEOUT,
     expectFulfilled,
+    expectNothingFromPromise,
     expectNotZero,
     expectRejected,
-    makeWalletSignerWithProvider,
+    WalletArgs,
+    buildWalletArgs,
+    RunLiveBridgeTests,
+    SHORT_TEST_TIMEOUT,
 } from "@tests/helpers";
 
-import {bridgeInteractionsPrivkey, type BridgeSwapTestCase} from "./bridge_test_utils";
+import {bridgeInteractionsPrivkey, type BridgeSwapTestCase, bridgeSwapTestPrivkey} from "./bridge_test_utils";
 
-import type {TransactionResponse} from "@ethersproject/providers";
+import {MockTerraSignerWrapper} from "./mockterrasigner";
 
-import type {ContractTransaction, PopulatedTransaction,} from "@ethersproject/contracts";
+import type {PopulatedTransaction} from "@ethersproject/contracts";
 
-import {Wallet} from "@ethersproject/wallet";
-import {parseEther} from "@ethersproject/units";
-import {BigNumber} from "@ethersproject/bignumber";
-import {StaticCallResult} from "@common/types";
+import {Zero} from "@ethersproject/constants";
+import {BigNumber}  from "@ethersproject/bignumber";
+import {Wallet as EvmWallet} from "@ethersproject/wallet";
+import {TransactionResponse} from "@ethersproject/providers";
+import {TransactionDescription} from "@ethersproject/abi";
 
-type TxnResponse = ContractTransaction | TransactionResponse;
 
-function executeTransaction(prom: Promise<TxnResponse>): Promise<void> {
-    return Promise.resolve(prom)
-        .then((response: TxnResponse): Promise<void> => {
-            return response.wait(1)
+import {BlockTxBroadcastResult, MsgExecuteContract, Wallet as TerraWallet} from "@terra-money/terra.js";
+
+
+function executeTransaction(prom: Promise<TransactionResponse>): Promise<void> {
+    return prom
+        .then((response: TransactionResponse): Promise<void> =>
+            response.wait(1)
                 .then(() => {})
-                .catch(rejectPromise)
-        })
+        )
 }
 
-function callStatic(prom: Promise<StaticCallResult>): Promise<void> {
-    return Promise.resolve(prom)
-        .then((response: StaticCallResult): Promise<void> => {
-            if (response === StaticCallResult.Failure) {
-                return rejectPromise("Static Call Failed")
+function executeTransactionTerra(prom: Promise<BlockTxBroadcastResult>): Promise<void> {
+    return prom
+        .then(() => {})
+        .catch(err => {
+            if (err.isAxiosError) {
+                const {response: {data}} = err;
+                return rejectPromise(data.message)
             }
 
-            return
+            return rejectPromise(err)
         })
 }
 
@@ -52,24 +67,8 @@ interface EstimateOutputs {
     bridgeArgs:     Bridge.BridgeTransactionParams,
 }
 
-interface WalletArgs {
-    wallet:         Wallet,
-    address:        string,
-    bridgeInstance: Bridge.SynapseBridge,
-}
-
-async function buildWalletArgs(chainId: number, privkey: string=bridgeTestPrivkey1): Promise<WalletArgs> {
-    const wallet = makeWalletSignerWithProvider(chainId, privkey);
-
-    return {
-        wallet,
-        address:       (await wallet.getAddress()),
-        bridgeInstance: new Bridge.SynapseBridge({ network: Networks.fromChainId(chainId) })
-    }
-}
 
 describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Suite) {
-
     interface TestOpts {
         executeSuccess: boolean,
         canBridge:      boolean,
@@ -79,107 +78,79 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         callStatic: boolean,
     }
 
-    const executeFailAmt: BigNumber = parseEther("420.696969");
+    function makeTcArgs(
+        t1: Token,  t2: Token,
+        c1: number, c2: number,
+        succeeds: boolean, canBridge: boolean,
+        amountFrom: BigNumber
+    ): any {
+        return {
+            args: {
+                tokenFrom:   t1,
+                tokenTo:     t2,
+                chainIdFrom: c1,
+                chainIdTo:   c2,
+                amountFrom:  amountFrom,
+            },
+            expected: {
+                executeSuccess: succeeds,
+                canBridge:      canBridge,
+            },
+        }
+    }
 
-    const testCases: TestCase[] = [
-        {
-            args: {
-                tokenFrom:   Tokens.ETH,
-                tokenTo:     Tokens.WETH,
-                chainIdFrom: ChainId.OPTIMISM,
-                chainIdTo:   ChainId.ETH,
-                amountFrom:  executeFailAmt,
-            },
-            expected: {
-                executeSuccess: false,
-                canBridge:      false,
-            },
-            callStatic:         false,
-        },
-        {
-            args: {
-                tokenFrom:   Tokens.ETH,
-                tokenTo:     Tokens.WETH,
-                chainIdFrom: ChainId.BOBA,
-                chainIdTo:   ChainId.ETH,
-                amountFrom:  executeFailAmt,
-            },
-            expected: {
-                executeSuccess: false,
-                canBridge:      false,
-            },
-            callStatic:         true,
-        },
-        {
-            args: {
-                tokenFrom:   Tokens.ETH,
-                tokenTo:     Tokens.WETH_E,
-                chainIdFrom: ChainId.ARBITRUM,
-                chainIdTo:   ChainId.AVALANCHE,
-                amountFrom:  parseEther("0.005"),
-            },
-            expected: {
-                executeSuccess: true,
-                canBridge:      true,
-            },
-            callStatic:         true,
-        },
-        // {
-        //     args: {
-        //         tokenFrom:   Tokens.WETH_E,
-        //         tokenTo:     Tokens.ETH,
-        //         chainIdFrom: ChainId.AVALANCHE,
-        //         chainIdTo:   ChainId.ARBITRUM,
-        //         amountFrom:  parseEther("0.05"),
-        //     },
-        //     expected: {
-        //         executeSuccess: false,
-        //         canBridge:      false,
-        //     },
-        //     callStatic:         true,
-        // },
-        {
-            args: {
-                tokenFrom:   Tokens.ETH,
-                tokenTo:     Tokens.NETH,
-                chainIdFrom: ChainId.ETH,
-                chainIdTo:   ChainId.OPTIMISM,
-                amountFrom:  executeFailAmt,
-            },
-            expected: {
-                executeSuccess: false,
-                canBridge:      false,
-            },
-            callStatic:         true,
-        },
-        {
-            args: {
-                tokenFrom:   Tokens.ETH,
-                tokenTo:     Tokens.NETH,
-                chainIdFrom: ChainId.ETH,
-                chainIdTo:   ChainId.OPTIMISM,
-                amountFrom:  executeFailAmt,
-            },
-            expected: {
-                executeSuccess: false,
-                canBridge:      false,
-            },
-            callStatic:         false,
-        },
-        {
-            args: {
-                tokenFrom:   Tokens.NUSD,
-                tokenTo:     Tokens.USDT,
-                chainIdFrom: ChainId.POLYGON,
-                chainIdTo:   ChainId.FANTOM,
-                amountFrom:  parseEther("666"),
-            },
-            expected: {
-                executeSuccess: false,
-                canBridge:      false,
-            },
-            callStatic:         false,
-        },
+    function makeTc(
+        t1: Token, t2: Token,
+        c1: number, c2: number,
+        succeeds: boolean, canBridge: boolean,
+        amountFrom: BigNumber,
+        callStatic: boolean = true
+    ): TestCase {
+        const {args, expected} = makeTcArgs(t1, t2, c1, c2, succeeds, canBridge, amountFrom);
+        return {args, expected, callStatic}
+    }
+
+    function makeUSTTest(
+        c1: number, c2: number,
+        succeeds: boolean, canBridge: boolean,
+        amountFrom: BigNumber, callStatic: boolean=true
+    ): TestCase {
+        return makeTc(Tokens.UST, Tokens.UST, c1, c2, succeeds, canBridge, amountFrom, callStatic);
+    }
+
+    const
+        failAmt:   BigNumber = BigNumber.from("420696969000000000000"),
+        beastAmt:  BigNumber = BigNumber.from("666000000"),
+        bridgeAmt: BigNumber = BigNumber.from("1005000");
+
+    let testCases: TestCase[] = [
+        makeTc(Tokens.ETH,    Tokens.WETH,     ChainId.OPTIMISM,     ChainId.ETH,         false,   false,  failAmt, false),
+        makeTc(Tokens.ETH,    Tokens.WETH,     ChainId.BOBA,         ChainId.ETH,         false,   false,  failAmt),
+        makeTc(Tokens.ETH,    Tokens.NETH,     ChainId.ETH,          ChainId.OPTIMISM,    false,   false,  failAmt),
+        makeTc(Tokens.ETH,    Tokens.NETH,     ChainId.ETH,          ChainId.OPTIMISM,    false,   false,  failAmt, false),
+        makeTc(Tokens.NUSD,   Tokens.USDT,     ChainId.POLYGON,      ChainId.FANTOM,      false,   false,  failAmt, false),
+        makeTc(Tokens.DAI,    Tokens.USDT,     ChainId.AVALANCHE,    ChainId.FANTOM,      false,   false,  BigNumber.from("666000000000000000000"), false),
+        makeTc(Tokens.ETH,    Tokens.WETH_E,   ChainId.ARBITRUM,     ChainId.AVALANCHE,   true,    true,   BigNumber.from("6000000000000000")),
+    ];
+
+    const ustTestCases: TestCase[] = [
+        makeUSTTest(ChainId.POLYGON, ChainId.FANTOM,  false, false, beastAmt),
+        makeUSTTest(ChainId.BSC,     ChainId.TERRA,   false, false, beastAmt),
+        makeUSTTest(ChainId.POLYGON, ChainId.TERRA,   false, false, beastAmt),
+        makeUSTTest(ChainId.TERRA,   ChainId.FANTOM,  false, false, beastAmt),
+        makeUSTTest(ChainId.TERRA,   ChainId.FANTOM,  true,  true,  bridgeAmt),
+    ];
+
+    const liveTestCases: TestCase[] = [
+    //     makeUSTTest(ChainId.TERRA,    ChainId.HARMONY, true, true,  BigNumber.from("2000000"), false),
+    //     makeUSTTest(ChainId.HARMONY,  ChainId.BSC,     true, true,  BigNumber.from("8000000"), false),
+    //     makeUSTTest(ChainId.BSC,      ChainId.TERRA,   true, true,  BigNumber.from("4500000"), false),
+    ];
+
+    testCases = [
+        ...testCases,
+        ...ustTestCases,
+        ...(RunLiveBridgeTests ? liveTestCases : [])
     ];
 
     const getBridgeEstimate = async (
@@ -202,6 +173,69 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
             )
             .catch(rejectPromise)
 
+    function executeTxnFunc(
+        tc:       TestCase,
+        prom:     Promise<GenericTxnResponse>,
+        approval: boolean=false
+    ): (ctx: Mocha.Context) => PromiseLike<any> {
+        return async function (ctx: Mocha.Context): Promise<void | any> {
+            if (approval && tc.args.tokenFrom.isEqual(Tokens.ETH)) return
+
+            ctx.timeout(20*1000);
+
+            if (tc.args.chainIdFrom === ChainId.TERRA) {
+                let execProm = executeTransactionTerra(prom as Promise<BlockTxBroadcastResult>);
+
+                return (await (tc.expected.executeSuccess
+                        ? expectFulfilled(execProm)
+                        : expectRejected(execProm)
+                ))
+            }
+
+            let execProm = executeTransaction(prom as Promise<TransactionResponse>);
+
+            if (approval) {
+                return (await expectNothingFromPromise(execProm))
+            }
+
+            return (await (
+                tc.expected.executeSuccess
+                    ? expectFulfilled(execProm)
+                    : expectRejected(execProm)
+            ))
+        }
+    }
+
+    function executeStaticCallFunc(
+        tc:       TestCase,
+        prom:     Promise<StaticCallResult>,
+        approval: boolean=false
+    ): (ctx: Mocha.Context) => PromiseLike<any> {
+        return async function (ctx: Mocha.Context): Promise<void | any> {
+            if (approval && tc.args.tokenFrom.isEqual(Tokens.ETH)) return
+
+            ctx.timeout(20*1000);
+
+            let execProm = Promise.resolve(prom)
+                .then(res => {
+                    if (res === StaticCallResult.Failure) {
+                        return rejectPromise("static call failed")
+                    }
+                })
+                .catch(rejectPromise)
+
+            if (approval) {
+                return (await expectNothingFromPromise(execProm))
+            }
+
+            return (await (
+                tc.expected.executeSuccess
+                    ? expectFulfilled(execProm)
+                    : expectRejected(execProm)
+            ))
+        }
+    }
+
     testCases.forEach(tc => {
         const
             describeNetFromTitle: string = `${tc.args.tokenFrom.symbol} on ${Networks.networkName(tc.args.chainIdFrom)}`,
@@ -216,60 +250,10 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
             bridgeTxnTestTitle:   string = executeTxnTestTitle("SynapseBridge token bridge");
 
         describe(describeTitle, function(this: Mocha.Suite) {
-            let
-                walletArgs:     WalletArgs,
-                wallet:         Wallet,
-                bridgeInstance: Bridge.SynapseBridge;
-
-            before(async function(this: Mocha.Context) {
-                this.timeout(DEFAULT_TEST_TIMEOUT);
-
-                walletArgs = await buildWalletArgs(
-                    tc.args.chainIdFrom,
-                    bridgeInteractionsPrivkey.privkey
-                );
-
-                wallet         = walletArgs.wallet;
+            const
+                walletArgs = buildWalletArgs(tc.args.chainIdFrom, bridgeInteractionsPrivkey.privkey),
+                wallet         = walletArgs.wallet,
                 bridgeInstance = walletArgs.bridgeInstance;
-            })
-
-            function executeTxnFunc(
-                tc:       TestCase,
-                prom:     Promise<TxnResponse>,
-                approval: boolean=false
-            ): (ctx: Mocha.Context) => PromiseLike<any> {
-                return async function (ctx: Mocha.Context): Promise<void | any> {
-                    if (approval && tc.args.tokenFrom.isEqual(Tokens.ETH)) return
-
-                    ctx.timeout(20*1000);
-
-                    let execProm = executeTransaction(prom);
-
-                    return (await (tc.expected.executeSuccess
-                            ? expectFulfilled(execProm)
-                            : expectRejected(execProm)
-                    ))
-                }
-            }
-
-            function callStaticFunc(
-                tc:       TestCase,
-                prom:     Promise<StaticCallResult>,
-                approval: boolean=false
-            ): (ctx: Mocha.Context) => PromiseLike<any> {
-                return async function (ctx: Mocha.Context): Promise<void | any> {
-                    if (approval && tc.args.tokenFrom.isEqual(Tokens.ETH)) return
-
-                    ctx.timeout(5*1000);
-
-                    let execProm = callStatic(prom);
-
-                    return (await (tc.expected.executeSuccess
-                            ? expectFulfilled(execProm)
-                            : expectRejected(execProm)
-                    ))
-                }
-            }
 
             let
                 outputEstimate: Bridge.BridgeOutputEstimate,
@@ -277,6 +261,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
             step("acquire output estimate", async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
+                this.slow(1.5*1000);
 
                 let prom = getBridgeEstimate(tc, walletArgs);
 
@@ -289,106 +274,386 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 outputEstimate = estimate;
                 doBridgeArgs = bridgeParams;
 
+                if (tc.args.chainIdTo === ChainId.TERRA) {
+                    doBridgeArgs.addressTo = walletArgs.terraAddress;
+                } else {
+                    doBridgeArgs.addressTo = walletArgs.evmAddress;
+                }
+
                 return
             });
 
-            describe("- checkCanBridge()", function(this: Mocha.Suite) {
+            describe("Test checkCanBridge()", function(this: Mocha.Suite) {
                 const canBridgeTestTitle: string = `should${tc.expected.canBridge ? "" : " not"} be able to bridge`;
 
-                it(canBridgeTestTitle, function(this: Mocha.Context, done: Mocha.Done) {
-                    this.timeout(3.5*1000);
-                    this.slow(2*1000);
+                it(canBridgeTestTitle, async function(this: Mocha.Context) {
+                    this.timeout(5.5*1000);
+                    this.slow(2.75*1000);
 
                     let prom = bridgeInstance.checkCanBridge({
                         token: tc.args.tokenFrom,
-                        signer: wallet,
+                        address: walletArgs.address,
                         amount: tc.args.amountFrom,
                     }).then(({canBridge}) => canBridge)
 
-                    expect(prom).to.eventually.equal(tc.expected.canBridge).notify(done);
-                })
+                    return (await expect(prom)
+                        .to.eventually
+                        .equal(tc.expected.canBridge)
+                    )
+                });
             });
 
-            describe("- Transaction Builders", function(this: Mocha.Suite) {
+            let needsApproval = true;
+
+            step("Check approval", async function(this: Mocha.Context) {
+                if (tc.args.chainIdFrom === ChainId.TERRA) {
+                    needsApproval = false;
+                    return
+                }
+
+                if (tc.args.tokenFrom.isEqual(Tokens.ETH)) {
+                    needsApproval = false;
+                    return
+                }
+
+                this.timeout(5 * 1000);
+                this.slow(1.5 * 1000);
+
+                const _contracts = SynapseContracts.contractsForChainId(tc.args.chainIdFrom);
+
+                const spender: string =
+                    tc.args.tokenFrom.isEqual(Tokens.UST) && tc.args.chainIdTo === ChainId.TERRA
+                        ? _contracts.bridgeAddress
+                        : _contracts.bridgeZapAddress;
+
+                const allowanceArgs = {
+                    tokenAddress: tc.args.tokenFrom.address(tc.args.chainIdFrom),
+                    chainId:      tc.args.chainIdFrom
+                };
+
+                let prom = ERC20.allowanceOf(
+                    walletArgs.evmAddress,
+                    spender,
+                    allowanceArgs
+                );
+
+                Promise.resolve(prom)
+                    .then(allowance => needsApproval = allowance.lt(tc.args.amountFrom));
+
+                return (await expect(prom).to.eventually.be.fulfilled)
+            });
+
+            function getGenericSigner(
+                w: TerraWallet | EvmWallet,
+                callStatic: boolean,
+                wantFail:   boolean
+            ): GenericSigner {
+                let _wallet: GenericSigner;
+
+                if (w instanceof TerraWallet) {
+                    _wallet = callStatic
+                        ? new MockTerraSignerWrapper(w, wantFail)
+                        : new TerraSignerWrapper(w);
+                } else {
+                    _wallet = w as EvmWallet;
+                }
+
+                return _wallet
+            }
+
+            describe("Test Transaction Builders", function(this: Mocha.Suite) {
                 let
-                    approvalTxn:     PopulatedTransaction,
-                    bridgeTxn:       PopulatedTransaction;
+                    approvalTxn: PopulatedTransaction,
+                    bridgeTxn:   PopulatedTransaction | MsgExecuteContract;
 
                 const
                     approveTitle: string = "approval transaction should be populated successfully",
                     bridgeTitle:  string = "bridge transaction should be populated successfully";
 
-                step(approveTitle, async function(this: Mocha.Context) {
-                    if (tc.args.tokenFrom.isEqual(Tokens.ETH)) return
-                    this.timeout(DEFAULT_TEST_TIMEOUT);
+                describe("- build transactions", function(this: Mocha.Suite) {
+                    step(approveTitle, async function(this: Mocha.Context) {
+                        if (tc.args.tokenFrom.isEqual(Tokens.ETH) || tc.args.chainIdFrom === ChainId.TERRA) {
+                            return
+                        }
 
-                    return (await expectFulfilled(
-                        bridgeInstance
-                            .buildApproveTransaction({token: tc.args.tokenFrom})
-                            .then((txn) => approvalTxn = txn)
-                    ))
-                });
+                        this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                step(bridgeTitle, async function(this: Mocha.Context) {
-                    this.timeout(DEFAULT_TEST_TIMEOUT);
+                        let prom = bridgeInstance.buildApproveTransaction({token: tc.args.tokenFrom});
+                        Promise.resolve(prom).then(t => approvalTxn = t);
 
-                    return (await expectFulfilled(
-                        bridgeInstance.buildBridgeTokenTransaction(doBridgeArgs)
-                            .then((txn) => bridgeTxn = txn)
-                    ))
-                });
+                        return (await expect(prom).to.eventually.be.fulfilled)
+                    });
 
-                const approval = true;
+                    step(bridgeTitle, async function(this: Mocha.Context) {
+                        this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                step(approvalTxnTestTitle, async function(this: Mocha.Context) {
-                    if (tc.callStatic) {
-                        return await callStaticFunc(
-                            tc,
-                            staticCallPopulatedTransaction(approvalTxn, wallet),
-                            approval
-                        )(this)
-                    } else {
-                        return await executeTxnFunc(
-                            tc,
-                            wallet.sendTransaction(approvalTxn),
-                            approval
-                        )(this)
+                        let prom = bridgeInstance.buildBridgeTokenTransaction(doBridgeArgs);
+                        Promise.resolve(prom).then(t => bridgeTxn = t);
+
+                        return (await expect(prom).to.eventually.be.fulfilled)
+                    });
+
+                    if (tc.args.chainIdTo === ChainId.TERRA) {
+                        describe("* Test properties of populated redeemV2 transaction", function(this: Mocha.Suite) {
+                            let decoded: TransactionDescription;
+
+                            step("Bridge transaction should decode to redeemV2", function(this: Mocha.Context) {
+                                const
+                                    t = bridgeTxn as PopulatedTransaction,
+                                    synBridge = SynapseBridgeFactory.createInterface();
+
+                                try {
+                                    decoded = synBridge.parseTransaction({data: t.data});
+                                } catch (e) {
+                                    expect.fail();
+                                }
+                            });
+
+                            it("tx data should have a 'name' property equal to 'redeemV2'", function(this: Mocha.Context) {
+                                expect(decoded).to.have.property("name", "redeemV2");
+                            });
+
+                            it("tx data should have 4 arguments, one of them being 'to'", function(this: Mocha.Context) {
+                                expect(decoded).to.have.property("args").with.length(4);
+                                expect(decoded.args).to.have.property("to");
+                            });
+
+                            it("tx data should  have a 'value' property equal to 0", function(this: Mocha.Context) {
+                                expect(decoded).to.have.property("value").which.equals(Zero);
+                            });
+
+                            it("tx data should have its 'to' argument set to the correct Terra address", function(this: Mocha.Context) {
+                                expect(decodeHexTerraAddress(decoded.args["to"])).to.equal(walletArgs.terraAddress);
+                            });
+                        });
                     }
                 });
 
-                step(bridgeTxnTestTitle, async function(this: Mocha.Context) {
-                    if (tc.callStatic) {
-                        return await callStaticFunc(
-                            tc,
-                            staticCallPopulatedTransaction(bridgeTxn, wallet)
-                        )(this)
-                    } else {
-                        return await executeTxnFunc(
-                            tc,
-                            wallet.sendTransaction(bridgeTxn)
-                        )(this)
-                    }
-                });
+                const execOnTerra: boolean = tc.args.chainIdFrom === ChainId.TERRA && !tc.callStatic;
+
+                if (!execOnTerra) {
+                    describe("- execute transactions", function(this: Mocha.Suite) {
+                        step(approvalTxnTestTitle, async function(this: Mocha.Context) {
+                            if (!needsApproval) {
+                                return
+                            }
+
+                            const _wallet = getGenericSigner(wallet, tc.callStatic, tc.expected.executeSuccess);
+
+                            this.slow(SHORT_TEST_TIMEOUT);
+
+                            if (tc.callStatic && tc.args.chainIdFrom !== ChainId.TERRA) {
+                                return await executeStaticCallFunc(
+                                    tc,
+                                    staticCallPopulatedTransaction(approvalTxn as PopulatedTransaction, wallet as EvmWallet),
+                                    true
+                                )(this)
+                            }
+
+                            return await executeTxnFunc(
+                                tc,
+                                _wallet.sendTransaction(approvalTxn),
+                                true
+                            )(this)
+                        });
+
+                        step(bridgeTxnTestTitle, async function(this: Mocha.Context) {
+                            this.slow(SHORT_TEST_TIMEOUT);
+
+                            const _wallet = getGenericSigner(wallet, tc.callStatic, tc.expected.executeSuccess);
+
+                            if (tc.callStatic && tc.args.chainIdFrom !== ChainId.TERRA) {
+                                return await executeStaticCallFunc(
+                                    tc,
+                                    staticCallPopulatedTransaction(bridgeTxn as PopulatedTransaction, wallet as EvmWallet)
+                                )(this)
+                            }
+
+                            return await executeTxnFunc(
+                                tc,
+                                _wallet.sendTransaction(bridgeTxn)
+                            )(this)
+                        });
+                    });
+                }
             });
 
-            (tc.callStatic ? describe.skip : describe)("- Magic Executors", function(this: Mocha.Suite) {
-                const approval = true;
+            if (!tc.callStatic) {
+                describe("Test Magic Executors", function(this: Mocha.Suite) {
+                    step(approvalTxnTestTitle, async function(this: Mocha.Context) {
+                        if (!needsApproval) {
+                            if (!(tc.args.tokenFrom.isEqual(Tokens.DAI) && tc.args.chainIdFrom === ChainId.AVALANCHE)) {
+                                return
+                            }
+                        }
 
-                step(approvalTxnTestTitle, async function(this: Mocha.Context) {
-                    return await executeTxnFunc(
-                        tc,
-                        bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet),
-                        approval
-                    )(this)
-                });
+                        this.slow(1.5*1000);
 
-                step(bridgeTxnTestTitle, async function (this: Mocha.Context) {
-                    return await executeTxnFunc(
-                        tc,
-                        bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet)
-                    )(this)
+                        return await executeTxnFunc(
+                            tc,
+                            bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet as EvmWallet),
+                            true
+                        )(this)
+                    });
+
+                    step(bridgeTxnTestTitle, async function (this: Mocha.Context) {
+                        this.slow(SHORT_TEST_TIMEOUT);
+
+                        const _wallet = getGenericSigner(wallet, tc.callStatic, tc.expected.executeSuccess);
+
+                        let prom: Promise<GenericTxnResponse> =
+                            bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, _wallet);
+
+                        return await executeTxnFunc(
+                            tc,
+                            prom
+                        )(this)
+                    });
                 });
-            })
-        })
-    })
-})
+            }
+        });
+    });
+
+    describe("* Validation tests", function(this: Mocha.Suite) {
+        const
+            chainIdFrom = ChainId.BSC,
+            walletArgs = buildWalletArgs(
+                chainIdFrom,
+                bridgeInteractionsPrivkey.privkey
+            ),
+            bridgeInstance = walletArgs.bridgeInstance;
+
+        let outEstimate: Bridge.BridgeOutputEstimate;
+
+        const params: Bridge.BridgeParams = {
+            tokenFrom:   Tokens.UST,
+            tokenTo:     Tokens.UST,
+            chainIdTo:   ChainId.TERRA,
+            amountFrom:  Tokens.UST.valueToWei("10", chainIdFrom),
+        };
+
+        step("- get output estimate", async function(this: Mocha.Context) {
+            this.timeout(5*1000);
+            this.slow(1.5*1000);
+
+            let prom = bridgeInstance.estimateBridgeTokenOutput(params);
+            Promise.resolve(prom).then(res => outEstimate = res);
+
+            return (await expect(prom).to.eventually.not.be.rejected)
+        });
+
+        it("buildBridgeTokenTransaction should throw an error when passed an invalid terra address", async function(this: Mocha.Context) {
+            const bridgeArgs: Bridge.BridgeTransactionParams = {
+                ...params,
+                amountFrom: Tokens.UST.valueToWei("5", chainIdFrom),
+                amountTo:   outEstimate.amountToReceive,
+                addressTo:  walletArgs.evmAddress,
+            };
+
+            let prom = bridgeInstance.buildBridgeTokenTransaction(bridgeArgs);
+
+            const wantErrMsg: string = `${bridgeArgs.addressTo} passed as BridgeTransactionParams.addressTo is not a valid Terra address`;
+
+            return (await expect(prom).to.eventually
+                .be.rejectedWith(wantErrMsg)
+                .and.be.an.instanceOf(CanBridgeError)
+            )
+        });
+
+        it("buildBridgeTokenTransaction should throw an error when passed an invalid EVM address", async function(this: Mocha.Context) {
+            const
+                terraBridge = new Bridge.SynapseBridge({network: ChainId.TERRA}),
+                amountFrom  = Tokens.UST.valueToWei("5", ChainId.TERRA),
+                bridgeParams: Bridge.BridgeParams = {
+                    tokenFrom:   Tokens.UST,
+                    tokenTo:     Tokens.UST,
+                    chainIdTo:   ChainId.BSC,
+                    amountFrom,
+                };
+
+            const bridgeArgs: Bridge.BridgeTransactionParams = {
+                ...bridgeParams,
+                amountFrom,
+                amountTo:   outEstimate.amountToReceive,
+                addressTo:  walletArgs.terraAddress,
+            };
+
+            let prom = terraBridge.buildBridgeTokenTransaction(bridgeArgs);
+
+            const wantErrMsg: string = `${bridgeArgs.addressTo} passed as BridgeTransactionParams.addressTo is not a valid EVM address`;
+
+            return (await expect(prom).to.eventually
+                .be.rejectedWith(wantErrMsg)
+                .and.be.an.instanceOf(CanBridgeError)
+            )
+        });
+
+        describe("attempt to execute a transaction on Terra, but fail", function(this: Mocha.Suite) {
+            const
+                terraBridge = new Bridge.SynapseBridge({network: ChainId.TERRA}),
+                amountFrom  = Tokens.UST.valueToWei("500000000000", ChainId.TERRA),
+                bridgeParams: Bridge.BridgeParams = {
+                    tokenFrom:   Tokens.UST,
+                    tokenTo:     Tokens.UST,
+                    chainIdTo:   ChainId.BSC,
+                    amountFrom,
+                };
+
+            let
+                walletArgs = buildWalletArgs(ChainId.TERRA),
+                terraWallet = walletArgs.wallet as TerraWallet,
+                estimate: Bridge.BridgeOutputEstimate;
+
+            step("get another output estimate", async function(this: Mocha.Context) {
+                this.timeout(5*1000);
+                this.slow(1.5*1000);
+
+                let prom = terraBridge.estimateBridgeTokenOutput(bridgeParams);
+                Promise.resolve(prom).then(res => estimate = res);
+
+                return (await expect(prom).to.eventually.not.be.rejected)
+            });
+
+            it("magic executor should fail", async function(this: Mocha.Context) {
+                this.timeout(7 * 1000);
+                this.slow(1.5 * 1000);
+
+                const txnParams: Bridge.BridgeTransactionParams = {
+                    ...bridgeParams,
+                    amountFrom,
+                    amountTo:  estimate.amountToReceive,
+                    addressTo: walletArgs.evmAddress,
+                };
+
+                const wantErrMsg: string = `Balance of token ${Tokens.UST.symbol} is too low`;
+
+                let prom = terraBridge.executeBridgeTokenTransaction(txnParams, terraWallet);
+
+                return (await expect(prom).to.eventually
+                    .be.rejectedWith(wantErrMsg)
+                    .and.be.an.instanceof(CanBridgeError)
+                )
+            });
+
+            it("executing built transaction should fail", async function(this: Mocha.Context) {
+                this.timeout(7 * 1000);
+                this.slow(1.5 * 1000);
+
+                const txnParams: Bridge.BridgeTransactionParams = {
+                    ...bridgeParams,
+                    amountFrom: BigNumber.from("500000000000"),
+                    amountTo:   BigNumber.from("400000000000"),
+                    addressTo:  walletArgs.evmAddress,
+                };
+
+                let walletWrapper = new TerraSignerWrapper(terraWallet);
+
+                let prom: Promise<any> = terraBridge
+                    .buildBridgeTokenTransaction(txnParams)
+                    .then((m): Promise<any> => walletWrapper.sendTransaction(m as MsgExecuteContract));
+
+                return (await expect(prom).to.eventually.be.rejected)
+            });
+        });
+    });
+});

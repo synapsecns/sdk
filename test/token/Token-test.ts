@@ -1,11 +1,10 @@
 import {expect} from "chai";
 
-import _ from "lodash";
-
 import {
     ChainId,
     Tokens,
-    type Token, supportedChainIds
+    type Token,
+    supportedChainIds
 } from "@sdk";
 
 import {tokenSwitch} from "@sdk/internal";
@@ -14,7 +13,7 @@ import {
     expectBnEqual,
     expectBoolean,
     expectNull,
-    wrapExpect,
+    wrapExpect
 } from "@tests/helpers";
 
 import {BigNumber} from "@ethersproject/bignumber";
@@ -61,9 +60,9 @@ describe("Token Tests", function(this: Mocha.Suite) {
                 const got: BigNumber = tc.token.valueToWei(tc.amount, tc.chainId);
 
                 expectBnEqual(got, tc.wantAmount);
-            })
-        })
-    })
+            });
+        });
+    });
 
     describe("canSwap tests", function(this: Mocha.Suite) {
         interface TestCase {
@@ -117,9 +116,9 @@ describe("Token Tests", function(this: Mocha.Suite) {
                 wrapExpect(
                     expectBoolean(tc.tokenA.canSwap(tc.tokenB), tc.expected)
                 )
-            )
-        })
-    })
+            );
+        });
+    });
 
     describe("wrapperAddress tests", function(this: Mocha.Suite) {
         interface TestCase {
@@ -138,8 +137,8 @@ describe("Token Tests", function(this: Mocha.Suite) {
 
             it(testTitle, function(this: Mocha.Context) {
                 expectNull(tc.token.wrapperAddress(tc.chainId), tc.want === null);
-            })
-        })
+            });
+        });
     });
 
     describe("decimals tests", function(this: Mocha.Suite) {
@@ -209,29 +208,29 @@ describe("Token Tests", function(this: Mocha.Suite) {
                     expect(got).to.not.exist;
                 }
             });
-        })
-    })
+        });
+    });
 
     describe("Test all tokens", function(this: Mocha.Suite) {
         Tokens.AllTokens.forEach(t => {
             let supportedNets = Object.keys(t.addresses).map(c => Number(c));
-            _.map(supportedChainIds(), (cid) => {
+            supportedChainIds().forEach((cid) => {
                 let tokenAddr = t.address(cid);
                 switch (tokenSwitch(t)) {
                     case Tokens.ETH:
                         it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
                             expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
-                        })
+                        });
                         return
                     case Tokens.AVAX:
                         it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
                             expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
-                        })
+                        });
                         return
                     case Tokens.MOVR:
                         it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
                             expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
-                        })
+                        });
                         return
                 }
                 if (supportedNets.includes(cid)) {
@@ -240,13 +239,13 @@ describe("Token Tests", function(this: Mocha.Suite) {
                     }
                     it(`${t.symbol} address for chain id ${cid} should not be null`, function(this: Mocha.Context) {
                         expect(tokenAddr, `${t.symbol}: ${cid}`).to.not.be.null;
-                    })
+                    });
                 } else {
                     it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
                         expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
-                    })
+                    });
                 }
-            })
+            });
         });
     });
-})
+});
