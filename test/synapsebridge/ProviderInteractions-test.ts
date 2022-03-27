@@ -101,13 +101,14 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         ironMaiden:   parseEther("666"),
     } as const;
 
+    const failAllOpts = (callStatic: boolean): TestOpts & {callStatic: boolean} => ({executeSuccess: false, canBridge: false, callStatic})
+
     const testCases: TestCase[] = [
-        makeTestCase(Tokens.ETH,  Tokens.WETH,   ChainId.OPTIMISM, ChainId.ETH,       testAmts.executeFail, {executeSuccess: false, canBridge: false, callStatic: false}),
-        makeTestCase(Tokens.ETH,  Tokens.WETH,   ChainId.BOBA,     ChainId.ETH,       testAmts.executeFail, {executeSuccess: false, canBridge: false, callStatic: true}),
-        makeTestCase(Tokens.ETH,  Tokens.WETH_E, ChainId.ARBITRUM, ChainId.AVALANCHE, testAmts.small,       {executeSuccess: false, canBridge: false, callStatic: true}),
-        makeTestCase(Tokens.ETH,  Tokens.NETH,   ChainId.ETH,      ChainId.OPTIMISM,  testAmts.executeFail, {executeSuccess: false, canBridge: false, callStatic: true}),
-        makeTestCase(Tokens.ETH,  Tokens.WETH_E, ChainId.ARBITRUM, ChainId.AVALANCHE, testAmts.small,       {executeSuccess: false, canBridge: false, callStatic: false}),
-        makeTestCase(Tokens.NUSD, Tokens.USDT,   ChainId.POLYGON,  ChainId.FANTOM,    testAmts.ironMaiden,  {executeSuccess: false, canBridge: false, callStatic: false}),
+        makeTestCase(Tokens.ETH,  Tokens.WETH,   ChainId.OPTIMISM, ChainId.ETH,       testAmts.executeFail, failAllOpts(false)),
+        makeTestCase(Tokens.ETH,  Tokens.WETH,   ChainId.BOBA,     ChainId.ETH,       testAmts.executeFail, failAllOpts(true)),
+        makeTestCase(Tokens.ETH,  Tokens.WETH_E, ChainId.ARBITRUM, ChainId.AVALANCHE, testAmts.small,       {executeSuccess: true,  canBridge: true,  callStatic: true}),
+        makeTestCase(Tokens.ETH,  Tokens.NETH,   ChainId.ETH,      ChainId.OPTIMISM,  testAmts.executeFail, failAllOpts(true)),
+        makeTestCase(Tokens.NUSD, Tokens.USDT,   ChainId.POLYGON,  ChainId.FANTOM,    testAmts.ironMaiden,  failAllOpts(false)),
     ];
 
     const getBridgeEstimate = async (
@@ -143,10 +144,12 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
             ctx.timeout(20 * 1000);
 
-            const fn: (p: Promise<TransactionResponse | StaticCallResult>) => Promise<void> =
-                staticCall ? callStatic : executeTransaction;
-
-            let execProm = fn(prom);
+            let execProm: Promise<void>;
+            if (staticCall) {
+                execProm = callStatic(prom as Promise<StaticCallResult>);
+            } else {
+                execProm = executeTransaction(prom as Promise<TransactionResponse>);
+            }
 
             if (approval) {
                 return (await expectNothingFromPromise(execProm))
