@@ -62,7 +62,22 @@ export const
     expectPromiseResolve = (
         data: Promise<any>,
         wantResolve: boolean
-    ): Chai.PromisedAssertion => wantResolve ? expectFulfilled(data) : expectRejected(data);
+    ): Chai.PromisedAssertion => wantResolve ? expectFulfilled(data) : expectRejected(data),
+    expectNothingFromPromise = async (data: Promise<any>): Promise<Chai.PromisedAssertion> => {
+        let promReturned: boolean = false;
+
+        if (!data) {
+            return expectToEventuallyBe(data).undefined
+        }
+
+        const promFn = (): void  => { promReturned = true; }
+
+        await Promise.resolve(data)
+            .then(promFn)
+            .catch(promFn);
+
+        return expect(promReturned).to.be.true
+    };
 
 export const
     expectBoolean   = (data: boolean, want:      boolean):             Chai.Assertion => expectToBe(data)[want ? "true" : "false"],
