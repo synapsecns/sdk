@@ -271,15 +271,17 @@ export namespace Bridge {
         ): Promise<ContractTransaction> {
             try {
                 await this.checkSwapSupported(args);
-            } catch (e) {
+            } catch (e) { /* c8 ignore start */
                 return rejectPromise(e);
-            }
+            } /* c8 ignore stop */
 
             const
                 {tokenFrom, amountFrom, addressTo} = args,
                 signerAddress = await signer.getAddress();
 
-            args.addressTo = addressTo ?? signerAddress
+            if (!addressTo) {
+                args.addressTo = signerAddress;
+            }
 
             const checkArgs = {signer, token: tokenFrom, amount: amountFrom};
 
@@ -368,9 +370,11 @@ export namespace Bridge {
 
             const errStr: string = `Spend allowance of Bridge too low for token ${token.symbol}; current allowance for Bridge is ${allowanceEth}`;
 
-            return needsApproval
-                ? {canBridge: false, reasonUnable: errStr, amount: currentAllowance}
-                : hasBalanceRes
+            if (!needsApproval) {
+                return hasBalanceRes
+            }
+
+            return {canBridge: false, reasonUnable: errStr, amount: currentAllowance}
         }
 
         private async checkNeedsApprove({
@@ -419,9 +423,14 @@ export namespace Bridge {
         async checkCanBridge(args: CheckCanBridgeParams): Promise<CanBridgeResult> {
             const {token, signer, address} = args;
 
-            const signerAddress: string = (address && address !== "")
-                ? address
-                : (await signer.getAddress());
+            let signerAddress: string;
+
+
+            if (address && address !== "") { /* c8 ignore start */
+                signerAddress = address;
+            } else {
+                signerAddress = await signer.getAddress();
+            } /* c8 ignore stop */
 
             const checkArgs: CanBridgeParams = {...args, address: signerAddress};
 
@@ -457,9 +466,11 @@ export namespace Bridge {
         }): [ERC20.ApproveArgs, string] {
             const {token, amount} = args;
 
+            /* c8 ignore start */
             let tokenAddr: string = instanceOfToken(token)
                 ? token.address(this.chainId)
                 : token as string;
+            /* c8 ignore stop */
 
             return [{
                 spender: this.zapBridgeAddress,
