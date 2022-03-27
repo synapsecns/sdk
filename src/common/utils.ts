@@ -35,7 +35,7 @@ export function staticCallPopulatedTransaction(
         })
 }
 
-function pow10(exp: number): BigNumber { return BigNumber.from(10).pow(exp) }
+export function pow10(exp: number): BigNumber { return BigNumber.from(10).pow(exp) }
 
 /**
  * "Fixes" a value into units of Wei; should be used when tokens

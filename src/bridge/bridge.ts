@@ -2,6 +2,7 @@ import {ChainId}  from "@chainid";
 import {Networks} from "@networks";
 
 import {
+    pow10,
     rejectPromise,
     executePopulatedTransaction
 } from "@common/utils";
@@ -497,7 +498,7 @@ export namespace Bridge {
 
             const
                 intermediateTokenAddr   = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase(),
-                multiplier              = BigNumber.from(10).pow(18-fromCoinDecimals),
+                multiplier              = pow10(18-fromCoinDecimals),
                 amountFromFixedDecimals = amountFrom.mul(multiplier);
 
             const bridgeFeeRequest: Promise<BigNumber> = this.bridgeConfigInstance["calculateSwapFee(string,uint256,uint256)"](
