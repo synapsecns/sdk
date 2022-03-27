@@ -181,7 +181,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 outputEstimate: Bridge.BridgeOutputEstimate,
                 doBridgeArgs:   Bridge.BridgeTransactionParams;
 
-            step("acquire output estimate", async function(this: Mocha.Context) {
+            step("[*] acquire output estimate", async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
 
                 let prom = getBridgeEstimate(tc, walletArgs);
@@ -198,7 +198,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 return
             });
 
-            describe("- checkCanBridge()", function(this: Mocha.Suite) {
+            describe("- checkCanBridge() test", function(this: Mocha.Suite) {
                 const canBridgeTestTitle: string = `should${tc.expected.canBridge ? "" : " not"} be able to bridge`;
 
                 it(canBridgeTestTitle, async function(this: Mocha.Context) {
@@ -219,14 +219,16 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 });
             });
 
-            describe("- Transaction Builders", function(this: Mocha.Suite) {
+            describe("- Transaction Builders Tests", function(this: Mocha.Suite) {
                 let
                     approvalTxn:     PopulatedTransaction,
                     bridgeTxn:       PopulatedTransaction;
 
+                const makeBuilderTitle = (txKind: string): string => `${txKind} should build successfully`;
+
                 const
-                    approveTitle: string = "approval transaction should be populated successfully",
-                    bridgeTitle:  string = "bridge transaction should be populated successfully";
+                    approveTitle: string = makeBuilderTitle("approval"),
+                    bridgeTitle:  string = makeBuilderTitle("token bridge");
 
                 step(approveTitle, async function(this: Mocha.Context) {
                     if (tc.args.tokenFrom.isEqual(Tokens.ETH)) return
@@ -274,28 +276,30 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 });
             });
 
-            (tc.callStatic ? describe.skip : describe)("- Magic Executors", function(this: Mocha.Suite) {
-                step(approvalTxnTestTitle, async function(this: Mocha.Context) {
-                    let prom = bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet);
+            if (!tc.callStatic) {
+                describe("- Magic Executors tests", function(this: Mocha.Suite) {
+                    step(approvalTxnTestTitle, async function(this: Mocha.Context) {
+                        let prom = bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet);
 
-                    return await executeTxn(
-                        tc,
-                        prom,
-                        tc.callStatic,
-                        true
-                    )(this)
+                        return await executeTxn(
+                            tc,
+                            prom,
+                            tc.callStatic,
+                            true
+                        )(this)
+                    });
+
+                    step(bridgeTxnTestTitle, async function (this: Mocha.Context) {
+                        let prom = bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet);
+
+                        return await executeTxn(
+                            tc,
+                            prom,
+                            tc.callStatic
+                        )(this)
+                    });
                 });
-
-                step(bridgeTxnTestTitle, async function (this: Mocha.Context) {
-                    let prom = bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet);
-
-                    return await executeTxn(
-                        tc,
-                        prom,
-                        tc.callStatic
-                    )(this)
-                });
-            });
+            }
         });
     });
 });
