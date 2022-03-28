@@ -1095,6 +1095,7 @@ export namespace Bridge {
         [ChainId.MOONRIVER]: 21,
         [ChainId.ARBITRUM]:  40,
         [ChainId.AVALANCHE]: 5,
+        [ChainId.DFK]:       1,
         [ChainId.HARMONY]:   1,
         [ChainId.AURORA]:    5,
     };
