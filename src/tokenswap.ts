@@ -139,7 +139,7 @@ export namespace TokenSwap {
     export async function buildSwapTokensTransaction(args: SwapTokensParams): Promise<PopulatedTransaction> {
         const {swapSupported: canSwap, reasonNotSupported} = swapSupported(args);
         if (!canSwap) {
-            return rejectPromise(reasonNotSupported)
+            return rejectPromise(reasonNotSupported.reason)
         }
 
         return resolveSwapData(args)
