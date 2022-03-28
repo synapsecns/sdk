@@ -10,7 +10,7 @@ require:
 
 recursive: true
 parallel: true
-jobs: 7
+jobs: 6
 
 spec:
   # sync/non-network-based tests
