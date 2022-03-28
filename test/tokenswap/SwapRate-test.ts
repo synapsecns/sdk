@@ -1,27 +1,30 @@
-import {rejectPromise} from "@common/utils";
+import {expect} from "chai";
+
 import {step} from "mocha-steps";
 
 import {
+    type Token,
     ChainId,
     Networks,
     Tokens,
     TokenSwap,
-    type Token, UnsupportedSwapErrors
+    UnsupportedSwapErrors
 } from "@sdk";
+
+import {rejectPromise} from "@sdk/common/utils";
 
 import {
     DEFAULT_TEST_TIMEOUT,
     expectFulfilled,
-    expectProperty,
     expectRejected,
     getTestAmount,
 } from "@tests/helpers";
 
-import {Zero}      from "@ethersproject/constants";
-import {BigNumber} from "@ethersproject/bignumber";
-import {BaseContract, Contract} from "@ethersproject/contracts";
-import {expect} from "chai";
-import {SwapContract} from "@contracts";
+import {Zero}         from "@ethersproject/constants";
+import {BigNumber}    from "@ethersproject/bignumber";
+import {BaseContract} from "@ethersproject/contracts";
+
+
 import UnsupportedSwapError = UnsupportedSwapErrors.UnsupportedSwapError;
 
 
@@ -79,14 +82,28 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                     })
                     .catch(rejectPromise)
 
-                return tc.wantError
-                    ? (await expect(prom).to.eventually.be.rejected)
-                    : (await expect(prom).to.eventually
+                if (tc.wantError) {
+                    let err: Error;
+                    try {
+                        await prom;
+                    } catch (e) {
+                        err = e;
+                    }
+
+                    if (err instanceof UnsupportedSwapError) {
+                        expect(err).to.be.an.instanceof(UnsupportedSwapError).and.to.haveOwnProperty("errorKind");
+                    }
+
+                    return (await expect(prom).to.eventually.be.rejected)
+                }
+
+
+                return (await expect(prom).to.eventually
                         .haveOwnProperty("amountOut")
                         .that.is.an.instanceOf(BigNumber)
                         .and.is.gt(Zero.toNumber())
                     )
-            })
+            });
 
             step(testTitle2, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
