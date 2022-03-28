@@ -21,6 +21,7 @@ import {
 import type {
     GenericZapBridgeContract,
     L1BridgeZapContract,
+    L2BridgeZapContract,
     SynapseBridgeContract,
     BridgeConfigV3Contract
 } from "@contracts";
@@ -759,6 +760,10 @@ export namespace Bridge {
                 ];
 
             BridgeUtils.DepositIfChainTokens.forEach((depositIfChainArgs) => {
+                if (this.chainId === ChainId.DFK && args.tokenTo.isEqual(Tokens.SYN_AVAX)) {
+                    return
+                }
+
                 let {chainId, tokens, depositEth, redeemChainIds} = depositIfChainArgs;
 
                 let
@@ -778,7 +783,17 @@ export namespace Bridge {
                 }
             });
 
-            let {castArgs, isEasy, txn} = this.checkEasyArgs(args, zapBridge, easyDeposits, easyRedeems, easyDepositETH);
+            let zapInstance: L1BridgeZapContract | L2BridgeZapContract;
+            if (this.chainId !== ChainId.DFK) {
+                zapInstance = zapBridge;
+            } else {
+                zapInstance = SynapseEntities.L1BridgeZapContractInstance({
+                    chainId: ChainId.DFK,
+                    signerOrProvider: this.provider
+                });
+            }
+
+            let {castArgs, isEasy, txn} = this.checkEasyArgs(args, zapInstance, easyDeposits, easyRedeems, easyDepositETH);
             if (isEasy && txn) {
                 return txn
             }
@@ -899,29 +914,27 @@ export namespace Bridge {
                             bridgeTransactionDeadline,
                             BridgeUtils.overrides(args.amountFrom)
                         )
-                    } else if (this.chainId === ChainId.AVALANCHE) {
-                        if (chainIdTo === ChainId.DFK) {
-                            return zapBridge.populateTransaction.redeem(
-                                args.addressTo,
-                                ChainId.DFK,
-                                Tokens.SYN_JEWEL.address(this.chainId),
-                                args.amountFrom
-                            )
-                        } else if (chainIdTo === ChainId.HARMONY) {
-                            return zapBridge.populateTransaction.redeemAndSwap(
-                                args.addressTo,
-                                ChainId.DFK,
-                                Tokens.SYN_JEWEL.address(this.chainId),
-                                args.amountFrom,
-                                1,
-                                0,
-                                minToSwapDest,
-                                transactionDeadline
-                            )
-                        }
                     }
 
-                    break;
+                    if (chainIdTo === ChainId.DFK) {
+                        return zapBridge.populateTransaction.redeem(
+                            args.addressTo,
+                            ChainId.DFK,
+                            Tokens.SYN_JEWEL.address(this.chainId),
+                            args.amountFrom
+                        )
+                    }
+
+                    return zapBridge.populateTransaction.redeemAndSwap(
+                        args.addressTo,
+                        ChainId.DFK,
+                        Tokens.SYN_JEWEL.address(this.chainId),
+                        args.amountFrom,
+                        1,
+                        0,
+                        minToSwapDest,
+                        transactionDeadline
+                    )
                 case Tokens.SYN_JEWEL:
                     if (this.chainId === ChainId.DFK) {
                         const zap = SynapseEntities.L1BridgeZapContractInstance({
@@ -937,16 +950,36 @@ export namespace Bridge {
                                 args.amountFrom,
                                 BridgeUtils.overrides(args.amountFrom)
                             )
-                    } else if (this.chainId === ChainId.HARMONY) {
+                    }
+
+                    return zapBridge
+                        .populateTransaction
+                        .swapAndRedeem(
+                            ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.SYN_JEWEL),
+                            0,
+                            1,
+                            amountFrom,
+                            minToSwapOriginHighSlippage, // minToSwapOrigin, // minToSwapOriginHighSlippage,
+                            transactionDeadline
+                        )
+                case Tokens.SYN_AVAX:
+                    if (this.chainId === ChainId.DFK) {
+                        const zap = SynapseEntities.L1BridgeZapContractInstance({
+                            chainId:          ChainId.DFK,
+                            signerOrProvider: this.provider
+                        });
+
+                        return zap
+                            .populateTransaction
+                            .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.WAVAX))
+                    } else if (this.chainId === ChainId.AVALANCHE) {
                         return zapBridge
                             .populateTransaction
-                            .swapAndRedeem(
-                                ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.SYN_JEWEL),
-                                0,
-                                1,
-                                amountFrom,
-                                minToSwapOriginHighSlippage, // minToSwapOrigin, // minToSwapOriginHighSlippage,
-                                transactionDeadline
+                            .depositETH(
+                                castArgs.addressTo,
+                                castArgs.chainIdTo,
+                                castArgs.amountFrom,
+                                BridgeUtils.overrides(castArgs.amountFrom)
                             )
                     }
 

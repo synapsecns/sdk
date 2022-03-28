@@ -220,6 +220,11 @@ export namespace BridgeUtils {
                     compare = t2.underlyingToken;
                 }
                 break;
+            case Tokens.WAVAX:
+                if (chainId !== ChainId.DFK) {
+                    compare = t2.underlyingToken;
+                }
+                break;
             default:
                 if (t2.isWrapperToken && t2.underlyingToken) {
                     compare = t2.underlyingToken;
