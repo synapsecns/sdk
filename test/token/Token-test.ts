@@ -219,16 +219,9 @@ describe("Token Tests", function(this: Mocha.Suite) {
                 let tokenAddr = t.address(cid);
                 switch (tokenSwitch(t)) {
                     case Tokens.ETH:
-                        it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
-                            expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
-                        })
-                        return
                     case Tokens.AVAX:
-                        it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
-                            expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
-                        })
-                        return
                     case Tokens.MOVR:
+                    case Tokens.JEWEL:
                         it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
                             expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
                         })
