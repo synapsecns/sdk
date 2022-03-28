@@ -1,0 +1,76 @@
+name: Publish (Dev/Beta)
+
+on:
+  push:
+    tags:
+      - "!v*"
+      - "v*-dev*"
+      - "v*-beta*"
+      - "v*-alpha*"
+
+jobs:
+  tagged_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version-file: '.nvmrc'
+          cache: "yarn"
+          registry-url: "https://registry.npmjs.org"
+          scope: "@synapseprotocol"
+
+      - name: Yarn Install
+        run: yarn install --frozen-lockfile
+
+      - name: Yarn Build
+        run: yarn run build
+
+      - name: Set NPM tag in env
+        id: npm_tag
+        run: |
+          REF_NAME=${GITHUB_REF#refs/*/}
+          ALPHA='alpha'
+          BETA='beta'
+          DEV='dev'
+          
+          case $REF_NAME in
+            *"$ALPHA"*)
+              echo ::set-output name=npm_tag::${ALPHA}
+              ;;
+            *"$BETA"*)
+              echo ::set-output name=npm_tag::${BETA}
+              ;;
+            *"DEV"*)
+              echo ::set-output name=npm_tag::${DEV}
+              ;;
+          esac
+
+      - name: Set tagname in env
+        id: git_tag
+        run: echo ::set-output name=git_tag::${GITHUB_REF#refs/*/}
+
+      - name: Make tarball
+        run: yarn pack --filename synapseprotocol-sdk-${{ steps.git_tag.outputs.git_tag }}.tgz
+
+      - name: Create release with tarball
+        uses: "marvinpinto/action-automatic-releases@v1.2.1"
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
+          automatic_release_tag: ${{ steps.git_tag.outputs.git_tag }}
+          files: |
+            synapseprotocol-sdk-${{ steps.git_tag.outputs.git_tag }}.tgz
+            LICENSE
+            README.md
+
+      - name: Publish to NPM
+        run: yarn publish --non-interactive --tag ${{ steps.npm_tag.outputs.npm_tag }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_SERVICE_ACCOUNT_TOKEN }}
