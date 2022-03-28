@@ -1,0 +1,7 @@
+{
+  "reporter": "text-lcov",
+  "exclude": [
+    "src/abis/*",
+    "src/internal/gen/*"
+  ]
+}
