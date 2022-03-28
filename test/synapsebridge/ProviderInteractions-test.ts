@@ -14,7 +14,7 @@ import {Bridge, ChainId, Networks, Tokens} from "@sdk";
 import {rejectPromise, staticCallPopulatedTransaction} from "@sdk/common/utils";
 
 import {
-    bridgeTestPrivkey1, DEFAULT_TEST_TIMEOUT, expectFulfilled, expectNothingFromPromise, expectNotZero, expectRejected,
+    bridgeTestPrivkey1, DEFAULT_TEST_TIMEOUT, expectFulfilled, expectNothingFromPromise, expectNotZero,
     makeWalletSignerWithProvider,
 } from "@tests/helpers";
 import {expect} from "chai";
@@ -105,26 +105,24 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
     let testCases: TestCase[] = [
         makeTestCase(Tokens.ETH,    Tokens.WETH_E, ChainId.ARBITRUM,  ChainId.AVALANCHE, testAmts.small,       {executeSuccess: true,  canBridge: true,  callStatic: true}),
+        makeTestCase(Tokens.DAI,    Tokens.BUSD,   ChainId.AVALANCHE, ChainId.BSC,       testAmts.executeFail, failAllOpts(true)),
         makeTestCase(Tokens.ETH,    Tokens.WETH,   ChainId.OPTIMISM,  ChainId.ETH,       testAmts.executeFail, failAllOpts(false)),
-        makeTestCase(Tokens.ETH,    Tokens.WETH,   ChainId.BOBA,      ChainId.ETH,       testAmts.executeFail, failAllOpts(true)),
+        makeTestCase(Tokens.ETH,    Tokens.WETH,   ChainId.BOBA,      ChainId.ETH,       testAmts.executeFail, failAllOpts(false)),
         makeTestCase(Tokens.ETH,    Tokens.NETH,   ChainId.ETH,       ChainId.OPTIMISM,  testAmts.executeFail, failAllOpts(true)),
         makeTestCase(Tokens.NUSD,   Tokens.USDT,   ChainId.POLYGON,   ChainId.FANTOM,    testAmts.ironMaiden,  failAllOpts(false)),
-        // makeTestCase(Tokens.AVWETH, Tokens.ETH,    ChainId.AVALANCHE, ChainId.OPTIMISM,  testAmts.executeFail, failAllOpts(false)),
-        // makeTestCase(Tokens.JUMP,   Tokens.JUMP,   ChainId.BSC,       ChainId.FANTOM,    testAmts.ironMaiden,  failAllOpts(false)),
-        // makeTestCase(Tokens.JUMP,   Tokens.JUMP,   ChainId.FANTOM,    ChainId.BSC,       testAmts.ironMaiden,  failAllOpts(false)),
     ];
 
-    // const dfkTestCases: TestCase[] = [
-    //     // makeTestCase(Tokens.WJEWEL,      Tokens.JEWEL,       ChainId.HARMONY,     ChainId.DFK,        parseEther("0.9"),   {executeSuccess: true,   canBridge: true,   callStatic: false}),
-    //     makeTestCase(Tokens.AVAX,        Tokens.SYN_AVAX,    ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("0.6"),   {executeSuccess: true,   canBridge: true,   callStatic: true}),
-    //     // makeTestCase(Tokens.WAVAX,       Tokens.SYN_AVAX,    ChainId.DFK,         ChainId.HARMONY,    parseEther("1.0"),   {executeSuccess: true,   canBridge: true,   callStatic: false}),
-    //     // makeTestCase(Tokens.SYN_AVAX,    Tokens.AVAX,        ChainId.HARMONY,     ChainId.AVALANCHE,  parseEther("1.0"),   {executeSuccess: true,   canBridge: true,   callStatic: false}),
-    //     makeTestCase(Tokens.XJEWEL,      Tokens.XJEWEL,      ChainId.HARMONY,     ChainId.DFK,        parseEther("1.5"),   {executeSuccess: true,   canBridge: true,   callStatic: true}),
-    //     // makeTestCase(Tokens.JEWEL,       Tokens.SYN_JEWEL,   ChainId.DFK,         ChainId.AVALANCHE,  parseEther("5.35"),  {executeSuccess: false,  canBridge: false,  callStatic: true}),
-    //     // makeTestCase(Tokens.SYN_JEWEL,   Tokens.WJEWEL,      ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("0.3"),   {executeSuccess: true,   canBridge: true,   callStatic: false}),
-    // ];
-    //
-    // testCases.push(...dfkTestCases);
+    const dfkTestCases: TestCase[] = [
+        makeTestCase(Tokens.AVAX,        Tokens.SYN_AVAX,    ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("0.6"),   {executeSuccess: false,  canBridge: true,   callStatic: true}),
+        makeTestCase(Tokens.XJEWEL,      Tokens.XJEWEL,      ChainId.HARMONY,     ChainId.DFK,        parseEther("1.5"),   {executeSuccess: true,   canBridge: false,  callStatic: true}),
+        // makeTestCase(Tokens.WJEWEL,      Tokens.JEWEL,       ChainId.HARMONY,     ChainId.DFK,        parseEther("0.9"),   {executeSuccess: true,   canBridge: true,   callStatic: false}),
+        // makeTestCase(Tokens.WAVAX,       Tokens.SYN_AVAX,    ChainId.DFK,         ChainId.HARMONY,    parseEther("1.0"),   {executeSuccess: true,   canBridge: true,   callStatic: false}),
+        // makeTestCase(Tokens.SYN_AVAX,    Tokens.AVAX,        ChainId.HARMONY,     ChainId.AVALANCHE,  parseEther("1.0"),   {executeSuccess: true,   canBridge: true,   callStatic: false}),
+        // makeTestCase(Tokens.JEWEL,       Tokens.SYN_JEWEL,   ChainId.DFK,         ChainId.AVALANCHE,  parseEther("5.35"),  {executeSuccess: false,  canBridge: false,  callStatic: true}),
+        // makeTestCase(Tokens.SYN_JEWEL,   Tokens.WJEWEL,      ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("0.3"),   {executeSuccess: true,   canBridge: true,   callStatic: false}),
+    ];
+
+    testCases.push(...dfkTestCases);
 
     const getBridgeEstimate = async (
         tc: TestCase,
@@ -157,7 +155,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 return
             }
 
-            ctx.timeout(20 * 1000);
+            ctx.timeout(30 * 1000);
 
             let execProm: Promise<void>;
             if (staticCall) {
@@ -170,10 +168,11 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 return (await expectNothingFromPromise(execProm))
             }
 
-            return (await (tc.expected.executeSuccess
-                    ? expectFulfilled(execProm)
-                    : expectRejected(execProm)
-            ))
+            if (tc.expected.executeSuccess) {
+                return (await expect(execProm).to.eventually.be.fulfilled)
+            }
+
+            return (await expect(execProm).to.eventually.be.rejected)
         }
     }
 
@@ -196,6 +195,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 {wallet, bridgeInstance} = walletArgs;
 
             let
+                canBridge:      boolean,
                 outputEstimate: Bridge.BridgeOutputEstimate,
                 doBridgeArgs:   Bridge.BridgeTransactionParams;
 
@@ -212,11 +212,6 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
                 outputEstimate = estimate;
                 doBridgeArgs = bridgeParams;
-                //
-                // console.log({
-                //     estimate: outputEstimate.amountToReceive.toString(),
-                //     bridgeFee: outputEstimate.bridgeFee.toString()
-                // })
 
                 return
             });
@@ -225,14 +220,21 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 const canBridgeTestTitle: string = `should${tc.expected.canBridge ? "" : " not"} be able to bridge`;
 
                 it(canBridgeTestTitle, async function(this: Mocha.Context) {
-                    this.timeout(5.5*1000);
+                    if (tc.args.chainIdFrom === ChainId.HARMONY) {
+                        this.timeout(15 * 1000);
+                    } else {
+                        this.timeout(5.5 * 1000);
+                    }
                     this.slow(2*1000);
 
                     let prom = bridgeInstance.checkCanBridge({
                         token: tc.args.tokenFrom,
                         signer: wallet,
                         amount: tc.args.amountFrom,
-                    }).then(({canBridge}) => canBridge)
+                    }).then(({canBridge: res}) => {
+                        canBridge = res;
+                        return res
+                    });
 
                     return (await expect(prom)
                         .to
@@ -241,8 +243,6 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                     )
                 });
             });
-
-            const involvesDFK = tc.args.chainIdFrom === ChainId.DFK || tc.args.chainIdTo === ChainId.DFK;
 
             describe("- Transaction Builders Tests", function(this: Mocha.Suite) {
                 let
@@ -305,10 +305,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 });
             });
 
-
-
-            // don't want DFK-related tests running in CI yet
-            if (!tc.callStatic && !involvesDFK) {
+            if (!tc.callStatic) {
                 describe("- Magic Executors tests", function(this: Mocha.Suite) {
                     step(approvalTxnTestTitle, async function(this: Mocha.Context) {
                         let prom = bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet);

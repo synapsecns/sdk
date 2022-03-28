@@ -100,11 +100,10 @@ jobs:
           RPC_BATCH_INTERVAL: 55
           REPORTS_DIR:        ${{ env.COVERAGE_DIR }}
           ETH_RPC_URI:        ${{ secrets.ETH_RPC_URI }}
-          # OPTIMISM_RPC_URI:   ${{ secrets.OPTIMISM_RPC_URI }}
-          BSC_RPC_URI:        "https://bsc-dataseed1.defibit.io"
+          OPTIMISM_RPC_URI:   ${{ secrets.OPTIMISM_RPC_URI }}
           POLYGON_RPC_URI:    ${{ secrets.POLYGON_RPC_URI }}
           FANTOM_RPC_URI:     ${{ secrets.FANTOM_RPC_URI }}
-          # METIS_RPC_URI:      ${{ secrets.METIS_RPC_URI }}
+          METIS_RPC_URI:      ${{ secrets.METIS_RPC_URI }}
           ARBITRUM_RPC_URI:   ${{ secrets.ARBITRUM_RPC_URI }}
           AVALANCHE_RPC_URI:  ${{ secrets.AVALANCHE_RPC_URI }}
           HARMONY_RPC_URI:    "https://api.fuzz.fi"
