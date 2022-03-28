@@ -76,6 +76,10 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                             return "0xd203De32170130082896b4111eDF825a4774c18E"
                         case ChainId.ARBITRUM:
                             return "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
+                        case ChainId.AVALANCHE:
+                            return "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7"
+                        case ChainId.DFK:
+                            return "0xCCb93dABD71c8Dad03Fc4CE5559dC3D89F67a260"
                         default:
                             return "0x0000000000000000000000000000000000000000"
                     }})(),
