@@ -110,7 +110,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         makeTestCase(Tokens.JUMP,   Tokens.JUMP,   ChainId.FANTOM,    ChainId.BSC,       testAmts.ironMaiden,  failAllOpts(false)),
         makeTestCase(Tokens.ETH,    Tokens.WETH_E, ChainId.ARBITRUM,  ChainId.AVALANCHE, testAmts.small,       {executeSuccess: true,  canBridge: true,  callStatic: true}),
         makeTestCase(Tokens.ETH,    Tokens.NETH,   ChainId.ETH,       ChainId.OPTIMISM,  testAmts.executeFail, failAllOpts(true)),
-        makeTestCase(Tokens.AVWETH, Tokens.ETH,    ChainId.AVALANCHE, ChainId.OPTIMISM,  testAmts.executeFail, failAllOpts(false)),
+        // makeTestCase(Tokens.AVWETH, Tokens.ETH,    ChainId.AVALANCHE, ChainId.OPTIMISM,  testAmts.executeFail, failAllOpts(false)),
         makeTestCase(Tokens.NUSD,   Tokens.USDT,   ChainId.POLYGON,   ChainId.FANTOM,    testAmts.ironMaiden,  failAllOpts(false)),
     ];
 
