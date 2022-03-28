@@ -105,7 +105,6 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
     let testCases: TestCase[] = [
         makeTestCase(Tokens.ETH,    Tokens.WETH_E, ChainId.ARBITRUM,  ChainId.AVALANCHE, testAmts.small,       {executeSuccess: true,  canBridge: true,  callStatic: true}),
-        makeTestCase(Tokens.DAI,    Tokens.BUSD,   ChainId.AVALANCHE, ChainId.BSC,       testAmts.executeFail, failAllOpts(true)),
         makeTestCase(Tokens.ETH,    Tokens.WETH,   ChainId.OPTIMISM,  ChainId.ETH,       testAmts.executeFail, failAllOpts(false)),
         makeTestCase(Tokens.ETH,    Tokens.WETH,   ChainId.BOBA,      ChainId.ETH,       testAmts.executeFail, failAllOpts(false)),
         makeTestCase(Tokens.ETH,    Tokens.NETH,   ChainId.ETH,       ChainId.OPTIMISM,  testAmts.executeFail, failAllOpts(true)),
@@ -113,13 +112,11 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
     ];
 
     const dfkTestCases: TestCase[] = [
-        makeTestCase(Tokens.AVAX,        Tokens.SYN_AVAX,    ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("0.6"),   {executeSuccess: false,  canBridge: true,   callStatic: true}),
+        makeTestCase(Tokens.AVAX,        Tokens.SYN_AVAX,    ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("0.6"),   {executeSuccess: true,   canBridge: true,   callStatic: true}),
+        makeTestCase(Tokens.AVAX,        Tokens.WAVAX,       ChainId.AVALANCHE,   ChainId.DFK,        parseEther("0.6"),   {executeSuccess: true,   canBridge: true,   callStatic: true}),
         makeTestCase(Tokens.XJEWEL,      Tokens.XJEWEL,      ChainId.HARMONY,     ChainId.DFK,        parseEther("1.5"),   {executeSuccess: true,   canBridge: false,  callStatic: true}),
-        // makeTestCase(Tokens.WJEWEL,      Tokens.JEWEL,       ChainId.HARMONY,     ChainId.DFK,        parseEther("0.9"),   {executeSuccess: true,   canBridge: true,   callStatic: false}),
-        // makeTestCase(Tokens.WAVAX,       Tokens.SYN_AVAX,    ChainId.DFK,         ChainId.HARMONY,    parseEther("1.0"),   {executeSuccess: true,   canBridge: true,   callStatic: false}),
-        // makeTestCase(Tokens.SYN_AVAX,    Tokens.AVAX,        ChainId.HARMONY,     ChainId.AVALANCHE,  parseEther("1.0"),   {executeSuccess: true,   canBridge: true,   callStatic: false}),
-        // makeTestCase(Tokens.JEWEL,       Tokens.SYN_JEWEL,   ChainId.DFK,         ChainId.AVALANCHE,  parseEther("5.35"),  {executeSuccess: false,  canBridge: false,  callStatic: true}),
-        // makeTestCase(Tokens.SYN_JEWEL,   Tokens.WJEWEL,      ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("0.3"),   {executeSuccess: true,   canBridge: true,   callStatic: false}),
+        makeTestCase(Tokens.JEWEL,       Tokens.WJEWEL,      ChainId.DFK,         ChainId.HARMONY,    parseEther("1.5"),   {executeSuccess: true,   canBridge: true,   callStatic: true}),
+        makeTestCase(Tokens.JEWEL,       Tokens.SYN_JEWEL,   ChainId.DFK,         ChainId.AVALANCHE,  parseEther("1.5"),   {executeSuccess: true,   canBridge: true,   callStatic: true}),
     ];
 
     testCases.push(...dfkTestCases);
