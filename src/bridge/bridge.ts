@@ -927,7 +927,7 @@ export namespace Bridge {
 
                     return zapBridge.populateTransaction.redeemAndSwap(
                         args.addressTo,
-                        ChainId.DFK,
+                        args.chainIdTo,
                         Tokens.SYN_JEWEL.address(this.chainId),
                         args.amountFrom,
                         1,
