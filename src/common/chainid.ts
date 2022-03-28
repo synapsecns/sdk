@@ -13,6 +13,7 @@ export const ChainId = {
     "MOONRIVER":    1285,
     "ARBITRUM":     42161,
     "AVALANCHE":    43114,
+    "DFK":          53935,
     "AURORA":       1313161554,
     "HARMONY":      1666600000,
 } as const;

@@ -166,6 +166,12 @@ export namespace Networks {
         chainCurrency: "AVAX",
     });
 
+    export const DFK = new Network({
+        name:          "DFK",
+        chainId:       ChainId.DFK,
+        chainCurrency: "JEWEL"
+    });
+
     export const AURORA = new Network({
         name:          "Aurora",
         chainId:       ChainId.AURORA,
@@ -191,6 +197,7 @@ export namespace Networks {
         [ChainId.MOONRIVER]:  MOONRIVER,
         [ChainId.ARBITRUM]:   ARBITRUM,
         [ChainId.AVALANCHE]:  AVALANCHE,
+        [ChainId.DFK]:        DFK,
         [ChainId.AURORA]:     AURORA,
         [ChainId.HARMONY]:    HARMONY,
     }

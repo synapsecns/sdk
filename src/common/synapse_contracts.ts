@@ -116,7 +116,7 @@ export namespace SynapseContracts {
 
     export const Harmony = new SynapseContract({
         bridge:    "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
-        bridgeZap: "0xB729B5bAD4B42f3bDd4A3518a1Cc00178cb5920a",
+        bridgeZap: "0x4F4f66964335D7bef23C16a62Fcd3d1E89f02959",
     });
 
     const chainIdContractsMap: ChainIdTypeMap<SynapseContract> = {
