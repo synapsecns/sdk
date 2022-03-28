@@ -125,7 +125,7 @@ export namespace TokenSwap {
     export async function calculateSwapRate(args: SwapParams): Promise<EstimatedSwapRate> {
         const {swapSupported: canSwap, reasonNotSupported} = swapSupported(args);
         if (!canSwap) {
-            return rejectPromise(reasonNotSupported)
+            return rejectPromise(reasonNotSupported.reason)
         }
 
         return resolveSwapData(args)
