@@ -51,7 +51,7 @@ export namespace GasUtils {
             bridgeGasLimit: BigNumber.from(1500000),
         },
         [ChainId.AVALANCHE]: {
-            maxFeePerGas:    makeGwei("150"),
+            maxFeePerGas:    makeGwei("210"),
             maxPriorityFee:  makeGwei("3"),
             bridgeGasLimit:  BigNumber.from(700000),
             approveGasLimit: BigNumber.from(75000),
