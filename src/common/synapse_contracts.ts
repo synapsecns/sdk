@@ -109,6 +109,11 @@ export namespace SynapseContracts {
         bridgeZap: "0xE85429C97589AD793Ca11A8BC3477C03d27ED140",
     });
 
+    export const DFK = new SynapseContract({
+        bridge:    "0xE05c976d3f045D0E6E7A6f61083d98A15603cF6A",
+        bridgeZap: "0x33d90B6ce7e0bFC42BCD35d05c443c6915296987",
+    });
+
     export const Aurora = new SynapseContract({
         bridge:    "0xaeD5b25BE1c3163c907a471082640450F928DDFE",
         bridgeZap: "0x2D8Ee8d6951cB4Eecfe4a79eb9C2F973C02596Ed",
@@ -132,6 +137,7 @@ export namespace SynapseContracts {
         [ChainId.MOONRIVER]: Moonriver,
         [ChainId.ARBITRUM]:  Arbitrum,
         [ChainId.AVALANCHE]: Avalanche,
+        [ChainId.DFK]:       DFK,
         [ChainId.AURORA]:    Aurora,
         [ChainId.HARMONY]:   Harmony,
     }

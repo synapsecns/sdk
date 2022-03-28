@@ -59,6 +59,11 @@ export namespace GasUtils {
         [ChainId.AURORA]: {
             gasPrice: makeGwei('1'),
         },
+        [ChainId.HARMONY]: {
+            gasPrice:        makeGwei("45"),
+            bridgeGasLimit:  BigNumber.from(250000),
+            approveGasLimit: BigNumber.from(75000)
+        }
     }
 
     export const makeGasParams = (chainId: number): GasParams => CHAIN_GAS_PARAMS[chainId] ?? {};

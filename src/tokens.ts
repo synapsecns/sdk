@@ -294,8 +294,9 @@ export namespace Tokens {
         symbol:   "wAVAX",
         decimals: 18,
         addresses: {
-            [ChainId.AVALANCHE]: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+            [ChainId.DFK]:       "0xB57B60DeBDB0b8172bb6316a9164bd3C695F133a",
             [ChainId.MOONBEAM]:  "0xA1f8890E39b4d8E33efe296D698fe42Fb5e59cC3",
+            [ChainId.AVALANCHE]: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
         },
         swapType:        SwapType.AVAX,
         underlyingToken: AVAX,
@@ -307,6 +308,16 @@ export namespace Tokens {
         decimals: 18,
         addresses: {
             [ChainId.HARMONY]: "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6"
+        },
+        swapType: SwapType.AVAX
+    });
+
+    export const MULTI_AVAX = new BaseToken({
+        name:     "AnySwap/Multi Wrapped AVAX",
+        symbol:   "multiAVAX",
+        decimals: 18,
+        addresses: {
+            [ChainId.HARMONY]: "0xb12c13e66ade1f72f71834f2fc5082db8c091358"
         },
         swapType: SwapType.AVAX
     });
@@ -332,6 +343,51 @@ export namespace Tokens {
         },
         swapType:        SwapType.MOVR,
         underlyingToken: MOVR,
+    });
+
+    export const JEWEL = new BaseToken({
+        name:     "JEWEL",
+        symbol:   "JEWEL",
+        decimals: 18,
+        addresses: {
+            [ChainId.DFK]: "",
+        },
+        swapType:   SwapType.JEWEL,
+        isGasToken: true,
+    });
+
+    export const WJEWEL = new WrapperToken({
+        name:    "Wrapped JEWEL",
+        symbol:  "wJEWEL",
+        decimals: 18,
+        addresses: {
+            [ChainId.DFK]:     "0xCCb93dABD71c8Dad03Fc4CE5559dC3D89F67a260",
+            [ChainId.HARMONY]: "0x72Cb10C6bfA5624dD07Ef608027E366bd690048F"
+        },
+        swapType:        SwapType.JEWEL,
+        underlyingToken: JEWEL,
+    });
+
+    export const SYN_JEWEL = new BaseToken({
+        name:    "synJEWEL",
+        symbol:  "synJEWEL",
+        decimals: 18,
+        addresses: {
+            [ChainId.AVALANCHE]: "0x997Ddaa07d716995DE90577C123Db411584E5E46",
+            [ChainId.HARMONY]:   "0x28b42698Caf46B4B012CF38b6C75867E0762186D"
+        },
+        swapType: SwapType.JEWEL
+    });
+
+    export const XJEWEL = new BaseToken({
+        name:    "xJEWEL",
+        symbol:  "xJEWEL",
+        decimals: 18,
+        addresses: {
+            [ChainId.DFK]:     "0x77f2656d04E158f915bC22f07B779D94c1DC47Ff",
+            [ChainId.HARMONY]: "0xA9cE83507D872C5e1273E745aBcfDa849DAA654F"
+        },
+        swapType: SwapType.XJEWEL
     });
 
     // non-Synapse, non-stablecoin tokens
@@ -509,12 +565,14 @@ export namespace Tokens {
     });
 
     export const mintBurnTokens: Token[] = [
-        NUSD,  SYN,      NETH,
-        HIGH,  DOG,      JUMP,
-        FRAX,  SYN_FRAX, NFD,
-        GOHM,  SOLAR,    GMX,
-        UST,   NEWO,     SDT,
-        LUNA,  USDB,     SYN_AVAX,
+        NUSD,    SYN,      NETH,
+        HIGH,    DOG,      JUMP,
+        FRAX,    SYN_FRAX, NFD,
+        GOHM,    SOLAR,    GMX,
+        UST,     NEWO,     SDT,
+        LUNA,    USDB,     SYN_AVAX,
+        JEWEL,   WJEWEL,   SYN_JEWEL,
+        XJEWEL,
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
@@ -528,6 +586,8 @@ export namespace Tokens {
             wrapperToken = WMOVR;
         } else if (gasToken.isEqual(ETH)) {
             wrapperToken = WETH;
+        } else if (gasToken.isEqual(JEWEL)) {
+            wrapperToken = WJEWEL;
         }
 
         return wrapperToken
@@ -540,6 +600,7 @@ export namespace Tokens {
         SYN, NUSD, AVAX, WAVAX, MOVR, WMOVR,
         GOHM, HIGH, JUMP, DOG, NFD, FRAX,
         SYN_FRAX, SOLAR, GMX, NEWO, SDT,
-        LUNA, USDB, SYN_AVAX
+        LUNA, USDB, SYN_AVAX, JEWEL, WJEWEL,
+        SYN_JEWEL, XJEWEL,
     ];
 }

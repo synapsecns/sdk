@@ -70,6 +70,7 @@ const CHAINID_CONTRACTS_MAP: {[c: number]: SynapseContracts.SynapseContract} = {
     [ChainId.MOONRIVER]: SynapseContracts.Moonriver,
     [ChainId.ARBITRUM]:  SynapseContracts.Arbitrum,
     [ChainId.AVALANCHE]: SynapseContracts.Avalanche,
+    [ChainId.DFK]:       SynapseContracts.DFK,
     [ChainId.AURORA]:    SynapseContracts.Aurora,
     [ChainId.HARMONY]:   SynapseContracts.Harmony,
 }

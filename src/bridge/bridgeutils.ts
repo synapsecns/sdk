@@ -29,6 +29,8 @@ export namespace BridgeUtils {
         ChainId.OPTIMISM,
         ChainId.BOBA,
         ChainId.ARBITRUM,
+        ChainId.AVALANCHE,
+        ChainId.DFK
     ];
 
     export const isL2ETHChain          = (chainId: number): boolean => L2_ETH_CHAINS.includes(chainId);
@@ -48,10 +50,16 @@ export namespace BridgeUtils {
         {
             chainId:        ChainId.AVALANCHE,
             tokens:         [Tokens.AVAX, Tokens.WAVAX, Tokens.SYN_AVAX],
-            redeemChainIds: [ChainId.MOONBEAM],
+            redeemChainIds: [ChainId.MOONBEAM, ChainId.DFK],
             depositEth:     true
         },
         {chainId: ChainId.MOONRIVER, tokens: [Tokens.MOVR, Tokens.WMOVR], redeemChainIds: [ChainId.MOONBEAM], depositEth: true},
+        {
+            chainId:         ChainId.HARMONY,
+            tokens:         [Tokens.XJEWEL],
+            redeemChainIds: [ChainId.DFK],
+            depositEth:      false,
+        },
     ]
 
     interface BridgeTxArgs {
@@ -196,7 +204,7 @@ export namespace BridgeUtils {
             checkReplaceToken(t2, check, replace)
         ];
 
-    function findSymbol(t1: Token, t2: Token): boolean {
+    function findSymbol(t1: Token, t2: Token, chainId: number): boolean {
         let compare: Token = t2;
         switch (tokenSwitch(t2)) {
             case Tokens.WETH_E:
@@ -204,6 +212,13 @@ export namespace BridgeUtils {
                 break;
             case Tokens.WETH:
                 compare = Tokens.WETH;
+                break;
+            case Tokens.WJEWEL:
+                if (chainId !== ChainId.HARMONY) {
+                    compare = t2.underlyingToken;
+                } else {
+                    compare = Tokens.SYN_JEWEL;
+                }
                 break;
             default:
                 if (t2.isWrapperToken && t2.underlyingToken) {
@@ -218,7 +233,7 @@ export namespace BridgeUtils {
     export function makeTokenArgs(chainId: number, t: Token): [Token[], number] {
         let
             toks: Token[] = SwapPools.bridgeSwappableMap[chainId].swappableSwapGroups[t.swapType].poolTokens,
-            idx  = toks.findIndex((tok: Token) => findSymbol(tok, t));
+            idx  = toks.findIndex((tok: Token) => findSymbol(tok, t, chainId));
 
         return [toks, idx]
     }

@@ -758,9 +758,11 @@ export namespace Bridge {
                 easyDeposits:   ID[] = [],
                 easyDepositETH: ID[] = [],
                 easyRedeems:    ID[] = [
-                    Tokens.SYN.id,      Tokens.HIGH.id, Tokens.DOG.id,
-                    Tokens.FRAX.id,     Tokens.UST.id,  Tokens.GOHM.id,
-                    Tokens.NEWO.id,     Tokens.SDT.id,  Tokens.LUNA.id,
+                    Tokens.SYN.id,      Tokens.HIGH.id,    Tokens.DOG.id,
+                    Tokens.FRAX.id,     Tokens.UST.id,     Tokens.GOHM.id,
+                    Tokens.NEWO.id,     Tokens.SDT.id,     Tokens.LUNA.id,
+                    // Tokens.XJEWEL.id,
+                    // Tokens.WJEWEL.id,
                 ];
 
             BridgeUtils.DepositIfChainTokens.forEach((depositIfChainArgs) => {
@@ -913,6 +915,19 @@ export namespace Bridge {
                             )
                     }
 
+                    if (this.chainId === ChainId.HARMONY && args.tokenFrom.isEqual(Tokens.WJEWEL)) {
+                        return zapBridge
+                            .populateTransaction
+                            .swapAndRedeem(
+                                ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.SYN_JEWEL),
+                                0,
+                                1,
+                                amountFrom,
+                                minToSwapOriginHighSlippage, // minToSwapOrigin, // minToSwapOriginHighSlippage,
+                                transactionDeadline
+                            )
+                    }
+
                     if (this.chainId === ChainId.HARMONY && args.tokenFrom.isEqual(Tokens.SYN_AVAX)) {
                         const redeemArgs = BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.SYN_AVAX);
 
@@ -948,6 +963,9 @@ export namespace Bridge {
                     break;
                 case SwapType.MOVR:
                     bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.MOVR, Tokens.WMOVR);
+                    break;
+                case SwapType.JEWEL:
+                    bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.JEWEL, Tokens.WJEWEL);
                     break;
                 default:
                     bridgeTokens = (t1: Token, t2: Token) => [t1, t2];

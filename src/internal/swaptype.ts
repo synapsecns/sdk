@@ -19,6 +19,8 @@ export const SwapType = {
     SDT:     "SDT",
     LUNA:    "LUNA",
     USDB:    "USDB",
+    JEWEL:   "JEWEL",
+    XJEWEL:  "XJEWEL"
 } as const;
 
 export type SwapType = ValueOf<typeof SwapType>
@@ -26,8 +28,9 @@ export type SwapType = ValueOf<typeof SwapType>
 export type SwapTypeMap<T> = {[k in SwapType]?: T}
 
 export const mintBurnSwapTypes: SwapType[] = [
-    SwapType.HIGH, SwapType.DOG,  SwapType.JUMP,
-    SwapType.NFD,  SwapType.OHM,  SwapType.SOLAR,
-    SwapType.GMX,  SwapType.UST,  SwapType.NEWO,
-    SwapType.SDT,  SwapType.LUNA, SwapType.USDB,
+    SwapType.HIGH,   SwapType.DOG,     SwapType.JUMP,
+    SwapType.NFD,    SwapType.OHM,     SwapType.SOLAR,
+    SwapType.GMX,    SwapType.UST,     SwapType.NEWO,
+    SwapType.SDT,    SwapType.LUNA,    SwapType.USDB,
+    SwapType.JEWEL,  SwapType.XJEWEL,
 ];

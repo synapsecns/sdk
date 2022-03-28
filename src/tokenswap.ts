@@ -209,7 +209,12 @@ export namespace TokenSwap {
                 bridgeConfigIntermediateToken = chainId === ChainId.ETH ? Tokens.WETH : Tokens.NETH;
                 break;
             case SwapType.AVAX:
-                intermediateToken = Tokens.WAVAX;
+                intermediateToken             = Tokens.WAVAX;
+                bridgeConfigIntermediateToken = chainId === ChainId.HARMONY ? Tokens.SYN_AVAX : Tokens.WAVAX;
+                break;
+            case SwapType.JEWEL:
+                intermediateToken             = Tokens.WJEWEL;
+                bridgeConfigIntermediateToken = chainId === ChainId.HARMONY ? Tokens.SYN_JEWEL : Tokens.WJEWEL;
                 break;
             case SwapType.MOVR:
                 intermediateToken = Tokens.WMOVR;
