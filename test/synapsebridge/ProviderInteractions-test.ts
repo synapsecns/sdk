@@ -103,7 +103,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
     const failAllOpts = (callStatic: boolean): TestOpts & {callStatic: boolean} => ({executeSuccess: false, canBridge: false, callStatic})
 
-    const testCases: TestCase[] = [
+    let testCases: TestCase[] = [
         makeTestCase(Tokens.ETH,    Tokens.WETH,   ChainId.OPTIMISM,  ChainId.ETH,       testAmts.executeFail, failAllOpts(false)),
         makeTestCase(Tokens.ETH,    Tokens.WETH,   ChainId.BOBA,      ChainId.ETH,       testAmts.executeFail, failAllOpts(true)),
         makeTestCase(Tokens.ETH,    Tokens.WETH_E, ChainId.ARBITRUM,  ChainId.AVALANCHE, testAmts.small,       {executeSuccess: true,  canBridge: true,  callStatic: true}),
@@ -111,6 +111,18 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         makeTestCase(Tokens.AVWETH, Tokens.ETH,    ChainId.AVALANCHE, ChainId.OPTIMISM,  testAmts.executeFail, failAllOpts(false)),
         makeTestCase(Tokens.NUSD,   Tokens.USDT,   ChainId.POLYGON,   ChainId.FANTOM,    testAmts.ironMaiden,  failAllOpts(false)),
     ];
+
+    // const dfkTestCases: TestCase[] = [
+    //     makeTestCase(Tokens.WJEWEL, Tokens.JEWEL, ChainId.HARMONY, ChainId.DFK, parseEther("0.9"), {executeSuccess: true, canBridge: true, callStatic: false}),
+    //     makeTestCase(Tokens.AVAX, Tokens.WAVAX, ChainId.AVALANCHE, ChainId.DFK, parseEther("0.05"), {executeSuccess: true, canBridge: false, callStatic: false}),
+    //     makeTestCase(Tokens.AVAX, Tokens.SYN_AVAX, ChainId.AVALANCHE, ChainId.HARMONY, parseEther("0.1"), {executeSuccess: true, canBridge: true,   callStatic: false}),
+    //     makeTestCase(Tokens.WAVAX,  Tokens.SYN_AVAX, ChainId.DFK,   ChainId.HARMONY,   parseEther("0.03"), {executeSuccess: true, canBridge: false, callStatic: false}),
+    //     makeTestCase(Tokens.XJEWEL, Tokens.XJEWEL,   ChainId.DFK,   ChainId.HARMONY,   parseEther("1.2"),  {executeSuccess: true, canBridge: true, callStatic: false}),
+    //     makeTestCase(Tokens.JEWEL, Tokens.SYN_JEWEL, ChainId.DFK, ChainId.AVALANCHE, parseEther("1.1"), {executeSuccess: true, canBridge: true, callStatic: false}),
+    //     makeTestCase(Tokens.SYN_JEWEL, Tokens.WJEWEL, ChainId.AVALANCHE, ChainId.HARMONY, parseEther("0.3"), {executeSuccess: true, canBridge: true, callStatic: false}),
+    // ];
+    //
+    // testCases.push(...dfkTestCases);
 
     const getBridgeEstimate = async (
         tc: TestCase,
@@ -139,7 +151,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         approval:   boolean = false,
     ): (ctx: Mocha.Context) => PromiseLike<any> {
         return async function(ctx: Mocha.Context): Promise<void | any> {
-            if (approval && tc.args.tokenFrom.isEqual(Tokens.ETH)) {
+            if (approval && tc.args.tokenFrom.isGasToken) {
                 return
             }
 
@@ -199,6 +211,11 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 outputEstimate = estimate;
                 doBridgeArgs = bridgeParams;
 
+                console.log({
+                    estimate: outputEstimate.amountToReceive.toString(),
+                    bridgeFee: outputEstimate.bridgeFee.toString()
+                })
+
                 return
             });
 
@@ -235,7 +252,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                     bridgeTitle:  string = makeBuilderTitle("token bridge");
 
                 step(approveTitle, async function(this: Mocha.Context) {
-                    if (tc.args.tokenFrom.isEqual(Tokens.ETH)) return
+                    if (tc.args.tokenFrom.isGasToken) return
 
                     this.timeout(DEFAULT_TEST_TIMEOUT);
 
@@ -280,30 +297,30 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 });
             });
 
-            if (!tc.callStatic) {
-                describe("- Magic Executors tests", function(this: Mocha.Suite) {
-                    step(approvalTxnTestTitle, async function(this: Mocha.Context) {
-                        let prom = bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet);
-
-                        return await executeTxn(
-                            tc,
-                            prom,
-                            tc.callStatic,
-                            true
-                        )(this)
-                    });
-
-                    step(bridgeTxnTestTitle, async function (this: Mocha.Context) {
-                        let prom = bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet);
-
-                        return await executeTxn(
-                            tc,
-                            prom,
-                            tc.callStatic
-                        )(this)
-                    });
-                });
-            }
+            // if (!tc.callStatic) {
+            //     describe("- Magic Executors tests", function(this: Mocha.Suite) {
+            //         step(approvalTxnTestTitle, async function(this: Mocha.Context) {
+            //             let prom = bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet);
+            //
+            //             return await executeTxn(
+            //                 tc,
+            //                 prom,
+            //                 tc.callStatic,
+            //                 true
+            //             )(this)
+            //         });
+            //
+            //         step(bridgeTxnTestTitle, async function (this: Mocha.Context) {
+            //             let prom = bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet);
+            //
+            //             return await executeTxn(
+            //                 tc,
+            //                 prom,
+            //                 tc.callStatic
+            //             )(this)
+            //         });
+            //     });
+            // }
         });
     });
 });
