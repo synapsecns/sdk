@@ -35,18 +35,23 @@ export namespace BridgeUtils {
     export const chainSupportsGasToken = (chainId: number): boolean => GAS_TOKEN_CHAINS.includes(chainId);
 
     interface DepositIfChainArgs {
-        chainId:     number;
-        tokens:      Token[];
-        depositEth:  boolean;
-        altChainId?: number;
+        chainId:        number;
+        tokens:         Token[];
+        depositEth:     boolean;
+        redeemChainIds: number[];
     }
 
     export const DepositIfChainTokens: DepositIfChainArgs[] = [
-        {chainId: ChainId.FANTOM,    tokens: [Tokens.JUMP],  depositEth: false},
-        {chainId: ChainId.POLYGON,   tokens: [Tokens.NFD],   depositEth: false},
-        {chainId: ChainId.MOONRIVER, tokens: [Tokens.SOLAR], depositEth: false},
-        {chainId: ChainId.AVALANCHE, tokens: [Tokens.AVAX, Tokens.WAVAX], altChainId: ChainId.MOONBEAM, depositEth: true},
-        {chainId: ChainId.MOONRIVER, tokens: [Tokens.MOVR, Tokens.WMOVR], altChainId: ChainId.MOONBEAM, depositEth: true},
+        {chainId: ChainId.FANTOM,    tokens: [Tokens.JUMP],   redeemChainIds: [ChainId.BSC],  depositEth: false},
+        {chainId: ChainId.POLYGON,   tokens: [Tokens.NFD],    redeemChainIds: [],  depositEth: false},
+        {chainId: ChainId.MOONRIVER, tokens: [Tokens.SOLAR],  redeemChainIds: [],  depositEth: false},
+        {
+            chainId:        ChainId.AVALANCHE,
+            tokens:         [Tokens.AVAX, Tokens.WAVAX, Tokens.SYN_AVAX],
+            redeemChainIds: [ChainId.MOONBEAM],
+            depositEth:     true
+        },
+        {chainId: ChainId.MOONRIVER, tokens: [Tokens.MOVR, Tokens.WMOVR], redeemChainIds: [ChainId.MOONBEAM], depositEth: true},
     ]
 
     interface BridgeTxArgs {
@@ -201,7 +206,9 @@ export namespace BridgeUtils {
                 compare = Tokens.WETH;
                 break;
             default:
-                compare = t2.isWrapperToken ? t2.underlyingToken : compare;
+                if (t2.isWrapperToken && t2.underlyingToken) {
+                    compare = t2.underlyingToken;
+                }
                 break;
         }
 

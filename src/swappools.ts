@@ -399,25 +399,26 @@ export namespace SwapPools {
     const makeSingleTokenPool = (t: Token): LPToken => ({poolTokens: [t], swapType: t.swapType});
 
     const
-        ETH_Pool     = makeSingleTokenPool(Tokens.ETH),
-        SYN_Pool     = makeSingleTokenPool(Tokens.SYN),
-        FRAX_Pool    = makeSingleTokenPool(Tokens.FRAX),
-        HIGH_Pool    = makeSingleTokenPool(Tokens.HIGH),
-        DOG_Pool     = makeSingleTokenPool(Tokens.DOG),
-        JUMP_Pool    = makeSingleTokenPool(Tokens.JUMP),
-        NFD_Pool     = makeSingleTokenPool(Tokens.NFD),
-        GOHM_Pool    = makeSingleTokenPool(Tokens.GOHM),
-        GMX_Pool     = makeSingleTokenPool(Tokens.GMX),
-        SOLAR_Pool   = makeSingleTokenPool(Tokens.SOLAR),
-        AVAX_Pool    = makeSingleTokenPool(Tokens.AVAX),
-        WAVAX_Pool   = makeSingleTokenPool(Tokens.WAVAX),
-        MOVR_Pool    = makeSingleTokenPool(Tokens.MOVR),
-        WMOVR_Pool   = makeSingleTokenPool(Tokens.WMOVR),
-        UST_Pool     = makeSingleTokenPool(Tokens.UST),
-        NEWO_Pool    = makeSingleTokenPool(Tokens.NEWO),
-        SDT_Pool     = makeSingleTokenPool(Tokens.SDT),
-        LUNA_Pool    = makeSingleTokenPool(Tokens.LUNA),
-        USDB_Pool    = makeSingleTokenPool(Tokens.USDB);
+        ETH_Pool      = makeSingleTokenPool(Tokens.ETH),
+        SYN_Pool      = makeSingleTokenPool(Tokens.SYN),
+        FRAX_Pool     = makeSingleTokenPool(Tokens.FRAX),
+        HIGH_Pool     = makeSingleTokenPool(Tokens.HIGH),
+        DOG_Pool      = makeSingleTokenPool(Tokens.DOG),
+        JUMP_Pool     = makeSingleTokenPool(Tokens.JUMP),
+        NFD_Pool      = makeSingleTokenPool(Tokens.NFD),
+        GOHM_Pool     = makeSingleTokenPool(Tokens.GOHM),
+        GMX_Pool      = makeSingleTokenPool(Tokens.GMX),
+        SOLAR_Pool    = makeSingleTokenPool(Tokens.SOLAR),
+        AVAX_Pool     = makeSingleTokenPool(Tokens.AVAX),
+        WAVAX_Pool    = makeSingleTokenPool(Tokens.WAVAX),
+        SYN_AVAX_Pool = makeSingleTokenPool(Tokens.SYN_AVAX),
+        MOVR_Pool     = makeSingleTokenPool(Tokens.MOVR),
+        WMOVR_Pool    = makeSingleTokenPool(Tokens.WMOVR),
+        UST_Pool      = makeSingleTokenPool(Tokens.UST),
+        NEWO_Pool     = makeSingleTokenPool(Tokens.NEWO),
+        SDT_Pool      = makeSingleTokenPool(Tokens.SDT),
+        LUNA_Pool     = makeSingleTokenPool(Tokens.LUNA),
+        USDB_Pool     = makeSingleTokenPool(Tokens.USDB);
 
     export type SwapTypePoolTokens = SwapTypeMap<LPToken>
 
@@ -555,7 +556,7 @@ export namespace SwapPools {
             },
             GMX_Pool,
             NEWO_Pool,
-            LUNA_Pool,
+            LUNA_Pool
         ),
         [ChainId.AVALANCHE]: makeSwapTypeMap(
             {
@@ -567,8 +568,9 @@ export namespace SwapPools {
             AVAX_Pool,
             NEWO_Pool,
             SDT_Pool,
-            USDB_Pool,
+            USDB_Pool
         ),
+        [ChainId.DFK]: {swappableTokens: {}, swappableSwapGroups: {}},
         [ChainId.AURORA]: makeSwapTypeMap(
             {
                 usdPool: [AURORA_POOL_SWAP_TOKEN, AURORA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
@@ -582,6 +584,7 @@ export namespace SwapPools {
             },
             FRAX_Pool,
             SDT_Pool,
+            SYN_AVAX_Pool
         )
     }
 

@@ -301,6 +301,16 @@ export namespace Tokens {
         underlyingToken: AVAX,
     });
 
+    export const SYN_AVAX = new BaseToken({
+        name:     "Wrapped AVAX",
+        symbol:   "synAVAX",
+        decimals: 18,
+        addresses: {
+            [ChainId.HARMONY]: "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6"
+        },
+        swapType: SwapType.AVAX
+    });
+
     export const MOVR = new BaseToken({
         name:     "Moonriver",
         symbol:   "MOVR",
@@ -504,7 +514,7 @@ export namespace Tokens {
         FRAX,  SYN_FRAX, NFD,
         GOHM,  SOLAR,    GMX,
         UST,   NEWO,     SDT,
-        LUNA,  USDB,
+        LUNA,  USDB,     SYN_AVAX,
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
@@ -530,6 +540,6 @@ export namespace Tokens {
         SYN, NUSD, AVAX, WAVAX, MOVR, WMOVR,
         GOHM, HIGH, JUMP, DOG, NFD, FRAX,
         SYN_FRAX, SOLAR, GMX, NEWO, SDT,
-        LUNA, USDB,
+        LUNA, USDB, SYN_AVAX
     ];
 }

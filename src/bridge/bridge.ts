@@ -600,7 +600,7 @@ export namespace Bridge {
         }
 
         private checkEasyArgs(
-            args: BridgeTransactionParams,
+            args:      BridgeTransactionParams,
             zapBridge: GenericZapBridgeContract,
             easyDeposits:    ID[],
             easyRedeems:     ID[],
@@ -741,7 +741,7 @@ export namespace Bridge {
             const
                 {chainIdTo, amountFrom, amountTo} = args,
                 zapBridge = SynapseEntities.L2BridgeZapContractInstance({
-                    chainId: this.chainId,
+                    chainId:          this.chainId,
                     signerOrProvider: this.provider
                 });
 
@@ -749,34 +749,39 @@ export namespace Bridge {
                 ? Tokens.WETH_E
                 : tokenArgs.tokenFrom;
 
+            // console.log({
+            //     tokenArgs,
+            //     chainIdTo: args.chainIdTo
+            // });
+
             let
                 easyDeposits:   ID[] = [],
                 easyDepositETH: ID[] = [],
                 easyRedeems:    ID[] = [
-                    Tokens.SYN.id,  Tokens.HIGH.id, Tokens.DOG.id,
-                    Tokens.FRAX.id, Tokens.UST.id,  Tokens.GOHM.id,
-                    Tokens.NEWO.id, Tokens.SDT.id,  Tokens.LUNA.id,
+                    Tokens.SYN.id,      Tokens.HIGH.id, Tokens.DOG.id,
+                    Tokens.FRAX.id,     Tokens.UST.id,  Tokens.GOHM.id,
+                    Tokens.NEWO.id,     Tokens.SDT.id,  Tokens.LUNA.id,
                 ];
 
-            BridgeUtils.DepositIfChainTokens.forEach((args) => {
-                let {chainId, tokens, depositEth, altChainId} = args;
+            BridgeUtils.DepositIfChainTokens.forEach((depositIfChainArgs) => {
+                let {chainId, tokens, depositEth, redeemChainIds} = depositIfChainArgs;
 
                 let
-                    hasAltChain = typeof altChainId !== 'undefined',
-                    tokenHashes = tokens.map((t) => t.id);
+                    hasAltChains = redeemChainIds.length > 0,
+                    tokenHashes  = tokens.map((t) => t.id);
 
                 if (this.chainId === chainId) {
-                    depositEth
-                        ? easyDepositETH.push(...tokenHashes)
-                        : easyDeposits.push(...tokenHashes);
-                } else {
-                    if (hasAltChain) {
-                        if (this.chainId === altChainId) easyRedeems.push(...tokenHashes);
+                    if (depositEth) {
+                        easyDepositETH.push(...tokenHashes);
                     } else {
+                        easyDeposits.push(...tokenHashes);
+                    }
+                } else {
+                    if (hasAltChains && redeemChainIds.includes(this.chainId)) {
                         easyRedeems.push(...tokenHashes);
                     }
                 }
-            })
+            });
 
             let {castArgs, isEasy, txn} = this.checkEasyArgs(args, zapBridge, easyDeposits, easyRedeems, easyDepositETH);
             if (isEasy && txn) {
@@ -906,6 +911,14 @@ export namespace Bridge {
                                 minToSwapDestFromOriginHighSlippage, // swapMinAmount
                                 bridgeTransactionDeadline, // toSwapDeadline, // swapDeadline
                             )
+                    }
+
+                    if (this.chainId === ChainId.HARMONY && args.tokenFrom.isEqual(Tokens.SYN_AVAX)) {
+                        const redeemArgs = BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.SYN_AVAX);
+
+                        return zapBridge
+                            .populateTransaction
+                            .redeem(...redeemArgs)
                     }
 
                     if (args.tokenFrom.isEqual(Tokens.NUSD) || args.tokenFrom.isEqual(Tokens.NETH)) {
