@@ -58,7 +58,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         return makeBridgeSwapTestCase(c1, t1, c2, t2, expected, getTestAmount(t1, c1, amt))
     }
 
-    function makeTestName(tc: TestCase): [string, string, string] {
+    function makeTestName(tc: TestCase): [string, string, string, string] {
         let {
             args: {
                 amountFrom,
@@ -85,11 +85,12 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
             testParamsTitle: string = `with params ${amt} ${tokFrom} on ${netFrom} to ${tokTo} on ${netTo}`;
 
         const
-            bridgeOutputTestTitle: string = `getEstimatedBridgeOutput ${testParamsTitle} should return ${titleSuffix}`,
-            transactionTestTitle: string  = `buildBridgeTokenTransaction ${testParamsTitle} ${passFailSuffix}`,
-            approveTestTitle:      string = `buildApproveTransaction ${testParamsTitle} ${passFailSuffix}`;
+            describeTitle:         string = `Test bridge output estimation ${testParamsTitle}`,
+            bridgeOutputTestTitle: string = `getEstimatedBridgeOutput should return ${titleSuffix}`,
+            transactionTestTitle:  string = `buildBridgeTokenTransaction ${passFailSuffix}`,
+            approveTestTitle:      string = `buildApproveTransaction ${passFailSuffix}`;
 
-        return [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle]
+        return [describeTitle, bridgeOutputTestTitle, transactionTestTitle, approveTestTitle]
     }
 
     [
@@ -216,95 +217,97 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         makeTestCase(Tokens.JEWEL,     Tokens.WJEWEL,    ChainId.DFK,       ChainId.HARMONY),
         makeTestCase(Tokens.WJEWEL,    Tokens.SYN_JEWEL, ChainId.HARMONY,   ChainId.AVALANCHE),
     ].forEach((tc: TestCase) => {
-        const [bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc)
+        const [describeTitle, bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc)
 
-        let amountTo: BigNumber;
+        describe(describeTitle, function(this: Mocha.Suite) {
+            let amountTo: BigNumber;
 
-        it(bridgeOutputTestTitle, async function(this: Mocha.Context) {
-            this.timeout(DEFAULT_TEST_TIMEOUT)
+            it(bridgeOutputTestTitle, async function(this: Mocha.Context) {
+                this.timeout(DEFAULT_TEST_TIMEOUT)
 
-            let {args: { chainIdFrom, ...testArgs }, expected: {notZero, wantError}} = tc;
+                let {args: { chainIdFrom, ...testArgs }, expected: {notZero, wantError}} = tc;
 
-            const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
+                const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
 
-            let prom: Promise<Bridge.BridgeOutputEstimate> = bridgeInstance.estimateBridgeTokenOutput(testArgs);
+                let prom: Promise<Bridge.BridgeOutputEstimate> = bridgeInstance.estimateBridgeTokenOutput(testArgs);
 
-            let amountToReceive: BigNumber;
+                let amountToReceive: BigNumber;
 
-            try {
-                const {amountToReceive: amt} = await prom;
-                amountToReceive = amt;
-            } catch (e) {
-                return (await expectPromiseResolve(prom, !wantError))
-            }
+                try {
+                    const {amountToReceive: amt} = await prom;
+                    amountToReceive = amt;
+                } catch (e) {
+                    return (await expectPromiseResolve(prom, !wantError))
+                }
 
-            amountTo = amountToReceive;
+                amountTo = amountToReceive;
 
-            if (notZero) {
-                return expect(amountToReceive).to.be.gt(Zero);
-            } else {
+                if (notZero) {
+                    return expect(amountToReceive).to.be.gt(Zero)
+                }
+
                 return expect(amountToReceive).to.equal(Zero)
-            }
-        });
+            });
 
-        it(approveTestTitle, async function(this: Mocha.Context) {
-            if (tc.expected.wantError) return
+            it(approveTestTitle, async function(this: Mocha.Context) {
+                if (tc.expected.wantError) return
 
-            this.timeout(DEFAULT_TEST_TIMEOUT);
+                this.timeout(DEFAULT_TEST_TIMEOUT);
 
-            let {
-                args: {
-                    chainIdFrom,
-                    tokenFrom,
-                    amountFrom,
-                },
-            } = tc;
+                let {
+                    args: {
+                        chainIdFrom,
+                        tokenFrom,
+                        amountFrom,
+                    },
+                } = tc;
 
-            const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
+                const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
 
-            switch (tokenSwitch(tokenFrom)) {
-                case Tokens.ETH:
-                    tokenFrom = Tokens.WETH;
-                    break;
-                case Tokens.AVAX:
-                    tokenFrom = Tokens.WAVAX;
-                    break;
-                case Tokens.MOVR:
-                    tokenFrom = Tokens.WMOVR;
-                    break;
-                case Tokens.JEWEL:
-                    tokenFrom = Tokens.WJEWEL;
-                    break;
-            }
+                switch (tokenSwitch(tokenFrom)) {
+                    case Tokens.ETH:
+                        tokenFrom = Tokens.WETH;
+                        break;
+                    case Tokens.AVAX:
+                        tokenFrom = Tokens.WAVAX;
+                        break;
+                    case Tokens.MOVR:
+                        tokenFrom = Tokens.WMOVR;
+                        break;
+                    case Tokens.JEWEL:
+                        tokenFrom = Tokens.WJEWEL;
+                        break;
+                }
 
-            let prom = bridgeInstance.buildApproveTransaction({token:  tokenFrom, amount: amountFrom});
+                let prom = bridgeInstance.buildApproveTransaction({token:  tokenFrom, amount: amountFrom});
 
-            return (await expectFulfilled(prom))
-        });
+                return (await expect(prom).to.eventually.be.fulfilled)
+            });
 
-        const undefEmptyArr = [
-            "", "", undefined, "", undefined,
-            undefined, "", "", undefined, undefined, ""
-        ];
+            const undefEmptyArr = [
+                "", "", undefined, "", undefined,
+                undefined, "", "", undefined, undefined, ""
+            ];
 
-        it(transactionTestTitle, async function(this: Mocha.Context) {
-            this.timeout(DEFAULT_TEST_TIMEOUT);
+            it(transactionTestTitle, async function(this: Mocha.Context) {
+                this.timeout(DEFAULT_TEST_TIMEOUT);
 
-            let {args: { chainIdFrom }, args, expected: {wantError, noAddrTo}} = tc;
+                let {args: { chainIdFrom }, args, expected: {wantError, noAddrTo}} = tc;
 
-            const
-                bridgeInstance    = new Bridge.SynapseBridge({ network: chainIdFrom }),
-                addressTo: string = noAddrTo
-                    ? _.shuffle(undefEmptyArr)[0]
-                    : makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey1).address;
+                const
+                    bridgeInstance    = new Bridge.SynapseBridge({ network: chainIdFrom }),
+                    addressTo: string = noAddrTo
+                        ? _.shuffle(undefEmptyArr)[0]
+                        : makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey1).address;
 
-            let prom = bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo});
+                let prom = bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo});
 
-            return (await (
-                wantError
-                    ? expectRejected(prom)
-                    : expectPromiseResolve(prom, !noAddrTo)
-            ))
+                if (wantError || noAddrTo) {
+                    return (await expect(prom).to.eventually.be.rejected)
+                }
+
+                return (await expect(prom).to.eventually.be.fulfilled)
+            });
         });
     });
 });
