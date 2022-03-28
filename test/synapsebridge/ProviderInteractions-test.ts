@@ -210,11 +210,11 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
                 outputEstimate = estimate;
                 doBridgeArgs = bridgeParams;
-
-                console.log({
-                    estimate: outputEstimate.amountToReceive.toString(),
-                    bridgeFee: outputEstimate.bridgeFee.toString()
-                })
+                //
+                // console.log({
+                //     estimate: outputEstimate.amountToReceive.toString(),
+                //     bridgeFee: outputEstimate.bridgeFee.toString()
+                // })
 
                 return
             });
@@ -297,30 +297,33 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 });
             });
 
-            // if (!tc.callStatic) {
-            //     describe("- Magic Executors tests", function(this: Mocha.Suite) {
-            //         step(approvalTxnTestTitle, async function(this: Mocha.Context) {
-            //             let prom = bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet);
-            //
-            //             return await executeTxn(
-            //                 tc,
-            //                 prom,
-            //                 tc.callStatic,
-            //                 true
-            //             )(this)
-            //         });
-            //
-            //         step(bridgeTxnTestTitle, async function (this: Mocha.Context) {
-            //             let prom = bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet);
-            //
-            //             return await executeTxn(
-            //                 tc,
-            //                 prom,
-            //                 tc.callStatic
-            //             )(this)
-            //         });
-            //     });
-            // }
+            const involvesDFK = tc.args.chainIdFrom === ChainId.DFK || tc.args.chainIdTo === ChainId.DFK;
+
+            // don't want DFK-related tests running in CI yet
+            if (!tc.callStatic && !involvesDFK) {
+                describe("- Magic Executors tests", function(this: Mocha.Suite) {
+                    step(approvalTxnTestTitle, async function(this: Mocha.Context) {
+                        let prom = bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet);
+
+                        return await executeTxn(
+                            tc,
+                            prom,
+                            tc.callStatic,
+                            true
+                        )(this)
+                    });
+
+                    step(bridgeTxnTestTitle, async function (this: Mocha.Context) {
+                        let prom = bridgeInstance.executeBridgeTokenTransaction(doBridgeArgs, wallet);
+
+                        return await executeTxn(
+                            tc,
+                            prom,
+                            tc.callStatic
+                        )(this)
+                    });
+                });
+            }
         });
     });
 });
