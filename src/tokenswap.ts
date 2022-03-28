@@ -37,11 +37,16 @@ export namespace UnsupportedSwapErrors {
         NonmatchingSwapTypes,
     }
 
-    export class UnsupportedSwapError extends Error {
-        readonly errorKind: UnsupportedSwapErrorKind;
-        readonly reason:    string;
+    export interface UnsupportedSwapErrorArgs {
+        reason:    string;
+        errorKind: UnsupportedSwapErrorKind;
+    }
 
-        constructor({errorKind, reason}: {errorKind: UnsupportedSwapErrorKind, reason: string}) {
+    export class UnsupportedSwapError extends Error {
+        readonly reason:    string;
+        readonly errorKind: UnsupportedSwapErrorKind;
+
+        constructor({reason, errorKind}: UnsupportedSwapErrorArgs) {
             super(reason);
 
             this.name = this.constructor.name;
@@ -53,23 +58,23 @@ export namespace UnsupportedSwapErrors {
     }
 
     export const tokenNotSupported = (t: {symbol: string}, netName: string): UnsupportedSwapError => new UnsupportedSwapError({
-        errorKind:  UnsupportedSwapErrorKind.UnsupportedToken,
         reason:    `Token ${t.symbol} not supported on network ${netName}`,
+        errorKind:  UnsupportedSwapErrorKind.UnsupportedToken,
     });
 
     export const tokenNotSupportedNetFrom = (t: {symbol: string}, netName: string): UnsupportedSwapError => new UnsupportedSwapError({
-        errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetFrom,
         reason:    `Token ${t.symbol} not supported on 'from' network ${netName}`,
+        errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetFrom,
     });
 
     export const tokenNotSupportedNetTo = (t: {symbol: string}, netName: string): UnsupportedSwapError => new UnsupportedSwapError({
-        errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetTo,
         reason:    `Token ${t.symbol} not supported on 'to' network ${netName}`,
+        errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetTo,
     });
 
     export const nonMatchingSwapTypes = (): UnsupportedSwapError => new UnsupportedSwapError({
-        errorKind:  UnsupportedSwapErrorKind.NonmatchingSwapTypes,
         reason:    "Token swap types don't match",
+        errorKind:  UnsupportedSwapErrorKind.NonmatchingSwapTypes,
     });
 }
 
