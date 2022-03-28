@@ -97,10 +97,8 @@ jobs:
       - name: Run Tests (Node ${{ matrix.node-version }})
         run: yarn -s run test:coverage
         env:
-          # RPC_BATCH_INTERVAL: 55
           REPORTS_DIR:        ${{ env.COVERAGE_DIR }}
           ETH_RPC_URI:        ${{ secrets.ETH_RPC_URI }}
-          # OPTIMISM_RPC_URI:   ${{ secrets.OPTIMISM_RPC_URI }}
           POLYGON_RPC_URI:    ${{ secrets.POLYGON_RPC_URI }}
           FANTOM_RPC_URI:     ${{ secrets.FANTOM_RPC_URI }}
           METIS_RPC_URI:      ${{ secrets.METIS_RPC_URI }}
