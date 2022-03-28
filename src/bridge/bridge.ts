@@ -275,13 +275,13 @@ export namespace Bridge {
                 return rejectPromise(e);
             } /* c8 ignore stop */
 
-            const
-                {tokenFrom, amountFrom, addressTo} = args,
-                signerAddress = await signer.getAddress();
+            const {tokenFrom, amountFrom, addressTo} = args;
 
-            if (!addressTo) {
+            const signerAddress = await signer.getAddress()
+
+            if (!addressTo) { /* c8 ignore start */
                 args.addressTo = signerAddress;
-            }
+            } /* c8 ignore stop */
 
             const checkArgs = {signer, token: tokenFrom, amount: amountFrom};
 
