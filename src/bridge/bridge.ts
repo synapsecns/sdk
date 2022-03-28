@@ -512,11 +512,6 @@ export namespace Bridge {
                 multiplier              = pow10(18-fromCoinDecimals),
                 amountFromFixedDecimals = amountFrom.mul(multiplier);
 
-            console.log({
-                intermediateTokenAddr,
-                chainIdTo
-            });
-
             const bridgeFeeRequest: Promise<BigNumber> = this.bridgeConfigInstance["calculateSwapFee(string,uint256,uint256)"](
                 intermediateTokenAddr,
                 chainIdTo,
@@ -785,7 +780,6 @@ export namespace Bridge {
 
             let {castArgs, isEasy, txn} = this.checkEasyArgs(args, zapBridge, easyDeposits, easyRedeems, easyDepositETH);
             if (isEasy && txn) {
-                console.log({castArgs})
                 return txn
             }
 
