@@ -5,6 +5,8 @@ on:
     tags:
       - "v*"
       - "!v*-dev*"
+      - "!v*-beta*"
+      - "!v*-alpha*"
 
 jobs:
   tagged_release:
