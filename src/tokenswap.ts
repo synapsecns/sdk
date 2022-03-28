@@ -37,27 +37,37 @@ export namespace UnsupportedSwapErrors {
         NonmatchingSwapTypes,
     }
 
-    export interface UnsupportedSwapError {
-        errorKind: UnsupportedSwapErrorKind,
-        reason:    string,
+    export class UnsupportedSwapError extends Error {
+        readonly errorKind: UnsupportedSwapErrorKind;
+        readonly reason:    string;
+
+        constructor({errorKind, reason}: {errorKind: UnsupportedSwapErrorKind, reason: string}) {
+            super(reason);
+
+            this.name = this.constructor.name;
+            Error.captureStackTrace(this, this.constructor);
+
+            this.reason    = reason;
+            this.errorKind = errorKind;
+        }
     }
 
-    export const tokenNotSupported = (t: {symbol: string}, netName: string): UnsupportedSwapError => ({
+    export const tokenNotSupported = (t: {symbol: string}, netName: string): UnsupportedSwapError => new UnsupportedSwapError({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedToken,
         reason:    `Token ${t.symbol} not supported on network ${netName}`,
     });
 
-    export const tokenNotSupportedNetFrom = (t: {symbol: string}, netName: string): UnsupportedSwapError => ({
+    export const tokenNotSupportedNetFrom = (t: {symbol: string}, netName: string): UnsupportedSwapError => new UnsupportedSwapError({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetFrom,
         reason:    `Token ${t.symbol} not supported on 'from' network ${netName}`,
     });
 
-    export const tokenNotSupportedNetTo = (t: {symbol: string}, netName: string): UnsupportedSwapError => ({
+    export const tokenNotSupportedNetTo = (t: {symbol: string}, netName: string): UnsupportedSwapError => new UnsupportedSwapError({
         errorKind:  UnsupportedSwapErrorKind.UnsupportedTokenNetTo,
         reason:    `Token ${t.symbol} not supported on 'to' network ${netName}`,
     });
 
-    export const nonMatchingSwapTypes = (): UnsupportedSwapError => ({
+    export const nonMatchingSwapTypes = (): UnsupportedSwapError => new UnsupportedSwapError({
         errorKind:  UnsupportedSwapErrorKind.NonmatchingSwapTypes,
         reason:    "Token swap types don't match",
     });
@@ -130,7 +140,8 @@ export namespace TokenSwap {
 
         return resolveSwapData(args)
             .then(({swapInstance, tokenIndexFrom, tokenIndexTo}) =>
-                swapInstance.calculateSwap(tokenIndexFrom, tokenIndexTo, args.amountIn)
+                swapInstance
+                    .calculateSwap(tokenIndexFrom, tokenIndexTo, args.amountIn)
                     .then((res): EstimatedSwapRate => ({amountOut: res}))
             )
             .catch(rejectPromise)

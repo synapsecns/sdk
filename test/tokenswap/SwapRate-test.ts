@@ -1,3 +1,4 @@
+import {rejectPromise} from "@common/utils";
 import {step} from "mocha-steps";
 
 import {
@@ -5,7 +6,7 @@ import {
     Networks,
     Tokens,
     TokenSwap,
-    type Token
+    type Token, UnsupportedSwapErrors
 } from "@sdk";
 
 import {
@@ -21,6 +22,7 @@ import {BigNumber} from "@ethersproject/bignumber";
 import {BaseContract, Contract} from "@ethersproject/contracts";
 import {expect} from "chai";
 import {SwapContract} from "@contracts";
+import UnsupportedSwapError = UnsupportedSwapErrors.UnsupportedSwapError;
 
 
 describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
@@ -70,14 +72,20 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                     tokenFrom: tc.tokenFrom,
                     tokenTo:   tc.tokenTo,
                     amountIn:  tc.amountIn,
-                })).then((res) => {
-                    amountOut = res.amountOut;
-                    return res
-                });
+                }))
+                    .then((res) => {
+                        amountOut = res.amountOut;
+                        return res
+                    })
+                    .catch(rejectPromise)
 
                 return tc.wantError
-                    ? await expectRejected(prom)
-                    : expectProperty(await prom, "amountOut").that.is.gt(Zero.toNumber())
+                    ? (await expect(prom).to.eventually.be.rejected)
+                    : (await expect(prom).to.eventually
+                        .haveOwnProperty("amountOut")
+                        .that.is.an.instanceOf(BigNumber)
+                        .and.is.gt(Zero.toNumber())
+                    )
             })
 
             step(testTitle2, async function(this: Mocha.Context) {
