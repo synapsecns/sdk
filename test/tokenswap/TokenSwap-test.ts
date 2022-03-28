@@ -26,15 +26,18 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
         }
 
         [
-            {chainId: ChainId.ETH,       token: Tokens.FRAX,     wantA: undefined,   wantB: Tokens.FRAX},
-            {chainId: ChainId.ETH,       token: Tokens.SYN_FRAX, wantA: undefined,   wantB: Tokens.FRAX},
-            {chainId: ChainId.HARMONY,   token: Tokens.FRAX,     wantA: undefined,   wantB: Tokens.SYN_FRAX},
-            {chainId: ChainId.ETH,       token: Tokens.NETH,     wantA: Tokens.NETH, wantB: Tokens.WETH},
-            {chainId: ChainId.ARBITRUM,  token: Tokens.NETH,     wantA: Tokens.NETH, wantB: Tokens.NETH},
-            {chainId: ChainId.BSC,       token: Tokens.BUSD,     wantA: Tokens.NUSD, wantB: Tokens.NUSD},
-            {chainId: ChainId.AVALANCHE, token: Tokens.GOHM,     wantA: Tokens.GOHM, wantB: Tokens.GOHM},
-            {chainId: ChainId.OPTIMISM,  token: Tokens.LUNA,     wantA: Tokens.LUNA, wantB: Tokens.LUNA},
-
+            {chainId: ChainId.ETH,       token: Tokens.FRAX,     wantA: undefined,     wantB: Tokens.FRAX},
+            {chainId: ChainId.ETH,       token: Tokens.SYN_FRAX, wantA: undefined,     wantB: Tokens.FRAX},
+            {chainId: ChainId.HARMONY,   token: Tokens.FRAX,     wantA: undefined,     wantB: Tokens.SYN_FRAX},
+            {chainId: ChainId.ETH,       token: Tokens.NETH,     wantA: Tokens.NETH,   wantB: Tokens.WETH},
+            {chainId: ChainId.ARBITRUM,  token: Tokens.NETH,     wantA: Tokens.NETH,   wantB: Tokens.NETH},
+            {chainId: ChainId.BSC,       token: Tokens.BUSD,     wantA: Tokens.NUSD,   wantB: Tokens.NUSD},
+            {chainId: ChainId.AVALANCHE, token: Tokens.GOHM,     wantA: Tokens.GOHM,   wantB: Tokens.GOHM},
+            {chainId: ChainId.OPTIMISM,  token: Tokens.LUNA,     wantA: Tokens.LUNA,   wantB: Tokens.LUNA},
+            {chainId: ChainId.HARMONY,   token: Tokens.SYN_AVAX, wantA: Tokens.WAVAX,  wantB: Tokens.SYN_AVAX},
+            {chainId: ChainId.HARMONY,   token: Tokens.WJEWEL,   wantA: Tokens.WJEWEL, wantB: Tokens.SYN_JEWEL},
+            {chainId: ChainId.AVALANCHE, token: Tokens.WJEWEL,   wantA: Tokens.WJEWEL, wantB: Tokens.SYN_JEWEL},
+            {chainId: ChainId.DFK,       token: Tokens.WJEWEL,   wantA: Tokens.WJEWEL, wantB: Tokens.WJEWEL},
         ].forEach((tc: TestCase) => {
             const
                 testPrefix: string = `intermediateTokens() with token ${tc.token.symbol} and Chain ID ${tc.chainId} should return`,
@@ -49,9 +52,9 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     : expectBoolean(tc.wantA.isEqual(got.intermediateToken), true);
 
                 expectBoolean(tc.wantB.isEqual(got.bridgeConfigIntermediateToken), true);
-            })
-        })
-    })
+            });
+        });
+    });
 
     describe("detailedTokenSwapMap test", function(this: Mocha.Suite) {
         const
@@ -60,7 +63,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
 
         it(`should have ${allChains.length} entries`, function() {
             expectLength(Object.keys(detailedMap), allChains.length);
-        })
+        });
 
         interface TokenOnChain {
             chainId: ChainId,
@@ -117,6 +120,16 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                 chainTokens:   [
                     {chainId: ChainId.ARBITRUM,  token: Tokens.NEWO},
                     {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
+                    {chainId: ChainId.HARMONY,   token: Tokens.AVAX},
+                    {chainId: ChainId.DFK,       token: Tokens.SYN_JEWEL}
+                ],
+            },
+            {
+                chainId:       ChainId.DFK,
+                chainTokens:   [
+                    {chainId: ChainId.AVALANCHE, token: Tokens.JEWEL},
+                    {chainId: ChainId.HARMONY,   token: Tokens.JEWEL},
+                    {chainId: ChainId.HARMONY,   token: Tokens.XJEWEL},
                 ],
             },
         ].forEach((tc: TestCase) => {
@@ -128,7 +141,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                 it(
                     `detailedMap[${tc.chainId}] should not be undefined`,
                     wrapExpect(expectUndefined(toksMap, false))
-                )
+                );
 
                 tc.chainTokens.forEach(tok => {
                     const
@@ -138,9 +151,9 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     it(
                         testTitle,
                         wrapExpect(expectProperty(tokMap, tok.chainId.toString()))
-                    )
-                })
-            })
-        })
-    })
-})
+                    );
+                });
+            });
+        });
+    });
+});
