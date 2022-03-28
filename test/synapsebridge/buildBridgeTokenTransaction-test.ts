@@ -150,6 +150,9 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
         makeTestCase(Tokens.METIS_ETH, Tokens.WETH_E,    ChainId.METIS,     ChainId.AVALANCHE,   swapAndRedeemAndSwap),
         makeTestCase(Tokens.ETH,       Tokens.METIS_ETH, ChainId.ETH,       ChainId.METIS,       depositETHAndSwap),
         makeTestCase(Tokens.NETH,      Tokens.WETH_E,    ChainId.METIS,     ChainId.AVALANCHE,   redeemAndSwap),
+        makeTestCase(Tokens.AVAX,      Tokens.SYN_AVAX,  ChainId.AVALANCHE, ChainId.HARMONY,     depositETH),
+        makeTestCase(Tokens.AVAX,      Tokens.WAVAX,     ChainId.AVALANCHE, ChainId.MOONBEAM,    depositETH),
+        makeTestCase(Tokens.SYN_AVAX,  Tokens.AVAX,      ChainId.HARMONY,   ChainId.AVALANCHE,   redeem),
     ].forEach((tc: TestCase) => {
         const testTitle = makeTestName(tc);
         describe(testTitle, function(this: Mocha.Suite) {
@@ -167,10 +170,10 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
                     addressTo: string = makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey1).address;
 
                 let prom = bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo});
-                Promise.resolve(prom).then(built => builtTxn = built);
+                Promise.resolve(prom).then(built => builtTxn = built)
 
                 return (await expectFulfilled(prom))
-            })
+            });
 
             let txnInfo: TransactionDescription;
             const
