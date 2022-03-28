@@ -294,9 +294,9 @@ export namespace Tokens {
         symbol:   "wAVAX",
         decimals: 18,
         addresses: {
-            [ChainId.DFK]:       "0xB57B60DeBDB0b8172bb6316a9164bd3C695F133a",
             [ChainId.MOONBEAM]:  "0xA1f8890E39b4d8E33efe296D698fe42Fb5e59cC3",
             [ChainId.AVALANCHE]: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+            [ChainId.DFK]:       "0xB57B60DeBDB0b8172bb6316a9164bd3C695F133a",
         },
         swapType:        SwapType.AVAX,
         underlyingToken: AVAX,
