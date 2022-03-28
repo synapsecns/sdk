@@ -70,7 +70,7 @@ export namespace Networks {
          * Bridge Zap contract is a NerveBridgeZap contract.
          */
         get zapIsL2BridgeZap(): boolean {
-            return this.chainId !== ChainId.ETH
+            return this.chainId !== ChainId.ETH && this.chainId !== ChainId.DFK
         }
 
         /**

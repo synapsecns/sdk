@@ -214,10 +214,10 @@ export namespace BridgeUtils {
                 compare = Tokens.WETH;
                 break;
             case Tokens.WJEWEL:
-                if (chainId !== ChainId.HARMONY) {
-                    compare = t2.underlyingToken;
-                } else {
+                if (chainId === ChainId.HARMONY) {
                     compare = Tokens.SYN_JEWEL;
+                } else {
+                    compare = t2.underlyingToken;
                 }
                 break;
             default:

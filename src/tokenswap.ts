@@ -190,6 +190,18 @@ export namespace TokenSwap {
 
     export function intermediateTokens(chainId: number, token: Token): IntermediateSwapTokens {
         if (mintBurnSwapTypes.includes(token.swapType)) {
+            if (token.swapType === SwapType.JEWEL) {
+                let bridgeConfigIntermediate: Token;
+
+                if (chainId === ChainId.HARMONY || chainId === ChainId.AVALANCHE) {
+                    bridgeConfigIntermediate = Tokens.SYN_JEWEL;
+                } else {
+                    bridgeConfigIntermediate = Tokens.WJEWEL;
+                }
+
+                return {intermediateToken: Tokens.WJEWEL, bridgeConfigIntermediateToken: bridgeConfigIntermediate}
+            }
+
             return {intermediateToken: token, bridgeConfigIntermediateToken: token}
         }
 
@@ -213,8 +225,10 @@ export namespace TokenSwap {
                 bridgeConfigIntermediateToken = chainId === ChainId.HARMONY ? Tokens.SYN_AVAX : Tokens.WAVAX;
                 break;
             case SwapType.JEWEL:
-                intermediateToken             = Tokens.WJEWEL;
-                bridgeConfigIntermediateToken = chainId === ChainId.HARMONY ? Tokens.SYN_JEWEL : Tokens.WJEWEL;
+                intermediateToken = Tokens.WJEWEL;
+                if (chainId === ChainId.HARMONY || chainId === ChainId.AVALANCHE) {
+                    bridgeConfigIntermediateToken = Tokens.SYN_JEWEL;
+                }
                 break;
             case SwapType.MOVR:
                 intermediateToken = Tokens.WMOVR;

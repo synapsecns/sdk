@@ -512,6 +512,11 @@ export namespace Bridge {
                 multiplier              = pow10(18-fromCoinDecimals),
                 amountFromFixedDecimals = amountFrom.mul(multiplier);
 
+            console.log({
+                intermediateTokenAddr,
+                chainIdTo
+            });
+
             const bridgeFeeRequest: Promise<BigNumber> = this.bridgeConfigInstance["calculateSwapFee(string,uint256,uint256)"](
                 intermediateTokenAddr,
                 chainIdTo,
@@ -749,11 +754,6 @@ export namespace Bridge {
                 ? Tokens.WETH_E
                 : tokenArgs.tokenFrom;
 
-            // console.log({
-            //     tokenArgs,
-            //     chainIdTo: args.chainIdTo
-            // });
-
             let
                 easyDeposits:   ID[] = [],
                 easyDepositETH: ID[] = [],
@@ -761,8 +761,6 @@ export namespace Bridge {
                     Tokens.SYN.id,      Tokens.HIGH.id,    Tokens.DOG.id,
                     Tokens.FRAX.id,     Tokens.UST.id,     Tokens.GOHM.id,
                     Tokens.NEWO.id,     Tokens.SDT.id,     Tokens.LUNA.id,
-                    // Tokens.XJEWEL.id,
-                    // Tokens.WJEWEL.id,
                 ];
 
             BridgeUtils.DepositIfChainTokens.forEach((depositIfChainArgs) => {
@@ -787,6 +785,7 @@ export namespace Bridge {
 
             let {castArgs, isEasy, txn} = this.checkEasyArgs(args, zapBridge, easyDeposits, easyRedeems, easyDepositETH);
             if (isEasy && txn) {
+                console.log({castArgs})
                 return txn
             }
 
@@ -794,6 +793,7 @@ export namespace Bridge {
                 transactionDeadline,
                 bridgeTransactionDeadline,
                 minToSwapOriginHighSlippage,
+                minToSwapDestFromOriginMediumSlippage,
                 minToSwapDestFromOriginHighSlippage,
                 minToSwapDest,
             } = BridgeUtils.getSlippages(amountFrom, amountTo);
@@ -877,6 +877,86 @@ export namespace Bridge {
                                 Tokens.GMX.wrapperAddress(this.chainId),
                                 amount
                             )
+                case Tokens.WJEWEL:
+                    if (this.chainId === ChainId.HARMONY) {
+                        return zapBridge
+                            .populateTransaction
+                            .swapAndRedeem(
+                                ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.SYN_JEWEL),
+                                0,
+                                1,
+                                amountFrom,
+                                minToSwapOriginHighSlippage, // minToSwapOrigin, // minToSwapOriginHighSlippage,
+                                transactionDeadline
+                            )
+                    } else if (this.chainId === ChainId.DFK) {
+                        const zap = SynapseEntities.L1BridgeZapContractInstance({
+                            chainId:          ChainId.DFK,
+                            signerOrProvider: this.provider
+                        });
+
+                        return zap.populateTransaction.depositETHAndSwap(
+                            args.addressTo,
+                            args.chainIdTo,
+                            args.amountFrom,
+                            1,
+                            0,
+                            minToSwapDestFromOriginMediumSlippage,
+                            bridgeTransactionDeadline,
+                            BridgeUtils.overrides(args.amountFrom)
+                        )
+                    } else if (this.chainId === ChainId.AVALANCHE) {
+                        if (chainIdTo === ChainId.DFK) {
+                            return zapBridge.populateTransaction.redeem(
+                                args.addressTo,
+                                ChainId.DFK,
+                                Tokens.SYN_JEWEL.address(this.chainId),
+                                args.amountFrom
+                            )
+                        } else if (chainIdTo === ChainId.HARMONY) {
+                            return zapBridge.populateTransaction.redeemAndSwap(
+                                args.addressTo,
+                                ChainId.DFK,
+                                Tokens.SYN_JEWEL.address(this.chainId),
+                                args.amountFrom,
+                                1,
+                                0,
+                                minToSwapDest,
+                                transactionDeadline
+                            )
+                        }
+                    }
+
+                    break;
+                case Tokens.SYN_JEWEL:
+                    if (this.chainId === ChainId.DFK) {
+                        const zap = SynapseEntities.L1BridgeZapContractInstance({
+                            chainId:          ChainId.DFK,
+                            signerOrProvider: this.provider
+                        });
+
+                        return zap
+                            .populateTransaction
+                            .depositETH(
+                                args.addressTo,
+                                args.chainIdTo,
+                                args.amountFrom,
+                                BridgeUtils.overrides(args.amountFrom)
+                            )
+                    } else if (this.chainId === ChainId.HARMONY) {
+                        return zapBridge
+                            .populateTransaction
+                            .swapAndRedeem(
+                                ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.SYN_JEWEL),
+                                0,
+                                1,
+                                amountFrom,
+                                minToSwapOriginHighSlippage, // minToSwapOrigin, // minToSwapOriginHighSlippage,
+                                transactionDeadline
+                            )
+                    }
+
+                    break;
                 default:
                     if (chainIdTo === ChainId.ETH) {
                         if (this.isL2ETHChain && args.tokenFrom.swapType === SwapType.ETH) {
@@ -912,19 +992,6 @@ export namespace Bridge {
                                 tokenArgs.tokenIndexTo, //swapTokenIndex
                                 minToSwapDestFromOriginHighSlippage, // swapMinAmount
                                 bridgeTransactionDeadline, // toSwapDeadline, // swapDeadline
-                            )
-                    }
-
-                    if (this.chainId === ChainId.HARMONY && args.tokenFrom.isEqual(Tokens.WJEWEL)) {
-                        return zapBridge
-                            .populateTransaction
-                            .swapAndRedeem(
-                                ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.SYN_JEWEL),
-                                0,
-                                1,
-                                amountFrom,
-                                minToSwapOriginHighSlippage, // minToSwapOrigin, // minToSwapOriginHighSlippage,
-                                transactionDeadline
                             )
                     }
 

@@ -15,7 +15,7 @@ export namespace SynapseContracts {
     interface SynapseContractArgs {
         bridge:     string,
         bridgeZap?: string,
-        mainnet?:   boolean,
+        l1Zap?:     boolean,
     }
 
     export class SynapseContract {
@@ -25,7 +25,7 @@ export namespace SynapseContracts {
         constructor({
             bridge,
             bridgeZap=null,
-            mainnet=false
+            l1Zap=false
         }: SynapseContractArgs) {
 
             this.bridge = {address: bridge};
@@ -34,7 +34,7 @@ export namespace SynapseContracts {
             if (bridgeZap) {
                 this.bridgeZap = {
                     address: bridgeZap,
-                    abi:     mainnet ? ABIs.L1BridgeZap : ABIs.L2BridgeZap,
+                    abi:     l1Zap ? ABIs.L1BridgeZap : ABIs.L2BridgeZap,
                 };
             }
         }
@@ -51,7 +51,7 @@ export namespace SynapseContracts {
     export const Ethereum = new SynapseContract({
         bridge:    "0x2796317b0fF8538F253012862c06787Adfb8cEb6",
         bridgeZap: "0x6571d6be3d8460CF5F7d6711Cd9961860029D85F",
-        mainnet:   true,
+        l1Zap:     true,
     });
 
     export const Optimism = new SynapseContract({
@@ -111,7 +111,8 @@ export namespace SynapseContracts {
 
     export const DFK = new SynapseContract({
         bridge:    "0xE05c976d3f045D0E6E7A6f61083d98A15603cF6A",
-        bridgeZap: "0x33d90B6ce7e0bFC42BCD35d05c443c6915296987",
+        bridgeZap: "0xA7F9B7B0f729Dc98ae748f5505497909aFfdfa8A",
+        l1Zap:     true,
     });
 
     export const Aurora = new SynapseContract({
