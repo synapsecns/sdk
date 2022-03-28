@@ -217,4 +217,50 @@ describe("Basic tests", function(this: Mocha.Suite) {
             });
         });
     });
+
+    describe("gasTokenForChain tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            chainId:     number;
+            wantGas:     boolean;
+            wantToken:   Token | null;
+            wantWrapper: Token | null;
+        }
+
+        const testCases: TestCase[] = [
+            {chainId: ChainId.AVALANCHE, wantGas: true,  wantToken: Tokens.AVAX, wantWrapper: Tokens.WAVAX},
+            {chainId: ChainId.MOONBEAM,  wantGas: false, wantToken: null,        wantWrapper: null},
+            {chainId: ChainId.BOBA,      wantGas: true,  wantToken: Tokens.ETH,  wantWrapper: Tokens.WETH},
+        ];
+
+        const makeWantStr = (want: boolean, kind: string): string => `should${want ? "" : " not"} have a ${kind} token`;
+
+        testCases.forEach(tc => {
+            const
+                shouldGasStr:     string = makeWantStr(tc.wantGas, "gas"),
+                shouldWrapperStr: string = makeWantStr(tc.wantGas, "wrapper");
+
+            it(`${Networks.networkName(tc.chainId)} ${shouldGasStr}`, function(this: Mocha.Context) {
+                const got: Token | null = Tokens.gasTokenForChain(tc.chainId);
+
+                if (tc.wantGas) {
+                    expect(got).to.not.be.null;
+                    expect(got.isEqual(tc.wantToken)).to.be.true;
+                } else {
+                    expect(got).to.be.null;
+                }
+            });
+
+            it(`${Networks.networkName(tc.chainId)} ${shouldWrapperStr}`, function(this: Mocha.Context) {
+                const gasToken: Token | null = Tokens.gasTokenForChain(tc.chainId);
+                const got:      Token | null = Tokens.gasTokenWrapper(gasToken);
+
+                if (tc.wantGas) {
+                    expect(got).to.not.be.null;
+                    expect(got.isEqual(tc.wantWrapper)).to.be.true;
+                } else {
+                    expect(got).to.be.null;
+                }
+            });
+        });
+    });
 });

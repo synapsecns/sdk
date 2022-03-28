@@ -3,6 +3,7 @@ import {BaseToken, type Token, WrapperToken,} from "@token";
 import {ChainId} from "@chainid";
 
 import {SwapType} from "@internal/index";
+import {ChainIdTypeMap} from "@common/types";
 
 export namespace Tokens {
     // Stablecoins
@@ -120,6 +121,12 @@ export namespace Tokens {
 
     // ETH, ETH wrappers, and nETH :D
 
+    /**
+     * ETH is the native currency ("gas token") for Ethereum, Optimism,
+     * Boba, Arbitrum, and countless other chains
+     * (though the four listed are the four currently supported by Synapse Protocol).
+     * See {@link WETH} for a "wrapped" ERC20 variant of ETH.
+     */
     export const ETH = new BaseToken({
         name:        "Ethereum",
         symbol:      "ETH",
@@ -278,6 +285,10 @@ export namespace Tokens {
 
     // chain native coins and wrapper tokens
 
+    /**
+     * AVAX is the native currency of Avalanche C-Chain.
+     * See {@link WAVAX} for the "wrapped" ERC20 variant of this token.
+     */
     export const AVAX = new BaseToken({
         name:     "Avalanche",
         symbol:   "AVAX",
@@ -302,6 +313,11 @@ export namespace Tokens {
         underlyingToken: AVAX,
     });
 
+    /**
+     * SYN_AVAX (synAVAX) is a "wrapped" ERC20 form of AVAX,
+     * and is the supported output Token when bridging AVAX from
+     * Avalanche C-Chain or Defi Kingdoms mainnet to Harmony.
+     */
     export const SYN_AVAX = new BaseToken({
         name:     "Wrapped AVAX",
         symbol:   "synAVAX",
@@ -322,6 +338,10 @@ export namespace Tokens {
         swapType: SwapType.AVAX
     });
 
+    /**
+     * MOVR is the native currency of the Moonriver chain.
+     * See {@link WMOVR} for the "wrapped" ERC20 variant of this token.
+     */
     export const MOVR = new BaseToken({
         name:     "Moonriver",
         symbol:   "MOVR",
@@ -345,6 +365,10 @@ export namespace Tokens {
         underlyingToken: MOVR,
     });
 
+    /**
+     * JEWEL is the native currency of the DeFi Kingdoms chain.
+     * See {@link WJEWEL} for the "wrapped" ERC20 variant of this token.
+     */
     export const JEWEL = new BaseToken({
         name:     "JEWEL",
         symbol:   "JEWEL",
@@ -356,6 +380,12 @@ export namespace Tokens {
         isGasToken: true,
     });
 
+    /**
+     * WJEWEL ("Wrapped JEWEL") is a "wrapped" ERC20 variant of {@link JEWEL}.
+     * In the context of Synapse Protocol, WJEWEL is primarily used for
+     * bridging the native currency of the DeFi Kingdoms mainnet, {@link JEWEL},
+     * to and from the Harmony network.
+     */
     export const WJEWEL = new WrapperToken({
         name:    "Wrapped JEWEL",
         symbol:  "wJEWEL",
@@ -368,6 +398,15 @@ export namespace Tokens {
         underlyingToken: JEWEL,
     });
 
+    /**
+     * SYN_JEWEL ("synJewel") is an ERC20 Token used by Synapse Protocol to
+     * bridge and "wrap" the native currency of the DeFi Kingdoms mainnet, {@link JEWEL},
+     * to and from Avalanche C-Chain.
+     *
+     * synJEWEL is supported on Harmony as an "intermediate" token; for example, it is
+     * possible to bridge {@link WJEWEL} from Harmony to synJEWEL on Avalanche, and then
+     * bridge synJEWEL to native {@link JEWEL} on the DeFi Kingdoms mainnet.
+     */
     export const SYN_JEWEL = new BaseToken({
         name:    "synJEWEL",
         symbol:  "synJEWEL",
@@ -577,20 +616,49 @@ export namespace Tokens {
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
 
-    export const gasTokenWrapper = (gasToken: Token): Token => {
-        let wrapperToken: Token;
+    export const ChainGasTokensMap: ChainIdTypeMap<Token> = {
+        [ChainId.ETH]:        ETH,
+        [ChainId.OPTIMISM]:   ETH,
+        [ChainId.BOBA]:       ETH,
+        [ChainId.ARBITRUM]:   ETH,
+        [ChainId.AVALANCHE]:  AVAX,
+        [ChainId.DFK]:        JEWEL,
+    };
 
-        if (gasToken.isEqual(AVAX)) {
-            wrapperToken = WAVAX;
-        } else if (gasToken.isEqual(MOVR)) {
-            wrapperToken = WMOVR;
-        } else if (gasToken.isEqual(ETH)) {
-            wrapperToken = WETH;
-        } else if (gasToken.isEqual(JEWEL)) {
-            wrapperToken = WJEWEL;
+    /**
+     * Returns the native currency Token ("gas token") for a given chain, if
+     * it's supported by Synapse Protocol.
+     * @param chainId
+     */
+    export const gasTokenForChain = (chainId: number): Token | null => {
+        if (chainId in ChainGasTokensMap) {
+            return ChainGasTokensMap[chainId]
         }
 
-        return wrapperToken
+        return null
+    }
+
+    /**
+     * Returns the "wrapper" Token for a given native currency Token ("gas token")
+     * if such Token exists and is supported by Synapse Protocol.
+     * @param gasToken
+     */
+    export const gasTokenWrapper = (gasToken: Token): Token | null => {
+        if (!gasToken) {
+            return null
+        }
+
+        if (gasToken.isEqual(AVAX)) {
+            return WAVAX;
+        } else if (gasToken.isEqual(MOVR)) {
+            return WMOVR;
+        } else if (gasToken.isEqual(ETH)) {
+            return WETH;
+        } else if (gasToken.isEqual(JEWEL)) {
+            return WJEWEL;
+        }
+
+        return null
     }
 
     export const AllTokens: Token[] = [
