@@ -366,10 +366,10 @@ export namespace Tokens {
     });
 
     /**
-     * JEWEL is the native currency of the DeFi Kingdoms chain.
-     * See {@link WJEWEL} for the "wrapped" ERC20 variant of this token.
+     * GAS_JEWEL is the native currency of the DeFi Kingdoms chain.
+     * See {@link JEWEL} for the "wrapped" ERC20 variant of this token.
      */
-    export const JEWEL = new BaseToken({
+    export const GAS_JEWEL = new BaseToken({
         name:     "JEWEL",
         symbol:   "JEWEL",
         decimals: 18,
@@ -381,38 +381,38 @@ export namespace Tokens {
     });
 
     /**
-     * WJEWEL ("Wrapped JEWEL") is a "wrapped" ERC20 variant of {@link JEWEL}.
-     * In the context of Synapse Protocol, WJEWEL is primarily used for
-     * bridging the native currency of the DeFi Kingdoms mainnet, {@link JEWEL},
+     * JEWEL is a "wrapped" ERC20 variant of {@link GAS_JEWEL}.
+     * In the context of Synapse Protocol, JEWEL is primarily used for
+     * bridging the native currency of the DeFi Kingdoms mainnet, {@link GAS_JEWEL},
      * to and from the Harmony network.
      */
-    export const WJEWEL = new WrapperToken({
+    export const JEWEL = new WrapperToken({
         name:    "Wrapped JEWEL",
-        symbol:  "wJEWEL",
+        symbol:  "JEWEL",
         decimals: 18,
         addresses: {
-            [ChainId.DFK]:     "0xCCb93dABD71c8Dad03Fc4CE5559dC3D89F67a260",
-            [ChainId.HARMONY]: "0x72Cb10C6bfA5624dD07Ef608027E366bd690048F"
+            [ChainId.AVALANCHE]: "0x997Ddaa07d716995DE90577C123Db411584E5E46",
+            [ChainId.DFK]:       "0xCCb93dABD71c8Dad03Fc4CE5559dC3D89F67a260",
+            [ChainId.HARMONY]:   "0x72Cb10C6bfA5624dD07Ef608027E366bd690048F"
         },
         swapType:        SwapType.JEWEL,
-        underlyingToken: JEWEL,
+        underlyingToken: GAS_JEWEL,
     });
 
     /**
      * SYN_JEWEL ("synJewel") is an ERC20 Token used by Synapse Protocol to
-     * bridge and "wrap" the native currency of the DeFi Kingdoms mainnet, {@link JEWEL},
+     * bridge and "wrap" the native currency of the DeFi Kingdoms mainnet, {@link GAS_JEWEL},
      * to and from Avalanche C-Chain.
      *
      * synJEWEL is supported on Harmony as an "intermediate" token; for example, it is
-     * possible to bridge {@link WJEWEL} from Harmony to synJEWEL on Avalanche, and then
-     * bridge synJEWEL to native {@link JEWEL} on the DeFi Kingdoms mainnet.
+     * possible to bridge {@link JEWEL} from Harmony to synJEWEL on Avalanche, and then
+     * bridge synJEWEL to native {@link GAS_JEWEL} on the DeFi Kingdoms mainnet.
      */
     export const SYN_JEWEL = new BaseToken({
         name:    "synJEWEL",
         symbol:  "synJEWEL",
         decimals: 18,
         addresses: {
-            [ChainId.AVALANCHE]: "0x997Ddaa07d716995DE90577C123Db411584E5E46",
             [ChainId.HARMONY]:   "0x28b42698Caf46B4B012CF38b6C75867E0762186D"
         },
         swapType: SwapType.JEWEL
@@ -610,7 +610,7 @@ export namespace Tokens {
         GOHM,    SOLAR,    GMX,
         UST,     NEWO,     SDT,
         LUNA,    USDB,     SYN_AVAX,
-        JEWEL,   WJEWEL,   SYN_JEWEL,
+        GAS_JEWEL,   JEWEL,   SYN_JEWEL,
         XJEWEL,
     ];
 
@@ -622,7 +622,7 @@ export namespace Tokens {
         [ChainId.BOBA]:       ETH,
         [ChainId.ARBITRUM]:   ETH,
         [ChainId.AVALANCHE]:  AVAX,
-        [ChainId.DFK]:        JEWEL,
+        [ChainId.DFK]:        GAS_JEWEL,
     };
 
     /**
@@ -655,8 +655,8 @@ export namespace Tokens {
                 return WMOVR
             case ETH:
                 return WETH
-            case JEWEL:
-                return WJEWEL
+            case GAS_JEWEL:
+                return JEWEL
         }
 
         return null
@@ -669,7 +669,7 @@ export namespace Tokens {
         SYN, NUSD, AVAX, WAVAX, MOVR, WMOVR,
         GOHM, HIGH, JUMP, DOG, NFD, FRAX,
         SYN_FRAX, SOLAR, GMX, NEWO, SDT,
-        LUNA, USDB, SYN_AVAX, JEWEL, WJEWEL,
+        LUNA, USDB, SYN_AVAX, GAS_JEWEL, JEWEL,
         SYN_JEWEL, XJEWEL,
     ];
 }

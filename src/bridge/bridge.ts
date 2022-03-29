@@ -886,7 +886,7 @@ export namespace Bridge {
                                 Tokens.GMX.wrapperAddress(this.chainId),
                                 amount
                             )
-                case Tokens.WJEWEL:
+                case Tokens.JEWEL:
                     if (this.chainId === ChainId.HARMONY) {
                         return zapBridge
                             .populateTransaction
@@ -920,7 +920,7 @@ export namespace Bridge {
                         return zapBridge.populateTransaction.redeem(
                             args.addressTo,
                             ChainId.DFK,
-                            Tokens.SYN_JEWEL.address(this.chainId),
+                            Tokens.JEWEL.address(this.chainId),
                             args.amountFrom
                         )
                     }
@@ -928,7 +928,7 @@ export namespace Bridge {
                     return zapBridge.populateTransaction.redeemAndSwap(
                         args.addressTo,
                         args.chainIdTo,
-                        Tokens.SYN_JEWEL.address(this.chainId),
+                        Tokens.JEWEL.address(this.chainId),
                         args.amountFrom,
                         1,
                         0,
@@ -1059,7 +1059,7 @@ export namespace Bridge {
                     bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.MOVR, Tokens.WMOVR);
                     break;
                 case SwapType.JEWEL:
-                    bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.JEWEL, Tokens.WJEWEL);
+                    bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.GAS_JEWEL, Tokens.JEWEL);
                     break;
                 default:
                     bridgeTokens = (t1: Token, t2: Token) => [t1, t2];

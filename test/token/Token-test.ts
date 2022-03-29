@@ -221,7 +221,7 @@ describe("Token Tests", function(this: Mocha.Suite) {
                     case Tokens.ETH:
                     case Tokens.AVAX:
                     case Tokens.MOVR:
-                    case Tokens.JEWEL:
+                    case Tokens.GAS_JEWEL:
                         it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
                             expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
                         })

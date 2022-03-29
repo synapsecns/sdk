@@ -213,7 +213,7 @@ export namespace BridgeUtils {
             case Tokens.WETH:
                 compare = Tokens.WETH;
                 break;
-            case Tokens.WJEWEL:
+            case Tokens.JEWEL:
                 if (chainId === ChainId.HARMONY) {
                     compare = Tokens.SYN_JEWEL;
                 } else {

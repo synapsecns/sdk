@@ -35,9 +35,9 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
             {chainId: ChainId.AVALANCHE, token: Tokens.GOHM,     wantA: Tokens.GOHM,   wantB: Tokens.GOHM},
             {chainId: ChainId.OPTIMISM,  token: Tokens.LUNA,     wantA: Tokens.LUNA,   wantB: Tokens.LUNA},
             {chainId: ChainId.HARMONY,   token: Tokens.SYN_AVAX, wantA: Tokens.WAVAX,  wantB: Tokens.SYN_AVAX},
-            {chainId: ChainId.HARMONY,   token: Tokens.WJEWEL,   wantA: Tokens.WJEWEL, wantB: Tokens.SYN_JEWEL},
-            {chainId: ChainId.AVALANCHE, token: Tokens.WJEWEL,   wantA: Tokens.WJEWEL, wantB: Tokens.SYN_JEWEL},
-            {chainId: ChainId.DFK,       token: Tokens.WJEWEL,   wantA: Tokens.WJEWEL, wantB: Tokens.WJEWEL},
+            {chainId: ChainId.HARMONY,   token: Tokens.JEWEL,    wantA: Tokens.JEWEL,  wantB: Tokens.SYN_JEWEL},
+            {chainId: ChainId.AVALANCHE, token: Tokens.JEWEL,    wantA: Tokens.JEWEL,  wantB: Tokens.JEWEL},
+            {chainId: ChainId.DFK,       token: Tokens.JEWEL,    wantA: Tokens.JEWEL,  wantB: Tokens.JEWEL},
         ].forEach((tc: TestCase) => {
             const
                 testPrefix: string = `intermediateTokens() with token ${tc.token.symbol} and Chain ID ${tc.chainId} should return`,
@@ -121,7 +121,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.ARBITRUM,  token: Tokens.NEWO},
                     {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
                     {chainId: ChainId.HARMONY,   token: Tokens.AVAX},
-                    {chainId: ChainId.DFK,       token: Tokens.SYN_JEWEL}
+                    {chainId: ChainId.DFK,       token: Tokens.JEWEL},
                 ],
             },
             {

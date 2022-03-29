@@ -26,8 +26,8 @@ export namespace Networks {
         {chainId: ChainId.AVALANCHE, token: Tokens.AVWETH},
         {chainId: ChainId.MOONRIVER, token: Tokens.MOVR},
         {chainId: ChainId.MOONRIVER, token: Tokens.WMOVR},
+        {chainId: ChainId.DFK,       token: Tokens.GAS_JEWEL},
         {chainId: ChainId.DFK,       token: Tokens.JEWEL},
-        {chainId: ChainId.DFK,       token: Tokens.WJEWEL},
     ];
 
     const checkWrappedToken = (chainId: ChainId, token: Token): boolean => {

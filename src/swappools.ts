@@ -419,12 +419,12 @@ export namespace SwapPools {
         SDT_Pool       = makeSingleTokenPool(Tokens.SDT),
         LUNA_Pool      = makeSingleTokenPool(Tokens.LUNA),
         USDB_Pool      = makeSingleTokenPool(Tokens.USDB),
-        // JEWEL_Pool     = makeSingleTokenPool(Tokens.JEWEL),
+        JEWEL_Pool     = makeSingleTokenPool(Tokens.JEWEL),
         // WJEWEL_Pool    = makeSingleTokenPool(Tokens.WJEWEL),
         SYN_JEWEL_Pool = makeSingleTokenPool(Tokens.SYN_JEWEL),
         XJEWEL_Pool    = makeSingleTokenPool(Tokens.XJEWEL),
-        DFK_JEWEL_Pool: LPToken = {poolTokens: [Tokens.JEWEL, Tokens.WJEWEL], swapType: SwapType.JEWEL},
-        HARMONY_JEWEL_Pool: LPToken = {poolTokens: [Tokens.WJEWEL, Tokens.SYN_JEWEL], swapType: SwapType.JEWEL};
+        DFK_JEWEL_Pool:     LPToken = {poolTokens: [Tokens.GAS_JEWEL, Tokens.JEWEL], swapType: SwapType.JEWEL},
+        HARMONY_JEWEL_Pool: LPToken = {poolTokens: [Tokens.JEWEL, Tokens.SYN_JEWEL], swapType: SwapType.JEWEL};
 
     export type SwapTypePoolTokens = SwapTypeMap<LPToken>
 
@@ -575,7 +575,7 @@ export namespace SwapPools {
             NEWO_Pool,
             SDT_Pool,
             USDB_Pool,
-            SYN_JEWEL_Pool
+            JEWEL_Pool
         ),
         [ChainId.DFK]: {
             swappableTokens: {

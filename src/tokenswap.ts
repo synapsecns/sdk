@@ -193,13 +193,13 @@ export namespace TokenSwap {
             if (token.swapType === SwapType.JEWEL) {
                 let bridgeConfigIntermediate: Token;
 
-                if (chainId === ChainId.HARMONY || chainId === ChainId.AVALANCHE) {
+                if (chainId === ChainId.HARMONY) {
                     bridgeConfigIntermediate = Tokens.SYN_JEWEL;
                 } else {
-                    bridgeConfigIntermediate = Tokens.WJEWEL;
+                    bridgeConfigIntermediate = Tokens.JEWEL;
                 }
 
-                return {intermediateToken: Tokens.WJEWEL, bridgeConfigIntermediateToken: bridgeConfigIntermediate}
+                return {intermediateToken: Tokens.JEWEL, bridgeConfigIntermediateToken: bridgeConfigIntermediate}
             }
 
             return {intermediateToken: token, bridgeConfigIntermediateToken: token}
@@ -225,7 +225,7 @@ export namespace TokenSwap {
                 bridgeConfigIntermediateToken = chainId === ChainId.HARMONY ? Tokens.SYN_AVAX : Tokens.WAVAX;
                 break;
             case SwapType.JEWEL:
-                intermediateToken = Tokens.WJEWEL;
+                intermediateToken = Tokens.JEWEL;
                 if (chainId === ChainId.HARMONY || chainId === ChainId.AVALANCHE) {
                     bridgeConfigIntermediateToken = Tokens.SYN_JEWEL;
                 }
