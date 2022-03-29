@@ -63,7 +63,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: true
-          automatic_release_tag: ${{ steps.git_tag.outputs.git_tag }}
           files: |
             synapseprotocol-sdk-${{ steps.git_tag.outputs.git_tag }}.tgz
             LICENSE
