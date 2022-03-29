@@ -2,7 +2,7 @@ import {BaseToken, type Token, WrapperToken,} from "@token";
 
 import {ChainId} from "@chainid";
 
-import {SwapType} from "@internal/index";
+import {SwapType, tokenSwitch} from "@internal/index";
 import {ChainIdTypeMap} from "@common/types";
 
 export namespace Tokens {
@@ -648,14 +648,15 @@ export namespace Tokens {
             return null
         }
 
-        if (gasToken.isEqual(AVAX)) {
-            return WAVAX;
-        } else if (gasToken.isEqual(MOVR)) {
-            return WMOVR;
-        } else if (gasToken.isEqual(ETH)) {
-            return WETH;
-        } else if (gasToken.isEqual(JEWEL)) {
-            return WJEWEL;
+        switch (tokenSwitch(gasToken)) {
+            case AVAX:
+                return WAVAX
+            case MOVR:
+                return WMOVR
+            case ETH:
+                return WETH
+            case JEWEL:
+                return WJEWEL
         }
 
         return null
