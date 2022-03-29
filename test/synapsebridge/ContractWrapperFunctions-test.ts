@@ -266,6 +266,9 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
           const testTitle: string = `Bridge transaction ${tc.transactionHashChainFrom} ${tc.want ? 'should' : 'should NOT'} be marked completed on Chain ID ${tc.chainIdTo}`;
 
           it(testTitle, async function(this: Mocha.Context) {
+              this.timeout(5.5 * 1000);
+              this.slow(2 * 1000);
+
               const got = await Bridge.checkBridgeTransactionComplete(tc);
 
               if (tc.want) {
