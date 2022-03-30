@@ -157,6 +157,9 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
         makeTestCase(Tokens.GAS_JEWEL, Tokens.JEWEL,     ChainId.DFK,       ChainId.AVALANCHE,   depositETHAndSwap),
         makeTestCase(Tokens.JEWEL,     Tokens.JEWEL,     ChainId.AVALANCHE, ChainId.DFK,         redeem),
         makeTestCase(Tokens.JEWEL,     Tokens.JEWEL,     ChainId.HARMONY,   ChainId.DFK,         swapAndRedeem),
+        makeTestCase(Tokens.JEWEL,     Tokens.JEWEL,     ChainId.AVALANCHE, ChainId.HARMONY,     redeemAndSwap),
+        makeTestCase(Tokens.JEWEL,     Tokens.SYN_JEWEL, ChainId.DFK,       ChainId.HARMONY,     depositETH),
+        makeTestCase(Tokens.JEWEL,     Tokens.SYN_JEWEL, ChainId.AVALANCHE, ChainId.HARMONY,     swapAndRedeem),
         makeTestCase(Tokens.WAVAX,     Tokens.SYN_AVAX,  ChainId.DFK,       ChainId.HARMONY,     redeem),
     ].forEach((tc: TestCase) => {
         const testTitle = makeTestName(tc);
