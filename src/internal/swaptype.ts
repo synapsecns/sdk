@@ -1,4 +1,4 @@
-import type {ValueOf} from "./generic_types";
+import type {ValueOf} from "./types";
 
 export const SwapType = {
     USD:     "USD",

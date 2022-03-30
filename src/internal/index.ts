@@ -1,10 +1,12 @@
-export type {ID, Distinct} from "./distinct";
+export {rpcProviderForChain} from "./rpcproviders";
 
 export {SwapType, mintBurnSwapTypes} from "./swaptype";
 export type {SwapTypeMap} from "./swaptype";
 
-export {rpcProviderForChain} from "./rpcproviders";
-
 export {tokenSwitch} from "./utils";
 
-export type {ValueOf} from "./generic_types";
+export type {
+	ID,
+	Distinct,
+	ValueOf
+} from "./types";

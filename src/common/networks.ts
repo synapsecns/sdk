@@ -6,7 +6,7 @@ import {SwapPools}  from "@swappools";
 import type {
     ID,
     Distinct,
-} from "@internal/distinct";
+} from "@internal/index";
 
 import {BridgeUtils} from "@bridge/bridgeutils";
 
