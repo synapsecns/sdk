@@ -52,6 +52,7 @@ import type {
     ContractTransaction,
     PopulatedTransaction,
 } from "@ethersproject/contracts";
+import {AvaxJewelMigrationAddress} from "@entities";
 
 /**
  * Bridge provides a wrapper around common Synapse Bridge interactions, such as output estimation, checking supported swaps/bridges,
@@ -466,6 +467,11 @@ export namespace Bridge {
             amount?: BigNumberish
         }): [ERC20.ApproveArgs, string] {
             const {token, amount} = args;
+            let spender: string = this.zapBridgeAddress;
+
+            if (instanceOfToken(token) && token.isEqual(Tokens.MULTIJEWEL)) {
+                spender = SynapseEntities.AvaxJewelMigrationAddress;
+            }
 
             /* c8 ignore start */
             let tokenAddr: string = instanceOfToken(token)
@@ -474,7 +480,7 @@ export namespace Bridge {
             /* c8 ignore stop */
 
             return [{
-                spender: this.zapBridgeAddress,
+                spender,
                 amount
             }, tokenAddr]
         }
@@ -749,6 +755,18 @@ export namespace Bridge {
             tokenArgs.tokenFrom = tokenArgs.tokenFrom.isEqual(Tokens.AVWETH)
                 ? Tokens.WETH_E
                 : tokenArgs.tokenFrom;
+
+            if (tokenArgs.tokenFrom.isEqual(Tokens.MULTIJEWEL)) {
+                const jewelMigrator = SynapseEntities.AvaxJewelMigrationContractInstance();
+
+                return jewelMigrator
+                    .populateTransaction
+                    .migrateAndBridge(
+                        args.amountFrom,
+                        args.addressTo,
+                        args.chainIdTo
+                    )
+            }
 
             let
                 easyDeposits:   ID[] = [],
