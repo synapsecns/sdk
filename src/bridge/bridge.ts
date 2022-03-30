@@ -972,18 +972,16 @@ export namespace Bridge {
                         return zap
                             .populateTransaction
                             .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.WAVAX))
-                    } else if (this.chainId === ChainId.AVALANCHE) {
-                        return zapBridge
-                            .populateTransaction
-                            .depositETH(
-                                castArgs.addressTo,
-                                castArgs.chainIdTo,
-                                castArgs.amountFrom,
-                                BridgeUtils.overrides(castArgs.amountFrom)
-                            )
                     }
 
-                    break;
+                    return zapBridge
+                        .populateTransaction
+                        .depositETH(
+                            castArgs.addressTo,
+                            castArgs.chainIdTo,
+                            castArgs.amountFrom,
+                            BridgeUtils.overrides(castArgs.amountFrom)
+                        )
                 default:
                     if (chainIdTo === ChainId.ETH) {
                         if (this.isL2ETHChain && args.tokenFrom.swapType === SwapType.ETH) {
