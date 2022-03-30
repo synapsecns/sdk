@@ -1,57 +1,34 @@
-import {ABIs}    from "@abis/index";
 import {ChainId} from "@chainid";
 
 import type {ChainIdTypeMap} from "./types";
 
-import {ContractInterface} from "@ethersproject/contracts";
-
-
 export namespace SynapseContracts {
-    type abiAndAddress = {
-        address: string,
-        abi?:    ContractInterface,
-    }
 
     interface SynapseContractArgs {
-        bridge:     string,
-        bridgeZap?: string,
-        l1Zap?:     boolean,
+        bridge:     string;
+        bridgeZap?: string;
     }
 
     export class SynapseContract {
-        readonly bridge:      abiAndAddress;
-        readonly bridgeZap?:  abiAndAddress;
+        readonly bridgeAddress:      string;
+        readonly bridgeZapAddress?:  string;
 
         constructor({
             bridge,
             bridgeZap=null,
-            l1Zap=false
         }: SynapseContractArgs) {
 
-            this.bridge = {address: bridge};
-            this.bridge.abi = ABIs.SynapseBridge;
+            this.bridgeAddress = bridge;
 
             if (bridgeZap) {
-                this.bridgeZap = {
-                    address: bridgeZap,
-                    abi:     l1Zap ? ABIs.L1BridgeZap : ABIs.L2BridgeZap,
-                };
+                this.bridgeZapAddress = bridgeZap;
             }
-        }
-
-        get bridgeAddress(): string {
-            return this.bridge.address
-        }
-
-        get bridgeZapAddress(): string {
-            return this.bridgeZap.address
         }
     }
 
     export const Ethereum = new SynapseContract({
         bridge:    "0x2796317b0fF8538F253012862c06787Adfb8cEb6",
         bridgeZap: "0x6571d6be3d8460CF5F7d6711Cd9961860029D85F",
-        l1Zap:     true,
     });
 
     export const Optimism = new SynapseContract({
@@ -112,7 +89,6 @@ export namespace SynapseContracts {
     export const DFK = new SynapseContract({
         bridge:    "0xE05c976d3f045D0E6E7A6f61083d98A15603cF6A",
         bridgeZap: "0xA7F9B7B0f729Dc98ae748f5505497909aFfdfa8A",
-        l1Zap:     true,
     });
 
     export const Aurora = new SynapseContract({
