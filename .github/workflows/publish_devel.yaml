@@ -3,9 +3,9 @@ name: Publish (Dev/Beta)
 on:
   push:
     tags:
-      - "v*-dev*"
-      - "v*-beta*"
-      - "v*-alpha*"
+      - "v[01].[0-9]+.[0-9]+-dev.[0-9]+"
+      - "v[01].[0-9]+.[0-9]+-beta.[0-9]+"
+      - "v[01].[0-9]+.[0-9]+-alpha.[0-9]+"
 
 jobs:
   tagged_release:
