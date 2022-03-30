@@ -1,8 +1,16 @@
-import {BaseToken, type Token, WrapperToken,} from "@token";
+import {
+    type Token,
+    BaseToken,
+    WrapperToken
+} from "@token";
 
 import {ChainId} from "@chainid";
 
-import {SwapType, tokenSwitch} from "@internal/index";
+import {
+    SwapType,
+    tokenSwitch
+} from "@internal/index";
+
 import {ChainIdTypeMap} from "@common/types";
 
 export namespace Tokens {
