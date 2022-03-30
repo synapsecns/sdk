@@ -20,6 +20,7 @@ const ENV_KEY_MAP: StringMap = {
     [ChainId.MOONRIVER]: "MOONRIVER_RPC_URI",
     [ChainId.ARBITRUM]:  "ARBITRUM_RPC_URI",
     [ChainId.AVALANCHE]: "AVALANCHE_RPC_URI",
+    [ChainId.DFK]:       "DFK_RPC_URI",
     [ChainId.AURORA]:    "AURORA_RPC_URI",
     [ChainId.HARMONY]:   "HARMONY_RPC_URI",
 }
@@ -81,9 +82,3 @@ export function configureRPCEndpoints(config: RPCEndpointsConfig) {
         }
     }
 }
-/**
- * Used solely for tests, initRpcConnectors() basically just makes sure on-import initialization
- * of Rpc connections occurs before tests run.
- * @internal
- */
-export function initRpcConnectors() {}
