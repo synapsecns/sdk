@@ -955,7 +955,7 @@ export namespace Bridge {
                     return zapBridge
                         .populateTransaction
                         .swapAndRedeem(
-                            ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.SYN_JEWEL),
+                            ...BridgeUtils.makeEasySubParams(castArgs, this.chainId, Tokens.JEWEL),
                             0,
                             1,
                             amountFrom,
