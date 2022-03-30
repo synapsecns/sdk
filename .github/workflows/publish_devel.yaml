@@ -12,26 +12,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - name: Install Node
-        uses: actions/setup-node@v2
-        with:
-          node-version-file: '.nvmrc'
-          cache: "yarn"
-          registry-url: "https://registry.npmjs.org"
-          scope: "@synapseprotocol"
+      - name: Set git tag name in env
+        id: git_tag
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
 
-      - name: Yarn Install
-        run: yarn install --frozen-lockfile
-
-      - name: Yarn Build
-        run: yarn run build
-
-      - name: Set NPM tag in env
+      - name: Set NPM tag name in env
         id: npm_tag
         run: |
           REF_NAME=${GITHUB_REF#refs/*/}
@@ -51,26 +40,33 @@ jobs:
               ;;
           esac
 
-      - name: Set tagname in env
-        id: git_tag
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
-
       - name: Set tarball filename in env
-        id: release_tarball
+        id: tarball_file
         run: |
           TARBALL=synapseprotocol-sdk-${{ steps.git_tag.outputs.tag }}.tgz
           echo ::set-output name=filename::${TARBALL}
 
-      - name: Make tarball
-        run: yarn pack --filename ${{ steps.release_tarball.outputs.filename }}
+      - uses: actions/setup-node@v2
+        with:
+          cache: "yarn"
+          scope: "@synapseprotocol"
+          registry-url: "https://registry.npmjs.org"
+          node-version-file: '.nvmrc'
 
-      - name: Create release with tarball
+      - run: yarn install --frozen-lockfile
+
+      - run: yarn run build
+
+      - name: Build dist tarball
+        run: yarn pack --filename ${{ steps.tarball_file.outputs.filename }}
+
+      - name: Create and publish GitHub release
         uses: "marvinpinto/action-automatic-releases@v1.2.1"
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: true
           files: |
-            ${{ steps.release_tarball.outputs.filename }}
+            ${{ steps.tarball_file.outputs.filename }}
             LICENSE
             README.md
 
