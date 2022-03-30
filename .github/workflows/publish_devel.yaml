@@ -41,22 +41,28 @@ jobs:
           
           case $REF_NAME in
             *"$ALPHA"*)
-              echo ::set-output name=npm_tag::${ALPHA}
+              echo ::set-output name=tag::${ALPHA}
               ;;
             *"$BETA"*)
-              echo ::set-output name=npm_tag::${BETA}
+              echo ::set-output name=tag::${BETA}
               ;;
             *"$DEV"*)
-              echo ::set-output name=npm_tag::${DEV}
+              echo ::set-output name=tag::${DEV}
               ;;
           esac
 
       - name: Set tagname in env
         id: git_tag
-        run: echo ::set-output name=git_tag::${GITHUB_REF#refs/*/}
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+
+      - name: Set tarball filename in env
+        id: release_tarball
+        run: |
+          TARBALL=synapseprotocol-sdk-${{ steps.git_tag.outputs.tag }}.tgz
+          echo ::set-output name=filename::${TARBALL}
 
       - name: Make tarball
-        run: yarn pack --filename synapseprotocol-sdk-${{ steps.git_tag.outputs.git_tag }}.tgz
+        run: yarn pack --filename ${{ steps.release_tarball.outputs.filename }}
 
       - name: Create release with tarball
         uses: "marvinpinto/action-automatic-releases@v1.2.1"
@@ -64,11 +70,11 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: true
           files: |
-            synapseprotocol-sdk-${{ steps.git_tag.outputs.git_tag }}.tgz
+            ${{ steps.release_tarball.outputs.filename }}
             LICENSE
             README.md
 
       - name: Publish to NPM
-        run: yarn publish --non-interactive --tag ${{ steps.npm_tag.outputs.npm_tag }}
+        run: yarn publish --non-interactive --tag ${{ steps.npm_tag.outputs.tag }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_SERVICE_ACCOUNT_TOKEN }}
