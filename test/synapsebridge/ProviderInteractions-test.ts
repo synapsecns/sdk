@@ -45,14 +45,14 @@ function callStatic(prom: Promise<StaticCallResult>): Promise<void> {
 }
 
 interface EstimateOutputs {
-    outputEstimate: Bridge.BridgeOutputEstimate,
-    bridgeArgs:     Bridge.BridgeTransactionParams,
+    outputEstimate: Bridge.BridgeOutputEstimate;
+    bridgeArgs:     Bridge.BridgeTransactionParams;
 }
 
 interface WalletArgs {
-    wallet:         Wallet,
-    address:        string,
-    bridgeInstance: Bridge.SynapseBridge,
+    wallet:         Wallet;
+    address:        string;
+    bridgeInstance: Bridge.SynapseBridge;
 }
 
 function buildWalletArgs(chainId: number, privkey: string=bridgeTestPrivkey1): WalletArgs {

@@ -33,17 +33,17 @@ export const
     bridgeInteractionsPrivkey: TestPrivKey = loadTestPrivkey("BRIDGE_INTERACTIONS");
 
 export interface BridgeSwapTestArgs {
-    chainIdFrom: number,
-    chainIdTo:   number,
-    tokenFrom:   Token,
-    tokenTo:     Token,
-    amountFrom:  BigNumber,
-    execute?:    boolean,
+    chainIdFrom: number;
+    chainIdTo:   number;
+    tokenFrom:   Token;
+    tokenTo:     Token;
+    amountFrom:  BigNumber;
+    execute?:    boolean;
 }
 
 export interface BridgeSwapTestCase<T> {
-    args:     BridgeSwapTestArgs,
-    expected: T,
+    args:     BridgeSwapTestArgs;
+    expected: T;
 }
 
 export function makeBridgeSwapTestCase<T>(
