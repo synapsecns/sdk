@@ -216,12 +216,14 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 const canBridgeTestTitle: string = `should${tc.expected.canBridge ? "" : " not"} be able to bridge`;
 
                 it(canBridgeTestTitle, async function(this: Mocha.Context) {
-                    if (tc.args.chainIdFrom === ChainId.HARMONY) {
+                    const {chainIdFrom, chainIdTo} = tc.args;
+                    if (chainIdFrom === ChainId.HARMONY || chainIdTo === ChainId.HARMONY) {
                         this.timeout(15 * 1000);
                     } else {
                         this.timeout(5.5 * 1000);
                     }
-                    this.slow(2*1000);
+
+                    this.slow(2 * 1000);
 
                     let prom = bridgeInstance.checkCanBridge({
                         token: tc.args.tokenFrom,
@@ -276,6 +278,8 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 });
 
                 step(approvalTxnTestTitle, async function(this: Mocha.Context) {
+                    if (tc.args.tokenFrom.isGasToken) return
+
                     let prom: Promise<TxExecResult> = tc.callStatic
                         ? staticCallPopulatedTransaction(approvalTxn, wallet)
                         : wallet.sendTransaction(approvalTxn);
@@ -304,6 +308,8 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
             if (!tc.callStatic) {
                 describe("- Magic Executors tests", function(this: Mocha.Suite) {
                     step(approvalTxnTestTitle, async function(this: Mocha.Context) {
+                        if (tc.args.tokenFrom.isGasToken) return
+
                         let prom = bridgeInstance.executeApproveTransaction({token: tc.args.tokenFrom}, wallet);
 
                         return await executeTxn(
