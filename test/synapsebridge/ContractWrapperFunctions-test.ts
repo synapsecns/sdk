@@ -259,7 +259,8 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
        const testCases: TestCase[] = [
            {chainIdTo: ChainId.AURORA, transactionHashChainFrom: "0x77a776395f347c313efcb660e50e3ea45846b80d90fa19f33f8b53a42cc46fb4", want: true},
-           {chainIdTo: ChainId.BSC,    transactionHashChainFrom: "0x53da6395da3a7f7efba5581387466de06983be8806978416441ba8202600684e", want: false}
+           {chainIdTo: ChainId.BSC,    transactionHashChainFrom: "0x53da6395da3a7f7efba5581387466de06983be8806978416441ba8202600684e", want: false},
+           {chainIdTo: ChainId.DFK,    transactionHashChainFrom: "0xeb449f8f890b20d42448fbf5b8542d7afc4e0c6a51a25e6b278475c6ad087d96", want: true}
        ];
 
        testCases.forEach(tc => {

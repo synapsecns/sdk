@@ -10,7 +10,7 @@ import {
 import {Bridge, ChainId, Networks, Token, Tokens} from "@sdk";
 
 import {TransactionDescription} from "@ethersproject/abi";
-import {L1BridgeZapFactory, L2BridgeZapFactory} from "@contracts";
+import {AvaxJewelMigrationFactory, L1BridgeZapFactory, L2BridgeZapFactory} from "@contracts";
 import {expect} from "chai";
 import {BridgeSwapTestCase, makeBridgeSwapTestCase} from "./bridge_test_utils";
 import {formatUnits} from "@ethersproject/units";
@@ -60,6 +60,11 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
     }
 
     const
+        l1BridgeZapInterface   = L1BridgeZapFactory.createInterface(),
+        l2BridgeZapInterface   = L2BridgeZapFactory.createInterface(),
+        jewelMigratorInterface = AvaxJewelMigrationFactory.createInterface();
+
+    const
         redeem                  = "redeem",
         deposit                 = "deposit",
         depositETH              = "depositETH",
@@ -73,94 +78,97 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
         zapAndDeposit           = "zapAndDeposit",
         zapAndDepositAndSwap    = "zapAndDepositAndSwap",
         depositAndSwap          = "depositAndSwap",
-        depositETHAndSwap       = "depositETHAndSwap";
+        depositETHAndSwap       = "depositETHAndSwap",
+        migrateAndBridge        = "migrateAndBridge";
 
     [
-        makeTestCase(Tokens.DAI,       Tokens.USDC,      ChainId.ETH,       ChainId.BSC,         zapAndDepositAndSwap),
-        makeTestCase(Tokens.NETH,      Tokens.ETH,       ChainId.BOBA,      ChainId.ETH,         redeem),
-        makeTestCase(Tokens.NETH,      Tokens.NETH,      ChainId.BOBA,      ChainId.ETH,         redeem),
-        makeTestCase(Tokens.USDC,      Tokens.NUSD,      ChainId.BOBA,      ChainId.BSC,         swapAndRedeem),
-        makeTestCase(Tokens.USDC,      Tokens.USDT,      ChainId.BSC,       ChainId.BOBA,        swapAndRedeemAndSwap),
-        makeTestCase(Tokens.FRAX,      Tokens.FRAX,      ChainId.MOONRIVER, ChainId.ETH,         redeem),
-        makeTestCase(Tokens.FRAX,      Tokens.FRAX,      ChainId.ETH,       ChainId.MOONRIVER,   deposit),
-        makeTestCase(Tokens.SYN,       Tokens.SYN,       ChainId.MOONRIVER, ChainId.ETH,         redeem),
-        makeTestCase(Tokens.SYN,       Tokens.SYN,       ChainId.ETH,       ChainId.MOONRIVER,   redeem),
-        makeTestCase(Tokens.ETH,       Tokens.NETH,      ChainId.OPTIMISM,  ChainId.ETH,         swapETHAndRedeem),
-        makeTestCase(Tokens.ETH,       Tokens.NETH,      ChainId.ETH,       ChainId.AVALANCHE,   depositETH),
-        makeTestCase(Tokens.WETH_E,    Tokens.ETH,       ChainId.AVALANCHE, ChainId.ETH,         swapAndRedeem),
-        makeTestCase(Tokens.WETH_E,    Tokens.ETH,       ChainId.AVALANCHE, ChainId.ARBITRUM,    swapAndRedeemAndSwap),
-        makeTestCase(Tokens.ETH,       Tokens.WETH_E,    ChainId.ETH,       ChainId.AVALANCHE,   depositETHAndSwap),
-        makeTestCase(Tokens.NUSD,      Tokens.DAI,       ChainId.AVALANCHE, ChainId.ETH,         redeemAndRemove),
-        makeTestCase(Tokens.DAI,       Tokens.DAI,       ChainId.AVALANCHE, ChainId.ETH,         swapAndRedeemAndRemove),
-        makeTestCase(Tokens.NUSD,      Tokens.DAI,       ChainId.AVALANCHE, ChainId.POLYGON,     redeemAndSwap),
-        makeTestCase(Tokens.DOG,       Tokens.DOG,       ChainId.POLYGON,   ChainId.ETH,         redeem),
-        makeTestCase(Tokens.ETH,       Tokens.ETH,       ChainId.ARBITRUM,  ChainId.OPTIMISM,    swapETHAndRedeemAndSwap),
-        makeTestCase(Tokens.NETH,      Tokens.ETH,       ChainId.ARBITRUM,  ChainId.OPTIMISM,    redeemAndSwap),
-        makeTestCase(Tokens.JUMP,      Tokens.JUMP,      ChainId.FANTOM,    ChainId.BSC,         deposit),
-        makeTestCase(Tokens.GOHM,      Tokens.GOHM,      ChainId.AVALANCHE, ChainId.OPTIMISM,    redeem),
-        makeTestCase(Tokens.GOHM,      Tokens.GOHM,      ChainId.ETH,       ChainId.AVALANCHE,   deposit),
-        makeTestCase(Tokens.GOHM,      Tokens.GOHM,      ChainId.HARMONY,   ChainId.MOONRIVER,   redeem),
-        makeTestCase(Tokens.GOHM,      Tokens.GOHM,      ChainId.ETH,       ChainId.AVALANCHE,   deposit),
-        makeTestCase(Tokens.USDC,      Tokens.USDC,      ChainId.AURORA,    ChainId.AVALANCHE,   swapAndRedeemAndSwap),
-        makeTestCase(Tokens.USDC,      Tokens.NUSD,      ChainId.BSC,       ChainId.AURORA,      swapAndRedeem),
-        makeTestCase(Tokens.USDC,      Tokens.NUSD,      ChainId.AURORA,    ChainId.ETH,         swapAndRedeem),
-        makeTestCase(Tokens.USDC,      Tokens.NUSD,      ChainId.ETH,       ChainId.AURORA,      zapAndDeposit),
-        makeTestCase(Tokens.WETH,      Tokens.WETH_E,    ChainId.ETH,       ChainId.AVALANCHE,   depositETHAndSwap),
-        makeTestCase(Tokens.NUSD,      Tokens.NUSD,      ChainId.ETH,       ChainId.AVALANCHE,   deposit),
-        makeTestCase(Tokens.WETH_E,    Tokens.WETH,      ChainId.AVALANCHE, ChainId.OPTIMISM,    swapAndRedeemAndSwap),
-        makeTestCase(Tokens.WETH,      Tokens.ONE_ETH,   ChainId.ETH,       ChainId.HARMONY,     depositETHAndSwap),
-        makeTestCase(Tokens.ONE_ETH,   Tokens.WETH_E,    ChainId.HARMONY,   ChainId.AVALANCHE,   swapAndRedeemAndSwap),
-        makeTestCase(Tokens.HIGH,      Tokens.HIGH,      ChainId.BSC,       ChainId.ETH,         redeem),
-        makeTestCase(Tokens.JUMP,      Tokens.JUMP,      ChainId.BSC,       ChainId.FANTOM,      redeem),
-        makeTestCase(Tokens.DOG,       Tokens.DOG,       ChainId.BSC,       ChainId.POLYGON,     redeem),
-        makeTestCase(Tokens.NFD,       Tokens.NFD,       ChainId.POLYGON,   ChainId.AVALANCHE,   deposit),
-        makeTestCase(Tokens.GMX,       Tokens.GMX,       ChainId.ARBITRUM,  ChainId.AVALANCHE,   deposit),
-        makeTestCase(Tokens.GMX,       Tokens.GMX,       ChainId.AVALANCHE, ChainId.ARBITRUM,    redeem),
-        makeTestCase(Tokens.SOLAR,     Tokens.SOLAR,     ChainId.MOONRIVER, ChainId.MOONBEAM,    deposit),
-        makeTestCase(Tokens.WAVAX,     Tokens.AVAX,      ChainId.MOONBEAM,  ChainId.AVALANCHE,   redeem),
-        makeTestCase(Tokens.AVAX,      Tokens.WAVAX,     ChainId.AVALANCHE, ChainId.MOONBEAM,    depositETH),
-        makeTestCase(Tokens.WMOVR,     Tokens.MOVR,      ChainId.MOONBEAM,  ChainId.MOONRIVER,   redeem),
-        makeTestCase(Tokens.MOVR,      Tokens.WMOVR,     ChainId.MOONRIVER, ChainId.MOONBEAM,    depositETH),
-        makeTestCase(Tokens.FTM_ETH,   Tokens.WETH,      ChainId.FANTOM,    ChainId.ETH,         swapAndRedeem),
-        makeTestCase(Tokens.FTM_ETH,   Tokens.ETH,       ChainId.FANTOM,    ChainId.ETH,         swapAndRedeem),
-        makeTestCase(Tokens.FTM_ETH,   Tokens.WETH_E,    ChainId.FANTOM,    ChainId.AVALANCHE,   swapAndRedeemAndSwap),
-        makeTestCase(Tokens.WETH_E,    Tokens.FTM_ETH,   ChainId.AVALANCHE, ChainId.FANTOM,      swapAndRedeemAndSwap),
-        makeTestCase(Tokens.ETH,       Tokens.FTM_ETH,   ChainId.ETH,       ChainId.FANTOM,      depositETHAndSwap),
-        makeTestCase(Tokens.WETH,      Tokens.FTM_ETH,   ChainId.ETH,       ChainId.FANTOM,      depositETHAndSwap),
-        makeTestCase(Tokens.ETH,       Tokens.WETH_E,    ChainId.ARBITRUM,  ChainId.AVALANCHE,   swapETHAndRedeemAndSwap),
-        makeTestCase(Tokens.WETH,      Tokens.WETH_E,    ChainId.ARBITRUM,  ChainId.AVALANCHE,   swapETHAndRedeemAndSwap),
-        makeTestCase(Tokens.WETH_E,    Tokens.ETH,       ChainId.AVALANCHE, ChainId.ARBITRUM,    swapAndRedeemAndSwap),
-        makeTestCase(Tokens.WETH_E,    Tokens.WETH,      ChainId.AVALANCHE, ChainId.ARBITRUM,    swapAndRedeemAndSwap),
-        makeTestCase(Tokens.USDC,      Tokens.DAI,       ChainId.BSC,       ChainId.ETH,         swapAndRedeemAndRemove),
-        makeTestCase(Tokens.NUSD,      Tokens.DAI,       ChainId.BSC,       ChainId.ETH,         redeemAndRemove),
-        makeTestCase(Tokens.NUSD,      Tokens.USDC,      ChainId.ETH,       ChainId.BSC,         depositAndSwap),
-        makeTestCase(Tokens.NUSD,      Tokens.NUSD,      ChainId.BSC,       ChainId.POLYGON,     redeem),
-        makeTestCase(Tokens.NUSD,      Tokens.NUSD,      ChainId.POLYGON,   ChainId.BSC,         redeem),
-        makeTestCase(Tokens.UST,       Tokens.UST,       ChainId.BSC,       ChainId.POLYGON,     redeem),
-        makeTestCase(Tokens.UST,       Tokens.UST,       ChainId.POLYGON,   ChainId.ETH,         redeem),
-        makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.ARBITRUM,  ChainId.AVALANCHE,   redeem),
-        makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.ETH,       ChainId.AVALANCHE,   deposit),
-        makeTestCase(Tokens.NEWO,      Tokens.NEWO,      ChainId.AVALANCHE, ChainId.ETH,         redeem),
-        makeTestCase(Tokens.SDT,       Tokens.SDT,       ChainId.ETH,       ChainId.FANTOM,      deposit),
-        makeTestCase(Tokens.SDT,       Tokens.SDT,       ChainId.AVALANCHE, ChainId.HARMONY,     redeem),
-        makeTestCase(Tokens.SDT,       Tokens.SDT,       ChainId.FANTOM,    ChainId.HARMONY,     redeem),
-        makeTestCase(Tokens.SDT,       Tokens.SDT,       ChainId.AVALANCHE, ChainId.FANTOM,      redeem),
-        makeTestCase(Tokens.LUNA,      Tokens.LUNA,      ChainId.ARBITRUM,  ChainId.OPTIMISM,    redeem),
-        makeTestCase(Tokens.LUNA,      Tokens.LUNA,      ChainId.OPTIMISM,  ChainId.ARBITRUM,    redeem),
-        makeTestCase(Tokens.METIS_ETH, Tokens.WETH_E,    ChainId.METIS,     ChainId.AVALANCHE,   swapAndRedeemAndSwap),
-        makeTestCase(Tokens.ETH,       Tokens.METIS_ETH, ChainId.ETH,       ChainId.METIS,       depositETHAndSwap),
-        makeTestCase(Tokens.NETH,      Tokens.WETH_E,    ChainId.METIS,     ChainId.AVALANCHE,   redeemAndSwap),
-        makeTestCase(Tokens.AVAX,      Tokens.SYN_AVAX,  ChainId.AVALANCHE, ChainId.HARMONY,     depositETH),
-        makeTestCase(Tokens.AVAX,      Tokens.WAVAX,     ChainId.AVALANCHE, ChainId.MOONBEAM,    depositETH),
-        makeTestCase(Tokens.SYN_AVAX,  Tokens.AVAX,      ChainId.HARMONY,   ChainId.AVALANCHE,   redeem),
-        makeTestCase(Tokens.GAS_JEWEL, Tokens.JEWEL,     ChainId.DFK,       ChainId.HARMONY,     depositETHAndSwap),
-        makeTestCase(Tokens.GAS_JEWEL, Tokens.JEWEL,     ChainId.DFK,       ChainId.AVALANCHE,   depositETHAndSwap),
-        makeTestCase(Tokens.JEWEL,     Tokens.JEWEL,     ChainId.AVALANCHE, ChainId.DFK,         redeem),
-        makeTestCase(Tokens.JEWEL,     Tokens.JEWEL,     ChainId.HARMONY,   ChainId.DFK,         swapAndRedeem),
-        makeTestCase(Tokens.JEWEL,     Tokens.JEWEL,     ChainId.AVALANCHE, ChainId.HARMONY,     redeemAndSwap),
-        makeTestCase(Tokens.JEWEL,     Tokens.SYN_JEWEL, ChainId.DFK,       ChainId.HARMONY,     depositETH),
-        makeTestCase(Tokens.JEWEL,     Tokens.SYN_JEWEL, ChainId.AVALANCHE, ChainId.HARMONY,     swapAndRedeem),
-        makeTestCase(Tokens.WAVAX,     Tokens.SYN_AVAX,  ChainId.DFK,       ChainId.HARMONY,     redeem),
+        makeTestCase(Tokens.DAI,        Tokens.USDC,      ChainId.ETH,       ChainId.BSC,         zapAndDepositAndSwap),
+        makeTestCase(Tokens.NETH,       Tokens.ETH,       ChainId.BOBA,      ChainId.ETH,         redeem),
+        makeTestCase(Tokens.NETH,       Tokens.NETH,      ChainId.BOBA,      ChainId.ETH,         redeem),
+        makeTestCase(Tokens.USDC,       Tokens.NUSD,      ChainId.BOBA,      ChainId.BSC,         swapAndRedeem),
+        makeTestCase(Tokens.USDC,       Tokens.USDT,      ChainId.BSC,       ChainId.BOBA,        swapAndRedeemAndSwap),
+        makeTestCase(Tokens.FRAX,       Tokens.FRAX,      ChainId.MOONRIVER, ChainId.ETH,         redeem),
+        makeTestCase(Tokens.FRAX,       Tokens.FRAX,      ChainId.ETH,       ChainId.MOONRIVER,   deposit),
+        makeTestCase(Tokens.SYN,        Tokens.SYN,       ChainId.MOONRIVER, ChainId.ETH,         redeem),
+        makeTestCase(Tokens.SYN,        Tokens.SYN,       ChainId.ETH,       ChainId.MOONRIVER,   redeem),
+        makeTestCase(Tokens.ETH,        Tokens.NETH,      ChainId.OPTIMISM,  ChainId.ETH,         swapETHAndRedeem),
+        makeTestCase(Tokens.ETH,        Tokens.NETH,      ChainId.ETH,       ChainId.AVALANCHE,   depositETH),
+        makeTestCase(Tokens.WETH_E,     Tokens.ETH,       ChainId.AVALANCHE, ChainId.ETH,         swapAndRedeem),
+        makeTestCase(Tokens.WETH_E,     Tokens.ETH,       ChainId.AVALANCHE, ChainId.ARBITRUM,    swapAndRedeemAndSwap),
+        makeTestCase(Tokens.ETH,        Tokens.WETH_E,    ChainId.ETH,       ChainId.AVALANCHE,   depositETHAndSwap),
+        makeTestCase(Tokens.NUSD,       Tokens.DAI,       ChainId.AVALANCHE, ChainId.ETH,         redeemAndRemove),
+        makeTestCase(Tokens.DAI,        Tokens.DAI,       ChainId.AVALANCHE, ChainId.ETH,         swapAndRedeemAndRemove),
+        makeTestCase(Tokens.NUSD,       Tokens.DAI,       ChainId.AVALANCHE, ChainId.POLYGON,     redeemAndSwap),
+        makeTestCase(Tokens.DOG,        Tokens.DOG,       ChainId.POLYGON,   ChainId.ETH,         redeem),
+        makeTestCase(Tokens.ETH,        Tokens.ETH,       ChainId.ARBITRUM,  ChainId.OPTIMISM,    swapETHAndRedeemAndSwap),
+        makeTestCase(Tokens.NETH,       Tokens.ETH,       ChainId.ARBITRUM,  ChainId.OPTIMISM,    redeemAndSwap),
+        makeTestCase(Tokens.JUMP,       Tokens.JUMP,      ChainId.FANTOM,    ChainId.BSC,         deposit),
+        makeTestCase(Tokens.GOHM,       Tokens.GOHM,      ChainId.AVALANCHE, ChainId.OPTIMISM,    redeem),
+        makeTestCase(Tokens.GOHM,       Tokens.GOHM,      ChainId.ETH,       ChainId.AVALANCHE,   deposit),
+        makeTestCase(Tokens.GOHM,       Tokens.GOHM,      ChainId.HARMONY,   ChainId.MOONRIVER,   redeem),
+        makeTestCase(Tokens.GOHM,       Tokens.GOHM,      ChainId.ETH,       ChainId.AVALANCHE,   deposit),
+        makeTestCase(Tokens.USDC,       Tokens.USDC,      ChainId.AURORA,    ChainId.AVALANCHE,   swapAndRedeemAndSwap),
+        makeTestCase(Tokens.USDC,       Tokens.NUSD,      ChainId.BSC,       ChainId.AURORA,      swapAndRedeem),
+        makeTestCase(Tokens.USDC,       Tokens.NUSD,      ChainId.AURORA,    ChainId.ETH,         swapAndRedeem),
+        makeTestCase(Tokens.USDC,       Tokens.NUSD,      ChainId.ETH,       ChainId.AURORA,      zapAndDeposit),
+        makeTestCase(Tokens.WETH,       Tokens.WETH_E,    ChainId.ETH,       ChainId.AVALANCHE,   depositETHAndSwap),
+        makeTestCase(Tokens.NUSD,       Tokens.NUSD,      ChainId.ETH,       ChainId.AVALANCHE,   deposit),
+        makeTestCase(Tokens.WETH_E,     Tokens.WETH,      ChainId.AVALANCHE, ChainId.OPTIMISM,    swapAndRedeemAndSwap),
+        makeTestCase(Tokens.WETH,       Tokens.ONE_ETH,   ChainId.ETH,       ChainId.HARMONY,     depositETHAndSwap),
+        makeTestCase(Tokens.ONE_ETH,    Tokens.WETH_E,    ChainId.HARMONY,   ChainId.AVALANCHE,   swapAndRedeemAndSwap),
+        makeTestCase(Tokens.HIGH,       Tokens.HIGH,      ChainId.BSC,       ChainId.ETH,         redeem),
+        makeTestCase(Tokens.JUMP,       Tokens.JUMP,      ChainId.BSC,       ChainId.FANTOM,      redeem),
+        makeTestCase(Tokens.DOG,        Tokens.DOG,       ChainId.BSC,       ChainId.POLYGON,     redeem),
+        makeTestCase(Tokens.NFD,        Tokens.NFD,       ChainId.POLYGON,   ChainId.AVALANCHE,   deposit),
+        makeTestCase(Tokens.GMX,        Tokens.GMX,       ChainId.ARBITRUM,  ChainId.AVALANCHE,   deposit),
+        makeTestCase(Tokens.GMX,        Tokens.GMX,       ChainId.AVALANCHE, ChainId.ARBITRUM,    redeem),
+        makeTestCase(Tokens.SOLAR,      Tokens.SOLAR,     ChainId.MOONRIVER, ChainId.MOONBEAM,    deposit),
+        makeTestCase(Tokens.WAVAX,      Tokens.AVAX,      ChainId.MOONBEAM,  ChainId.AVALANCHE,   redeem),
+        makeTestCase(Tokens.AVAX,       Tokens.WAVAX,     ChainId.AVALANCHE, ChainId.MOONBEAM,    depositETH),
+        makeTestCase(Tokens.WMOVR,      Tokens.MOVR,      ChainId.MOONBEAM,  ChainId.MOONRIVER,   redeem),
+        makeTestCase(Tokens.MOVR,       Tokens.WMOVR,     ChainId.MOONRIVER, ChainId.MOONBEAM,    depositETH),
+        makeTestCase(Tokens.FTM_ETH,    Tokens.WETH,      ChainId.FANTOM,    ChainId.ETH,         swapAndRedeem),
+        makeTestCase(Tokens.FTM_ETH,    Tokens.ETH,       ChainId.FANTOM,    ChainId.ETH,         swapAndRedeem),
+        makeTestCase(Tokens.FTM_ETH,    Tokens.WETH_E,    ChainId.FANTOM,    ChainId.AVALANCHE,   swapAndRedeemAndSwap),
+        makeTestCase(Tokens.WETH_E,     Tokens.FTM_ETH,   ChainId.AVALANCHE, ChainId.FANTOM,      swapAndRedeemAndSwap),
+        makeTestCase(Tokens.ETH,        Tokens.FTM_ETH,   ChainId.ETH,       ChainId.FANTOM,      depositETHAndSwap),
+        makeTestCase(Tokens.WETH,       Tokens.FTM_ETH,   ChainId.ETH,       ChainId.FANTOM,      depositETHAndSwap),
+        makeTestCase(Tokens.ETH,        Tokens.WETH_E,    ChainId.ARBITRUM,  ChainId.AVALANCHE,   swapETHAndRedeemAndSwap),
+        makeTestCase(Tokens.WETH,       Tokens.WETH_E,    ChainId.ARBITRUM,  ChainId.AVALANCHE,   swapETHAndRedeemAndSwap),
+        makeTestCase(Tokens.WETH_E,     Tokens.ETH,       ChainId.AVALANCHE, ChainId.ARBITRUM,    swapAndRedeemAndSwap),
+        makeTestCase(Tokens.WETH_E,     Tokens.WETH,      ChainId.AVALANCHE, ChainId.ARBITRUM,    swapAndRedeemAndSwap),
+        makeTestCase(Tokens.USDC,       Tokens.DAI,       ChainId.BSC,       ChainId.ETH,         swapAndRedeemAndRemove),
+        makeTestCase(Tokens.NUSD,       Tokens.DAI,       ChainId.BSC,       ChainId.ETH,         redeemAndRemove),
+        makeTestCase(Tokens.NUSD,       Tokens.USDC,      ChainId.ETH,       ChainId.BSC,         depositAndSwap),
+        makeTestCase(Tokens.NUSD,       Tokens.NUSD,      ChainId.BSC,       ChainId.POLYGON,     redeem),
+        makeTestCase(Tokens.NUSD,       Tokens.NUSD,      ChainId.POLYGON,   ChainId.BSC,         redeem),
+        makeTestCase(Tokens.UST,        Tokens.UST,       ChainId.BSC,       ChainId.POLYGON,     redeem),
+        makeTestCase(Tokens.UST,        Tokens.UST,       ChainId.POLYGON,   ChainId.ETH,         redeem),
+        makeTestCase(Tokens.NEWO,       Tokens.NEWO,      ChainId.ARBITRUM,  ChainId.AVALANCHE,   redeem),
+        makeTestCase(Tokens.NEWO,       Tokens.NEWO,      ChainId.ETH,       ChainId.AVALANCHE,   deposit),
+        makeTestCase(Tokens.NEWO,       Tokens.NEWO,      ChainId.AVALANCHE, ChainId.ETH,         redeem),
+        makeTestCase(Tokens.SDT,        Tokens.SDT,       ChainId.ETH,       ChainId.FANTOM,      deposit),
+        makeTestCase(Tokens.SDT,        Tokens.SDT,       ChainId.AVALANCHE, ChainId.HARMONY,     redeem),
+        makeTestCase(Tokens.SDT,        Tokens.SDT,       ChainId.FANTOM,    ChainId.HARMONY,     redeem),
+        makeTestCase(Tokens.SDT,        Tokens.SDT,       ChainId.AVALANCHE, ChainId.FANTOM,      redeem),
+        makeTestCase(Tokens.LUNA,       Tokens.LUNA,      ChainId.ARBITRUM,  ChainId.OPTIMISM,    redeem),
+        makeTestCase(Tokens.LUNA,       Tokens.LUNA,      ChainId.OPTIMISM,  ChainId.ARBITRUM,    redeem),
+        makeTestCase(Tokens.METIS_ETH,  Tokens.WETH_E,    ChainId.METIS,     ChainId.AVALANCHE,   swapAndRedeemAndSwap),
+        makeTestCase(Tokens.ETH,        Tokens.METIS_ETH, ChainId.ETH,       ChainId.METIS,       depositETHAndSwap),
+        makeTestCase(Tokens.NETH,       Tokens.WETH_E,    ChainId.METIS,     ChainId.AVALANCHE,   redeemAndSwap),
+        makeTestCase(Tokens.AVAX,       Tokens.SYN_AVAX,  ChainId.AVALANCHE, ChainId.HARMONY,     depositETH),
+        makeTestCase(Tokens.AVAX,       Tokens.WAVAX,     ChainId.AVALANCHE, ChainId.MOONBEAM,    depositETH),
+        makeTestCase(Tokens.SYN_AVAX,   Tokens.AVAX,      ChainId.HARMONY,   ChainId.AVALANCHE,   redeem),
+        makeTestCase(Tokens.GAS_JEWEL,  Tokens.JEWEL,     ChainId.DFK,       ChainId.HARMONY,     depositETHAndSwap),
+        makeTestCase(Tokens.GAS_JEWEL,  Tokens.JEWEL,     ChainId.DFK,       ChainId.AVALANCHE,   depositETHAndSwap),
+        makeTestCase(Tokens.JEWEL,      Tokens.JEWEL,     ChainId.AVALANCHE, ChainId.DFK,         redeem),
+        makeTestCase(Tokens.JEWEL,      Tokens.JEWEL,     ChainId.HARMONY,   ChainId.DFK,         swapAndRedeem),
+        makeTestCase(Tokens.JEWEL,      Tokens.JEWEL,     ChainId.AVALANCHE, ChainId.HARMONY,     redeemAndSwap),
+        makeTestCase(Tokens.JEWEL,      Tokens.SYN_JEWEL, ChainId.DFK,       ChainId.HARMONY,     depositETH),
+        makeTestCase(Tokens.JEWEL,      Tokens.SYN_JEWEL, ChainId.AVALANCHE, ChainId.HARMONY,     swapAndRedeem),
+        makeTestCase(Tokens.WAVAX,      Tokens.SYN_AVAX,  ChainId.DFK,       ChainId.HARMONY,     redeem),
+        makeTestCase(Tokens.MULTIJEWEL, Tokens.JEWEL,     ChainId.AVALANCHE, ChainId.HARMONY,     migrateAndBridge),
+        makeTestCase(Tokens.MULTIJEWEL, Tokens.JEWEL,     ChainId.AVALANCHE, ChainId.DFK,         migrateAndBridge),
     ].forEach((tc: TestCase) => {
         const testTitle = makeTestName(tc);
         describe(testTitle, function(this: Mocha.Suite) {
@@ -184,9 +192,6 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
             });
 
             let txnInfo: TransactionDescription;
-            const
-                l1BridgeZapInterface = L1BridgeZapFactory.createInterface(),
-                l2BridgeZapInterface = L2BridgeZapFactory.createInterface();
 
 
             step(`tx should be a call to function ${tc.expected.wantFn}()`, function(this: Mocha.Context) {
@@ -194,7 +199,11 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
                 if (chainIdFrom === ChainId.ETH || chainIdFrom === ChainId.DFK) {
                     txnInfo = l1BridgeZapInterface.parseTransaction({data: builtTxn.data || ""});
                 } else {
-                    txnInfo = l2BridgeZapInterface.parseTransaction({data: builtTxn.data || ""});
+                    if (tc.args.tokenFrom.isEqual(Tokens.MULTIJEWEL)) {
+                        txnInfo = jewelMigratorInterface.parseTransaction({data: builtTxn.data || ""});
+                    } else {
+                        txnInfo = l2BridgeZapInterface.parseTransaction({data: builtTxn.data || ""});
+                    }
                 }
 
                 expect(txnInfo.name).to.equal(tc.expected.wantFn);
