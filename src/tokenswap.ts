@@ -82,23 +82,23 @@ export namespace TokenSwap {
     const BRIDGE_CONFIG_INSTANCE: BridgeConfigV3Contract = BridgeConfigV3ContractInstance();
 
     export interface SwapParams {
-        chainId:       number,
-        tokenFrom:     Token,
-        tokenTo:       Token,
-        amountIn:      BigNumberish,
-        swapData?:     SwapSetup,
+        chainId:       number;
+        tokenFrom:     Token;
+        tokenTo:       Token;
+        amountIn:      BigNumberish;
+        swapData?:     SwapSetup;
     }
 
     export interface SwapTokensParams extends SwapParams {
-        minAmountOut: BigNumberish,
-        deadline?:    number,
+        minAmountOut: BigNumberish;
+        deadline?:    number;
     }
 
     export interface BridgeSwapSupportedParams {
-        tokenFrom:   Token,
-        tokenTo:     Token,
-        chainIdFrom: number,
-        chainIdTo:   number,
+        tokenFrom:   Token;
+        tokenTo:     Token;
+        chainIdFrom: number;
+        chainIdTo:   number;
     }
 
     export type EstimatedSwapRate = {
@@ -106,25 +106,25 @@ export namespace TokenSwap {
     }
 
     export type IntermediateSwapTokens = {
-        intermediateToken?:            Token,
-        bridgeConfigIntermediateToken: Token
+        intermediateToken?:            Token;
+        bridgeConfigIntermediateToken: Token;
     }
 
     export type SwapSupportedResult = {
-        swapSupported:       boolean,
-        reasonNotSupported?: UnsupportedSwapErrors.UnsupportedSwapError,
+        swapSupported:       boolean;
+        reasonNotSupported?: UnsupportedSwapErrors.UnsupportedSwapError;
     }
 
     export type DetailedTokenSwapMap = {
         [chainId: number]: {
-            token: Token,
-            [chainId: number]: Token[],
-        }[],
+            token: Token;
+            [chainId: number]: Token[];
+        }[];
     }
 
     interface TokenSwapMap {
-        token: Token,
-        [chainId: number]: Token[],
+        token: Token;
+        [chainId: number]: Token[];
     }
 
     export function swapSupported(args: SwapParams): SwapSupportedResult {

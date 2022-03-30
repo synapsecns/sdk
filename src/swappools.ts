@@ -26,8 +26,8 @@ export namespace SwapPools {
     }
 
     export interface LPToken {
-        readonly poolTokens: Token[],
-        readonly swapType:   SwapType,
+        readonly poolTokens: Token[];
+        readonly swapType:   SwapType;
     }
 
     export interface SwapPoolToken extends IBaseToken, LPToken {
@@ -427,9 +427,9 @@ export namespace SwapPools {
     export type SwapTypePoolTokens = SwapTypeMap<LPToken>
 
     interface SwapTypeMapArgs {
-        usdPool?:   [SwapToken, Token[]],
-        ethPool?:   [ETHSwapToken, Token[]],
-        ohm?: boolean
+        usdPool?:   [SwapToken, Token[]];
+        ethPool?:   [ETHSwapToken, Token[]];
+        ohm?:        boolean;
     }
 
     interface BridgeTokenMapping {

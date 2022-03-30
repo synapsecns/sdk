@@ -30,13 +30,13 @@ export const MAX_APPROVAL_AMOUNT = BigNumber.from("0xfffffffffffffffffffffffffff
 
 export namespace ERC20 {
     export type ApproveArgs = {
-        spender: string,
-        amount?: BigNumberish
+        spender: string;
+        amount?: BigNumberish;
     }
 
     export type ERC20TokenParams = {
-        tokenAddress: string,
-        chainId:      number,
+        tokenAddress: string;
+        chainId:      number;
     }
 
     class ERC20 {

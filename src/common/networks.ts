@@ -14,8 +14,8 @@ import type {ChainIdTypeMap} from "./types";
 
 export namespace Networks {
     type supportedTokenEdgeCase = {
-        chainId: ChainId,
-        token:   Token,
+        chainId: ChainId;
+        token:   Token;
     }
 
     const tokenSupportChecks: supportedTokenEdgeCase[] = [
@@ -39,9 +39,9 @@ export namespace Networks {
     }
 
     interface NetworkArgs {
-        name:          string,
-        chainId:       number,
-        chainCurrency: string,
+        name:          string;
+        chainId:       number;
+        chainCurrency: string;
     }
 
     export class Network implements Distinct {

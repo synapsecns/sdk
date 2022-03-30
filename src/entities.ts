@@ -24,7 +24,7 @@ const bridgeConfigV3Address: string = "0x5217c83ca75559B1f8a8803824E5b7ac233A12a
 
 export const AvaxJewelMigrationAddress: string = "0x82d4aCF0DA013Ee3649C7eAdF5Db9093A7EFa7B0";
 
-enum ContractKind {bridge="bridge", bridgeZap="bridgeZap"}
+enum ContractKind {bridge="bridgeAddress", bridgeZap="bridgeZapAddress"}
 
 interface NewInstanceParams {
     chainId:           number;

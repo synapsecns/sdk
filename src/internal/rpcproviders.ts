@@ -69,8 +69,8 @@ export function rpcProviderForChain(chainId: number): Provider {
 
 export interface RPCEndpointsConfig {
     [chainId: number]: {
-        endpoint:       string,
-        batchInterval?: number,
+        endpoint:       string;
+        batchInterval?: number;
     }
 }
 

@@ -6,8 +6,8 @@ import {Web3Provider} from "@ethersproject/providers";
 import {MiniRpcProvider} from "./minirpc";
 
 interface RpcConnectorArgs {
-    urls:           StringMap,
-    batchInterval?: number,
+    urls:           StringMap;
+    batchInterval?: number;
 }
 
 export class RpcConnector {

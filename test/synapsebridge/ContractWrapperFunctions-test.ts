@@ -163,7 +163,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
                 dotenv.config();
 
-                const bscZapAddr: string = contractAddressFor(ChainId.BSC, "bridgeZap");
+                const bscZapAddr: string = contractAddressFor(ChainId.BSC, "bridgeZapAddress");
                 const tokenParams = {tokenAddress: Tokens.BUSD.address(ChainId.BSC), chainId: ChainId.BSC};
 
                 try {
@@ -203,7 +203,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                     const e: Error = err instanceof Error ? err : new Error(err);
                     expect(e.message).to.eq("");
                 }
-            })
+            });
 
             runTestCase(makeTestCase(
                 ChainId.BSC,

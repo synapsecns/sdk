@@ -52,7 +52,6 @@ import type {
     ContractTransaction,
     PopulatedTransaction,
 } from "@ethersproject/contracts";
-import {AvaxJewelMigrationAddress} from "@entities";
 
 /**
  * Bridge provides a wrapper around common Synapse Bridge interactions, such as output estimation, checking supported swaps/bridges,
@@ -71,8 +70,8 @@ export namespace Bridge {
     }
 
     export type BridgeOutputEstimate = {
-        amountToReceive: BigNumber,
-        bridgeFee:       BigNumber,
+        amountToReceive: BigNumber;
+        bridgeFee:       BigNumber;
     }
 
     /**
@@ -82,10 +81,10 @@ export namespace Bridge {
      * @param {BigNumber} amountFrom not necessarily used by this interface, and overriden in BridgeParamsWithAmounts.
      */
     export interface BridgeParams {
-        tokenFrom:   Token,
-        tokenTo:     Token
-        chainIdTo:   number,
-        amountFrom?: BigNumber,
+        tokenFrom:   Token;
+        tokenTo:     Token;
+        chainIdTo:   number;
+        amountFrom?: BigNumber;
     }
 
     /**

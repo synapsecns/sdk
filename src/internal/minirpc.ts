@@ -15,13 +15,13 @@ export class RequestError extends Error {
 }
 
 interface RPCRequest {
-    method:  string,
-    params?: Array<any>,
+    method:  string;
+    params?: Array<any>;
 }
 
 interface JsonRPCRequest extends RPCRequest {
-    jsonrpc: "2.0",
-    id:      number,
+    jsonrpc: "2.0";
+    id:      number;
 }
 
 interface BatchItem {

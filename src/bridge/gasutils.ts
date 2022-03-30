@@ -1,4 +1,3 @@
-import _ from "lodash";
 import {ChainId} from "@chainid";
 import type {ChainIdTypeMap} from "@common/types";
 
@@ -9,16 +8,14 @@ import type {PopulatedTransaction} from "@ethersproject/contracts";
 
 export namespace GasUtils {
     type GasParams = {
-        maxFeePerGas?:    BigNumber,
-        maxPriorityFee?:  BigNumber,
-        gasPrice?:        BigNumber,
-        bridgeGasLimit?:  BigNumber,
-        approveGasLimit?: BigNumber,
+        maxFeePerGas?:    BigNumber;
+        maxPriorityFee?:  BigNumber;
+        gasPrice?:        BigNumber;
+        bridgeGasLimit?:  BigNumber;
+        approveGasLimit?: BigNumber;
     }
 
     const makeGwei = (n: string): BigNumber => parseUnits(n, "gwei")
-
-
 
     const CHAIN_GAS_PARAMS: ChainIdTypeMap<GasParams> = {
         [ChainId.ETH]: {

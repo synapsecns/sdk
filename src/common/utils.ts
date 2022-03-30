@@ -52,7 +52,20 @@ export function fixWeiValue(amt: BigNumber, decimals: number): BigNumber {
 }
 
 export function contractAddressFor(chainId: number, key: string): string {
-    const { address } = contractsForChainId(chainId)[key] || "";
+    let address: string;
+
+    const contractsForChain = contractsForChainId(chainId);
+
+    switch (key) {
+        case "bridgeAddress":
+            address = contractsForChain.bridgeAddress;
+            break;
+        case "bridgeZapAddress":
+            address = contractsForChain.bridgeZapAddress;
+            break;
+
+    }
+
     return address
 }
 
