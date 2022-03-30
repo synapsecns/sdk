@@ -16,6 +16,7 @@ import {
     expectUndefined,
     expectBoolean,
 } from "@tests/helpers";
+import {expect} from "chai";
 
 
 describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
@@ -55,6 +56,36 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
 
                 expectBoolean(tc.wantB.isEqual(got.bridgeConfigIntermediateToken), true);
             });
+        });
+    });
+
+    describe("bridgeableTokens test", function(this: Mocha.Suite) {
+        interface TestCase {
+            network: Networks.Network;
+            want:    Token[];
+            wantNot: Token[];
+        }
+
+        const testCases: TestCase[] = [
+            {network: Networks.DFK, want: [Tokens.GAS_JEWEL, Tokens.WAVAX, Tokens.XJEWEL], wantNot: [Tokens.JEWEL]}
+        ];
+
+        testCases.forEach(tc => {
+           describe(`bridgeableTokens on ${tc.network.name}`, function(this: Mocha.Suite) {
+               const got = tc.network.bridgeableTokens;
+
+               tc.want.forEach(t => {
+                   it(`returned array should contain token ${t.symbol}`, function(this: Mocha.Context) {
+                      expect(got.find((tok => tok.isEqual(t)))).to.not.be.undefined;
+                   });
+               });
+
+               tc.wantNot.forEach(t => {
+                   it(`returned array should not contain token ${t.symbol}`, function(this: Mocha.Context) {
+                       expect(got.find((tok => tok.isEqual(t)))).to.be.undefined;
+                   });
+               });
+           });
         });
     });
 

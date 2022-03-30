@@ -11,6 +11,7 @@ import type {
 import {BridgeUtils} from "@bridge/bridgeutils";
 
 import type {ChainIdTypeMap} from "./types";
+import _ from "lodash";
 
 export namespace Networks {
     type supportedTokenEdgeCase = {
@@ -93,6 +94,25 @@ export namespace Networks {
             return tokenAddr !== null
                 ? this.tokenAddresses.includes(tokenAddr)
                 : false
+        }
+
+        get bridgeableTokens(): Token[] {
+            let tokens: Token[] = [];
+
+            const chainGasToken = Tokens.gasTokenForChain(this.chainId);
+
+            this.tokens.forEach(t => {
+                if (!_.isNull(chainGasToken)) {
+                    const gasWrapper = Tokens.gasTokenWrapper(chainGasToken);
+                    if (gasWrapper.isEqual(t)) {
+                        return
+                    }
+                }
+
+                tokens.push(t);
+            });
+
+            return tokens
         }
     }
 
