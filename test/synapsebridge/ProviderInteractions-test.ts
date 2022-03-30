@@ -79,17 +79,13 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
     }
 
     function makeTestCase(
-        t1: Token,  t2: Token,
-        c1: number, c2: number,
-        amt:  BigNumber,
+        tokenFrom:   Token,  tokenTo:   Token,
+        chainIdFrom: number, chainIdTo: number,
+        amountFrom:  BigNumber,
         opts: TestOpts & {callStatic: boolean}
     ): TestCase {
         return {
-            args: {
-                tokenFrom:   t1, tokenTo:   t2,
-                chainIdFrom: c1, chainIdTo: c2,
-                amountFrom: amt
-            },
+            args:     {tokenFrom, tokenTo, chainIdFrom, chainIdTo, amountFrom},
             expected: {...opts},
             callStatic: opts.callStatic
         }

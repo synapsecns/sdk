@@ -57,9 +57,9 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 this.timeout(DEFAULT_TEST_TIMEOUT);
                 let prom = bridgeInstance.bridgeVersion();
                 return wrapExpectAsync(expectBnEqual(await prom, expected), prom)
-            })
-        })
-    })
+            });
+        });
+    });
 
     describe(".WETH_ADDRESS", function(this: Mocha.Suite) {
         ALL_CHAIN_IDS.forEach(network => {
@@ -89,18 +89,18 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 this.timeout(DEFAULT_TEST_TIMEOUT);
                 let prom = bridgeInstance.WETH_ADDRESS();
                 return wrapExpectAsync(expectEqual(await prom, expected), prom)
-            })
-        })
-    })
+            });
+        });
+    });
 
     describe(".getAllowanceForAddress", function(this: Mocha.Suite) {
         interface TestCase {
-            provider:   Provider,
-            chainId:    number,
-            address:    string,
-            token:      Token,
-            want:       BigNumber,
-            isInfinite: boolean,
+            provider:   Provider;
+            chainId:    number;
+            address:    string;
+            token:      Token;
+            want:       BigNumber;
+            isInfinite: boolean;
         }
 
         const
@@ -154,7 +154,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 } catch (err) {
                     return (await expectFulfilled(prom))
                 }
-            })
+            });
         }
 
         describe("- infinite approval", function(this: Mocha.Suite) {
@@ -211,7 +211,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 infiniteApprovalsPrivkey.address,
                 MaxUint256
             ));
-        })
+        });
 
         describe("- zero approval", function(this: Mocha.Suite) {
             [
@@ -272,11 +272,11 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
               const got = await Bridge.checkBridgeTransactionComplete(tc);
 
               if (tc.want) {
-                  return expect(got).to.be.true;
+                  return expect(got).to.be.true
               } else {
-                  return expect(got).to.be.false;
+                  return expect(got).to.be.false
               }
           });
        });
     });
-})
+});

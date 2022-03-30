@@ -8,11 +8,11 @@ import {BigNumber} from "@ethersproject/bignumber";
 
 describe("Slippages tests", function(this: Mocha.Suite) {
     interface TestCase {
-        func:    (BigNumber, string) => BigNumber,
-        value:    BigNumber,
-        slippage: string,
-        expected: BigNumber,
-        add:      boolean,
+        func:    (BigNumber, string) => BigNumber;
+        value:    BigNumber;
+        slippage: string;
+        expected: BigNumber;
+        add:      boolean;
     }
 
     describe("_applySlippage", function(this: Mocha.Suite) {
@@ -59,9 +59,9 @@ describe("Slippages tests", function(this: Mocha.Suite) {
         ].forEach((tc: TestCase) => {
             it(makeTitle(tc), function(this: Mocha.Context) {
                 expect(Slippages._applySlippage(tc.value, tc.slippage, tc.add)).to.equal(tc.expected);
-            })
-        })
-    })
+            });
+        });
+    });
 
     describe("addSlippage", function(this: Mocha.Suite) {
         const mainValue = BigNumber.from(69420);
@@ -71,7 +71,7 @@ describe("Slippages tests", function(this: Mocha.Suite) {
         it(`Slippages.addSlippage(${mainValue.toString()}, Slippages.OneTenth) should return ${want1.toString()}`, function(this: Mocha.Context) {
             ret = Slippages.addSlippage(mainValue, Slippages.OneTenth);
             expect(ret).to.equal(want1);
-        })
+        });
 
         it("_applySlippage with add=true vs add=false", function(this: Mocha.Context) {
             const
@@ -80,8 +80,8 @@ describe("Slippages tests", function(this: Mocha.Suite) {
                 want = BigNumber.from('0x8b');
 
             expect(subVal).to.equal(want);
-        })
-    })
+        });
+    });
 
     describe("formatSlippageToString", function(this: Mocha.Suite) {
         interface formatTestCase {
@@ -101,7 +101,7 @@ describe("Slippages tests", function(this: Mocha.Suite) {
 
             it(testTitle, function(this: Mocha.Context) {
                 expectEqual(Slippages.formatSlippageToString(tc.slippage), tc.want);
-            })
-        })
-    })
-})
+            });
+        });
+    });
+});

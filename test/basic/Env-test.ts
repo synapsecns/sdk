@@ -44,12 +44,12 @@ describe('Test ENV values', function(this: Mocha.Suite) {
 
             it(
                 testTitle,
-            function(this: Mocha.Context) {
+                function(this: Mocha.Context) {
                     loadTestEnv();
                     const gotVal: string = process.env[envKey];
                     expectEqual(gotVal, expectedVal);
                 }
-            )
-        })
-    })
-})
+            );
+        });
+    });
+});

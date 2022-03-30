@@ -34,9 +34,9 @@ import {Zero} from "@ethersproject/constants";
 
 describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.Suite) {
     interface Expected {
-        notZero:   boolean,
-        wantError: boolean,
-        noAddrTo:  boolean,
+        notZero:   boolean;
+        wantError: boolean;
+        noAddrTo:  boolean;
     }
 
     type TestCase = BridgeSwapTestCase<Expected>

@@ -31,11 +31,11 @@ import UnsupportedSwapError = UnsupportedSwapErrors.UnsupportedSwapError;
 describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
     describe("calculateSwapRate() tests", function(this: Mocha.Suite) {
         interface TestCase {
-            chainId:   number,
-            tokenFrom: Token,
-            tokenTo:   Token,
-            amountIn:  BigNumber,
-            wantError: boolean,
+            chainId:   number;
+            tokenFrom: Token;
+            tokenTo:   Token;
+            amountIn:  BigNumber;
+            wantError: boolean;
         }
 
         const makeTestCase = (c: number, t1: Token, t2: Token, amt?: string, wantError?: boolean): TestCase =>
@@ -120,7 +120,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                         ? expectRejected(prom)
                         : expectFulfilled(prom)
                 ))
-            })
+            });
 
             step(testTitle3, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
@@ -129,7 +129,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                     tc.tokenFrom,
                     tc.tokenTo,
                     tc.chainId,
-                )
+                );
 
                 try {
                     let res = await prom;
@@ -143,7 +143,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                         expect.fail(e);
                     }
                 }
-            })
-        })
-    })
-})
+            });
+        });
+    });
+});

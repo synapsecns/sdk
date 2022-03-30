@@ -18,7 +18,7 @@ import {formatUnits} from "@ethersproject/units";
 
 describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Mocha.Suite) {
     interface Expected {
-        wantFn: string,
+        wantFn: string;
     }
 
     type TestCase = BridgeSwapTestCase<Expected>

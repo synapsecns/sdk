@@ -43,13 +43,13 @@ describe("Basic tests", function(this: Mocha.Suite) {
         it(
             `supportedChainIds ${testSuffix}`,
             wrapExpect(expectLength(supportedChains, numChains))
-        )
+        );
 
         it(
             `supportedNetworks ${testSuffix}`,
             wrapExpect(expectLength(supportedNetworks, numChains))
-        )
-    })
+        );
+    });
 
     describe("Test configureRPCEndpoints", function(this: Mocha.Suite) {
         const rpcConfig: RPCEndpointsConfig = {
@@ -66,7 +66,7 @@ describe("Basic tests", function(this: Mocha.Suite) {
             previousBscEndpoint  = (rpcProviderForChain(ChainId.BSC)  as Web3Provider).connection.url;
             previousBobaEndpoint = (rpcProviderForChain(ChainId.BOBA) as Web3Provider).connection.url;
             previousEthEndpoint  = (rpcProviderForChain(ChainId.ETH)  as Web3Provider).connection.url;
-        })
+        });
 
 
         it("configureRPCEndponts should only reconfigure BSC and Boba", function(this: Mocha.Context) {
@@ -80,17 +80,17 @@ describe("Basic tests", function(this: Mocha.Suite) {
             expect(checkBscEndpoint).to.not.equal(previousBscEndpoint);
             expect(checkBobaEndpoint).to.not.equal(previousBobaEndpoint);
             expect(checkEthEndpoint).to.equal(previousEthEndpoint);
-        })
-    })
+        });
+    });
 
     describe("Check swappableTokens", function(this: Mocha.Suite) {
         interface TestCase {
-            token:   Token,
-            want:    boolean,
+            token:   Token;
+            want:    boolean;
         }
 
         interface ChainTestCase extends TestCase {
-            chainId: number,
+            chainId: number;
         }
 
         const
@@ -115,7 +115,7 @@ describe("Basic tests", function(this: Mocha.Suite) {
         it(
             `resC should have ${numChains} map entries`,
             wrapExpect(expectLength(Object.keys(resC), numChains))
-        )
+        );
 
         describe("Check result of two inputs", function(this: Mocha.Suite) {
             const symbols = symbolsForChain(resA, chainB);
@@ -129,9 +129,9 @@ describe("Basic tests", function(this: Mocha.Suite) {
                 it(
                     testTitle,
                     wrapExpect(expectIncludes(symbols, tc.token.symbol, tc.want))
-                )
-            })
-        })
+                );
+            });
+        });
 
         describe("Check result of one input", function(this: Mocha.Suite) {
             [
@@ -143,9 +143,9 @@ describe("Basic tests", function(this: Mocha.Suite) {
                 it(
                     testTitle,
                     wrapExpect(expectIncludes(symbolsForChain(resB, tc.chainId), tc.token.symbol, tc.want))
-                )
-            })
-        })
+                );
+            });
+        });
 
         describe("Test supported tokens", function(this: Mocha.Suite) {
             [
@@ -171,21 +171,21 @@ describe("Basic tests", function(this: Mocha.Suite) {
                 it(
                     testTitle,
                     function(this: Mocha.Context) {expect(supported).to.equal(tc.want)}
-                )
-            })
-        })
-    })
+                );
+            });
+        });
+    });
 
     describe("Test Networks.networkSupportsToken()", function(this: Mocha.Suite) {
         it("BSC should support gOHM", function(this: Mocha.Context) {
             expect(Networks.networkSupportsToken(ChainId.BSC, Tokens.GOHM)).to.be.true;
             expect(Networks.networkSupportsToken(Networks.BSC, Tokens.GOHM)).to.be.true;
-        })
+        });
 
         it("ETH should not support BUSD", function(this: Mocha.Context) {
             expect(Networks.networkSupportsToken(ChainId.ETH, Tokens.BUSD)).to.be.false;
             expect(Networks.networkSupportsToken(Networks.ETH, Tokens.BUSD)).to.be.false;
-        })
+        });
     });
 
     describe("fixWeiValue tests", function(this: Mocha.Suite) {

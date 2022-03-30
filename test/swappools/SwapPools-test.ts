@@ -24,9 +24,9 @@ import {
 describe("SwapPools Tests", function(this: Mocha.Suite) {
     describe("Pool tokens tests", function(this: Mocha.Suite) {
         interface TestCase {
-            chainId:   number,
-            swapToken: SwapPools.SwapPoolToken,
-            tokens:    {token: Token, want: boolean}[]
+            chainId:   number;
+            swapToken: SwapPools.SwapPoolToken;
+            tokens:    {token: Token, want: boolean}[];
         }
 
         const makeWantString = (tc: {want: boolean}, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
@@ -62,7 +62,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                 poolSymbols: string[] = tc.swapToken.poolTokens.map((t: Token) => t.symbol);
 
             describe(describeTitle, function(this: Mocha.Suite) {
-                for (const tok of tc.tokens) {
+                tc.tokens.forEach(tok => {
                     const
                         wantTok: boolean  = tok.want,
                         tokSymbol: string = tok.token.symbol,
@@ -71,24 +71,24 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     it(
                         testTitle,
                         wrapExpect(expectIncludes(poolSymbols, tokSymbol, wantTok))
-                    )
-                }
-            })
-        })
-    })
+                    );
+                });
+            });
+        });
+    });
 
     describe("Test SwapPool getters for network", function(this: Mocha.Suite) {
         interface TestCase {
-            chainId:            number,
-            wantStableSwapPool: boolean,
-            wantEthSwapPool:    boolean,
+            chainId:            number;
+            wantStableSwapPool: boolean;
+            wantEthSwapPool:    boolean;
         }
 
-        const makeTestCase = (c: number, s: boolean, e: boolean): TestCase => ({
-            chainId:            c,
-            wantStableSwapPool: s,
-            wantEthSwapPool:    e,
-        })
+        const makeTestCase = (
+            chainId:            number,
+            wantStableSwapPool: boolean,
+            wantEthSwapPool:    boolean
+        ): TestCase => ({chainId, wantStableSwapPool, wantEthSwapPool})
 
         const testCases: TestCase[] = [
             makeTestCase(ChainId.ETH,       true,  false),
@@ -107,7 +107,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             makeTestCase(ChainId.HARMONY,   true,  true),
         ];
 
-        const makeShouldHaveString = (want: boolean): string => `${want ? "should" : "should not"} have a(n)`
+        const makeShouldHaveString = (want: boolean): string => `${want ? "should" : "should not"} have a(n)`;
 
         const makeTestTitles = (tc: TestCase): [string, string, string, string, string] => {
             const testPrefix: string = `${Networks.networkName(tc.chainId)}`;
@@ -174,6 +174,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             ] = makeTestTitles(tc);
 
             it(stableSwapTestTitle, testFn(tc, true));
+
             if (tc.wantStableSwapPool && tc.chainId !== ChainId.ETH) {
                 it(stableSwapContractTestTitle, swapContractTestFn(tc, true));
                 it(`${testPrefix} StableSwapToken's .swapETHAddress() should return null`, function(this: Mocha.Context) {
@@ -182,6 +183,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             }
 
             it(ethSwapTestTitle, testFn(tc, false));
+
             if (tc.wantEthSwapPool) {
                 it(ethSwapContractTestTitle, swapContractTestFn(tc, false));
 
@@ -201,13 +203,13 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
 
     describe("SwapPoolToken properties tests", function(this: Mocha.Suite) {
         interface TestCase {
-            testName:     string,
-            chainId:      number,
-            swapPool:     SwapPools.SwapPoolToken,
-            wantSymbol:   string,
-            wantSwapType: SwapType,
-            wantAddress:  string|null,
-            wantDecimals: number|null
+            testName:     string;
+            chainId:      number;
+            swapPool:     SwapPools.SwapPoolToken;
+            wantSymbol:   string;
+            wantSwapType: SwapType;
+            wantAddress:  string|null;
+            wantDecimals: number|null;
         }
 
         const testCases: TestCase[] = [
@@ -243,27 +245,27 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
         const wantValStr = (tc: TestCase, wantVal: any|null): string =>
             `${wantVal === null ? "'null'" : "'"+wantVal+"'"} for Chain ID ${tc.chainId}`
 
-        for (const tc of testCases) {
+        testCases.forEach(tc => {
             describe(`${tc.testName} Properties Tests`, function(this: Mocha.Suite) {
                 it(`property 'symbol' should equal ${tc.wantSymbol}`, function(this: Mocha.Context) {
                     expectEqual(tc.swapPool.symbol, tc.wantSymbol);
-                })
+                });
 
                 it(`property 'swapType' should equal ${tc.wantSwapType}`, function(this: Mocha.Context) {
                     expectEqual(tc.swapPool.swapType, tc.wantSwapType);
-                })
+                });
 
                 it(`function address() should return ${wantValStr(tc, tc.wantAddress)}`, function(this: Mocha.Context) {
                     expectNull(tc.swapPool.address(tc.chainId), tc.wantAddress === null);
-                })
+                });
 
                 it(`function decimals() should return ${wantValStr(tc, tc.wantDecimals)}`, function(this: Mocha.Context) {
                     expectNull(tc.swapPool.decimals(tc.chainId), tc.wantDecimals === null);
-                })
+                });
 
                 it(`property 'id' should return ${tc.wantSymbol}`, function(this: Mocha.Context) {
                     expectEqual(tc.swapPool.id.description, tc.wantSymbol);
-                })
+                });
 
                 if (tc.wantAddress !== null) {
                     it(`property 'addresses' should contain ${tc.wantAddress}`, function(this: Mocha.Context) {
@@ -271,9 +273,9 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
 
                         expectProperty(addrsMap, `${tc.chainId}`);
                         expectEqual(addrsMap[tc.chainId], tc.wantAddress);
-                    })
+                    });
                 }
-            })
-        }
-    })
-})
+            });
+        });
+    });
+});

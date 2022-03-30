@@ -95,7 +95,7 @@ describe("SynapseBridge - checkSwapSupported tests", function(this: Mocha.Suite)
             netNameFrom = Networks.fromChainId(chainIdFrom).name,
             netNameTo   = Networks.fromChainId(chainIdTo).name;
 
-        const testTitle = `checkSwapSupported with params ${tokenFromSymbol} on ${netNameFrom} to ${tokenToSymbol} on ${netNameTo} should return ${expected}`
+        const testTitle = `checkSwapSupported with params ${tokenFromSymbol} on ${netNameFrom} to ${tokenToSymbol} on ${netNameTo} should return ${expected}`;
 
         it(testTitle, function(this: Mocha.Context) {
             let { chainIdFrom, ...testArgs } = args;
@@ -103,6 +103,6 @@ describe("SynapseBridge - checkSwapSupported tests", function(this: Mocha.Suite)
 
             const [swapAllowed, errReason] = bridgeInstance.swapSupported({ ...testArgs, chainIdTo });
             expectEqual(swapAllowed, expected, errReason);
-        })
-    })
-})
+        });
+    });
+});

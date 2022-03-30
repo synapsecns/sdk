@@ -66,13 +66,13 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
         });
 
         interface TokenOnChain {
-            chainId: ChainId,
-            token:   Token,
+            chainId: ChainId;
+            token:   Token;
         }
 
         interface TestCase {
-            chainId:       ChainId,
-            chainTokens:   TokenOnChain[],
+            chainId:       ChainId;
+            chainTokens:   TokenOnChain[];
         }
 
         const findTokenMap = (
