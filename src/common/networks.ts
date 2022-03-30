@@ -169,7 +169,7 @@ export namespace Networks {
     });
 
     export const DFK = new Network({
-        name:          "DFK",
+        name:          "DeFi Kingdoms",
         chainId:       ChainId.DFK,
         chainCurrency: "JEWEL"
     });
