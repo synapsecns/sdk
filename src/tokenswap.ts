@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {
     ChainId,
     supportedChainIds
@@ -242,8 +243,17 @@ export namespace TokenSwap {
             let n1: Networks.Network = Networks.fromChainId(c1);
             let networkTokens: Token[] = n1.tokens;
 
+            const chainGasToken = Tokens.gasTokenForChain(c1);
+
             res[c1] = networkTokens.map((t: Token) => {
                 let swapType = t.swapType;
+
+                if (!_.isNull(chainGasToken)) {
+                    const gasWrapper = Tokens.gasTokenWrapper(chainGasToken);
+                    if (gasWrapper.isEqual(t)) {
+                        return
+                    }
+                }
 
                 let tokSwapMap: TokenSwapMap = {
                     token: t,
@@ -252,14 +262,23 @@ export namespace TokenSwap {
                 for (const c2 of allChainIds) {
                     if (c1 === c2) continue
 
+                    const chain2GasToken = Tokens.gasTokenForChain(c2);
                     let outToks: Token[] = SwapPools.tokensForChainBySwapGroup(c2, swapType);
                     if (outToks.length === 0) continue
+
+                    outToks = outToks.filter((t2: Token) => {
+                        if (!_.isNull(chain2GasToken)) {
+                            return !Tokens.gasTokenWrapper(chain2GasToken).isEqual(t2)
+                        }
+
+                        return true
+                    })
 
                     tokSwapMap[c2] = outToks;
                 }
 
                 return tokSwapMap
-            })
+            }).filter(t => !_.isUndefined(t))
         }
 
         return res

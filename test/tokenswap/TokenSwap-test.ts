@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import {
     ChainId,
     Networks,
@@ -127,8 +129,8 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
             {
                 chainId:       ChainId.DFK,
                 chainTokens:   [
-                    {chainId: ChainId.AVALANCHE, token: Tokens.JEWEL},
-                    {chainId: ChainId.HARMONY,   token: Tokens.JEWEL},
+                    {chainId: ChainId.AVALANCHE, token: Tokens.GAS_JEWEL},
+                    {chainId: ChainId.HARMONY,   token: Tokens.GAS_JEWEL},
                     {chainId: ChainId.HARMONY,   token: Tokens.XJEWEL},
                 ],
             },
