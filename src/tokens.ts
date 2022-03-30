@@ -426,6 +426,16 @@ export namespace Tokens {
         swapType: SwapType.JEWEL
     });
 
+    export const MULTIJEWEL = new BaseToken({
+        name:     "Jewels (multiJEWEL)",
+        symbol:   "JEWEL",
+        decimals: 18,
+        addresses: {
+            [ChainId.AVALANCHE]: "0x4f60a160D8C2DDdaAfe16FCC57566dB84D674BD6",
+        },
+        swapType: SwapType.JEWEL
+    });
+
     export const XJEWEL = new BaseToken({
         name:    "xJEWEL",
         symbol:  "xJEWEL",
@@ -612,14 +622,14 @@ export namespace Tokens {
     });
 
     export const mintBurnTokens: Token[] = [
-        NUSD,    SYN,      NETH,
-        HIGH,    DOG,      JUMP,
-        FRAX,    SYN_FRAX, NFD,
-        GOHM,    SOLAR,    GMX,
-        UST,     NEWO,     SDT,
-        LUNA,    USDB,     SYN_AVAX,
-        GAS_JEWEL,   JEWEL,   SYN_JEWEL,
-        XJEWEL,
+        NUSD,      SYN,      NETH,
+        HIGH,      DOG,      JUMP,
+        FRAX,      SYN_FRAX, NFD,
+        GOHM,      SOLAR,    GMX,
+        UST,       NEWO,     SDT,
+        LUNA,      USDB,     SYN_AVAX,
+        GAS_JEWEL, JEWEL,    SYN_JEWEL,
+        XJEWEL,    MULTIJEWEL
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
@@ -678,6 +688,6 @@ export namespace Tokens {
         GOHM, HIGH, JUMP, DOG, NFD, FRAX,
         SYN_FRAX, SOLAR, GMX, NEWO, SDT,
         LUNA, USDB, SYN_AVAX, GAS_JEWEL, JEWEL,
-        SYN_JEWEL, XJEWEL,
+        SYN_JEWEL, XJEWEL, MULTIJEWEL,
     ];
 }
