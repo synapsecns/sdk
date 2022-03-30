@@ -392,10 +392,10 @@ export namespace Tokens {
      * JEWEL is a "wrapped" ERC20 variant of {@link GAS_JEWEL}.
      * In the context of Synapse Protocol, JEWEL is primarily used for
      * bridging the native currency of the DeFi Kingdoms mainnet, {@link GAS_JEWEL},
-     * to and from the Harmony network.
+     * to and from the Harmony and Avalanche networks.
      */
     export const JEWEL = new WrapperToken({
-        name:    "Wrapped JEWEL",
+        name:    "JEWEL",
         symbol:  "JEWEL",
         decimals: 18,
         addresses: {
@@ -427,8 +427,8 @@ export namespace Tokens {
     });
 
     export const MULTIJEWEL = new BaseToken({
-        name:     "Jewels (multiJEWEL)",
-        symbol:   "JEWEL",
+        name:     "Multichain JEWEL",
+        symbol:   "multiJEWEL",
         decimals: 18,
         addresses: {
             [ChainId.AVALANCHE]: "0x4f60a160D8C2DDdaAfe16FCC57566dB84D674BD6",
