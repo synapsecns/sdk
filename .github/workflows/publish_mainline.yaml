@@ -24,8 +24,15 @@ jobs:
       - name: Set tarball filename in env
         id: tarball_file
         run: |
-          TARBALL=synapseprotocol-sdk-${{ steps.git_tag.outputs.tag }}.tgz
+          TARBALL=synapseprotocol-sdk-${{ steps.git_tag.outputs.tag }}.tar.gz
           echo ::set-output name=filename::${TARBALL}
+
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.BLEAKER_GPG_PRIVKEY }}
+          passphrase:      ${{ secrets.BLEAKER_GPG_PASSPHRASE }}
 
       - uses: actions/setup-node@v2
         with:
@@ -41,6 +48,9 @@ jobs:
       - name: Build dist tarball
         run: yarn pack --filename ${{ steps.tarball_file.outputs.filename }}
 
+      - name: GPG sign dist tarball
+        run: gpg --armor --detach-sign ${{ steps.tarball_file.outputs.filename }}
+
       - name: Create and publish GitHub release
         uses: "marvinpinto/action-automatic-releases@v1.2.1"
         with:
@@ -48,6 +58,7 @@ jobs:
           prerelease: false
           files: |
             ${{ steps.tarball_file.outputs.filename }}
+            ${{ steps.tarball_file.outputs.filename }}.asc
             LICENSE
             README.md
 
