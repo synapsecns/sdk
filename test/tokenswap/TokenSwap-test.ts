@@ -155,6 +155,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
                     {chainId: ChainId.HARMONY,   token: Tokens.AVAX},
                     {chainId: ChainId.DFK,       token: Tokens.JEWEL},
+                    {chainId: ChainId.DFK,       token: Tokens.MULTIJEWEL},
                 ],
             },
             {

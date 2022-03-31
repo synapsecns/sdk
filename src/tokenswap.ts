@@ -36,6 +36,7 @@ export namespace UnsupportedSwapErrors {
         UnsupportedTokenNetFrom,
         UnsupportedTokenNetTo,
         NonmatchingSwapTypes,
+        UnsupportedMultiJEWELMigration,
     }
 
     export interface UnsupportedSwapErrorArgs {
@@ -76,6 +77,11 @@ export namespace UnsupportedSwapErrors {
     export const nonMatchingSwapTypes = (): UnsupportedSwapError => new UnsupportedSwapError({
         reason:    "Token swap types don't match",
         errorKind:  UnsupportedSwapErrorKind.NonmatchingSwapTypes,
+    });
+
+    export const unsupportedMultiJEWELMigration = (): UnsupportedSwapError => new UnsupportedSwapError({
+        reason:    "Migrating multiJEWEL from Avalanche to Harmony is not supported",
+        errorKind: UnsupportedSwapErrorKind.UnsupportedMultiJEWELMigration,
     });
 }
 
@@ -262,6 +268,10 @@ export namespace TokenSwap {
                 for (const c2 of allChainIds) {
                     if (c1 === c2) continue
 
+                    if (c1 === ChainId.AVALANCHE && t.isEqual(Tokens.MULTIJEWEL) && c2 !== ChainId.DFK) {
+                        continue
+                    }
+
                     const chain2GasToken = Tokens.gasTokenForChain(c2);
                     let outToks: Token[] = SwapPools.tokensForChainBySwapGroup(c2, swapType);
                     if (outToks.length === 0) continue
@@ -359,6 +369,12 @@ export namespace TokenSwap {
         const
             netFrom = Networks.fromChainId(chainIdFrom),
             netTo   = (typeof chainIdTo !== "undefined" ? Networks.fromChainId(chainIdTo) : netFrom);
+
+        if (chainIdTo) {
+            if (tokenFrom.isEqual(Tokens.MULTIJEWEL) && chainIdTo !== ChainId.DFK) {
+                return {swapSupported: false, reasonNotSupported: UnsupportedSwapErrors.unsupportedMultiJEWELMigration()}
+            }
+        }
 
         let
             swapSupported: boolean = true,
