@@ -38,7 +38,7 @@ const CHAIN_RPC_URIS: StringMap = {
     [ChainId.MOONRIVER]: "https://rpc.api.moonriver.moonbeam.network",
     [ChainId.ARBITRUM]:  "https://arb1.arbitrum.io/rpc",
     [ChainId.AVALANCHE]: "https://api.avax.network/ext/bc/C/rpc",
-    [ChainId.DFK]:       "https://rpc.dfkchain.com",
+    [ChainId.DFK]:       "https://subnets.avax.network/defi-kingdoms/dfk-chain/rpc",
     [ChainId.AURORA]:    "https://mainnet.aurora.dev",
     [ChainId.HARMONY]:   "https://api.harmony.one/",
 }
