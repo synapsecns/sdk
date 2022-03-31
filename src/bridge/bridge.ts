@@ -921,14 +921,23 @@ export namespace Bridge {
                             signerOrProvider: this.provider
                         });
 
-                        return zap.populateTransaction.depositETHAndSwap(
+                        if (args.chainIdTo === ChainId.HARMONY) {
+                            return zap.populateTransaction.depositETHAndSwap(
+                                args.addressTo,
+                                args.chainIdTo,
+                                args.amountFrom,
+                                1,
+                                0,
+                                minToSwapDestFromOriginMediumSlippage,
+                                bridgeTransactionDeadline,
+                                BridgeUtils.overrides(args.amountFrom)
+                            )
+                        }
+
+                        return zap.populateTransaction.depositETH(
                             args.addressTo,
                             args.chainIdTo,
                             args.amountFrom,
-                            1,
-                            0,
-                            minToSwapDestFromOriginMediumSlippage,
-                            bridgeTransactionDeadline,
                             BridgeUtils.overrides(args.amountFrom)
                         )
                     }

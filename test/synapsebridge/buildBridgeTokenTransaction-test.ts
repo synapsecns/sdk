@@ -160,7 +160,7 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
         makeTestCase(Tokens.AVAX,       Tokens.WAVAX,     ChainId.AVALANCHE, ChainId.MOONBEAM,    depositETH),
         makeTestCase(Tokens.SYN_AVAX,   Tokens.AVAX,      ChainId.HARMONY,   ChainId.AVALANCHE,   redeem),
         makeTestCase(Tokens.GAS_JEWEL,  Tokens.JEWEL,     ChainId.DFK,       ChainId.HARMONY,     depositETHAndSwap),
-        makeTestCase(Tokens.GAS_JEWEL,  Tokens.JEWEL,     ChainId.DFK,       ChainId.AVALANCHE,   depositETHAndSwap),
+        makeTestCase(Tokens.GAS_JEWEL,  Tokens.JEWEL,     ChainId.DFK,       ChainId.AVALANCHE,   depositETH),
         makeTestCase(Tokens.JEWEL,      Tokens.JEWEL,     ChainId.AVALANCHE, ChainId.DFK,         redeem),
         makeTestCase(Tokens.JEWEL,      Tokens.JEWEL,     ChainId.HARMONY,   ChainId.DFK,         swapAndRedeem),
         makeTestCase(Tokens.JEWEL,      Tokens.JEWEL,     ChainId.AVALANCHE, ChainId.HARMONY,     redeemAndSwap),
