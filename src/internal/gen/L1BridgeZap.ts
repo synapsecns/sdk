@@ -34,6 +34,8 @@ export interface L1BridgeZapInterface extends utils.Interface {
     "depositETH(address,uint256,uint256)": FunctionFragment;
     "depositETHAndSwap(address,uint256,uint256,uint8,uint8,uint256,uint256)": FunctionFragment;
     "redeem(address,uint256,address,uint256)": FunctionFragment;
+    "redeemAndRemove(address,uint256,address,uint256,uint8,uint256,uint256)": FunctionFragment;
+    "redeemAndSwap(address,uint256,address,uint256,uint8,uint8,uint256,uint256)": FunctionFragment;
     "redeemv2(bytes32,uint256,address,uint256)": FunctionFragment;
     "zapAndDeposit(address,uint256,address,uint256[],uint256,uint256)": FunctionFragment;
     "zapAndDepositAndSwap(address,uint256,address,uint256[],uint256,uint256,uint8,uint8,uint256,uint256)": FunctionFragment;
@@ -50,6 +52,8 @@ export interface L1BridgeZapInterface extends utils.Interface {
       | "depositETH"
       | "depositETHAndSwap"
       | "redeem"
+      | "redeemAndRemove"
+      | "redeemAndSwap"
       | "redeemv2"
       | "zapAndDeposit"
       | "zapAndDepositAndSwap"
@@ -109,6 +113,31 @@ export interface L1BridgeZapInterface extends utils.Interface {
     values: [string, BigNumberish, string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "redeemAndRemove",
+    values: [
+      string,
+      BigNumberish,
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "redeemAndSwap",
+    values: [
+      string,
+      BigNumberish,
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "redeemv2",
     values: [BytesLike, BigNumberish, string, BigNumberish]
   ): string;
@@ -163,6 +192,14 @@ export interface L1BridgeZapInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "redeemAndRemove",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "redeemAndSwap",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "redeemv2", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "zapAndDeposit",
@@ -210,36 +247,18 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    /**
-     * Calculate the amount of underlying token available to withdraw when withdrawing via only single token
-     * @param tokenAmount the amount of LP token to burn
-     * @param tokenIndex index of which token will be withdrawn
-     */
     calculateRemoveLiquidityOneToken(
       tokenAmount: BigNumberish,
       tokenIndex: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { availableTokenAmount: BigNumber }>;
 
-    /**
-     * This shouldn't be used outside frontends for user estimates.
-     * A simple method to calculate prices from deposits or withdrawals, excluding fees but including slippage. This is helpful as an input into the various "min" parameters on calls to fight front-running
-     * @param amounts an array of token amounts to deposit or withdrawal, corresponding to pooledTokens. The amount should be in each pooled token's native precision.
-     * @param deposit whether this is a deposit or a withdrawal
-     */
     calculateTokenAmount(
       amounts: BigNumberish[],
       deposit: boolean,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    /**
-     * Wraps SynapseBridge deposit() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     deposit(
       to: string,
       chainId: BigNumberish,
@@ -248,17 +267,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    /**
-     * Wraps SynapseBridge depositAndSwap() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-     * @param chainId which chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     depositAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -271,12 +279,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    /**
-     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     */
     depositETH(
       to: string,
       chainId: BigNumberish,
@@ -284,16 +286,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    /**
-     * Wraps SynapseBridge depositAndSwap() function to make it compatible w/ ETH -> WETH conversions
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-     * @param chainId which chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param to address on other chain to bridge assets to
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     depositETHAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -305,13 +297,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    /**
-     * Wraps SynapseBridge redeem() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to redeem into the bridge
-     */
     redeem(
       to: string,
       chainId: BigNumberish,
@@ -320,13 +305,29 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    /**
-     * Wraps SynapseBridge redeemv2() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to redeem into the bridge
-     */
+    redeemAndRemove(
+      to: string,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
+      liqTokenIndex: BigNumberish,
+      liqMinAmount: BigNumberish,
+      liqDeadline: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    redeemAndSwap(
+      to: string,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
+      tokenIndexFrom: BigNumberish,
+      tokenIndexTo: BigNumberish,
+      minDy: BigNumberish,
+      deadline: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     redeemv2(
       to: BytesLike,
       chainId: BigNumberish,
@@ -335,15 +336,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    /**
-     * Combines adding liquidity to the given Swap, and calls deposit() on the bridge using that LP token
-     * @param chainId which chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param liquidityAmounts the amounts of each token to add, in their native precision
-     * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     zapAndDeposit(
       to: string,
       chainId: BigNumberish,
@@ -354,19 +346,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    /**
-     * Combines adding liquidity to the given Swap, and calls depositAndSwap() on the bridge using that LP token
-     * @param chainId which chain to bridge assets onto
-     * @param liqDeadline latest timestamp to accept this transaction
-     * @param liquidityAmounts the amounts of each token to add, in their native precision
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
-     * @param swapDeadline latest timestamp to accept this transaction*
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     zapAndDepositAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -386,36 +365,18 @@ export interface L1BridgeZap extends BaseContract {
 
   baseTokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-  /**
-   * Calculate the amount of underlying token available to withdraw when withdrawing via only single token
-   * @param tokenAmount the amount of LP token to burn
-   * @param tokenIndex index of which token will be withdrawn
-   */
   calculateRemoveLiquidityOneToken(
     tokenAmount: BigNumberish,
     tokenIndex: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  /**
-   * This shouldn't be used outside frontends for user estimates.
-   * A simple method to calculate prices from deposits or withdrawals, excluding fees but including slippage. This is helpful as an input into the various "min" parameters on calls to fight front-running
-   * @param amounts an array of token amounts to deposit or withdrawal, corresponding to pooledTokens. The amount should be in each pooled token's native precision.
-   * @param deposit whether this is a deposit or a withdrawal
-   */
   calculateTokenAmount(
     amounts: BigNumberish[],
     deposit: boolean,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  /**
-   * Wraps SynapseBridge deposit() function
-   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-   * @param chainId which chain to bridge assets onto
-   * @param to address on other chain to bridge assets to
-   * @param token ERC20 compatible token to deposit into the bridge
-   */
   deposit(
     to: string,
     chainId: BigNumberish,
@@ -424,17 +385,6 @@ export interface L1BridgeZap extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  /**
-   * Wraps SynapseBridge depositAndSwap() function
-   * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-   * @param chainId which chain to bridge assets onto
-   * @param deadline latest timestamp to accept this transaction*
-   * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-   * @param to address on other chain to bridge assets to
-   * @param token ERC20 compatible token to deposit into the bridge
-   * @param tokenIndexFrom the token the user wants to swap from
-   * @param tokenIndexTo the token the user wants to swap to
-   */
   depositAndSwap(
     to: string,
     chainId: BigNumberish,
@@ -447,12 +397,6 @@ export interface L1BridgeZap extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  /**
-   * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
-   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-   * @param chainId which chain to bridge assets onto
-   * @param to address on other chain to bridge assets to
-   */
   depositETH(
     to: string,
     chainId: BigNumberish,
@@ -460,16 +404,6 @@ export interface L1BridgeZap extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  /**
-   * Wraps SynapseBridge depositAndSwap() function to make it compatible w/ ETH -> WETH conversions
-   * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-   * @param chainId which chain to bridge assets onto
-   * @param deadline latest timestamp to accept this transaction*
-   * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-   * @param to address on other chain to bridge assets to
-   * @param tokenIndexFrom the token the user wants to swap from
-   * @param tokenIndexTo the token the user wants to swap to
-   */
   depositETHAndSwap(
     to: string,
     chainId: BigNumberish,
@@ -481,13 +415,6 @@ export interface L1BridgeZap extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  /**
-   * Wraps SynapseBridge redeem() function
-   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-   * @param chainId which chain to bridge assets onto
-   * @param to address on other chain to bridge assets to
-   * @param token ERC20 compatible token to redeem into the bridge
-   */
   redeem(
     to: string,
     chainId: BigNumberish,
@@ -496,13 +423,29 @@ export interface L1BridgeZap extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  /**
-   * Wraps SynapseBridge redeemv2() function
-   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-   * @param chainId which chain to bridge assets onto
-   * @param to address on other chain to bridge assets to
-   * @param token ERC20 compatible token to redeem into the bridge
-   */
+  redeemAndRemove(
+    to: string,
+    chainId: BigNumberish,
+    token: string,
+    amount: BigNumberish,
+    liqTokenIndex: BigNumberish,
+    liqMinAmount: BigNumberish,
+    liqDeadline: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  redeemAndSwap(
+    to: string,
+    chainId: BigNumberish,
+    token: string,
+    amount: BigNumberish,
+    tokenIndexFrom: BigNumberish,
+    tokenIndexTo: BigNumberish,
+    minDy: BigNumberish,
+    deadline: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   redeemv2(
     to: BytesLike,
     chainId: BigNumberish,
@@ -511,15 +454,6 @@ export interface L1BridgeZap extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  /**
-   * Combines adding liquidity to the given Swap, and calls deposit() on the bridge using that LP token
-   * @param chainId which chain to bridge assets onto
-   * @param deadline latest timestamp to accept this transaction*
-   * @param liquidityAmounts the amounts of each token to add, in their native precision
-   * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
-   * @param to address on other chain to bridge assets to
-   * @param token ERC20 compatible token to deposit into the bridge
-   */
   zapAndDeposit(
     to: string,
     chainId: BigNumberish,
@@ -530,19 +464,6 @@ export interface L1BridgeZap extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  /**
-   * Combines adding liquidity to the given Swap, and calls depositAndSwap() on the bridge using that LP token
-   * @param chainId which chain to bridge assets onto
-   * @param liqDeadline latest timestamp to accept this transaction
-   * @param liquidityAmounts the amounts of each token to add, in their native precision
-   * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-   * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
-   * @param swapDeadline latest timestamp to accept this transaction*
-   * @param to address on other chain to bridge assets to
-   * @param token ERC20 compatible token to deposit into the bridge
-   * @param tokenIndexFrom the token the user wants to swap from
-   * @param tokenIndexTo the token the user wants to swap to
-   */
   zapAndDepositAndSwap(
     to: string,
     chainId: BigNumberish,
@@ -562,36 +483,18 @@ export interface L1BridgeZap extends BaseContract {
 
     baseTokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-    /**
-     * Calculate the amount of underlying token available to withdraw when withdrawing via only single token
-     * @param tokenAmount the amount of LP token to burn
-     * @param tokenIndex index of which token will be withdrawn
-     */
     calculateRemoveLiquidityOneToken(
       tokenAmount: BigNumberish,
       tokenIndex: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    /**
-     * This shouldn't be used outside frontends for user estimates.
-     * A simple method to calculate prices from deposits or withdrawals, excluding fees but including slippage. This is helpful as an input into the various "min" parameters on calls to fight front-running
-     * @param amounts an array of token amounts to deposit or withdrawal, corresponding to pooledTokens. The amount should be in each pooled token's native precision.
-     * @param deposit whether this is a deposit or a withdrawal
-     */
     calculateTokenAmount(
       amounts: BigNumberish[],
       deposit: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    /**
-     * Wraps SynapseBridge deposit() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     deposit(
       to: string,
       chainId: BigNumberish,
@@ -600,17 +503,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    /**
-     * Wraps SynapseBridge depositAndSwap() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-     * @param chainId which chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     depositAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -623,12 +515,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    /**
-     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     */
     depositETH(
       to: string,
       chainId: BigNumberish,
@@ -636,16 +522,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    /**
-     * Wraps SynapseBridge depositAndSwap() function to make it compatible w/ ETH -> WETH conversions
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-     * @param chainId which chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param to address on other chain to bridge assets to
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     depositETHAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -657,13 +533,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    /**
-     * Wraps SynapseBridge redeem() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to redeem into the bridge
-     */
     redeem(
       to: string,
       chainId: BigNumberish,
@@ -672,13 +541,29 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    /**
-     * Wraps SynapseBridge redeemv2() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to redeem into the bridge
-     */
+    redeemAndRemove(
+      to: string,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
+      liqTokenIndex: BigNumberish,
+      liqMinAmount: BigNumberish,
+      liqDeadline: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    redeemAndSwap(
+      to: string,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
+      tokenIndexFrom: BigNumberish,
+      tokenIndexTo: BigNumberish,
+      minDy: BigNumberish,
+      deadline: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     redeemv2(
       to: BytesLike,
       chainId: BigNumberish,
@@ -687,15 +572,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    /**
-     * Combines adding liquidity to the given Swap, and calls deposit() on the bridge using that LP token
-     * @param chainId which chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param liquidityAmounts the amounts of each token to add, in their native precision
-     * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     zapAndDeposit(
       to: string,
       chainId: BigNumberish,
@@ -706,19 +582,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    /**
-     * Combines adding liquidity to the given Swap, and calls depositAndSwap() on the bridge using that LP token
-     * @param chainId which chain to bridge assets onto
-     * @param liqDeadline latest timestamp to accept this transaction
-     * @param liquidityAmounts the amounts of each token to add, in their native precision
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
-     * @param swapDeadline latest timestamp to accept this transaction*
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     zapAndDepositAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -744,36 +607,18 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    /**
-     * Calculate the amount of underlying token available to withdraw when withdrawing via only single token
-     * @param tokenAmount the amount of LP token to burn
-     * @param tokenIndex index of which token will be withdrawn
-     */
     calculateRemoveLiquidityOneToken(
       tokenAmount: BigNumberish,
       tokenIndex: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    /**
-     * This shouldn't be used outside frontends for user estimates.
-     * A simple method to calculate prices from deposits or withdrawals, excluding fees but including slippage. This is helpful as an input into the various "min" parameters on calls to fight front-running
-     * @param amounts an array of token amounts to deposit or withdrawal, corresponding to pooledTokens. The amount should be in each pooled token's native precision.
-     * @param deposit whether this is a deposit or a withdrawal
-     */
     calculateTokenAmount(
       amounts: BigNumberish[],
       deposit: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    /**
-     * Wraps SynapseBridge deposit() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     deposit(
       to: string,
       chainId: BigNumberish,
@@ -782,17 +627,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    /**
-     * Wraps SynapseBridge depositAndSwap() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-     * @param chainId which chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     depositAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -805,12 +639,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    /**
-     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     */
     depositETH(
       to: string,
       chainId: BigNumberish,
@@ -818,16 +646,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    /**
-     * Wraps SynapseBridge depositAndSwap() function to make it compatible w/ ETH -> WETH conversions
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-     * @param chainId which chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param to address on other chain to bridge assets to
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     depositETHAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -839,13 +657,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    /**
-     * Wraps SynapseBridge redeem() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to redeem into the bridge
-     */
     redeem(
       to: string,
       chainId: BigNumberish,
@@ -854,13 +665,29 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    /**
-     * Wraps SynapseBridge redeemv2() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to redeem into the bridge
-     */
+    redeemAndRemove(
+      to: string,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
+      liqTokenIndex: BigNumberish,
+      liqMinAmount: BigNumberish,
+      liqDeadline: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    redeemAndSwap(
+      to: string,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
+      tokenIndexFrom: BigNumberish,
+      tokenIndexTo: BigNumberish,
+      minDy: BigNumberish,
+      deadline: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     redeemv2(
       to: BytesLike,
       chainId: BigNumberish,
@@ -869,15 +696,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    /**
-     * Combines adding liquidity to the given Swap, and calls deposit() on the bridge using that LP token
-     * @param chainId which chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param liquidityAmounts the amounts of each token to add, in their native precision
-     * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     zapAndDeposit(
       to: string,
       chainId: BigNumberish,
@@ -888,19 +706,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    /**
-     * Combines adding liquidity to the given Swap, and calls depositAndSwap() on the bridge using that LP token
-     * @param chainId which chain to bridge assets onto
-     * @param liqDeadline latest timestamp to accept this transaction
-     * @param liquidityAmounts the amounts of each token to add, in their native precision
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
-     * @param swapDeadline latest timestamp to accept this transaction*
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     zapAndDepositAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -924,36 +729,18 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * Calculate the amount of underlying token available to withdraw when withdrawing via only single token
-     * @param tokenAmount the amount of LP token to burn
-     * @param tokenIndex index of which token will be withdrawn
-     */
     calculateRemoveLiquidityOneToken(
       tokenAmount: BigNumberish,
       tokenIndex: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * This shouldn't be used outside frontends for user estimates.
-     * A simple method to calculate prices from deposits or withdrawals, excluding fees but including slippage. This is helpful as an input into the various "min" parameters on calls to fight front-running
-     * @param amounts an array of token amounts to deposit or withdrawal, corresponding to pooledTokens. The amount should be in each pooled token's native precision.
-     * @param deposit whether this is a deposit or a withdrawal
-     */
     calculateTokenAmount(
       amounts: BigNumberish[],
       deposit: boolean,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * Wraps SynapseBridge deposit() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     deposit(
       to: string,
       chainId: BigNumberish,
@@ -962,17 +749,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * Wraps SynapseBridge depositAndSwap() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-     * @param chainId which chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     depositAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -985,12 +761,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     */
     depositETH(
       to: string,
       chainId: BigNumberish,
@@ -998,16 +768,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * Wraps SynapseBridge depositAndSwap() function to make it compatible w/ ETH -> WETH conversions
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-     * @param chainId which chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param to address on other chain to bridge assets to
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     depositETHAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -1019,13 +779,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * Wraps SynapseBridge redeem() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to redeem into the bridge
-     */
     redeem(
       to: string,
       chainId: BigNumberish,
@@ -1034,13 +787,29 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * Wraps SynapseBridge redeemv2() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to redeem into the bridge
-     */
+    redeemAndRemove(
+      to: string,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
+      liqTokenIndex: BigNumberish,
+      liqMinAmount: BigNumberish,
+      liqDeadline: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    redeemAndSwap(
+      to: string,
+      chainId: BigNumberish,
+      token: string,
+      amount: BigNumberish,
+      tokenIndexFrom: BigNumberish,
+      tokenIndexTo: BigNumberish,
+      minDy: BigNumberish,
+      deadline: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     redeemv2(
       to: BytesLike,
       chainId: BigNumberish,
@@ -1049,15 +818,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * Combines adding liquidity to the given Swap, and calls deposit() on the bridge using that LP token
-     * @param chainId which chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param liquidityAmounts the amounts of each token to add, in their native precision
-     * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     zapAndDeposit(
       to: string,
       chainId: BigNumberish,
@@ -1068,19 +828,6 @@ export interface L1BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * Combines adding liquidity to the given Swap, and calls depositAndSwap() on the bridge using that LP token
-     * @param chainId which chain to bridge assets onto
-     * @param liqDeadline latest timestamp to accept this transaction
-     * @param liquidityAmounts the amounts of each token to add, in their native precision
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
-     * @param swapDeadline latest timestamp to accept this transaction*
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     zapAndDepositAndSwap(
       to: string,
       chainId: BigNumberish,

@@ -28,9 +28,6 @@ import type {
 
 export interface AvaxJewelMigrationInterface extends utils.Interface {
   functions: {
-    "LEGACY_TOKEN()": FunctionFragment;
-    "NEW_TOKEN()": FunctionFragment;
-    "SYNAPSE_BRIDGE()": FunctionFragment;
     "migrate(uint256)": FunctionFragment;
     "migrateAndBridge(uint256,address,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -41,9 +38,6 @@ export interface AvaxJewelMigrationInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "LEGACY_TOKEN"
-      | "NEW_TOKEN"
-      | "SYNAPSE_BRIDGE"
       | "migrate"
       | "migrateAndBridge"
       | "owner"
@@ -52,15 +46,6 @@ export interface AvaxJewelMigrationInterface extends utils.Interface {
       | "transferOwnership"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "LEGACY_TOKEN",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "NEW_TOKEN", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "SYNAPSE_BRIDGE",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "migrate",
     values: [BigNumberish]
@@ -83,15 +68,6 @@ export interface AvaxJewelMigrationInterface extends utils.Interface {
     values: [string]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "LEGACY_TOKEN",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "NEW_TOKEN", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "SYNAPSE_BRIDGE",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "migrate", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "migrateAndBridge",
@@ -157,12 +133,6 @@ export interface AvaxJewelMigration extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    LEGACY_TOKEN(overrides?: CallOverrides): Promise<[string]>;
-
-    NEW_TOKEN(overrides?: CallOverrides): Promise<[string]>;
-
-    SYNAPSE_BRIDGE(overrides?: CallOverrides): Promise<[string]>;
-
     migrate(
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -199,12 +169,6 @@ export interface AvaxJewelMigration extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
-
-  LEGACY_TOKEN(overrides?: CallOverrides): Promise<string>;
-
-  NEW_TOKEN(overrides?: CallOverrides): Promise<string>;
-
-  SYNAPSE_BRIDGE(overrides?: CallOverrides): Promise<string>;
 
   migrate(
     amount: BigNumberish,
@@ -243,12 +207,6 @@ export interface AvaxJewelMigration extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    LEGACY_TOKEN(overrides?: CallOverrides): Promise<string>;
-
-    NEW_TOKEN(overrides?: CallOverrides): Promise<string>;
-
-    SYNAPSE_BRIDGE(overrides?: CallOverrides): Promise<string>;
-
     migrate(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     migrateAndBridge(
@@ -291,12 +249,6 @@ export interface AvaxJewelMigration extends BaseContract {
   };
 
   estimateGas: {
-    LEGACY_TOKEN(overrides?: CallOverrides): Promise<BigNumber>;
-
-    NEW_TOKEN(overrides?: CallOverrides): Promise<BigNumber>;
-
-    SYNAPSE_BRIDGE(overrides?: CallOverrides): Promise<BigNumber>;
-
     migrate(
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -335,12 +287,6 @@ export interface AvaxJewelMigration extends BaseContract {
   };
 
   populateTransaction: {
-    LEGACY_TOKEN(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    NEW_TOKEN(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    SYNAPSE_BRIDGE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     migrate(
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }

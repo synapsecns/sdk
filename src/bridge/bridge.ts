@@ -681,8 +681,8 @@ export namespace Bridge {
                 minToSwapDestFromOriginMediumSlippage,
             } = BridgeUtils.getSlippages(amountFrom, amountTo);
 
-            if (args.tokenTo.isEqual(Tokens.NUSD)) {
-                if (args.tokenFrom.isEqual(Tokens.NUSD)) {
+            if (args.tokenTo.isEqual(Tokens.NUSD) || args.tokenTo.isEqual(Tokens.DFK_USDC)) {
+                if (args.tokenFrom.isEqual(Tokens.NUSD) || args.tokenFrom.isEqual(Tokens.DFK_USDC)) {
                     const bridgeDepositArgs = BridgeUtils.makeEasyParams(
                         args as BridgeUtils.BridgeTxParams,
                         this.chainId,
@@ -873,7 +873,8 @@ export namespace Bridge {
 
             switch (tokenSwitch(args.tokenTo)) {
                 case Tokens.NUSD:
-                    if (args.tokenFrom.isEqual(Tokens.NUSD)) {
+                case Tokens.DFK_USDC:
+                    if (args.tokenFrom.isEqual(Tokens.NUSD) || args.tokenFrom.isEqual(Tokens.DFK_USDC)) {
                         return zapBridge
                             .populateTransaction
                             .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.NUSD))
@@ -1019,7 +1020,7 @@ export namespace Bridge {
                                 let useSwapETH = !BridgeUtils.isETHLikeToken(args.tokenFrom);
                                 return easySwapAndRedeem(Tokens.NETH, useSwapETH)
                             }
-                        } else if (args.tokenFrom.isEqual(Tokens.NUSD)) {
+                        } else if (args.tokenFrom.isEqual(Tokens.NUSD) || args.tokenFrom.isEqual(Tokens.DFK_USDC)) {
                             return zapBridge
                                 .populateTransaction
                                 .redeemAndRemove(
@@ -1054,7 +1055,7 @@ export namespace Bridge {
                             .redeem(...redeemArgs)
                     }
 
-                    if (args.tokenFrom.isEqual(Tokens.NUSD) || args.tokenFrom.isEqual(Tokens.NETH)) {
+                    if (args.tokenFrom.isEqual(Tokens.NUSD) || args.tokenFrom.isEqual(Tokens.DFK_USDC) || args.tokenFrom.isEqual(Tokens.NETH)) {
                         return easyRedeemAndSwap(args.tokenFrom)
                     }
 

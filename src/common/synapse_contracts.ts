@@ -88,7 +88,7 @@ export namespace SynapseContracts {
 
     export const DFK = new SynapseContract({
         bridge:    "0xE05c976d3f045D0E6E7A6f61083d98A15603cF6A",
-        bridgeZap: "0xA7F9B7B0f729Dc98ae748f5505497909aFfdfa8A",
+        bridgeZap: "0x75224b0f245Fe51d5bf47A898DbB6720D4150BA7",
     });
 
     export const Aurora = new SynapseContract({

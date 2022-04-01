@@ -419,6 +419,7 @@ export namespace SwapPools {
         SDT_Pool        = makeSingleTokenPool(Tokens.SDT),
         LUNA_Pool       = makeSingleTokenPool(Tokens.LUNA),
         USDB_Pool       = makeSingleTokenPool(Tokens.USDB),
+        DFK_USDC_Pool   = makeSingleTokenPool(Tokens.DFK_USDC),
         XJEWEL_Pool     = makeSingleTokenPool(Tokens.XJEWEL),
         AVAX_JEWEL_Pool:    LPToken = {poolTokens: [Tokens.JEWEL, Tokens.MULTIJEWEL], swapType: SwapType.JEWEL},
         DFK_JEWEL_Pool:     LPToken = {poolTokens: [Tokens.GAS_JEWEL, Tokens.JEWEL],  swapType: SwapType.JEWEL},
@@ -577,11 +578,13 @@ export namespace SwapPools {
         ),
         [ChainId.DFK]: {
             swappableTokens: {
+                [SwapType.USD]:    DFK_USDC_Pool.poolTokens,
                 [SwapType.JEWEL]:  DFK_JEWEL_Pool.poolTokens,
                 [SwapType.XJEWEL]: XJEWEL_Pool.poolTokens,
                 [SwapType.AVAX]:   WAVAX_Pool.poolTokens
             },
             swappableSwapGroups: {
+                [SwapType.USD]:    DFK_USDC_Pool,
                 [SwapType.JEWEL]:  DFK_JEWEL_Pool,
                 [SwapType.XJEWEL]: XJEWEL_Pool,
                 [SwapType.AVAX]:   WAVAX_Pool

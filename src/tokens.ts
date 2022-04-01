@@ -285,8 +285,19 @@ export namespace Tokens {
             [ChainId.METIS]:     "0x961318Fc85475E125B99Cc9215f62679aE5200aB",
             [ChainId.ARBITRUM]:  "0x2913E812Cf0dcCA30FB28E6Cac3d2DCFF4497688",
             [ChainId.AVALANCHE]: "0xCFc37A6AB183dd4aED08C204D1c2773c0b1BDf46",
+            [ChainId.DFK]:       "0x3AD9DFE640E1A9Cc1D9B0948620820D975c3803a",
             [ChainId.AURORA]:    "0x07379565cD8B0CaE7c60Dc78e7f601b34AF2A21c",
             [ChainId.HARMONY]:   "0xED2a7edd7413021d440b09D654f3b87712abAB66",
+        },
+        swapType: SwapType.USD,
+    });
+
+    export const DFK_USDC = new BaseToken({
+        name:     "USD Circle",
+        symbol:   "USDC",
+        decimals: 18,
+        addresses: {
+            [ChainId.DFK]: "0x3AD9DFE640E1A9Cc1D9B0948620820D975c3803a"
         },
         swapType: SwapType.USD,
     });
@@ -622,14 +633,14 @@ export namespace Tokens {
     });
 
     export const mintBurnTokens: Token[] = [
-        NUSD,      SYN,      NETH,
-        HIGH,      DOG,      JUMP,
-        FRAX,      SYN_FRAX, NFD,
-        GOHM,      SOLAR,    GMX,
-        UST,       NEWO,     SDT,
-        LUNA,      USDB,     SYN_AVAX,
-        GAS_JEWEL, JEWEL,    SYN_JEWEL,
-        XJEWEL,    MULTIJEWEL
+        NUSD,      SYN,        NETH,
+        HIGH,      DOG,        JUMP,
+        FRAX,      SYN_FRAX,   NFD,
+        GOHM,      SOLAR,      GMX,
+        UST,       NEWO,       SDT,
+        LUNA,      USDB,       SYN_AVAX,
+        GAS_JEWEL, JEWEL,      SYN_JEWEL,
+        XJEWEL,    MULTIJEWEL, DFK_USDC
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
@@ -688,6 +699,6 @@ export namespace Tokens {
         GOHM, HIGH, JUMP, DOG, NFD, FRAX,
         SYN_FRAX, SOLAR, GMX, NEWO, SDT,
         LUNA, USDB, SYN_AVAX, GAS_JEWEL, JEWEL,
-        SYN_JEWEL, XJEWEL, MULTIJEWEL,
+        SYN_JEWEL, XJEWEL, MULTIJEWEL, DFK_USDC
     ];
 }

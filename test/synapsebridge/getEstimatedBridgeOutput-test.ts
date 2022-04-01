@@ -193,6 +193,9 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         makeTestCase(Tokens.AVAX,      Tokens.SYN_AVAX,  ChainId.AVALANCHE, ChainId.HARMONY),
         makeTestCase(Tokens.GAS_JEWEL, Tokens.JEWEL,     ChainId.DFK,       ChainId.HARMONY),
         makeTestCase(Tokens.JEWEL,     Tokens.JEWEL,     ChainId.HARMONY,   ChainId.AVALANCHE),
+        makeTestCase(Tokens.USDC,      Tokens.DFK_USDC,  ChainId.ARBITRUM,  ChainId.DFK),
+        makeTestCase(Tokens.DFK_USDC,  Tokens.USDC,      ChainId.DFK,       ChainId.AVALANCHE),
+        makeTestCase(Tokens.DFK_USDC,  Tokens.DAI,       ChainId.DFK,       ChainId.ETH),
     ].forEach((tc: TestCase) => {
         const [describeTitle, bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc)
 

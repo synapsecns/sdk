@@ -27,10 +27,6 @@ process_solc_output () {
 
   cd "$CURRENT_DIR"
   PY_HELPER sol_output "$TEMP_OUTPUT" "$@" > "$filename.json"
-  rm -rf "$filename.ts"
-  touch "$filename.ts"
-  echo "const ABI = $(cat $filename.json | jq)\n" >> "$filename.ts"
-  echo "export default ABI" >> "$filename.ts"
 }
 
 process_abi () {
@@ -44,5 +40,6 @@ process_abi "contracts/bridge/SynapseBridge.sol" "SynapseBridge"
 process_abi "contracts/bridge/SynapseERC20.sol" "SynapseERC20"
 process_abi "contracts/bridge/wrappers/L2BridgeZap.sol" "L2BridgeZap"
 process_abi "contracts/bridge/wrappers/L1BridgeZap.sol" "L1BridgeZap"
+process_abi "contracts/bridge/wrappers/AvaxJewelMigration.sol" "AvaxJewelMigration"
 process_abi "contracts/bridge/BridgeConfigV3.sol" "BridgeConfigV3"
 process_abi "contracts/amm/SwapFlashLoan.sol" "SwapFlashLoan"
