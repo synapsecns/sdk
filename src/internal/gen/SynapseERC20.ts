@@ -465,16 +465,16 @@ export interface SynapseERC20 extends BaseContract {
 
     /**
      * Initializes this ERC20 contract with the given parameters.
-     * @param decimals Token name
-     * @param name Token name
-     * @param owner admin address to be initialized with
-     * @param symbol Token symbol
+     * @param _decimals Token name
+     * @param _name Token name
+     * @param _owner admin address to be initialized with
+     * @param _symbol Token symbol
      */
     initialize(
-      name: string,
-      symbol: string,
-      decimals: BigNumberish,
-      owner: string,
+      _name: string,
+      _symbol: string,
+      _decimals: BigNumberish,
+      _owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -670,16 +670,16 @@ export interface SynapseERC20 extends BaseContract {
 
   /**
    * Initializes this ERC20 contract with the given parameters.
-   * @param decimals Token name
-   * @param name Token name
-   * @param owner admin address to be initialized with
-   * @param symbol Token symbol
+   * @param _decimals Token name
+   * @param _name Token name
+   * @param _owner admin address to be initialized with
+   * @param _symbol Token symbol
    */
   initialize(
-    name: string,
-    symbol: string,
-    decimals: BigNumberish,
-    owner: string,
+    _name: string,
+    _symbol: string,
+    _decimals: BigNumberish,
+    _owner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -872,16 +872,16 @@ export interface SynapseERC20 extends BaseContract {
 
     /**
      * Initializes this ERC20 contract with the given parameters.
-     * @param decimals Token name
-     * @param name Token name
-     * @param owner admin address to be initialized with
-     * @param symbol Token symbol
+     * @param _decimals Token name
+     * @param _name Token name
+     * @param _owner admin address to be initialized with
+     * @param _symbol Token symbol
      */
     initialize(
-      name: string,
-      symbol: string,
-      decimals: BigNumberish,
-      owner: string,
+      _name: string,
+      _symbol: string,
+      _decimals: BigNumberish,
+      _owner: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1138,16 +1138,16 @@ export interface SynapseERC20 extends BaseContract {
 
     /**
      * Initializes this ERC20 contract with the given parameters.
-     * @param decimals Token name
-     * @param name Token name
-     * @param owner admin address to be initialized with
-     * @param symbol Token symbol
+     * @param _decimals Token name
+     * @param _name Token name
+     * @param _owner admin address to be initialized with
+     * @param _symbol Token symbol
      */
     initialize(
-      name: string,
-      symbol: string,
-      decimals: BigNumberish,
-      owner: string,
+      _name: string,
+      _symbol: string,
+      _decimals: BigNumberish,
+      _owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1352,16 +1352,16 @@ export interface SynapseERC20 extends BaseContract {
 
     /**
      * Initializes this ERC20 contract with the given parameters.
-     * @param decimals Token name
-     * @param name Token name
-     * @param owner admin address to be initialized with
-     * @param symbol Token symbol
+     * @param _decimals Token name
+     * @param _name Token name
+     * @param _owner admin address to be initialized with
+     * @param _symbol Token symbol
      */
     initialize(
-      name: string,
-      symbol: string,
-      decimals: BigNumberish,
-      owner: string,
+      _name: string,
+      _symbol: string,
+      _decimals: BigNumberish,
+      _owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

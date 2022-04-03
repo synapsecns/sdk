@@ -35,6 +35,45 @@ const _abi = [
     type: "event",
   },
   {
+    inputs: [],
+    name: "LEGACY_TOKEN",
+    outputs: [
+      {
+        internalType: "contract IERC20",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "NEW_TOKEN",
+    outputs: [
+      {
+        internalType: "contract IERC20Mintable",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "SYNAPSE_BRIDGE",
+    outputs: [
+      {
+        internalType: "contract ISynapseBridge",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",

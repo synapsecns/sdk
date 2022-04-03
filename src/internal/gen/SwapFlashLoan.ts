@@ -722,7 +722,7 @@ export interface SwapFlashLoan extends BaseContract {
      * Burn LP tokens to remove liquidity from the pool. Withdraw fee that decays linearly over period of 4 weeks since last deposit will apply.
      * @param amount the amount of LP tokens to burn
      * @param deadline latest timestamp to accept this transaction
-     * @param minAmounts the minimum amounts of each token in the pool acceptable for this burn. Useful as a front-running mitigation
+     * @param minAmounts the minimum amounts of each token in the pool        acceptable for this burn. Useful as a front-running mitigation
      */
     removeLiquidity(
       amount: BigNumberish,
@@ -1049,7 +1049,7 @@ export interface SwapFlashLoan extends BaseContract {
    * Burn LP tokens to remove liquidity from the pool. Withdraw fee that decays linearly over period of 4 weeks since last deposit will apply.
    * @param amount the amount of LP tokens to burn
    * @param deadline latest timestamp to accept this transaction
-   * @param minAmounts the minimum amounts of each token in the pool acceptable for this burn. Useful as a front-running mitigation
+   * @param minAmounts the minimum amounts of each token in the pool        acceptable for this burn. Useful as a front-running mitigation
    */
   removeLiquidity(
     amount: BigNumberish,
@@ -1374,7 +1374,7 @@ export interface SwapFlashLoan extends BaseContract {
      * Burn LP tokens to remove liquidity from the pool. Withdraw fee that decays linearly over period of 4 weeks since last deposit will apply.
      * @param amount the amount of LP tokens to burn
      * @param deadline latest timestamp to accept this transaction
-     * @param minAmounts the minimum amounts of each token in the pool acceptable for this burn. Useful as a front-running mitigation
+     * @param minAmounts the minimum amounts of each token in the pool        acceptable for this burn. Useful as a front-running mitigation
      */
     removeLiquidity(
       amount: BigNumberish,
@@ -1825,7 +1825,7 @@ export interface SwapFlashLoan extends BaseContract {
      * Burn LP tokens to remove liquidity from the pool. Withdraw fee that decays linearly over period of 4 weeks since last deposit will apply.
      * @param amount the amount of LP tokens to burn
      * @param deadline latest timestamp to accept this transaction
-     * @param minAmounts the minimum amounts of each token in the pool acceptable for this burn. Useful as a front-running mitigation
+     * @param minAmounts the minimum amounts of each token in the pool        acceptable for this burn. Useful as a front-running mitigation
      */
     removeLiquidity(
       amount: BigNumberish,
@@ -2138,7 +2138,7 @@ export interface SwapFlashLoan extends BaseContract {
      * Burn LP tokens to remove liquidity from the pool. Withdraw fee that decays linearly over period of 4 weeks since last deposit will apply.
      * @param amount the amount of LP tokens to burn
      * @param deadline latest timestamp to accept this transaction
-     * @param minAmounts the minimum amounts of each token in the pool acceptable for this burn. Useful as a front-running mitigation
+     * @param minAmounts the minimum amounts of each token in the pool        acceptable for this burn. Useful as a front-running mitigation
      */
     removeLiquidity(
       amount: BigNumberish,

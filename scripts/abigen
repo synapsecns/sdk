@@ -1,4 +1,6 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
+
+source .env
 
 CURRENT_DIR="${PWD}"
 
@@ -23,6 +25,12 @@ check_or_fallback () {
   [[ -z "$1" ]] && echo "$2" || echo "$1"
 }
 
+output_json () {
+  DATA="$1"
+  CONTRACT="$2"
+  echo "${DATA}" | jq "${JQ_WANT}" > "${COMBINED_OUTPUTS_DIR}/${CONTRACT}.json"
+}
+
 PY_HELPER () {
   echo $($PYTHON_PATH "${PYTHON_HELPER_PATH}" "$@")
 }
@@ -38,21 +46,22 @@ process_abi () {
   $SOLC_PATH --allow-paths="*," --no-color --standard-json $solc_input_json > "${TEMP_OUTPUT}"
 
   cd "${CURRENT_DIR}"
-  PY_HELPER sol_output "${TEMP_OUTPUT}" "${CONTRACT_PATH}" "${CONTRACT_NAME}" | jq $JQ_WANT > "${COMBINED_OUTPUTS_DIR}/${CONTRACT_NAME}.json"
+  output_json "$(PY_HELPER sol_output "${TEMP_OUTPUT}" "${CONTRACT_PATH}" "${CONTRACT_NAME}")" "${CONTRACT_NAME}"
 
   rm -rf "${TEMP_INPUT}" "${TEMP_OUTPUT}"
 }
 
 RAW_GITHUB_URI="https://raw.githubusercontent.com/synapsecns/synapse-contracts"
+REQUEST_AUTH="${GITHUB_USERNAME}:${GITHUB_API_KEY}"
 
 get_abi_from_gh () {
   BRANCH="$1"
   CHAIN="$2"
   CONTRACT="$3"
 
-  endpoint="${RAW_GITHUB_URI}/${BRANCH}/deployments/${CHAIN}/${CONTRACT}.json"
+  REQUEST_ENDPOINT="${RAW_GITHUB_URI}/${BRANCH}/deployments/${CHAIN}/${CONTRACT}.json"
 
-  curl -s "${endpoint}" | jq $JQ_WANT > "${COMBINED_OUTPUTS_DIR}/${CONTRACT}.json"
+  output_json "$(curl -s "${REQUEST_ENDPOINT}" -u "${REQUEST_AUTH}")" "${CONTRACT}"
 }
 
 main_compiler () {
