@@ -18,9 +18,9 @@ export namespace GasUtils {
 
     const CHAIN_GAS_PARAMS: ChainIdTypeMap<GasParams> = {
         [ChainId.ETH]: {
-            maxFeePerGas:    makeGwei("100"),
+            maxFeePerGas:    makeGwei("55"),
             maxPriorityFee:  makeGwei("1.5"),
-            bridgeGasLimit:  BigNumber.from(100000),
+            bridgeGasLimit:  BigNumber.from(301000),
             approveGasLimit: BigNumber.from(75000),
         },
         [ChainId.OPTIMISM]: {

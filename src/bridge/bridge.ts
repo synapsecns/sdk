@@ -665,7 +665,7 @@ export namespace Bridge {
                     const bridgeDepositArgs = BridgeUtils.makeEasyParams(
                         args as BridgeUtils.BridgeTxParams,
                         this.chainId,
-                        args.tokenTo
+                        Tokens.NUSD
                     );
 
                     return this.l1BridgeZapEth

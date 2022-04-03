@@ -220,12 +220,13 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         makeTestCase(Tokens.DFK_USDC,  Tokens.USDT,      ChainId.DFK,         ChainId.FANTOM),
         makeTestCase(Tokens.USDT,      Tokens.DFK_USDC,  ChainId.FANTOM,      ChainId.DFK,       randomAmtETH, returnsEstimate, noError, invalidAddrTo),
         makeTestCase(Tokens.DFK_USDC,  Tokens.NUSD,      ChainId.DFK,         ChainId.AURORA,    randomAmtETH, returnsEstimate, noError, invalidAddrTo),
-        makeTestCase(Tokens.USDC,      Tokens.DFK_USDC,  ChainId.FANTOM,      ChainId.DFK,       zeroETH,   zeroEstimate),
-        makeTestCase(Tokens.DFK_USDC,  Tokens.NUSD,      ChainId.DFK,         ChainId.FANTOM,    oneETH,    zeroEstimate),
-        makeTestCase(Tokens.DFK_USDC,  Tokens.DAI,       ChainId.DFK,         ChainId.AVALANCHE, "4",       zeroEstimate),
-        makeTestCase(Tokens.DFK_USDC,  Tokens.DAI,       ChainId.DFK,         ChainId.ETH,       "50",      zeroEstimate),
-        makeTestCase(Tokens.NUSD,      Tokens.DFK_USDC,  ChainId.METIS,       ChainId.DFK,       oneETH,    returnsEstimate),
-        makeTestCase(Tokens.DAI,       Tokens.DFK_USDC,  ChainId.AVALANCHE,   ChainId.DFK,       "3",       returnsEstimate),
+        makeTestCase(Tokens.USDC,      Tokens.DFK_USDC,  ChainId.FANTOM,      ChainId.DFK,       zeroETH,      zeroEstimate),
+        makeTestCase(Tokens.DFK_USDC,  Tokens.NUSD,      ChainId.DFK,         ChainId.FANTOM,    oneETH,       zeroEstimate),
+        makeTestCase(Tokens.DFK_USDC,  Tokens.DAI,       ChainId.DFK,         ChainId.AVALANCHE, "4",          zeroEstimate),
+        makeTestCase(Tokens.DFK_USDC,  Tokens.NUSD,      ChainId.DFK,         ChainId.ETH,       "50",         zeroEstimate),
+        makeTestCase(Tokens.NUSD,      Tokens.DFK_USDC,  ChainId.ETH,         ChainId.DFK,       "500",        returnsEstimate),
+        makeTestCase(Tokens.NUSD,      Tokens.DFK_USDC,  ChainId.METIS,       ChainId.DFK,       oneETH,       returnsEstimate),
+        makeTestCase(Tokens.DAI,       Tokens.DFK_USDC,  ChainId.AVALANCHE,   ChainId.DFK,       "3",          returnsEstimate),
     ].forEach((tc: TestCase) => {
         const [describeTitle, bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc)
 
