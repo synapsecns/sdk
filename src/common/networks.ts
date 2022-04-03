@@ -1,5 +1,5 @@
+import {ChainId, type ChainIdTypeMap} from "@chainid";
 import type {Token} from "@token";
-import {ChainId}    from "@chainid";
 import {Tokens}     from "@tokens";
 import {SwapPools}  from "@swappools";
 
@@ -7,7 +7,6 @@ import type {ID, Distinct} from "@internal/types";
 
 import {BridgeUtils} from "@bridge/bridgeutils";
 
-import type {ChainIdTypeMap} from "./types";
 import _ from "lodash";
 
 export namespace Networks {

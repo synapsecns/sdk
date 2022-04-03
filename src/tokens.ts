@@ -4,8 +4,7 @@ import {
     WrapperToken
 } from "@token";
 
-import {ChainId} from "@chainid";
-import {ChainIdTypeMap} from "@common/types";
+import {ChainId, type ChainIdTypeMap} from "@chainid";
 
 import {SwapType} from "@internal/swaptype"
 import {tokenSwitch} from "@internal/utils";

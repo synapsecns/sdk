@@ -1,11 +1,11 @@
 import type {AddressMap, DecimalsMap} from "@common/types";
 
+import {SwapType}          from "@internal/swaptype";
 import type {ID, Distinct} from "@internal/types";
-import {SwapType} from "@internal/swaptype";
 
 import {
     BigNumber,
-    BigNumberish,
+    type BigNumberish
 } from "@ethersproject/bignumber";
 
 import {parseUnits} from "@ethersproject/units";
@@ -16,6 +16,7 @@ export interface IBaseToken extends Distinct {
     readonly symbol:    string;
     readonly addresses: AddressMap;
     readonly swapType:  SwapType;
+
     /**
      * Returns the on-chain address of a Token respective to the passed chain ID; will return null
      * if the Token is not supported on the passed chain ID.
@@ -35,19 +36,23 @@ export interface Token extends IBaseToken {
 
     isWrapperToken:   boolean;
     underlyingToken?: Token;
+
     /**
      * Returns true if `other` has the same ID field as this Token.
      * @param other
      */
     isEqual:          (other: Token) => boolean;
+
     canSwap:          (other: Token) => boolean;
     wrapperAddress:   (chainId: number) => string | null;
+
     /**
      * Formats the passed Wei(ish) amount to units of Ether and returns that value as a BigNumber.
      * @param amt
      * @param chainId
      */
     weiToEther:       (amt: BigNumberish, chainId: number) => BigNumber;
+
     /**
      * Returns the passed Ether amount as a value in units of Wei as determined
      * by the Token's decimals value for the passed chain ID.
@@ -55,6 +60,7 @@ export interface Token extends IBaseToken {
      * @param chainId
      */
     etherToWei:       (amt: BigNumberish, chainId: number) => BigNumber;
+
     /**
      * @deprecated use {@link etherToWei}
      * @param amt

@@ -1,19 +1,20 @@
 import {Slippages} from "./slippages";
 
-import {Tokens} from "@tokens";
+import {Tokens}    from "@tokens";
 import {ChainId}   from "@chainid";
 import {SwapPools} from "@swappools";
+
+import * as SynapseEntities from "@entities";
 
 import type {Token} from "@token";
 import type {GenericZapBridgeContract, L2BridgeZapContract} from "@contracts";
 
+import {tokenSwitch}         from "@internal/utils";
 import {rpcProviderForChain} from "@internal/rpcproviders";
-import {tokenSwitch} from "@internal/utils";
 
 import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
 
-import * as SynapseEntities from "@entities";
 
 
 export namespace BridgeUtils {

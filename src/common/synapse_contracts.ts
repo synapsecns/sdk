@@ -1,6 +1,4 @@
-import {ChainId} from "@chainid";
-
-import type {ChainIdTypeMap} from "./types";
+import {ChainId, type ChainIdTypeMap} from "@chainid";
 
 export namespace SynapseContracts {
 

@@ -1,10 +1,13 @@
 import {Tokens} from "@tokens";
 
-import {ChainId, supportedChainIds} from "@chainid";
+import {
+    ChainId,
+    supportedChainIds,
+    type ChainIdTypeMap
+} from "@chainid";
 
 import type {
     AddressMap,
-    ChainIdTypeMap,
     DecimalsMap
 } from "@common/types";
 

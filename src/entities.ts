@@ -43,7 +43,10 @@ namespace Connector {
         return `${entityKind.toString()}.${chainId}`
     }
 
-    type EntityContract = SynapseBridgeContract | L1BridgeZapContract | L2BridgeZapContract | BridgeConfigV3Contract | AvaxJewelMigrationContract
+    type EntityContract =
+        SynapseBridgeContract  |
+        L1BridgeZapContract    | L2BridgeZapContract |
+        BridgeConfigV3Contract | AvaxJewelMigrationContract
 
     type ConnectorEntity = {
         contract:   EntityContract;
@@ -151,21 +154,42 @@ namespace Connector {
 
             return newEntity
         }
+
+        avaxJewelMigration(): AvaxJewelMigrationContract {
+            const
+                chainId       = ChainId.AVALANCHE,
+                entityKind    = EntityKind.AvaxJewelMigration,
+                connectorName = makeConnectorName(chainId, entityKind);
+
+            const check = this.checkEntity(connectorName);
+            if (check) {
+                return check as AvaxJewelMigrationContract
+            }
+
+            const newEntity = AvaxJewelMigrationFactory.connect(
+                AvaxJewelMigrationAddress,
+                rpcProviderForChain(ChainId.AVALANCHE)
+            );
+
+            this.addEntity(connectorName, newEntity, entityKind, chainId);
+
+            return newEntity
+        }
     }
 }
 
 const ENTITY_CONNECTOR = new Connector.EntityConnector();
 
 export function SynapseBridgeContractInstance(params: NewInstanceParams): SynapseBridgeContract {
-    return ENTITY_CONNECTOR.synapseBridge(params);
+    return ENTITY_CONNECTOR.synapseBridge(params)
 }
 
 export function L1BridgeZapContractInstance(params: NewInstanceParams): L1BridgeZapContract {
-    return ENTITY_CONNECTOR.l1BridgeZap(params);
+    return ENTITY_CONNECTOR.l1BridgeZap(params)
 }
 
 export function L2BridgeZapContractInstance(params: NewInstanceParams): L2BridgeZapContract {
-    return ENTITY_CONNECTOR.l2BridgeZap(params);
+    return ENTITY_CONNECTOR.l2BridgeZap(params)
 }
 
 export function GenericZapBridgeContractInstance(params: NewInstanceParams): GenericZapBridgeContract {
@@ -175,12 +199,9 @@ export function GenericZapBridgeContractInstance(params: NewInstanceParams): Gen
 }
 
 export function BridgeConfigV3ContractInstance(): BridgeConfigV3Contract {
-    return ENTITY_CONNECTOR.bridgeConfig();
+    return ENTITY_CONNECTOR.bridgeConfig()
 }
 
 export function AvaxJewelMigrationContractInstance(): AvaxJewelMigrationContract {
-    return AvaxJewelMigrationFactory.connect(
-        AvaxJewelMigrationAddress,
-        rpcProviderForChain(ChainId.AVALANCHE)
-    )
+    return ENTITY_CONNECTOR.avaxJewelMigration()
 }

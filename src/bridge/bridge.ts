@@ -1,4 +1,4 @@
-import {ChainId}  from "@chainid";
+import {ChainId, type ChainIdTypeMap} from "@chainid";
 import {Networks} from "@networks";
 
 import {
@@ -14,7 +14,6 @@ import {
     executePopulatedTransaction
 } from "@common/utils";
 
-import type {ChainIdTypeMap} from "@common/types";
 import {SynapseContracts}    from "@synapsecontracts";
 
 import type {
