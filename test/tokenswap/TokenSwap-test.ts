@@ -122,6 +122,9 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.ETH,       token: Tokens.BUSD},
                     {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
                     {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
+                    {chainId: ChainId.DFK,       token: Tokens.NUSD},
+                    {chainId: ChainId.DFK,       token: Tokens.USDT},
+                    {chainId: ChainId.DFK,       token: Tokens.BUSD},
                 ],
             },
             {
@@ -131,6 +134,8 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.AVALANCHE, token: Tokens.GOHM},
                     {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
                     {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
+                    {chainId: ChainId.DFK,       token: Tokens.NUSD},
+                    {chainId: ChainId.DFK,       token: Tokens.USDT},
                 ],
             },
             {
@@ -139,6 +144,8 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.AVALANCHE, token: Tokens.FTM_ETH},
                     {chainId: ChainId.AVALANCHE, token: Tokens.NUSD},
                     {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
+                    {chainId: ChainId.DFK,       token: Tokens.NUSD},
+                    {chainId: ChainId.DFK,       token: Tokens.USDT},
                 ],
             },
             {
@@ -156,6 +163,8 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.HARMONY,   token: Tokens.AVAX},
                     {chainId: ChainId.DFK,       token: Tokens.JEWEL},
                     {chainId: ChainId.DFK,       token: Tokens.MULTIJEWEL},
+                    {chainId: ChainId.DFK,       token: Tokens.USDC},
+                    {chainId: ChainId.DFK,       token: Tokens.DAI},
                 ],
             },
             {
@@ -164,6 +173,8 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.AVALANCHE, token: Tokens.GAS_JEWEL},
                     {chainId: ChainId.HARMONY,   token: Tokens.GAS_JEWEL},
                     {chainId: ChainId.HARMONY,   token: Tokens.XJEWEL},
+                    {chainId: ChainId.BSC,       token: Tokens.DFK_USDC},
+                    {chainId: ChainId.AVALANCHE, token: Tokens.DFK_USDC},
                 ],
             },
         ].forEach((tc: TestCase) => {
