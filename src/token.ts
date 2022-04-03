@@ -1,6 +1,7 @@
 import type {AddressMap, DecimalsMap} from "@common/types";
 
-import type {ID, Distinct, SwapType} from "@internal/index";
+import type {ID, Distinct} from "@internal/types";
+import {SwapType} from "@internal/swaptype";
 
 import {
     BigNumber,

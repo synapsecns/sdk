@@ -17,11 +17,8 @@ import {
     type BridgeConfigV3Contract
 } from "@contracts";
 
-import {
-    SwapType,
-    mintBurnSwapTypes,
-    rpcProviderForChain
-} from "@internal/index";
+import {SwapType, mintBurnSwapTypes} from "@internal/swaptype";
+import {rpcProviderForChain} from "@internal/rpcproviders";
 
 import {
     BigNumber,

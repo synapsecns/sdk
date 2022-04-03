@@ -25,18 +25,19 @@
     "prepare": "ts-patch install -s",
     "setup:dev": "yarn install --frozen-lockfile",
     "setup": "yarn && yarn -s run typegen",
+    " ----------": "",
     "test": "ts-mocha -p test/tsconfig.json",
     "test:coverage": "c8 --reports-dir $REPORTS_DIR ts-mocha -p test/tsconfig.json",
     "coverage:report": "c8 report --reports-dir $REPORTS_DIR --reporter=text-lcov > $REPORTS_DIR/lcov.info",
+    "  ----------": "",
     "prebuild": "yarn prepare && rm -rf ./dist",
     "build": "tsc --project tsconfig.build.json",
     "prepublishOnly": "yarn build",
-    "typegen:all": "yarn -s run abigen",
-    "posttypegen:all": "yarn -s run typegen",
+    "   ----------": "",
+    "preabigen": "mkdir -p src/abis",
     "abigen": "scripts/abigen.sh",
     "typegen": "typechain --target ethers-v5 --out-dir src/internal/gen src/abis/*.json",
-    "posttypegen": "yarn -s run typegen:clean",
-    "typegen:clean": "mv src/abis/ERC20.json ./ERC20.json && rm -rf src/abis/*.json && mv ./ERC20.json src/abis/ERC20.json"
+    "posttypegen": "rm -rf src/abis"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",
@@ -51,7 +52,6 @@
     "@ethersproject/wallet": "^5.5.0",
     "@ethersproject/web": "^5.5.1",
     "ethers": "^5.5.1",
-    "isomorphic-fetch": "^3.0.0",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
@@ -59,7 +59,6 @@
     "@typechain/ethers-v5": "10.0.0",
     "@types/chai-as-promised": "7.1.5",
     "@types/chai-things": "0.0.35",
-    "@types/isomorphic-fetch": "0.0.36",
     "@types/lodash": "4.14.181",
     "@types/mocha": "9.1.0",
     "@types/node": "17.0.21",
@@ -78,6 +77,6 @@
     "ts-patch": "2.0.1",
     "typechain": "8.0.0",
     "typescript": "4.6.3",
-    "typescript-transform-paths": "3.3.1"
+    "typescript-transform-paths": "^3.3.1"
   }
 }

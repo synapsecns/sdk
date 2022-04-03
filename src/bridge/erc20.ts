@@ -14,7 +14,7 @@ import {
     ERC20Contract,
 } from "@contracts";
 
-import {rpcProviderForChain} from "@internal/index";
+import {rpcProviderForChain} from "@internal/rpcproviders";
 
 import {
     executePopulatedTransaction,

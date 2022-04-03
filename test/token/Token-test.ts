@@ -8,7 +8,7 @@ import {
     type Token, supportedChainIds
 } from "@sdk";
 
-import {tokenSwitch} from "@sdk/internal";
+import {tokenSwitch} from "@sdk/internal/utils";
 
 import {
     expectBnEqual,

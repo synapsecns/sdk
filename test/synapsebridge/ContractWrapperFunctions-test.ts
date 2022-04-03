@@ -14,7 +14,7 @@ import {
 
 import {ERC20}               from "@sdk/bridge/erc20";
 import {contractAddressFor}  from "@sdk/common/utils";
-import {rpcProviderForChain} from "@sdk/internal";
+import {rpcProviderForChain} from "@sdk/internal/rpcproviders";
 
 import {
     DEFAULT_TEST_TIMEOUT,

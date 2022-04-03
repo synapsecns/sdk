@@ -5,13 +5,11 @@ import {
 } from "@token";
 
 import {ChainId} from "@chainid";
-
-import {
-    SwapType,
-    tokenSwitch
-} from "@internal/index";
-
 import {ChainIdTypeMap} from "@common/types";
+
+import {SwapType} from "@internal/swaptype"
+import {tokenSwitch} from "@internal/utils";
+
 
 export namespace Tokens {
     // Stablecoins

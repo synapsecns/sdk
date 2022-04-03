@@ -3,10 +3,7 @@ import {ChainId}    from "@chainid";
 import {Tokens}     from "@tokens";
 import {SwapPools}  from "@swappools";
 
-import type {
-    ID,
-    Distinct,
-} from "@internal/index";
+import type {ID, Distinct} from "@internal/types";
 
 import {BridgeUtils} from "@bridge/bridgeutils";
 

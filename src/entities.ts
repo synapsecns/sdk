@@ -12,12 +12,11 @@ import {
     type AvaxJewelMigrationContract
 } from "./contracts";
 
-import {ChainId}             from "@chainid";
-import {contractAddressFor}  from "@common/utils";
-import {rpcProviderForChain} from "@internal/index";
-
+import {ChainId}               from "@chainid";
+import {contractAddressFor}    from "@common/utils";
 import type {SignerOrProvider} from "@common/types";
-import EntityConnector = Connector.EntityConnector;
+
+import {rpcProviderForChain} from "@internal/rpcproviders";
 
 
 const bridgeConfigV3Address: string = "0x5217c83ca75559B1f8a8803824E5b7ac233A12a1";

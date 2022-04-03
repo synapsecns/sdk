@@ -10,7 +10,8 @@ import {
 
 import {SwapFactory} from "@sdk/contracts";
 import type {StringMap} from "@sdk/common/types";
-import {rpcProviderForChain, SwapType} from "@sdk/internal";
+import {rpcProviderForChain} from "@sdk/internal/rpcproviders";
+import {SwapType} from "@internal/swaptype";
 
 import {
     expectNull,

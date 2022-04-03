@@ -10,11 +10,8 @@ import type {
 
 import {BaseToken, type IBaseToken, type Token} from "@token";
 
-import {
-    type ID,
-    type SwapTypeMap,
-    SwapType
-} from "@internal/index";
+import type {ID} from "@internal/types";
+import {type SwapTypeMap, SwapType} from "@internal/swaptype";
 
 
 export namespace SwapPools {
@@ -164,7 +161,7 @@ export namespace SwapPools {
         }
 
         get poolTokensForBridgeSwaps(): Token[] {
-            return moveFirstToLast(this.poolTokens);
+            return moveFirstToLast(this.poolTokens)
         }
 
         get swapETHAddress(): string | null {
@@ -204,7 +201,7 @@ export namespace SwapPools {
         get poolTokensForBridgeSwaps(): Token[] {
             return this.depositTokens?.length > 0
                 ? moveFirstToLast(this.depositTokens)
-                : super.poolTokensForBridgeSwaps
+                : moveFirstToLast(this.poolTokens)
         }
 
         get swapETHAddress(): string | null {

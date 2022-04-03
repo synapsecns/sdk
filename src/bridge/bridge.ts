@@ -2,50 +2,49 @@ import {ChainId}  from "@chainid";
 import {Networks} from "@networks";
 
 import {
-    rejectPromise,
-    executePopulatedTransaction
-} from "@common/utils";
-
-import {SynapseContracts} from "@common/synapse_contracts";
-
-import * as SynapseEntities from "@entities";
-
-import {BridgeConfig} from "./bridgeconfig";
-
-import {
-    type ID,
-    SwapType,
-    rpcProviderForChain,
-    tokenSwitch
-} from "@internal/index";
-
-import type {
-    GenericZapBridgeContract,
-    L1BridgeZapContract,
-    SynapseBridgeContract,
-} from "@contracts";
+    type Token,
+    instanceOfToken
+} from "@token";
 
 import {Tokens}    from "@tokens";
 import {TokenSwap} from "@tokenswap";
 
 import {
-    type Token,
-    instanceOfToken
-} from "@token";
+    rejectPromise,
+    executePopulatedTransaction
+} from "@common/utils";
 
 import type {ChainIdTypeMap} from "@common/types";
+import {SynapseContracts}    from "@synapsecontracts";
 
+import type {
+    SynapseBridgeContract,
+    L1BridgeZapContract,
+    L2BridgeZapContract,
+    GenericZapBridgeContract
+} from "@contracts";
+
+// import {type ID, SwapType, rpcProviderForChain, tokenSwitch} from "@internal/index";
+import type {ID} from "@internal/types";
+import {SwapType} from "@internal/swaptype";
+import {rpcProviderForChain} from "@internal/rpcproviders";
+import {tokenSwitch} from "@internal/utils";
+
+import * as SynapseEntities from "@entities";
+
+import {BridgeConfig}               from "./bridgeconfig";
 import {GasUtils}                   from "./gasutils";
 import {BridgeUtils}                from "./bridgeutils";
 import {ERC20, MAX_APPROVAL_AMOUNT} from "./erc20";
 
-import {id as makeKappa}         from "@ethersproject/hash";
-import {Zero}                    from "@ethersproject/constants";
-import {formatUnits}             from "@ethersproject/units";
-import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+import {id as makeKappa} from "@ethersproject/hash";
+import {Zero}            from "@ethersproject/constants";
+import {formatUnits}     from "@ethersproject/units";
+import {BigNumber}       from "@ethersproject/bignumber";
 
-import type {Signer}   from "@ethersproject/abstract-signer";
-import type {Provider} from "@ethersproject/providers";
+import type {BigNumberish} from "@ethersproject/bignumber";
+import type {Signer}       from "@ethersproject/abstract-signer";
+import type {Provider}     from "@ethersproject/providers";
 
 import type {
     ContractTransaction,
@@ -167,6 +166,10 @@ export namespace Bridge {
             if (this.zapBridgeAddress && this.zapBridgeAddress !== "") {
                 this.zapBridge = BridgeUtils.newBridgeZap(this.chainId);
             }
+        }
+
+        private get l2BridgeZap(): L2BridgeZapContract {
+            return this.zapBridge as L2BridgeZapContract
         }
 
         bridgeVersion(): Promise<BigNumber> {
@@ -531,8 +534,7 @@ export namespace Bridge {
                     true
                 );
             } else {
-                amountToReceive_from_prom = BridgeUtils.calculateSwapL2Zap(
-                    this.zapBridge,
+                amountToReceive_from_prom = this.l2BridgeZap.calculateSwap(
                     intermediateToken.address(this.chainId),
                     tokenIndexFrom,
                     0,
@@ -570,8 +572,7 @@ export namespace Bridge {
                         tokenIndexTo
                     );
             } else {
-                amountToReceive_to_prom = BridgeUtils.calculateSwapL2Zap(
-                    l2BridgeZapTo,
+                amountToReceive_to_prom = l2BridgeZapTo.calculateSwap(
                     intermediateToken.address(chainIdTo),
                     0,
                     tokenIndexTo,
@@ -630,12 +631,7 @@ export namespace Bridge {
             args:      BridgeTransactionParams,
             tokenArgs: BridgeTokenArgs
         ): Promise<PopulatedTransaction> {
-            const
-                {addressTo, chainIdTo, amountFrom, amountTo} = args,
-                zapBridge = SynapseEntities.L1BridgeZapContractInstance({
-                    chainId: this.chainId,
-                    signerOrProvider: this.provider
-                });
+            const {addressTo, chainIdTo, amountFrom, amountTo} = args;
 
             let
                 easyRedeems:    ID[] = [Tokens.SYN.id,  Tokens.UST.id],
@@ -645,7 +641,7 @@ export namespace Bridge {
                 ],
                 easyDepositETH: ID[] = [Tokens.NETH.id];
 
-            let {castArgs, isEasy, txn} = this.checkEasyArgs(args, zapBridge, easyDeposits, easyRedeems, easyDepositETH);
+            let {castArgs, isEasy, txn} = this.checkEasyArgs(args, this.l1BridgeZapEth, easyDeposits, easyRedeems, easyDepositETH);
             if (isEasy && txn) {
                 return txn
             }
@@ -673,11 +669,11 @@ export namespace Bridge {
                         args.tokenTo
                     );
 
-                    return zapBridge
+                    return this.l1BridgeZapEth
                         .populateTransaction
                         .deposit(...bridgeDepositArgs)
                 } else {
-                    return zapBridge.populateTransaction.zapAndDeposit(
+                    return this.l1BridgeZapEth.populateTransaction.zapAndDeposit(
                         addressTo,
                         chainIdTo,
                         Tokens.NUSD.address(this.chainId),
@@ -689,7 +685,7 @@ export namespace Bridge {
             }
 
             if (BridgeUtils.isETHLikeToken(args.tokenTo) || args.tokenTo.isEqual(Tokens.WETH)) {
-                return zapBridge.populateTransaction.depositETHAndSwap(
+                return this.l1BridgeZapEth.populateTransaction.depositETHAndSwap(
                     ...BridgeUtils.depositETHParams(castArgs),
                     0, // nusd tokenindex,
                     tokenArgs.tokenIndexTo,
@@ -698,7 +694,7 @@ export namespace Bridge {
                     BridgeUtils.overrides(amountFrom)
                 )
             } else if (args.tokenFrom.isEqual(Tokens.NUSD)) {
-                return zapBridge.populateTransaction.depositAndSwap(
+                return this.l1BridgeZapEth.populateTransaction.depositAndSwap(
                     addressTo,
                     chainIdTo,
                     Tokens.NUSD.address(this.chainId),
@@ -710,7 +706,7 @@ export namespace Bridge {
                 )
             }
 
-            return zapBridge.populateTransaction.zapAndDepositAndSwap(
+            return this.l1BridgeZapEth.populateTransaction.zapAndDepositAndSwap(
                 addressTo,
                 chainIdTo,
                 Tokens.NUSD.address(this.chainId),

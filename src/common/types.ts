@@ -1,4 +1,4 @@
-import type {ChainId} from "./chainid";
+import type {ChainId} from "@chainid";
 import type {Signer}   from "@ethersproject/abstract-signer";
 import type {Provider} from "@ethersproject/providers";
 

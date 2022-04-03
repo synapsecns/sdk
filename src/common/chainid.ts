@@ -1,4 +1,4 @@
-import type {ValueOf} from "@internal";
+import type {ValueOf} from "@internal/types";
 
 export const ChainId = {
     "ETH":          1,

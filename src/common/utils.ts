@@ -1,14 +1,14 @@
 import {ChainId}          from "@chainid";
-import {SynapseContracts} from "./synapse_contracts";
+import {SynapseContracts} from "@synapsecontracts";
 import {StaticCallResult} from "./types";
 
-import type {Signer}      from "@ethersproject/abstract-signer";
+import {BigNumber} from "@ethersproject/bignumber";
 
+import type {Signer} from "@ethersproject/abstract-signer";
 import type {
     PopulatedTransaction,
     ContractTransaction,
 } from "@ethersproject/contracts";
-import {BigNumber} from "@ethersproject/bignumber";
 
 export function rejectPromise(e: any): Promise<never> { return Promise.reject(e instanceof Error ? e : new Error(e)) }
 

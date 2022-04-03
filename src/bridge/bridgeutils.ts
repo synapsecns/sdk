@@ -7,9 +7,11 @@ import {SwapPools} from "@swappools";
 import type {Token} from "@token";
 import type {GenericZapBridgeContract, L2BridgeZapContract} from "@contracts";
 
+import {rpcProviderForChain} from "@internal/rpcproviders";
+import {tokenSwitch} from "@internal/utils";
+
 import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
-import {rpcProviderForChain, tokenSwitch} from "@internal/index";
 
 import * as SynapseEntities from "@entities";
 
