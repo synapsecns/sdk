@@ -1,0 +1,94 @@
+#!/usr/bin/env zsh
+
+CURRENT_DIR="${PWD}"
+
+COMBINED_OUTPUTS_DIR=$(realpath "${CURRENT_DIR}/abigen")
+TEMP_INPUT=$(realpath "${CURRENT_DIR}/temp_input.json")
+TEMP_OUTPUT=$(realpath "${CURRENT_DIR}/temp_output.json")
+
+PYTHON_PATH=$(which python3)
+PYTHON_HELPER_PATH=$(realpath ./scripts/py_helpers.py)
+
+SYNAPSE_BRIDGE="SynapseBridge"
+L1BRIDGEZAP="L1BridgeZap"
+L2BRIDGEZAP="L2BridgeZap"
+BRIDGECONFIG="BridgeConfigV3"
+SWAP_FLASH_LOAN="SwapFlashLoan"
+SYNAPSE_ERC20="SynapseERC20"
+AVAX_JEWEL_MIGRATION="AvaxJewelMigration"
+
+JQ_WANT='{abi: .abi, userdoc: .userdoc, devdoc: .devdoc}'
+
+check_or_fallback () {
+  [[ -z "$1" ]] && echo "$2" || echo "$1"
+}
+
+PY_HELPER () {
+  echo $($PYTHON_PATH "${PYTHON_HELPER_PATH}" "$@")
+}
+
+process_abi () {
+  BASE_CONTRACTS_PATH=$(realpath "$1")
+  SOLC_PATH=$(realpath "$2")
+  CONTRACT_PATH="$3"
+  CONTRACT_NAME="$4"
+
+  solc_input_json=$(PY_HELPER make_solc_input "${BASE_CONTRACTS_PATH}" "${CONTRACT_PATH}" "${CONTRACT_NAME}")
+  cd "${BASE_CONTRACTS_PATH}"
+  $SOLC_PATH --allow-paths="*," --no-color --standard-json $solc_input_json > "${TEMP_OUTPUT}"
+
+  cd "${CURRENT_DIR}"
+  PY_HELPER sol_output "${TEMP_OUTPUT}" "${CONTRACT_PATH}" "${CONTRACT_NAME}" | jq $JQ_WANT > "${COMBINED_OUTPUTS_DIR}/${CONTRACT_NAME}.json"
+
+  rm -rf "${TEMP_INPUT}" "${TEMP_OUTPUT}"
+}
+
+RAW_GITHUB_URI="https://raw.githubusercontent.com/synapsecns/synapse-contracts"
+
+get_abi_from_gh () {
+  BRANCH="$1"
+  CHAIN="$2"
+  CONTRACT="$3"
+
+  endpoint="${RAW_GITHUB_URI}/${BRANCH}/deployments/${CHAIN}/${CONTRACT}.json"
+
+  curl -s "${endpoint}" | jq $JQ_WANT > "${COMBINED_OUTPUTS_DIR}/${CONTRACT}.json"
+}
+
+main_compiler () {
+  BRIDGE_PATH="contracts/bridge"
+  WRAPPERS_PATH="${BRIDGE_PATH}/wrappers"
+
+  process_abi "$@" "${BRIDGE_PATH}/${SYNAPSE_BRIDGE}.sol"         "${SYNAPSE_BRIDGE}"
+  process_abi "$@" "${WRAPPERS_PATH}/${L1BRIDGEZAP}.sol"          "${L1BRIDGEZAP}"
+  process_abi "$@" "${WRAPPERS_PATH}/${L2BRIDGEZAP}.sol"          "${L2BRIDGEZAP}"
+  process_abi "$@" "${BRIDGE_PATH}/${BRIDGECONFIG}.sol"           "${BRIDGECONFIG}"
+  process_abi "$@" "contracts/amm/${SWAP_FLASH_LOAN}.sol"         "${SWAP_FLASH_LOAN}"
+  process_abi "$@" "${BRIDGE_PATH}/${SYNAPSE_ERC20}.sol"          "${SYNAPSE_ERC20}"
+  process_abi "$@" "${WRAPPERS_PATH}/${AVAX_JEWEL_MIGRATION}.sol" "${AVAX_JEWEL_MIGRATION}"
+}
+
+DFK="dfk"
+METIS="metis"
+MAINNET="mainnet"
+AVALANCHE="avalanche"
+
+main_curler () {
+  GIT_BRANCH=$(check_or_fallback "$1" "master")
+
+  get_abi_from_gh "${GIT_BRANCH}" "${DFK}"       "${SYNAPSE_BRIDGE}"
+  get_abi_from_gh "${GIT_BRANCH}" "${DFK}"       "${L1BRIDGEZAP}"
+  get_abi_from_gh "${GIT_BRANCH}" "${METIS}"     "${L2BRIDGEZAP}"
+  get_abi_from_gh "${GIT_BRANCH}" "${MAINNET}"   "${BRIDGECONFIG}"
+  get_abi_from_gh "${GIT_BRANCH}" "${METIS}"     "${SWAP_FLASH_LOAN}"
+  get_abi_from_gh "${GIT_BRANCH}" "${MAINNET}"   "${SYNAPSE_ERC20}"
+  get_abi_from_gh "${GIT_BRANCH}" "${AVALANCHE}" "${AVAX_JEWEL_MIGRATION}"
+}
+
+USE_SOLC=$(check_or_fallback "${ABIGEN_USE_SOLC}" "0")
+
+if [[ "${USE_SOLC}" = "1" ]]; then
+  main_compiler "$@"
+else
+  main_curler "$@"
+fi

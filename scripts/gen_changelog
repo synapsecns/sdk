@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+source .env
+
+PULL_REQUEST="$1"
+PACKAGE_VERSION="$2"
+
+REQUEST_AUTH="${GITHUB_USERNAME}:${GITHUB_API_KEY}"
+REQUEST_HEADERS='Accept: application/vnd.github.v3.full+json'
+REQUEST_ENDPOINT="https://api.github.com/repos/synapsecns/sdk/pulls/${PULL_REQUEST}"
+
+FILENAME="pr_${PULL_REQUEST}_body.md"
+
+curl -s -H "${REQUEST_HEADERS}" -u "${REQUEST_AUTH}" "${REQUEST_ENDPOINT}" | jq -r '.body' > "${FILENAME}"
+
+CHANGELOG_HEADER="# Changelog and Release notes (v${PACKAGE_VERSION})"
+
+echo -e "${CHANGELOG_HEADER}\n\n\n$(cat ${FILENAME})" > "${FILENAME}"
+
+mv "${FILENAME}" "CHANGELOG.md"
+
+git add CHANGELOG.md
+git commit -m "Changelog for v${PACKAGE_VERSION}"

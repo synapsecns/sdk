@@ -34,10 +34,12 @@
     "build": "tsc --project tsconfig.build.json",
     "prepublishOnly": "yarn build",
     "   ----------": "",
-    "preabigen": "mkdir -p src/abis",
-    "abigen": "scripts/abigen.sh",
-    "typegen": "typechain --target ethers-v5 --out-dir src/internal/gen src/abis/*.json",
-    "posttypegen": "rm -rf src/abis"
+    "preabigen": "mkdir -p ./abigen && cp ./scripts/ERC20.json ./abigen/ERC20.json",
+    "preabigen:use_solc": "yarn preabigen",
+    "abigen": "scripts/abigen",
+    "abigen:use_solc": "ABIGEN_USE_SOLC=1 scripts/abigen",
+    "typegen": "typechain --target ethers-v5 --out-dir src/internal/gen ./abigen/*.json",
+    "posttypegen": "rm -rf ./abigen"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",

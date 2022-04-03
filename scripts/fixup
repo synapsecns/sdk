@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+git commit -m "fixup commit"
+
+HEAD_COMMIT="$(git rev-parse --short HEAD)"
+
+GIT_SEQUENCE_EDITOR="sed -i -re 's/^pick ${HEAD_COMMIT} /fixup ${HEAD_COMMIT} /g'" git rebase -i HEAD~2

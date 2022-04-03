@@ -2,6 +2,7 @@
 .nvim/
 node_modules/
 
+abigen/
 dist/
 artifacts/
 
