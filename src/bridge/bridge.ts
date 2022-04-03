@@ -2,7 +2,6 @@ import {ChainId}  from "@chainid";
 import {Networks} from "@networks";
 
 import {
-    pow10,
     rejectPromise,
     executePopulatedTransaction
 } from "@common/utils";
@@ -10,6 +9,8 @@ import {
 import {SynapseContracts} from "@common/synapse_contracts";
 
 import * as SynapseEntities from "@entities";
+
+import {BridgeConfig} from "./bridgeconfig";
 
 import {
     type ID,
@@ -21,9 +22,7 @@ import {
 import type {
     GenericZapBridgeContract,
     L1BridgeZapContract,
-    L2BridgeZapContract,
     SynapseBridgeContract,
-    BridgeConfigV3Contract
 } from "@contracts";
 
 import {Tokens}    from "@tokens";
@@ -133,23 +132,15 @@ export namespace Bridge {
         protected chainId: number;
         protected provider: Provider;
 
-        private readonly bridgeAddress: string;
-
-        private readonly bridgeInstance:           SynapseBridgeContract;
-        private readonly networkZapBridgeInstance: GenericZapBridgeContract;
-
-        private readonly isL2Zap:      boolean;
-        private readonly isL2ETHChain: boolean;
-
+        private readonly bridgeAddress:    string;
         private readonly zapBridgeAddress: string;
 
-        private readonly bridgeConfigInstance: BridgeConfigV3Contract = SynapseEntities.BridgeConfigV3ContractInstance();
+        private readonly bridgeInstance: SynapseBridgeContract;
+        private readonly zapBridge:      GenericZapBridgeContract;
+        private readonly l1BridgeZapEth: L1BridgeZapContract = BridgeUtils.newL1BridgeZap(ChainId.ETH);
+        private readonly bridgeConfig:   BridgeConfig = new BridgeConfig();
 
-        private readonly zapBridgeInstance: L1BridgeZapContract = SynapseEntities.L1BridgeZapContractInstance({
-            chainId: ChainId.ETH,
-            signerOrProvider: rpcProviderForChain(ChainId.ETH),
-        });
-
+        private readonly isL2ETHChain: boolean;
         readonly requiredConfirmations: number;
 
         constructor(args: {
@@ -164,20 +155,17 @@ export namespace Bridge {
 
             this.requiredConfirmations = getRequiredConfirmationsForBridge(this.network);
 
-            this.isL2Zap = this.network.zapIsL2BridgeZap;
             this.isL2ETHChain = BridgeUtils.isL2ETHChain(this.chainId);
 
-            const
-                factoryParams = {chainId: this.chainId, signerOrProvider: this.provider},
-                contractAddrs = SynapseContracts.contractsForChainId(this.chainId);
+            const contractAddrs = SynapseContracts.contractsForChainId(this.chainId);
 
             this.bridgeAddress    = contractAddrs.bridgeAddress;
             this.zapBridgeAddress = contractAddrs.bridgeZapAddress;
 
-            this.bridgeInstance = SynapseEntities.SynapseBridgeContractInstance(factoryParams);
+            this.bridgeInstance = SynapseEntities.SynapseBridgeContractInstance(BridgeUtils.entityParams(this.chainId));
 
             if (this.zapBridgeAddress && this.zapBridgeAddress !== "") {
-                this.networkZapBridgeInstance = SynapseEntities.GenericZapBridgeContractInstance(factoryParams);
+                this.zapBridge = BridgeUtils.newBridgeZap(this.chainId);
             }
         }
 
@@ -499,8 +487,7 @@ export namespace Bridge {
         private async calculateBridgeRate(args: BridgeParams): Promise<BridgeOutputEstimate> {
             let {chainIdTo, amountFrom} = args;
 
-            const toChainZapParams = {chainId: chainIdTo, signerOrProvider: rpcProviderForChain(chainIdTo)};
-            const toChainZap: GenericZapBridgeContract = SynapseEntities.GenericZapBridgeContractInstance(toChainZapParams);
+            const l2BridgeZapTo = BridgeUtils.newL2BridgeZap(chainIdTo);
 
             const {
                 tokenFrom, tokenTo,
@@ -509,20 +496,17 @@ export namespace Bridge {
             } = this.makeBridgeTokenArgs(args);
 
 
-            let {intermediateToken, bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
+            let {intermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
 
-            const fromCoinDecimals = tokenFrom.decimals(this.chainId);
-
-            const
-                intermediateTokenAddr   = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase(),
-                multiplier              = pow10(18-fromCoinDecimals),
-                amountFromFixedDecimals = amountFrom.mul(multiplier);
-
-            const bridgeFeeRequest: Promise<BigNumber> = this.bridgeConfigInstance["calculateSwapFee(string,uint256,uint256)"](
-                intermediateTokenAddr,
+            const {
+                bridgeFee:  bridgeFeeRequest,
+                amountFrom: amountFromFixedDecimals
+            } = this.bridgeConfig.calculateSwapFee({
+                chainIdFrom: this.chainId,
+                tokenFrom,
                 chainIdTo,
-                amountFromFixedDecimals
-            );
+                amountFrom
+            });
 
             const checkEthBridge = (c1: number, c2: number, t: Token): boolean =>
                 c1 === ChainId.ETH && BridgeUtils.isL2ETHChain(c2) && t.swapType === SwapType.ETH
@@ -542,13 +526,13 @@ export namespace Bridge {
                     tokenFrom.isEqual(t) ? amountFrom : Zero
                 );
 
-                amountToReceive_from_prom = this.zapBridgeInstance.calculateTokenAmount(
+                amountToReceive_from_prom = this.l1BridgeZapEth.calculateTokenAmount(
                     liquidityAmounts,
                     true
                 );
             } else {
                 amountToReceive_from_prom = BridgeUtils.calculateSwapL2Zap(
-                    this.networkZapBridgeInstance,
+                    this.zapBridge,
                     intermediateToken.address(this.chainId),
                     tokenIndexFrom,
                     0,
@@ -581,13 +565,13 @@ export namespace Bridge {
                 amountToReceive_to_prom = Promise.resolve(amountToReceive_from);
             } else if (chainIdTo === ChainId.ETH) {
                 amountToReceive_to_prom =
-                    (toChainZap as L1BridgeZapContract).calculateRemoveLiquidityOneToken(
+                    this.l1BridgeZapEth.calculateRemoveLiquidityOneToken(
                         amountToReceive_from,
                         tokenIndexTo
                     );
             } else {
                 amountToReceive_to_prom = BridgeUtils.calculateSwapL2Zap(
-                    toChainZap,
+                    l2BridgeZapTo,
                     intermediateToken.address(chainIdTo),
                     0,
                     tokenIndexTo,
@@ -800,17 +784,11 @@ export namespace Bridge {
                 }
             });
 
-            let zapInstance: L1BridgeZapContract | L2BridgeZapContract;
-            if (this.chainId !== ChainId.DFK) {
-                zapInstance = zapBridge;
-            } else {
-                zapInstance = SynapseEntities.L1BridgeZapContractInstance({
-                    chainId: ChainId.DFK,
-                    signerOrProvider: this.provider
-                });
-            }
+            const
+                dfkBridgeZap = BridgeUtils.newL1BridgeZap(ChainId.DFK),
+                checkEasyZap = this.chainId === ChainId.DFK ? dfkBridgeZap : this.zapBridge;
 
-            let {castArgs, isEasy, txn} = this.checkEasyArgs(args, zapInstance, easyDeposits, easyRedeems, easyDepositETH);
+            let {castArgs, isEasy, txn} = this.checkEasyArgs(args, checkEasyZap, easyDeposits, easyRedeems, easyDepositETH);
             if (isEasy && txn) {
                 return txn
             }
@@ -917,13 +895,8 @@ export namespace Bridge {
                                 transactionDeadline
                             )
                     } else if (this.chainId === ChainId.DFK) {
-                        const zap = SynapseEntities.L1BridgeZapContractInstance({
-                            chainId:          ChainId.DFK,
-                            signerOrProvider: this.provider
-                        });
-
                         if (args.chainIdTo === ChainId.HARMONY) {
-                            return zap.populateTransaction.depositETHAndSwap(
+                            return dfkBridgeZap.populateTransaction.depositETHAndSwap(
                                 args.addressTo,
                                 args.chainIdTo,
                                 args.amountFrom,
@@ -935,7 +908,7 @@ export namespace Bridge {
                             )
                         }
 
-                        return zap.populateTransaction.depositETH(
+                        return dfkBridgeZap.populateTransaction.depositETH(
                             args.addressTo,
                             args.chainIdTo,
                             args.amountFrom,
@@ -964,12 +937,7 @@ export namespace Bridge {
                     )
                 case Tokens.SYN_JEWEL:
                     if (this.chainId === ChainId.DFK) {
-                        const zap = SynapseEntities.L1BridgeZapContractInstance({
-                            chainId:          ChainId.DFK,
-                            signerOrProvider: this.provider
-                        });
-
-                        return zap
+                        return dfkBridgeZap
                             .populateTransaction
                             .depositETH(
                                 args.addressTo,
@@ -991,12 +959,7 @@ export namespace Bridge {
                         )
                 case Tokens.SYN_AVAX:
                     if (this.chainId === ChainId.DFK) {
-                        const zap = SynapseEntities.L1BridgeZapContractInstance({
-                            chainId:          ChainId.DFK,
-                            signerOrProvider: this.provider
-                        });
-
-                        return zap
+                        return dfkBridgeZap
                             .populateTransaction
                             .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.WAVAX))
                     }

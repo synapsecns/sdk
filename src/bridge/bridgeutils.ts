@@ -9,7 +9,9 @@ import type {GenericZapBridgeContract, L2BridgeZapContract} from "@contracts";
 
 import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
-import {tokenSwitch} from "@internal/index";
+import {rpcProviderForChain, tokenSwitch} from "@internal/index";
+
+import * as SynapseEntities from "@entities";
 
 
 export namespace BridgeUtils {
@@ -137,6 +139,13 @@ export namespace BridgeUtils {
             minToSwapDestFromOriginHighSlippage,
         }
     }
+
+    export const entityParams = (chainId: number) => ({chainId, signerOrProvider: rpcProviderForChain(chainId)});
+
+    export const
+        newL1BridgeZap = (chainId: number) => SynapseEntities.L1BridgeZapContractInstance(entityParams(chainId)),
+        newL2BridgeZap = (chainId: number) => SynapseEntities.L2BridgeZapContractInstance(entityParams(chainId)),
+        newBridgeZap   = (chainId: number) => SynapseEntities.GenericZapBridgeContractInstance(entityParams(chainId));
 
     export const subBigNumSafe = (a: BigNumber, b: BigNumber): BigNumber => a.gt(b) ? a.sub(b) : Zero
 
