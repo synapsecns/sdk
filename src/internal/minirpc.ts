@@ -72,14 +72,11 @@ export class MiniRpcProvider implements ExternalProvider {
     set batchInterval(interval: number) {
         this._batchInterval = interval;
     }
-    /* c8 ignore stop */
 
-    /* c8 ignore next 3 */
     get url(): string {
         return this._url
     }
 
-    /* c8 ignore start */
     /**
      * @internal
      */

@@ -7,22 +7,30 @@ import type {StringMap} from "@common/types";
 
 import {RpcConnector} from "./rpcconnector";
 
+const RPC_URI_SUFFIX: string = "RPC_URI";
+
+const makeRpcUriEnvKey = (chainId: number): string => {
+    const key: string = _.findKey(ChainId, (o) => o === chainId);
+
+    return `${key}_${RPC_URI_SUFFIX}`
+}
+
 const ENV_KEY_MAP: StringMap = {
-    [ChainId.ETH]:       "ETH_RPC_URI",
-    [ChainId.OPTIMISM]:  "OPTIMISM_RPC_URI",
-    [ChainId.CRONOS]:    "CRONOS_RPC_URI",
-    [ChainId.BSC]:       "BSC_RPC_URI",
-    [ChainId.POLYGON]:   "POLYGON_RPC_URI",
-    [ChainId.FANTOM]:    "FANTOM_RPC_URI",
-    [ChainId.BOBA]:      "BOBA_RPC_URI",
-    [ChainId.METIS]:     "METIS_RPC_URI",
-    [ChainId.MOONBEAM]:  "MOONBEAM_RPC_URI",
-    [ChainId.MOONRIVER]: "MOONRIVER_RPC_URI",
-    [ChainId.ARBITRUM]:  "ARBITRUM_RPC_URI",
-    [ChainId.AVALANCHE]: "AVALANCHE_RPC_URI",
-    [ChainId.DFK]:       "DFK_RPC_URI",
-    [ChainId.AURORA]:    "AURORA_RPC_URI",
-    [ChainId.HARMONY]:   "HARMONY_RPC_URI",
+    [ChainId.ETH]:       makeRpcUriEnvKey(ChainId.ETH),
+    [ChainId.OPTIMISM]:  makeRpcUriEnvKey(ChainId.OPTIMISM),
+    [ChainId.CRONOS]:    makeRpcUriEnvKey(ChainId.CRONOS),
+    [ChainId.BSC]:       makeRpcUriEnvKey(ChainId.BSC),
+    [ChainId.POLYGON]:   makeRpcUriEnvKey(ChainId.POLYGON),
+    [ChainId.FANTOM]:    makeRpcUriEnvKey(ChainId.FANTOM),
+    [ChainId.BOBA]:      makeRpcUriEnvKey(ChainId.BOBA),
+    [ChainId.METIS]:     makeRpcUriEnvKey(ChainId.METIS),
+    [ChainId.MOONBEAM]:  makeRpcUriEnvKey(ChainId.MOONBEAM),
+    [ChainId.MOONRIVER]: makeRpcUriEnvKey(ChainId.MOONRIVER),
+    [ChainId.ARBITRUM]:  makeRpcUriEnvKey(ChainId.ARBITRUM),
+    [ChainId.AVALANCHE]: makeRpcUriEnvKey(ChainId.AVALANCHE),
+    [ChainId.DFK]:       makeRpcUriEnvKey(ChainId.DFK),
+    [ChainId.AURORA]:    makeRpcUriEnvKey(ChainId.AURORA),
+    [ChainId.HARMONY]:   makeRpcUriEnvKey(ChainId.HARMONY),
 }
 
 const CHAIN_RPC_URIS: StringMap = {
