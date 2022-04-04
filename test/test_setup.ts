@@ -15,11 +15,8 @@ export const mochaHooks = {
         chai.use(waffleChai);
         chai.use(chaiAsPromised);
 
-        process.on("unhandledRejection", () => {
-            // Do nothing; we test these all the time.
-        });
-        process.on("rejectionHandled", () => {
-            // Do nothing; we test these all the time.
-        });
+        // Do nothing; we test these all the time.
+        process.on("unhandledRejection", () => {});
+        process.on("rejectionHandled",   () => {});
     }
 }

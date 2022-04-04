@@ -357,17 +357,17 @@ export namespace TokenSwap {
         chainIdFrom: number,
         chainIdTo?:  number
     ): SwapSupportedResult {
-        const isSameNet: boolean = typeof chainIdTo === "undefined";
+        const hasDestChain: boolean = !_.isUndefined(chainIdTo);
 
         const
-            unsupportedFromErr = isSameNet ? UnsupportedSwapErrors.tokenNotSupported : UnsupportedSwapErrors.tokenNotSupportedNetFrom,
-            unsupportedToErr   = isSameNet ? UnsupportedSwapErrors.tokenNotSupported : UnsupportedSwapErrors.tokenNotSupportedNetTo;
+            unsupportedFromErr = hasDestChain ? UnsupportedSwapErrors.tokenNotSupportedNetFrom : UnsupportedSwapErrors.tokenNotSupported,
+            unsupportedToErr   = hasDestChain ? UnsupportedSwapErrors.tokenNotSupportedNetTo   : UnsupportedSwapErrors.tokenNotSupported;
 
         const
             netFrom = Networks.fromChainId(chainIdFrom),
-            netTo   = (typeof chainIdTo !== "undefined" ? Networks.fromChainId(chainIdTo) : netFrom);
+            netTo   = hasDestChain ? Networks.fromChainId(chainIdTo) : netFrom;
 
-        if (chainIdTo) {
+        if (hasDestChain) {
             if (tokenFrom.isEqual(Tokens.MULTIJEWEL) && chainIdTo !== ChainId.DFK) {
                 return {swapSupported: false, reasonNotSupported: UnsupportedSwapErrors.unsupportedMultiJEWELMigration()}
             }
