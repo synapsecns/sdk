@@ -7,7 +7,6 @@ import {SwapPools} from "@swappools";
 import * as SynapseEntities from "@entities";
 
 import type {Token} from "@token";
-import type {GenericZapBridgeContract, L2BridgeZapContract} from "@contracts";
 
 import {tokenSwitch}         from "@internal/utils";
 import {rpcProviderForChain} from "@internal/rpcproviders";
@@ -179,21 +178,6 @@ export namespace BridgeUtils {
 
     export const depositETHParams = (args: BridgeTxParams): [string, number, BigNumber] =>
         [args.addressTo, args.chainIdTo, args.amountFrom];
-
-    export async function calculateSwapL2Zap(
-        zapBridge:         GenericZapBridgeContract,
-        intermediateToken: string,
-        tokenIndexFrom:    number,
-        tokenIndexTo:      number,
-        amount:           BigNumber
-    ): Promise<BigNumber> {
-        return (zapBridge as L2BridgeZapContract).calculateSwap(
-            intermediateToken,
-            tokenIndexFrom,
-            tokenIndexTo,
-            amount
-        )
-    }
 
     export const isETHLikeToken = (t: Token): boolean =>
         [Tokens.WETH_E.id, Tokens.ONE_ETH.id, Tokens.FTM_ETH.id, Tokens.METIS_ETH.id].includes(t.id)
