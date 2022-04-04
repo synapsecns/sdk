@@ -13,8 +13,7 @@ import {TransactionDescription} from "@ethersproject/abi";
 import {AvaxJewelMigrationFactory, L1BridgeZapFactory, L2BridgeZapFactory} from "@contracts";
 import {expect} from "chai";
 import {BridgeSwapTestCase, makeBridgeSwapTestCase} from "./bridge_test_utils";
-import {formatUnits} from "@ethersproject/units";
-
+import {BigNumber} from "@ethersproject/bignumber";
 
 describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Mocha.Suite) {
     interface Expected {
@@ -36,8 +35,6 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
     function makeTestName(tc: TestCase): string {
         let {
             args: {
-                amountFrom,
-                tokenFrom,
                 tokenFrom: { symbol: tokFrom },
                 tokenTo:   { symbol: tokTo   },
                 chainIdFrom: chainFrom,
@@ -47,7 +44,6 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
         } = tc;
 
         const
-            amt             = formatUnits(amountFrom, tokenFrom.decimals(chainFrom)),
             netFrom         = Networks.networkName(chainFrom),
             netTo           = Networks.networkName(chainTo);
 
@@ -194,18 +190,75 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
 
 
             step(`tx should be a call to function ${tc.expected.wantFn}()`, function(this: Mocha.Context) {
-                const {chainIdFrom} = tc.args;
+                const {chainIdFrom, chainIdTo, tokenFrom, tokenTo} = tc.args;
+                const dataObj = {data: builtTxn.data || ""};
+
                 if (chainIdFrom === ChainId.ETH || chainIdFrom === ChainId.DFK) {
-                    txnInfo = l1BridgeZapInterface.parseTransaction({data: builtTxn.data || ""});
+                    txnInfo = l1BridgeZapInterface.parseTransaction(dataObj);
                 } else {
                     if (tc.args.tokenFrom.isEqual(Tokens.MULTIJEWEL)) {
-                        txnInfo = jewelMigratorInterface.parseTransaction({data: builtTxn.data || ""});
+                        txnInfo = jewelMigratorInterface.parseTransaction(dataObj);
                     } else {
-                        txnInfo = l2BridgeZapInterface.parseTransaction({data: builtTxn.data || ""});
+                        txnInfo = l2BridgeZapInterface.parseTransaction(dataObj);
                     }
                 }
 
+                const txnArgs = txnInfo.args;
+
                 expect(txnInfo.name).to.equal(tc.expected.wantFn);
+
+                switch (txnInfo.name) {
+                    case redeem:
+                        describe("validate redeem args", function(this: Mocha.Suite) {
+                            it("property 'token' should be correct", function(this: Mocha.Context) {
+                                expect(txnArgs).to.have.property("token");
+
+                                const tokenAddr: string = tokenFrom.isEqual(Tokens.GMX) && chainIdFrom === ChainId.AVALANCHE
+                                    ? Tokens.GMX.wrapperAddress(ChainId.AVALANCHE).toLowerCase()
+                                    : tokenFrom.address(chainIdFrom).toLowerCase();
+
+                                expect(txnArgs["token"].toLowerCase()).to.equal(tokenAddr);
+                            });
+                        });
+
+                        break;
+                    case swapAndRedeem:
+                        describe("validate swapAndRedeem args", function(this: Mocha.Suite) {
+                            const
+                                fromAvalanche = chainIdFrom === ChainId.AVALANCHE,
+                                fromHarmony = chainIdFrom === ChainId.HARMONY,
+                                toJEWEL     = tokenTo.isEqual(Tokens.JEWEL),
+                                toSYNJEWEL  = tokenTo.isEqual(Tokens.SYN_JEWEL);
+
+                            // it("property 'token' should be correct", function(this: Mocha.Context) {
+                            //     expect(txnArgs).to.have.property("token");
+                            //
+                            //     const argToken: string = txnArgs["token"].toLowerCase();
+                            //
+                            //     if (toJEWEL && fromHarmony) {
+                            //         expect(argToken).to.equal(Tokens.SYN_JEWEL.address(chainIdFrom).toLowerCase());
+                            //     } else if (toSYNJEWEL && fromAvalanche) {
+                            //         expect(argToken).to.equal(Tokens.JEWEL.address(chainIdFrom).toLowerCase());
+                            //     } else {
+                            //         expect(argToken).to.equal(tokenFrom.address(chainIdFrom).toLowerCase());
+                            //     }
+                            // });
+
+                            it("property 'tokenIndexTo' should be correct", function(this: Mocha.Context) {
+                                expect(txnArgs).to.have.property("tokenIndexTo");
+
+                                const tokenIndexTo = BigNumber.from(txnArgs["tokenIndexTo"]).toNumber();
+
+                                if ((toJEWEL && fromHarmony) || (toSYNJEWEL && fromAvalanche)) {
+                                    expect(tokenIndexTo).to.equal(1);
+                                } else {
+                                    expect(tokenIndexTo).to.equal(0);
+                                }
+                            });
+                        });
+
+                        break;
+                }
             });
         });
     });
