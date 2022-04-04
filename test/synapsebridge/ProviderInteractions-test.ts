@@ -117,6 +117,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         makeTestCase(Tokens.JEWEL,       Tokens.SYN_JEWEL,   ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("1.5"),   {executeSuccess: true,   canBridge: false,  callStatic: true}),
         makeTestCase(Tokens.JEWEL,       Tokens.JEWEL,       ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("1.5"),   {executeSuccess: true,   canBridge: false,  callStatic: true}),
         makeTestCase(Tokens.MULTIJEWEL,  Tokens.JEWEL,       ChainId.AVALANCHE,   ChainId.DFK,        parseEther("0.75"),  {executeSuccess: true,   canBridge: false,  callStatic: true}),
+        makeTestCase(Tokens.MULTIJEWEL,  Tokens.JEWEL,       ChainId.AVALANCHE,   ChainId.DFK,        parseEther("3"),     {executeSuccess: true,   canBridge: false,  callStatic: true}),
         makeTestCase(Tokens.DFK_USDC,    Tokens.USDT,        ChainId.DFK,         ChainId.AVALANCHE,  parseEther("8"),     {executeSuccess: true,   canBridge: true,   callStatic: true}),
         makeTestCase(Tokens.DFK_USDC,    Tokens.DAI,         ChainId.DFK,         ChainId.AVALANCHE,  parseEther("9"),     {executeSuccess: true,   canBridge: true,   callStatic: true}),
     ];
