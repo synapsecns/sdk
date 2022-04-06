@@ -22,13 +22,14 @@ import {expect} from "chai";
 describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
     describe("intermediateTokens tests", function(this: Mocha.Suite) {
         interface TestCase {
-            chainId: number;
-            token:   Token;
-            wantA:   Token;
-            wantB:   Token;
+            chainId:       number;
+            otherChainId?: number;
+            token:         Token;
+            wantA:         Token;
+            wantB:         Token;
         }
 
-        [
+        const testCases: TestCase[] = [
             {chainId: ChainId.ETH,       token: Tokens.FRAX,     wantA: undefined,     wantB: Tokens.FRAX},
             {chainId: ChainId.ETH,       token: Tokens.SYN_FRAX, wantA: undefined,     wantB: Tokens.FRAX},
             {chainId: ChainId.HARMONY,   token: Tokens.FRAX,     wantA: undefined,     wantB: Tokens.SYN_FRAX},
@@ -41,14 +42,58 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
             {chainId: ChainId.HARMONY,   token: Tokens.JEWEL,    wantA: Tokens.JEWEL,  wantB: Tokens.SYN_JEWEL},
             {chainId: ChainId.AVALANCHE, token: Tokens.JEWEL,    wantA: Tokens.JEWEL,  wantB: Tokens.JEWEL},
             {chainId: ChainId.DFK,       token: Tokens.JEWEL,    wantA: Tokens.JEWEL,  wantB: Tokens.JEWEL},
-        ].forEach((tc: TestCase) => {
+            {
+                chainId:      ChainId.AVALANCHE,
+                otherChainId: ChainId.HARMONY,
+                token:        Tokens.WAVAX,
+                wantA:        Tokens.WAVAX,
+                wantB:        Tokens.SYN_AVAX,
+            },
+            {
+                chainId:      ChainId.HARMONY,
+                otherChainId: ChainId.AVALANCHE,
+                token:        Tokens.SYN_AVAX,
+                wantA:        Tokens.WAVAX,
+                wantB:        Tokens.WAVAX,
+            },
+            {
+                chainId:      ChainId.HARMONY,
+                otherChainId: ChainId.AVALANCHE,
+                token:        Tokens.MULTI_AVAX,
+                wantA:        Tokens.WAVAX,
+                wantB:        Tokens.WAVAX,
+            },
+            {
+                chainId:      ChainId.HARMONY,
+                otherChainId: ChainId.DFK,
+                token:        Tokens.MULTI_AVAX,
+                wantA:        Tokens.WAVAX,
+                wantB:        Tokens.SYN_AVAX,
+            },
+            {
+                chainId:      ChainId.MOONBEAM,
+                otherChainId: ChainId.AVALANCHE,
+                token:        Tokens.WAVAX,
+                wantA:        Tokens.WAVAX,
+                wantB:        Tokens.WAVAX,
+            },
+            {
+                chainId:      ChainId.HARMONY,
+                otherChainId: ChainId.MOONBEAM,
+                token:        Tokens.MULTI_AVAX,
+                wantA:        Tokens.WAVAX,
+                wantB:        Tokens.SYN_AVAX,
+            },
+        ];
+
+        testCases.forEach((tc: TestCase) => {
             const
                 testPrefix: string = `intermediateTokens() with token ${tc.token.symbol} and Chain ID ${tc.chainId} should return`,
                 testWant:   string = `intermediateToken === ${tc.wantA?.symbol ?? 'undefined'}, bridgeConfigIntermediateToken === ${tc.wantB.symbol}`,
                 testTitle:  string = `${testPrefix} ${testWant}`;
 
             it(testTitle, function(this: Mocha.Context) {
-                const got = TokenSwap.intermediateTokens(tc.chainId, tc.token);
+                const got = TokenSwap.intermediateTokens(tc.chainId, tc.token, tc.otherChainId);
 
                 typeof tc.wantA === "undefined"
                     ? expectUndefined(tc.wantA, true)
