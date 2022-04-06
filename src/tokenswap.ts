@@ -192,17 +192,22 @@ export namespace TokenSwap {
         }
     }
 
-    export function intermediateTokens(chainId: number, token: Token): IntermediateSwapTokens {
+    export function intermediateTokens(chainId: number, token: Token, otherChainId?: number): IntermediateSwapTokens {
         if (mintBurnSwapTypes.includes(token.swapType)) {
-            if (token.swapType === SwapType.JEWEL) {
-                let bridgeConfigIntermediate: Token = chainId === ChainId.HARMONY
-                    ? Tokens.SYN_JEWEL
-                    : Tokens.JEWEL;
+            switch (token.swapType) {
+                case SwapType.JEWEL:
+                    let bridgeConfigIntermediate: Token = chainId === ChainId.HARMONY
+                        ? Tokens.SYN_JEWEL
+                        : Tokens.JEWEL;
 
-                return {intermediateToken: Tokens.JEWEL, bridgeConfigIntermediateToken: bridgeConfigIntermediate}
+                    return {intermediateToken: Tokens.JEWEL, bridgeConfigIntermediateToken: bridgeConfigIntermediate}
+                // case SwapType.AVAX:
+                //     break;
+                default:
+                    return {intermediateToken: token, bridgeConfigIntermediateToken: token}
             }
 
-            return {intermediateToken: token, bridgeConfigIntermediateToken: token}
+
         }
 
         let
@@ -221,6 +226,26 @@ export namespace TokenSwap {
                 bridgeConfigIntermediateToken = chainId === ChainId.ETH ? Tokens.WETH : Tokens.NETH;
                 break;
             case SwapType.AVAX:
+                const
+                    fromAvax    = chainId === ChainId.AVALANCHE,
+                    fromHarmony = chainId === ChainId.HARMONY;
+
+                if (!_.isNil(otherChainId)) {
+                    if (fromAvax && otherChainId === ChainId.HARMONY) {
+                        intermediateToken             = Tokens.WAVAX;
+                        bridgeConfigIntermediateToken = Tokens.SYN_AVAX;
+                        break;
+                    } else if (fromHarmony && otherChainId === ChainId.AVALANCHE) {
+                        intermediateToken             = Tokens.WAVAX;
+                        bridgeConfigIntermediateToken = Tokens.WAVAX;
+                        break;
+                    } else {
+                        intermediateToken             = Tokens.WAVAX;
+                        bridgeConfigIntermediateToken = chainId === ChainId.HARMONY ? Tokens.SYN_AVAX : Tokens.WAVAX;
+                        break;
+                    }
+                }
+
                 intermediateToken             = Tokens.WAVAX;
                 bridgeConfigIntermediateToken = chainId === ChainId.HARMONY ? Tokens.SYN_AVAX : Tokens.WAVAX;
                 break;

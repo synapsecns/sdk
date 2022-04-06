@@ -34,7 +34,7 @@ export class BridgeConfig {
 	calculateSwapFee(args: BridgeConfigSwapFeeParams): CalculateSwapFeeResult {
 		const {chainIdFrom, chainIdTo, tokenFrom, amountFrom: baseAmountFrom} = args;
 
-		const {bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
+		const {bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom, chainIdFrom);
 
 		const intermediateTokenAddress = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase();
 

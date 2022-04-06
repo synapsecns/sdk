@@ -324,6 +324,7 @@ export namespace Tokens {
             [ChainId.MOONBEAM]:  "0xA1f8890E39b4d8E33efe296D698fe42Fb5e59cC3",
             [ChainId.AVALANCHE]: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
             [ChainId.DFK]:       "0xB57B60DeBDB0b8172bb6316a9164bd3C695F133a",
+            [ChainId.HARMONY]:   "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6" // synAVAX, but here for compat.
         },
         swapType:        SwapType.AVAX,
         underlyingToken: AVAX,
@@ -340,7 +341,7 @@ export namespace Tokens {
         decimals: 18,
         addresses: {
             [ChainId.HARMONY]:   "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6",
-            [ChainId.AVALANCHE]: "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6" // ???
+            [ChainId.AVALANCHE]: "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6" // Not actually real.
         },
         swapType: SwapType.AVAX
     });
@@ -697,6 +698,7 @@ export namespace Tokens {
         GOHM, HIGH, JUMP, DOG, NFD, FRAX,
         SYN_FRAX, SOLAR, GMX, NEWO, SDT,
         LUNA, USDB, SYN_AVAX, GAS_JEWEL, JEWEL,
-        SYN_JEWEL, XJEWEL, MULTIJEWEL, DFK_USDC
+        SYN_JEWEL, XJEWEL, MULTIJEWEL, DFK_USDC,
+        MULTI_AVAX,
     ];
 }

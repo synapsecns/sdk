@@ -498,7 +498,7 @@ export namespace Bridge {
             } = this.makeBridgeTokenArgs(args);
 
 
-            let {intermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom);
+            let {intermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom, this.chainId);
 
             const {
                 bridgeFee:  bridgeFeeRequest,
@@ -791,6 +791,7 @@ export namespace Bridge {
             const {
                 transactionDeadline,
                 bridgeTransactionDeadline,
+                minToSwapDestFromOrigin,
                 minToSwapOriginHighSlippage,
                 minToSwapDestFromOriginMediumSlippage,
                 minToSwapDestFromOriginHighSlippage,
@@ -961,17 +962,48 @@ export namespace Bridge {
 
                     /* c8 ignore next */
                     break;
-
-                    // @NOTE: the following is commented out as the branch is
-                    //
-                    // return zapBridge
-                    //     .populateTransaction
-                    //     .depositETH(
-                    //         castArgs.addressTo,
-                    //         castArgs.chainIdTo,
-                    //         castArgs.amountFrom,
-                    //         BridgeUtils.overrides(castArgs.amountFrom)
-                    //     )
+                case Tokens.MULTI_AVAX:
+                    switch (this.chainId) {
+                        case ChainId.DFK:
+                            return dfkBridgeZap
+                                .populateTransaction
+                                .redeemAndSwap(
+                                    castArgs.addressTo,
+                                    castArgs.chainIdTo,
+                                    Tokens.WAVAX.address(this.chainId),
+                                    castArgs.amountFrom,
+                                    0,
+                                    tokenArgs.tokenIndexTo,
+                                    minToSwapDest,
+                                    transactionDeadline
+                                )
+                        case ChainId.MOONBEAM:
+                            return this.l2BridgeZap
+                                .populateTransaction
+                                .redeemAndSwap(
+                                    castArgs.addressTo,
+                                    castArgs.chainIdTo,
+                                    Tokens.WAVAX.address(this.chainId),
+                                    castArgs.amountFrom,
+                                    0,
+                                    tokenArgs.tokenIndexTo,
+                                    minToSwapDest,
+                                    transactionDeadline
+                                )
+                        default:
+                            return this.l2BridgeZap
+                                .populateTransaction
+                                .depositETHAndSwap(
+                                    castArgs.addressTo, // to address
+                                    castArgs.chainIdTo, // to chainId
+                                    castArgs.amountFrom,
+                                    0, // tokenIndexFrom for nusd
+                                    tokenArgs.tokenIndexTo, // tokenIndexTo + 1,
+                                    minToSwapDestFromOrigin, // minDy
+                                    bridgeTransactionDeadline,
+                                    BridgeUtils.overrides(castArgs.amountFrom)
+                                )
+                    }
                 default:
                     if (chainIdTo === ChainId.ETH) {
                         if (this.isL2ETHChain && args.tokenFrom.swapType === SwapType.ETH) {
@@ -1010,13 +1042,29 @@ export namespace Bridge {
                             )
                     }
 
-                    if (this.chainId === ChainId.HARMONY && args.tokenFrom.isEqual(Tokens.SYN_AVAX)) {
-                        const redeemArgs = BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.SYN_AVAX);
+                    if (this.chainId === ChainId.HARMONY) {
+                        if (args.tokenFrom.isEqual(Tokens.SYN_AVAX)) {
+                            const redeemArgs = BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.SYN_AVAX);
 
-                        return zapBridge
-                            .populateTransaction
-                            .redeem(...redeemArgs)
+                            return zapBridge
+                                .populateTransaction
+                                .redeem(...redeemArgs)
+                        } else if (args.tokenFrom.isEqual(Tokens.MULTI_AVAX)) {
+                            return zapBridge
+                                .populateTransaction
+                                .swapAndRedeem(
+                                    castArgs.addressTo,
+                                    castArgs.chainIdTo,
+                                    Tokens.SYN_AVAX.address(this.chainId),
+                                    tokenArgs.tokenIndexFrom,
+                                    0,
+                                    castArgs.amountFrom,
+                                    minToSwapOriginHighSlippage,
+                                    transactionDeadline
+                                )
+                        }
                     }
+
 
                     if (args.tokenFrom.isEqual(Tokens.NUSD) || args.tokenFrom.isEqual(Tokens.DFK_USDC) || args.tokenFrom.isEqual(Tokens.NETH)) {
                         return easyRedeemAndSwap(args.tokenFrom)

@@ -404,7 +404,7 @@ export namespace SwapPools {
             [ChainId.HARMONY]: "0x02f7D17f126BD54573c8EbAD9e05408A56f46452"
         },
         poolId:      0,
-        poolType:    "AVAX",
+        poolType:    SwapType.AVAX,
         poolName:    "Harmony AVAX Swap Pool ",
         poolTokens:  [Tokens.SYN_AVAX, Tokens.MULTI_AVAX],
         swapAddress: "0x00A4F57D926781f62D09bb05ec76e6D8aE4268da"
@@ -516,7 +516,7 @@ export namespace SwapPools {
             LUNA_Pool,
         ),
         [ChainId.CRONOS]: makeSwapTypeMap({}),
-        [ChainId.BSC]: makeSwapTypeMap(
+        [ChainId.BSC]:    makeSwapTypeMap(
             {
                 usdPool: [BSC_POOL_SWAP_TOKEN, BSC_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps]
             },
