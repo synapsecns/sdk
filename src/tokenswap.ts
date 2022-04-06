@@ -179,7 +179,7 @@ export namespace TokenSwap {
 
             deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
 
-            const overrides: any = args.tokenFrom.isEqual(Tokens.ETH) ? {value:args.amountIn} : {};
+            const overrides: any = args.tokenFrom.isGasToken ? {value:args.amountIn} : {};
 
             return swapInstance.populateTransaction.swap(
                 tokenIndexFrom,
@@ -246,6 +246,7 @@ export namespace TokenSwap {
                     }
                 }
 
+                /* c8 ignore next 3 */
                 intermediateToken             = Tokens.WAVAX;
                 bridgeConfigIntermediateToken = chainId === ChainId.HARMONY ? Tokens.SYN_AVAX : Tokens.WAVAX;
                 break;
@@ -345,7 +346,7 @@ export namespace TokenSwap {
 
     function _intermediateToken(token: Token, chainId: number): Token {
         const {intermediateToken, bridgeConfigIntermediateToken} = intermediateTokens(chainId, token);
-
+        /* c8 ignore next */
         return intermediateToken ?? bridgeConfigIntermediateToken
     }
 

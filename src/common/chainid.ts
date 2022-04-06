@@ -22,6 +22,7 @@ export type ChainId = ValueOf<typeof ChainId> | number
 
 export type ChainIdTypeMap<T> = {[k in ChainId]?: T}
 
+/* c8 ignore next 4 */
 export const supportedChainIds = (): number[] =>
     Object.values(ChainId)
         .map(k => Number.isNaN(Number(k)) ? null : Number(k))

@@ -263,4 +263,12 @@ describe("Basic tests", function(this: Mocha.Suite) {
             });
         });
     });
+
+    describe("ChainId/Networks tests", function(this: Mocha.Suite) {
+       it("Passing an unknown Chain ID to Networks.fromChainId should return null", function(this: Mocha.Context) {
+           expect(Networks.fromChainId(775)).to.be.null;
+       });
+
+
+    });
 });

@@ -5,7 +5,7 @@ import _ from "lodash";
 import {
     ChainId,
     Tokens,
-    type Token, supportedChainIds
+    type Token, supportedChainIds, Networks
 } from "@sdk";
 
 import {tokenSwitch} from "@sdk/internal/utils";
@@ -18,6 +18,7 @@ import {
 } from "@tests/helpers";
 
 import {BigNumber} from "@ethersproject/bignumber";
+import {instanceOfToken} from "@token";
 
 describe("Token Tests", function(this: Mocha.Suite) {
     describe("valueToWei tests", function(this: Mocha.Suite) {
@@ -231,6 +232,27 @@ describe("Token Tests", function(this: Mocha.Suite) {
                         expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
                     });
                 }
+            });
+        });
+    });
+
+    describe("instanceOfToken tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            val:  any;
+            want: boolean;
+        }
+
+        const testCases: TestCase[] = [
+            {val: Networks.DFK,    want: false},
+            {val: Tokens.WAVAX,    want: true},
+            {val: Tokens.SYN,      want: true},
+            {val: ChainId.DFK,     want: false},
+            {val: "hello, world!", want: false}
+        ];
+
+        testCases.forEach(tc => {
+            it(`value of type ${tc.val.constructor.name} should${tc.want ? "" : " not"} be instanceof Token`, function(this: Mocha.Context) {
+                expect(instanceOfToken(tc.val)).to.equal(tc.want);
             });
         });
     });
