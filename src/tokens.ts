@@ -339,7 +339,8 @@ export namespace Tokens {
         symbol:   "synAVAX",
         decimals: 18,
         addresses: {
-            [ChainId.HARMONY]: "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6"
+            [ChainId.HARMONY]:   "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6",
+            [ChainId.AVALANCHE]: "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6" // ???
         },
         swapType: SwapType.AVAX
     });

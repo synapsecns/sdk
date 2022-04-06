@@ -396,6 +396,20 @@ export namespace SwapPools {
         depositTokens:   ONEETH_POOL_TOKENS,
     });
 
+    export const HARMONY_AVAX_SWAP_TOKEN = new SwapToken({
+        name:     "AVAX LP Token Harmony ",
+        symbol:   "AVAXLP",
+        decimals: 18,
+        addresses: {
+            [ChainId.HARMONY]: "0x02f7D17f126BD54573c8EbAD9e05408A56f46452"
+        },
+        poolId:      0,
+        poolType:    "AVAX",
+        poolName:    "Harmony AVAX Swap Pool ",
+        poolTokens:  [Tokens.SYN_AVAX, Tokens.MULTI_AVAX],
+        swapAddress: "0x00A4F57D926781f62D09bb05ec76e6D8aE4268da"
+    });
+
     const makeSingleTokenPool = (t: Token): LPToken => ({poolTokens: [t], swapType: t.swapType});
 
     const
@@ -411,7 +425,6 @@ export namespace SwapPools {
         SOLAR_Pool      = makeSingleTokenPool(Tokens.SOLAR),
         AVAX_Pool       = makeSingleTokenPool(Tokens.AVAX),
         WAVAX_Pool      = makeSingleTokenPool(Tokens.WAVAX),
-        SYN_AVAX_Pool   = makeSingleTokenPool(Tokens.SYN_AVAX),
         MOVR_Pool       = makeSingleTokenPool(Tokens.MOVR),
         WMOVR_Pool      = makeSingleTokenPool(Tokens.WMOVR),
         UST_Pool        = makeSingleTokenPool(Tokens.UST),
@@ -420,7 +433,9 @@ export namespace SwapPools {
         LUNA_Pool       = makeSingleTokenPool(Tokens.LUNA),
         USDB_Pool       = makeSingleTokenPool(Tokens.USDB),
         DFK_USDC_Pool   = makeSingleTokenPool(Tokens.DFK_USDC),
-        XJEWEL_Pool     = makeSingleTokenPool(Tokens.XJEWEL),
+        XJEWEL_Pool     = makeSingleTokenPool(Tokens.XJEWEL);
+
+    const
         AVAX_JEWEL_Pool:    LPToken = {poolTokens: [Tokens.JEWEL, Tokens.MULTIJEWEL], swapType: SwapType.JEWEL},
         DFK_JEWEL_Pool:     LPToken = {poolTokens: [Tokens.GAS_JEWEL, Tokens.JEWEL],  swapType: SwapType.JEWEL},
         HARMONY_JEWEL_Pool: LPToken = {poolTokens: [Tokens.JEWEL, Tokens.SYN_JEWEL],  swapType: SwapType.JEWEL};
@@ -603,7 +618,7 @@ export namespace SwapPools {
             },
             FRAX_Pool,
             SDT_Pool,
-            SYN_AVAX_Pool,
+            HARMONY_AVAX_SWAP_TOKEN,
             XJEWEL_Pool,
             HARMONY_JEWEL_Pool
         )
