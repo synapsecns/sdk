@@ -410,6 +410,20 @@ export namespace SwapPools {
         swapAddress: "0x00A4F57D926781f62D09bb05ec76e6D8aE4268da"
     });
 
+    export const HARMONY_JEWEL_SWAP_TOKEN = new SwapToken({
+        name:     "Jewel LP Token Harmony ",
+        symbol:   "JEWELP",
+        decimals: 18,
+        addresses: {
+            [ChainId.HARMONY]: "0x0000000000000000000000000000000000000000"
+        },
+        poolId:      0,
+        poolType:    SwapType.JEWEL,
+        poolName:    "Harmony Jewel Swap Pool ",
+        poolTokens:  [Tokens.JEWEL, Tokens.SYN_JEWEL],
+        swapAddress: "0x7bE461cce1501f07969BCE24Ccb2140fCA0a35b3"
+    });
+
     const makeSingleTokenPool = (t: Token): LPToken => ({poolTokens: [t], swapType: t.swapType});
 
     const
