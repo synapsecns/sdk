@@ -81,7 +81,7 @@ export namespace SynapseContracts {
 
     export const Avalanche = new SynapseContract({
         bridge:    "0xC05e61d0E7a63D27546389B7aD62FdFf5A91aACE",
-        bridgeZap: "0xE85429C97589AD793Ca11A8BC3477C03d27ED140",
+        bridgeZap: "0x0EF812f4c68DC84c22A4821EF30ba2ffAB9C2f3A",
     });
 
     export const DFK = new SynapseContract({
@@ -96,7 +96,7 @@ export namespace SynapseContracts {
 
     export const Harmony = new SynapseContract({
         bridge:    "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
-        bridgeZap: "0x4F4f66964335D7bef23C16a62Fcd3d1E89f02959",
+        bridgeZap: "0xB003e75f7E0B5365e814302192E99b4EE08c0DEd",
     });
 
     const chainIdContractsMap: ChainIdTypeMap<SynapseContract> = {
