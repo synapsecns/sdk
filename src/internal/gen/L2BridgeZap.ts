@@ -29,6 +29,7 @@ export interface L2BridgeZapInterface extends utils.Interface {
     "calculateSwap(address,uint8,uint8,uint256)": FunctionFragment;
     "deposit(address,uint256,address,uint256)": FunctionFragment;
     "depositETH(address,uint256,uint256)": FunctionFragment;
+    "depositETHAndSwap(address,uint256,uint256,uint8,uint8,uint256,uint256)": FunctionFragment;
     "redeem(address,uint256,address,uint256)": FunctionFragment;
     "redeemAndRemove(address,uint256,address,uint256,uint8,uint256,uint256)": FunctionFragment;
     "redeemAndSwap(address,uint256,address,uint256,uint8,uint8,uint256,uint256)": FunctionFragment;
@@ -48,6 +49,7 @@ export interface L2BridgeZapInterface extends utils.Interface {
       | "calculateSwap"
       | "deposit"
       | "depositETH"
+      | "depositETHAndSwap"
       | "redeem"
       | "redeemAndRemove"
       | "redeemAndSwap"
@@ -76,6 +78,18 @@ export interface L2BridgeZapInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "depositETH",
     values: [string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "depositETHAndSwap",
+    values: [
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "redeem",
@@ -202,6 +216,10 @@ export interface L2BridgeZapInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "depositETH", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "depositETHAndSwap",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "redeemAndRemove",
@@ -270,12 +288,6 @@ export interface L2BridgeZap extends BaseContract {
   functions: {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
 
-    /**
-     * Calculate amount of tokens you receive on swap
-     * @param dx the amount of tokens the user wants to sell. If the token charges a fee on transfers, use the amount that gets transferred after the fee.
-     * @param tokenIndexFrom the token the user wants to sell
-     * @param tokenIndexTo the token the user wants to buy
-     */
     calculateSwap(
       token: string,
       tokenIndexFrom: BigNumberish,
@@ -284,13 +296,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    /**
-     * wraps SynapseBridge redeem()
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which underlying chain to bridge assets onto
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     deposit(
       to: string,
       chainId: BigNumberish,
@@ -299,12 +304,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    /**
-     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     */
     depositETH(
       to: string,
       chainId: BigNumberish,
@@ -312,13 +311,17 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    /**
-     * wraps SynapseBridge redeem()
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which underlying chain to bridge assets onto
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
+    depositETHAndSwap(
+      to: string,
+      chainId: BigNumberish,
+      amount: BigNumberish,
+      tokenIndexFrom: BigNumberish,
+      tokenIndexTo: BigNumberish,
+      minDy: BigNumberish,
+      deadline: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     redeem(
       to: string,
       chainId: BigNumberish,
@@ -327,16 +330,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    /**
-     * Wraps redeemAndRemove on SynapseBridge Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
-     * @param amount Amount of (typically) LP token to pass to the nodes to attempt to removeLiquidity() with to redeem for the underlying assets of the LP token
-     * @param chainId which underlying chain to bridge assets onto
-     * @param liqDeadline Specificies the deadline that the nodes are allowed to try to redeem/swap the LP token*
-     * @param liqMinAmount Specifies the minimum amount of the underlying asset needed for the nodes to execute the redeem/swap
-     * @param liqTokenIndex Specifies which of the underlying LP assets the nodes should attempt to redeem for
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     redeemAndRemove(
       to: string,
       chainId: BigNumberish,
@@ -348,17 +341,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    /**
-     * Wraps redeemAndSwap on SynapseBridge.sol Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-     * @param chainId which underlying chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     redeemAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -371,13 +353,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    /**
-     * Wraps SynapseBridge redeemv2() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to redeem into the bridge
-     */
     redeemv2(
       to: BytesLike,
       chainId: BigNumberish,
@@ -468,12 +443,6 @@ export interface L2BridgeZap extends BaseContract {
 
   WETH_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
-  /**
-   * Calculate amount of tokens you receive on swap
-   * @param dx the amount of tokens the user wants to sell. If the token charges a fee on transfers, use the amount that gets transferred after the fee.
-   * @param tokenIndexFrom the token the user wants to sell
-   * @param tokenIndexTo the token the user wants to buy
-   */
   calculateSwap(
     token: string,
     tokenIndexFrom: BigNumberish,
@@ -482,13 +451,6 @@ export interface L2BridgeZap extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  /**
-   * wraps SynapseBridge redeem()
-   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-   * @param chainId which underlying chain to bridge assets onto
-   * @param to address on other chain to redeem underlying assets to
-   * @param token ERC20 compatible token to deposit into the bridge
-   */
   deposit(
     to: string,
     chainId: BigNumberish,
@@ -497,12 +459,6 @@ export interface L2BridgeZap extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  /**
-   * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
-   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-   * @param chainId which chain to bridge assets onto
-   * @param to address on other chain to bridge assets to
-   */
   depositETH(
     to: string,
     chainId: BigNumberish,
@@ -510,13 +466,17 @@ export interface L2BridgeZap extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  /**
-   * wraps SynapseBridge redeem()
-   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-   * @param chainId which underlying chain to bridge assets onto
-   * @param to address on other chain to redeem underlying assets to
-   * @param token ERC20 compatible token to deposit into the bridge
-   */
+  depositETHAndSwap(
+    to: string,
+    chainId: BigNumberish,
+    amount: BigNumberish,
+    tokenIndexFrom: BigNumberish,
+    tokenIndexTo: BigNumberish,
+    minDy: BigNumberish,
+    deadline: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   redeem(
     to: string,
     chainId: BigNumberish,
@@ -525,16 +485,6 @@ export interface L2BridgeZap extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  /**
-   * Wraps redeemAndRemove on SynapseBridge Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
-   * @param amount Amount of (typically) LP token to pass to the nodes to attempt to removeLiquidity() with to redeem for the underlying assets of the LP token
-   * @param chainId which underlying chain to bridge assets onto
-   * @param liqDeadline Specificies the deadline that the nodes are allowed to try to redeem/swap the LP token*
-   * @param liqMinAmount Specifies the minimum amount of the underlying asset needed for the nodes to execute the redeem/swap
-   * @param liqTokenIndex Specifies which of the underlying LP assets the nodes should attempt to redeem for
-   * @param to address on other chain to redeem underlying assets to
-   * @param token ERC20 compatible token to deposit into the bridge
-   */
   redeemAndRemove(
     to: string,
     chainId: BigNumberish,
@@ -546,17 +496,6 @@ export interface L2BridgeZap extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  /**
-   * Wraps redeemAndSwap on SynapseBridge.sol Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
-   * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-   * @param chainId which underlying chain to bridge assets onto
-   * @param deadline latest timestamp to accept this transaction*
-   * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-   * @param to address on other chain to redeem underlying assets to
-   * @param token ERC20 compatible token to deposit into the bridge
-   * @param tokenIndexFrom the token the user wants to swap from
-   * @param tokenIndexTo the token the user wants to swap to
-   */
   redeemAndSwap(
     to: string,
     chainId: BigNumberish,
@@ -569,13 +508,6 @@ export interface L2BridgeZap extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  /**
-   * Wraps SynapseBridge redeemv2() function
-   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-   * @param chainId which chain to bridge assets onto
-   * @param to address on other chain to bridge assets to
-   * @param token ERC20 compatible token to redeem into the bridge
-   */
   redeemv2(
     to: BytesLike,
     chainId: BigNumberish,
@@ -666,12 +598,6 @@ export interface L2BridgeZap extends BaseContract {
   callStatic: {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
-    /**
-     * Calculate amount of tokens you receive on swap
-     * @param dx the amount of tokens the user wants to sell. If the token charges a fee on transfers, use the amount that gets transferred after the fee.
-     * @param tokenIndexFrom the token the user wants to sell
-     * @param tokenIndexTo the token the user wants to buy
-     */
     calculateSwap(
       token: string,
       tokenIndexFrom: BigNumberish,
@@ -680,13 +606,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    /**
-     * wraps SynapseBridge redeem()
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which underlying chain to bridge assets onto
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     deposit(
       to: string,
       chainId: BigNumberish,
@@ -695,12 +614,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    /**
-     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     */
     depositETH(
       to: string,
       chainId: BigNumberish,
@@ -708,13 +621,17 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    /**
-     * wraps SynapseBridge redeem()
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which underlying chain to bridge assets onto
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
+    depositETHAndSwap(
+      to: string,
+      chainId: BigNumberish,
+      amount: BigNumberish,
+      tokenIndexFrom: BigNumberish,
+      tokenIndexTo: BigNumberish,
+      minDy: BigNumberish,
+      deadline: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     redeem(
       to: string,
       chainId: BigNumberish,
@@ -723,16 +640,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    /**
-     * Wraps redeemAndRemove on SynapseBridge Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
-     * @param amount Amount of (typically) LP token to pass to the nodes to attempt to removeLiquidity() with to redeem for the underlying assets of the LP token
-     * @param chainId which underlying chain to bridge assets onto
-     * @param liqDeadline Specificies the deadline that the nodes are allowed to try to redeem/swap the LP token*
-     * @param liqMinAmount Specifies the minimum amount of the underlying asset needed for the nodes to execute the redeem/swap
-     * @param liqTokenIndex Specifies which of the underlying LP assets the nodes should attempt to redeem for
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     redeemAndRemove(
       to: string,
       chainId: BigNumberish,
@@ -744,17 +651,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    /**
-     * Wraps redeemAndSwap on SynapseBridge.sol Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-     * @param chainId which underlying chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     redeemAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -767,13 +663,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    /**
-     * Wraps SynapseBridge redeemv2() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to redeem into the bridge
-     */
     redeemv2(
       to: BytesLike,
       chainId: BigNumberish,
@@ -867,12 +756,6 @@ export interface L2BridgeZap extends BaseContract {
   estimateGas: {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
 
-    /**
-     * Calculate amount of tokens you receive on swap
-     * @param dx the amount of tokens the user wants to sell. If the token charges a fee on transfers, use the amount that gets transferred after the fee.
-     * @param tokenIndexFrom the token the user wants to sell
-     * @param tokenIndexTo the token the user wants to buy
-     */
     calculateSwap(
       token: string,
       tokenIndexFrom: BigNumberish,
@@ -881,13 +764,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    /**
-     * wraps SynapseBridge redeem()
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which underlying chain to bridge assets onto
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     deposit(
       to: string,
       chainId: BigNumberish,
@@ -896,12 +772,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    /**
-     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     */
     depositETH(
       to: string,
       chainId: BigNumberish,
@@ -909,13 +779,17 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    /**
-     * wraps SynapseBridge redeem()
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which underlying chain to bridge assets onto
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
+    depositETHAndSwap(
+      to: string,
+      chainId: BigNumberish,
+      amount: BigNumberish,
+      tokenIndexFrom: BigNumberish,
+      tokenIndexTo: BigNumberish,
+      minDy: BigNumberish,
+      deadline: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     redeem(
       to: string,
       chainId: BigNumberish,
@@ -924,16 +798,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    /**
-     * Wraps redeemAndRemove on SynapseBridge Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
-     * @param amount Amount of (typically) LP token to pass to the nodes to attempt to removeLiquidity() with to redeem for the underlying assets of the LP token
-     * @param chainId which underlying chain to bridge assets onto
-     * @param liqDeadline Specificies the deadline that the nodes are allowed to try to redeem/swap the LP token*
-     * @param liqMinAmount Specifies the minimum amount of the underlying asset needed for the nodes to execute the redeem/swap
-     * @param liqTokenIndex Specifies which of the underlying LP assets the nodes should attempt to redeem for
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     redeemAndRemove(
       to: string,
       chainId: BigNumberish,
@@ -945,17 +809,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    /**
-     * Wraps redeemAndSwap on SynapseBridge.sol Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-     * @param chainId which underlying chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     redeemAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -968,13 +821,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    /**
-     * Wraps SynapseBridge redeemv2() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to redeem into the bridge
-     */
     redeemv2(
       to: BytesLike,
       chainId: BigNumberish,
@@ -1066,12 +912,6 @@ export interface L2BridgeZap extends BaseContract {
   populateTransaction: {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    /**
-     * Calculate amount of tokens you receive on swap
-     * @param dx the amount of tokens the user wants to sell. If the token charges a fee on transfers, use the amount that gets transferred after the fee.
-     * @param tokenIndexFrom the token the user wants to sell
-     * @param tokenIndexTo the token the user wants to buy
-     */
     calculateSwap(
       token: string,
       tokenIndexFrom: BigNumberish,
@@ -1080,13 +920,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * wraps SynapseBridge redeem()
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which underlying chain to bridge assets onto
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     deposit(
       to: string,
       chainId: BigNumberish,
@@ -1095,12 +928,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     */
     depositETH(
       to: string,
       chainId: BigNumberish,
@@ -1108,13 +935,17 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * wraps SynapseBridge redeem()
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which underlying chain to bridge assets onto
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
+    depositETHAndSwap(
+      to: string,
+      chainId: BigNumberish,
+      amount: BigNumberish,
+      tokenIndexFrom: BigNumberish,
+      tokenIndexTo: BigNumberish,
+      minDy: BigNumberish,
+      deadline: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     redeem(
       to: string,
       chainId: BigNumberish,
@@ -1123,16 +954,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * Wraps redeemAndRemove on SynapseBridge Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
-     * @param amount Amount of (typically) LP token to pass to the nodes to attempt to removeLiquidity() with to redeem for the underlying assets of the LP token
-     * @param chainId which underlying chain to bridge assets onto
-     * @param liqDeadline Specificies the deadline that the nodes are allowed to try to redeem/swap the LP token*
-     * @param liqMinAmount Specifies the minimum amount of the underlying asset needed for the nodes to execute the redeem/swap
-     * @param liqTokenIndex Specifies which of the underlying LP assets the nodes should attempt to redeem for
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     */
     redeemAndRemove(
       to: string,
       chainId: BigNumberish,
@@ -1144,17 +965,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * Wraps redeemAndSwap on SynapseBridge.sol Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
-     * @param chainId which underlying chain to bridge assets onto
-     * @param deadline latest timestamp to accept this transaction*
-     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
-     * @param to address on other chain to redeem underlying assets to
-     * @param token ERC20 compatible token to deposit into the bridge
-     * @param tokenIndexFrom the token the user wants to swap from
-     * @param tokenIndexTo the token the user wants to swap to
-     */
     redeemAndSwap(
       to: string,
       chainId: BigNumberish,
@@ -1167,13 +977,6 @@ export interface L2BridgeZap extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    /**
-     * Wraps SynapseBridge redeemv2() function
-     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
-     * @param chainId which chain to bridge assets onto
-     * @param to address on other chain to bridge assets to
-     * @param token ERC20 compatible token to redeem into the bridge
-     */
     redeemv2(
       to: BytesLike,
       chainId: BigNumberish,
