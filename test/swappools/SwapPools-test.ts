@@ -94,7 +94,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
         const testCases: TestCase[] = [
             makeTestCase(ChainId.ETH,       true,  false),
             makeTestCase(ChainId.OPTIMISM,  false, true),
-            makeTestCase(ChainId.CRONOS,    false, false),
+            // makeTestCase(ChainId.CRONOS,    true,  false),
             makeTestCase(ChainId.BSC,       true,  false),
             makeTestCase(ChainId.POLYGON,   true,  false),
             makeTestCase(ChainId.FANTOM,    true,  true),
@@ -137,8 +137,8 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
 
         const swapContractTestFn = (tc: TestCase, stableSwap: boolean): ((this: Mocha.Context, done: Mocha.Done) => void) => {
             return function(this: Mocha.Context, done: Mocha.Done) {
-                this.timeout(6.5*1000);
-                this.slow(3.5*1000);
+                this.timeout(6.5 * 1000);
+                this.slow(3.5 * 1000);
 
                 const getPoolFn: (chainId: number) => SwapPools.SwapPoolToken = stableSwap
                     ? SwapPools.stableswapPoolForNetwork

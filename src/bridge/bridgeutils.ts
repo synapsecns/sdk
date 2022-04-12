@@ -64,6 +64,7 @@ export namespace BridgeUtils {
             redeemChainIds: [ChainId.DFK],
             depositEth:      false,
         },
+        {chainId: ChainId.ARBITRUM, tokens: [Tokens.VSTA], redeemChainIds: [], depositEth: false},
     ]
 
     interface BridgeTxArgs {

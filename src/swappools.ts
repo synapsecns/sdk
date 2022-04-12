@@ -245,6 +245,15 @@ export namespace SwapPools {
         nativeTokens:    ETHTokenPool,
     });
 
+    export const CRONOS_POOL_SWAP_TOKEN = makeSwapToken({
+        chainId:     ChainId.CRONOS,
+        address:     "0x8415D4EB17F0949e2388fdF52909db4cC0a2B082",
+        netName:     "Cronos",
+        poolId:      0, // may need to change
+        swapAddress: "0xCe762CC8138F4fa55427403A33E95a3D492c0166",
+        poolTokens:  USDPoolTokens(),
+    })
+
     export const BSC_POOL_SWAP_TOKEN = makeSwapToken({
         chainId:      ChainId.BSC,
         address:     "0xa4b7Bc06EC817785170C2DbC1dD3ff86CDcdcc4C",
@@ -447,7 +456,8 @@ export namespace SwapPools {
         LUNA_Pool       = makeSingleTokenPool(Tokens.LUNA),
         USDB_Pool       = makeSingleTokenPool(Tokens.USDB),
         DFK_USDC_Pool   = makeSingleTokenPool(Tokens.DFK_USDC),
-        XJEWEL_Pool     = makeSingleTokenPool(Tokens.XJEWEL);
+        XJEWEL_Pool     = makeSingleTokenPool(Tokens.XJEWEL),
+        VSTA_Pool       = makeSingleTokenPool(Tokens.VSTA);
 
     const
         AVAX_JEWEL_Pool:    LPToken = {poolTokens: [Tokens.JEWEL, Tokens.MULTIJEWEL], swapType: SwapType.JEWEL},
@@ -522,6 +532,7 @@ export namespace SwapPools {
             NEWO_Pool,
             SDT_Pool,
             USDB_Pool,
+            VSTA_Pool,
         ),
         [ChainId.OPTIMISM]: makeSwapTypeMap(
             {
@@ -529,7 +540,11 @@ export namespace SwapPools {
             },
             LUNA_Pool,
         ),
-        [ChainId.CRONOS]: makeSwapTypeMap({}),
+        [ChainId.CRONOS]: makeSwapTypeMap(
+            {
+                usdPool: [CRONOS_POOL_SWAP_TOKEN, CRONOS_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps]
+            }
+        ),
         [ChainId.BSC]:    makeSwapTypeMap(
             {
                 usdPool: [BSC_POOL_SWAP_TOKEN, BSC_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps]
@@ -590,7 +605,8 @@ export namespace SwapPools {
             },
             GMX_Pool,
             NEWO_Pool,
-            LUNA_Pool
+            LUNA_Pool,
+            VSTA_Pool
         ),
         [ChainId.AVALANCHE]: makeSwapTypeMap(
             {
@@ -622,7 +638,7 @@ export namespace SwapPools {
         [ChainId.AURORA]: makeSwapTypeMap(
             {
                 usdPool: [AURORA_POOL_SWAP_TOKEN, AURORA_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
-                ohm: false
+                ohm:     false
             }
         ),
         [ChainId.HARMONY]: makeSwapTypeMap(
@@ -665,6 +681,8 @@ export namespace SwapPools {
         switch (chainId) {
             case ChainId.ETH:
                 return ETH_POOL_SWAP_TOKEN
+            case ChainId.CRONOS:
+                return CRONOS_POOL_SWAP_TOKEN
             case ChainId.BSC:
                 return BSC_POOL_SWAP_TOKEN
             case ChainId.POLYGON:

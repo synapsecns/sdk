@@ -22,6 +22,7 @@ export namespace Tokens {
         decimals:     18,
         addresses: {
             [ChainId.ETH]:       "0x6b175474e89094c44da98b954eedeac495271d0f",
+            [ChainId.CRONOS]:    "0xf2001b145b43032aaf5ee2884e456ccd805f677d",
             [ChainId.BSC]:       "0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3",
             [ChainId.POLYGON]:   "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
             [ChainId.BOBA]:      "0xf74195Bb8a5cf652411867c5C2C5b8C2a402be35",
@@ -60,6 +61,7 @@ export namespace Tokens {
         },
         addresses: {
             [ChainId.ETH]:       "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            [ChainId.CRONOS]:    "0xc21223249ca28397b4b6541dffaecc539bff0c59",
             [ChainId.BSC]:       "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
             [ChainId.POLYGON]:   "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
             [ChainId.FANTOM]:    "0x04068da6c83afcfa0e13ba15a6696662335d5b75",
@@ -89,6 +91,7 @@ export namespace Tokens {
         },
         addresses: {
             [ChainId.ETH]:       "0xdac17f958d2ee523a2206206994597c13d831ec7",
+            [ChainId.CRONOS]:    "0x66e428c3f67a68878562e79a0234c1f83c208770",
             [ChainId.BSC]:       "0x55d398326f99059ff775485246999027b3197955",
             [ChainId.POLYGON]:   "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
             [ChainId.FANTOM]:    "0x049d68029688eabf473097a2fc38ef61633a3c7a",
@@ -118,6 +121,7 @@ export namespace Tokens {
             [ChainId.MOONRIVER]: "0xa9D0C0E124F53f4bE1439EBc35A9C73c0e8275fB",
             [ChainId.ARBITRUM]:  "0x13780E6d5696DD91454F6d3BbC2616687fEa43d0",
             [ChainId.AVALANCHE]: "0xE97097dE8d6A17Be3c39d53AE63347706dCf8f43",
+            [ChainId.DFK]:       "0x360d6DD540E3448371876662FBE7F1aCaf08c5Ab",
             [ChainId.AURORA]:    "0xb1Da21B0531257a7E5aEfa0cd3CbF23AfC674cE1",
             [ChainId.HARMONY]:   "0xa0554607e477cdC9d0EE2A6b087F4b2DC2815C22",
         },
@@ -156,6 +160,7 @@ export namespace Tokens {
         decimals:    18,
         addresses: {
             [ChainId.OPTIMISM]:  "0x809DC529f07651bD43A172e8dB6f4a7a0d771036",
+            [ChainId.CRONOS]:    "0x41E95B1F1c7849c50Bb9Caf92AB33302c0de945F",
             [ChainId.FANTOM]:    "0x67C10C397dD0Ba417329543c1a40eb48AAa7cd00",
             [ChainId.BOBA]:      "0x96419929d7949D6A801A6909c145C8EEf6A40431",
             [ChainId.MOONBEAM]:  "0x3192Ae73315c3634Ffa217f71CF6CBc30FeE349A",
@@ -631,6 +636,17 @@ export namespace Tokens {
         swapType: SwapType.USDB
     });
 
+    export const VSTA = new BaseToken({
+        name:     "Vesta",
+        symbol:   "VSTA",
+        decimals: 18,
+        addresses: {
+            [ChainId.ETH]:      "0xA8d7F5e7C78ed0Fa097Cc5Ec66C1DC3104c9bbeb",
+            [ChainId.ARBITRUM]: "0xa684cd057951541187f288294a1e1c2646aa2d24"
+        },
+        swapType: SwapType.VSTA
+    });
+
     export const mintBurnTokens: Token[] = [
         NUSD,      SYN,        NETH,
         HIGH,      DOG,        JUMP,
@@ -639,7 +655,8 @@ export namespace Tokens {
         UST,       NEWO,       SDT,
         LUNA,      USDB,       SYN_AVAX,
         GAS_JEWEL, JEWEL,      SYN_JEWEL,
-        XJEWEL,    MULTIJEWEL, DFK_USDC
+        XJEWEL,    MULTIJEWEL, DFK_USDC,
+        VSTA
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
@@ -648,6 +665,7 @@ export namespace Tokens {
         [ChainId.ETH]:        ETH,
         [ChainId.OPTIMISM]:   ETH,
         [ChainId.BOBA]:       ETH,
+        [ChainId.MOONRIVER]:  MOVR,
         [ChainId.ARBITRUM]:   ETH,
         [ChainId.AVALANCHE]:  AVAX,
         [ChainId.DFK]:        GAS_JEWEL,
@@ -699,6 +717,6 @@ export namespace Tokens {
         SYN_FRAX, SOLAR, GMX, NEWO, SDT,
         LUNA, USDB, SYN_AVAX, GAS_JEWEL, JEWEL,
         SYN_JEWEL, XJEWEL, MULTIJEWEL, DFK_USDC,
-        MULTI_AVAX,
+        MULTI_AVAX, VSTA,
     ];
 }

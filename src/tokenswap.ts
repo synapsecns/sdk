@@ -206,8 +206,6 @@ export namespace TokenSwap {
                 default:
                     return {intermediateToken: token, bridgeConfigIntermediateToken: token}
             }
-
-
         }
 
         let
