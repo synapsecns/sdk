@@ -47,7 +47,7 @@ export function pow10(exp: number): BigNumber { return BigNumber.from(10).pow(ex
  * @param decimals
  */
 export function fixWeiValue(amt: BigNumber, decimals: number): BigNumber {
-    const multiplier = pow10(18).div(pow10(decimals))
+    const multiplier = pow10(18).div(pow10(decimals));
     return amt.mul(multiplier)
 }
 

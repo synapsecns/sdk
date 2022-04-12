@@ -16,7 +16,7 @@ export interface BridgeConfigSwapFeeParams {
 	chainIdFrom: number;
 	tokenFrom:   Token;
 	chainIdTo:   number;
-	amountFrom:  BigNumberish
+	amountFrom:  BigNumberish;
 }
 
 export type CalculateSwapFeeResult = {
@@ -46,7 +46,7 @@ export class BridgeConfig {
 			intermediateTokenAddress,
 			chainIdTo,
 			amountFrom
-		)
+		);
 
 		return {bridgeFee, amountFrom}
 	}

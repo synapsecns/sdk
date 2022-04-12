@@ -158,13 +158,13 @@ export namespace Networks {
         name:          "Metis",
         chainId:       ChainId.METIS,
         chainCurrency: "Metis",
-    })
+    });
 
     export const MOONBEAM = new Network({
         name:          "Moonbeam",
         chainId:        ChainId.MOONBEAM,
         chainCurrency: "GLMR",
-    })
+    });
 
     export const MOONRIVER = new Network({
         name:          "Moonriver",

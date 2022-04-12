@@ -229,7 +229,7 @@ export namespace BridgeUtils {
                 break;
         }
 
-        return t1.isEqual(compare);
+        return t1.isEqual(compare)
     }
 
     export function makeTokenArgs(chainId: number, t: Token): [Token[], number] {

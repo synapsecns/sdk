@@ -54,7 +54,7 @@ export namespace ERC20 {
         private connectContract(provider?: SignerOrProvider): ERC20Contract {
             provider = provider ? provider : rpcProviderForChain(this.chainId);
 
-            return this.instance.connect(provider);
+            return this.instance.connect(provider)
         }
 
         async approve(args: ApproveArgs, signer: Signer,

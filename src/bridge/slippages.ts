@@ -35,15 +35,15 @@ export namespace Slippages {
                 break;
         }
 
-        return inputValue.mul(numerator).div(denominator);
+        return inputValue.mul(numerator).div(denominator)
     }
 
     export function addSlippage(inputValue: BigNumber, slippageSelected: string|Slippage): BigNumber {
-        return _applySlippage(inputValue, slippageSelected, true);
+        return _applySlippage(inputValue, slippageSelected, true)
     }
 
     export function subtractSlippage(inputValue: BigNumber, slippageSelected: string|Slippage): BigNumber {
-        return _applySlippage(inputValue, slippageSelected, false);
+        return _applySlippage(inputValue, slippageSelected, false)
     }
 
     export function formatSlippageToString(slippageSelected: string|Slippage): string {
