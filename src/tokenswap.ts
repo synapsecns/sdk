@@ -105,6 +105,23 @@ export namespace TokenSwap {
         chainIdTo:   number;
     }
 
+    interface AddRemoveLiquidityParams {
+        chainId:        number;
+        lpTokenAddress: string;
+        deadline:       BigNumber;
+        // amounts:        [BigNumber, BigNumber, BigNumber];
+    }
+
+    export interface AddLiquidityParams extends AddRemoveLiquidityParams {
+        amounts:   BigNumber[];
+        minToMint: BigNumber;
+    }
+
+    export interface RemoveLiquidityParams extends AddRemoveLiquidityParams {
+        amount:     BigNumber;
+        minAmounts: BigNumber[];
+    }
+
     export type EstimatedSwapRate = {
         amountOut: BigNumber
     }
@@ -139,6 +156,26 @@ export namespace TokenSwap {
     export function bridgeSwapSupported(args: BridgeSwapSupportedParams): SwapSupportedResult {
         const {tokenFrom, tokenTo, chainIdFrom, chainIdTo} = args;
         return checkCanSwap(tokenFrom, tokenTo, chainIdFrom, chainIdTo);
+    }
+
+    export async function addLiquidity(args: AddLiquidityParams): Promise<any> {
+        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId);
+
+        return swapInstance.addLiquidity(
+            args.amounts,
+            args.minToMint,
+            args.deadline
+        )
+    }
+
+    export async function removeLiquidity(args: RemoveLiquidityParams): Promise<any> {
+        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId);
+
+        return swapInstance.removeLiquidity(
+            args.amount,
+            args.minAmounts,
+            args.deadline
+        )
     }
 
     export async function calculateSwapRate(args: SwapParams): Promise<EstimatedSwapRate> {
@@ -325,6 +362,12 @@ export namespace TokenSwap {
         const lpToken = _intermediateToken(token, chainId);
 
         return BRIDGE_CONFIG_INSTANCE.getPoolConfig(lpToken.address(chainId), chainId)
+            .then(({poolAddress}) => SwapFactory.connect(poolAddress, rpcProviderForChain(chainId)))
+            .catch(rejectPromise)
+    }
+
+    async function swapContractFromAddress(tokenAddress: string, chainId: number): Promise<SwapContract> {
+        return BRIDGE_CONFIG_INSTANCE.getPoolConfig(tokenAddress, chainId)
             .then(({poolAddress}) => SwapFactory.connect(poolAddress, rpcProviderForChain(chainId)))
             .catch(rejectPromise)
     }
