@@ -26,6 +26,8 @@ import {
 } from "@ethersproject/bignumber";
 
 import type {PopulatedTransaction} from "@ethersproject/contracts";
+import {Signer} from "ethers";
+import {TransactionResponse} from "@ethersproject/providers";
 
 export namespace UnsupportedSwapErrors {
     export enum UnsupportedSwapErrorKind {
@@ -109,6 +111,7 @@ export namespace TokenSwap {
         chainId:        number;
         lpTokenAddress: string;
         deadline:       BigNumber;
+        signer:         Signer;
         // amounts:        [BigNumber, BigNumber, BigNumber];
     }
 
@@ -158,8 +161,8 @@ export namespace TokenSwap {
         return checkCanSwap(tokenFrom, tokenTo, chainIdFrom, chainIdTo);
     }
 
-    export async function addLiquidity(args: AddLiquidityParams): Promise<any> {
-        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId);
+    export async function addLiquidity(args: AddLiquidityParams): Promise<TransactionResponse> {
+        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId, args.signer);
 
         return swapInstance.addLiquidity(
             args.amounts,
@@ -168,8 +171,8 @@ export namespace TokenSwap {
         )
     }
 
-    export async function removeLiquidity(args: RemoveLiquidityParams): Promise<any> {
-        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId);
+    export async function removeLiquidity(args: RemoveLiquidityParams): Promise<TransactionResponse> {
+        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId, args.signer);
 
         return swapInstance.removeLiquidity(
             args.amount,
@@ -366,9 +369,11 @@ export namespace TokenSwap {
             .catch(rejectPromise)
     }
 
-    async function swapContractFromAddress(tokenAddress: string, chainId: number): Promise<SwapContract> {
+    async function swapContractFromAddress(tokenAddress: string, chainId: number, signer?: Signer): Promise<SwapContract> {
+        const provider = signer ? signer : rpcProviderForChain(chainId);
+
         return BRIDGE_CONFIG_INSTANCE.getPoolConfig(tokenAddress, chainId)
-            .then(({poolAddress}) => SwapFactory.connect(poolAddress, rpcProviderForChain(chainId)))
+            .then(({poolAddress}) => SwapFactory.connect(poolAddress, provider))
             .catch(rejectPromise)
     }
 
