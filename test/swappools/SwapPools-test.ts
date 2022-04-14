@@ -94,7 +94,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
         const testCases: TestCase[] = [
             makeTestCase(ChainId.ETH,       true,  false),
             makeTestCase(ChainId.OPTIMISM,  false, true),
-            // makeTestCase(ChainId.CRONOS,    true,  false),
+            makeTestCase(ChainId.CRONOS,    true,  false),
             makeTestCase(ChainId.BSC,       true,  false),
             makeTestCase(ChainId.POLYGON,   true,  false),
             makeTestCase(ChainId.FANTOM,    true,  true),

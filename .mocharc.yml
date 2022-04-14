@@ -27,4 +27,5 @@ spec:
   - 'test/synapsebridge/ProviderInteractions-test.ts'
   - 'test/synapsebridge/ContractWrapperFunctions-test.ts'
   - 'test/tokenswap/SwapRate-test.ts'
+  - 'test/tokenswap/liquidity-test.ts'
   - 'test/erc20/*-test.ts'
