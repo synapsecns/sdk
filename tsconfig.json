@@ -17,7 +17,7 @@
       "@tokens":           ["./src/tokens"],
       "@tokenswap":        ["./src/tokenswap"]
     },
-    "target": "ESNext",
+    "target": "ES5",
     "module": "ESNext",
     "outDir": "dist",
     "strict": false,

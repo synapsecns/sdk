@@ -275,7 +275,6 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                     Promise.resolve(prom).then((txn) => bridgeTxn = txn).catch(err => {
                         let e = (err as Error);
                         console.error(e.stack)
-                        console.error(e.cause)
                     });
 
                     return (await expectFulfilled(prom))
