@@ -109,7 +109,7 @@ export namespace TokenSwap {
 
     interface AddRemoveLiquidityParams {
         chainId:        number;
-        lpTokenAddress: string;
+        lpSwapAddress:  string;
         deadline?:      BigNumber;
         signer?:        Signer;
     }
@@ -167,7 +167,7 @@ export namespace TokenSwap {
     }
 
     export async function calculateAddLiquidity(args: AddLiquidityParams): Promise<BigNumber> {
-        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId);
+        const swapInstance = await swapContractFromLPAddress(args.lpSwapAddress, args.chainId);
 
         return swapInstance.calculateTokenAmount(
             args.amounts,
@@ -176,13 +176,13 @@ export namespace TokenSwap {
     }
 
     export async function calculateRemoveLiquidity(args: RemoveLiquidityParams): Promise<BigNumber[]> {
-        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId);
+        const swapInstance = await swapContractFromLPAddress(args.lpSwapAddress, args.chainId);
 
         return swapInstance.calculateRemoveLiquidity(args.amount)
     }
 
     export async function calculateRemoveLiquidityOneToken(args: RemoveLiquidityOneParams): Promise<BigNumber> {
-        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId);
+        const swapInstance = await swapContractFromLPAddress(args.lpSwapAddress, args.chainId);
 
         const tokenAddress = args.token.address(args.chainId);
         if (!tokenAddress) {
@@ -212,7 +212,7 @@ export namespace TokenSwap {
             return rejectPromise(err)
         }
 
-        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId, args.signer);
+        const swapInstance = await swapContractFromLPAddress(args.lpSwapAddress, args.chainId, args.signer);
 
         return swapInstance.addLiquidity(
             args.amounts,
@@ -233,7 +233,7 @@ export namespace TokenSwap {
             return rejectPromise(err)
         }
 
-        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId, args.signer);
+        const swapInstance = await swapContractFromLPAddress(args.lpSwapAddress, args.chainId, args.signer);
 
         return swapInstance.removeLiquidity(
             args.amount,
@@ -254,7 +254,7 @@ export namespace TokenSwap {
             return rejectPromise(err)
         }
 
-        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId, args.signer);
+        const swapInstance = await swapContractFromLPAddress(args.lpSwapAddress, args.chainId, args.signer);
 
         const tokenAddress = args.token.address(args.chainId);
         if (!tokenAddress) {
@@ -458,19 +458,26 @@ export namespace TokenSwap {
     }
 
     async function swapContract(token: Token, chainId: number): Promise<SwapContract> {
+        const provider = rpcProviderForChain(chainId);
+
+        if (token.isEqual(Tokens.NUSD) && chainId === ChainId.CRONOS) {
+            return swapContractFromLPAddress(
+                SwapPools.stableswapPoolForNetwork(chainId).swapAddress,
+                chainId
+            )
+        }
+
         const lpToken = _intermediateToken(token, chainId);
 
         return BRIDGE_CONFIG_INSTANCE.getPoolConfig(lpToken.address(chainId), chainId)
-            .then(({poolAddress}) => SwapFactory.connect(poolAddress, rpcProviderForChain(chainId)))
+            .then(({poolAddress}) => SwapFactory.connect(poolAddress, provider))
             .catch(rejectPromise)
     }
 
-    async function swapContractFromAddress(tokenAddress: string, chainId: number, signer?: Signer): Promise<SwapContract> {
+    async function swapContractFromLPAddress(lpSwapAddress: string, chainId: number, signer?: Signer): Promise<SwapContract> {
         const provider = signer ? signer : rpcProviderForChain(chainId);
 
-        return BRIDGE_CONFIG_INSTANCE.getPoolConfig(tokenAddress, chainId)
-            .then(({poolAddress}) => SwapFactory.connect(poolAddress, provider))
-            .catch(rejectPromise)
+        return SwapFactory.connect(lpSwapAddress, provider)
     }
 
     export async function swapSetup(tokenFrom: Token, tokenTo: Token, chainId: number): Promise<SwapSetup> {
