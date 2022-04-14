@@ -110,19 +110,18 @@ export namespace TokenSwap {
     interface AddRemoveLiquidityParams {
         chainId:        number;
         lpTokenAddress: string;
-        deadline:       BigNumber;
-        signer:         Signer;
-        // amounts:        [BigNumber, BigNumber, BigNumber];
+        deadline?:      BigNumber;
+        signer?:        Signer;
     }
 
     export interface AddLiquidityParams extends AddRemoveLiquidityParams {
-        amounts:   BigNumber[];
-        minToMint: BigNumber;
+        amounts:    BigNumber[];
+        minToMint?: BigNumber;
     }
 
     export interface RemoveLiquidityParams extends AddRemoveLiquidityParams {
-        amount:     BigNumber;
-        minAmounts: BigNumber[];
+        amount:      BigNumber;
+        minAmounts?: BigNumber[];
     }
 
     export type EstimatedSwapRate = {
@@ -161,7 +160,33 @@ export namespace TokenSwap {
         return checkCanSwap(tokenFrom, tokenTo, chainIdFrom, chainIdTo);
     }
 
+    export async function calculateAddLiquidity(args: AddLiquidityParams): Promise<BigNumber> {
+        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId);
+
+        return swapInstance.calculateTokenAmount(
+            args.amounts,
+            true
+        )
+    }
+
+    export async function calculateRemoveLiquidity(args: RemoveLiquidityParams): Promise<BigNumber[]> {
+        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId);
+
+        return swapInstance.calculateRemoveLiquidity(args.amount)
+    }
+
     export async function addLiquidity(args: AddLiquidityParams): Promise<TransactionResponse> {
+        if (_.isEmpty(args.signer)) {
+            const err = new Error("signer be passed in AddLiquidityParams");
+            return rejectPromise(err)
+        } else if (_.isEmpty(args.deadline)) {
+            const err = new Error("deadline be passed in AddLiquidityParams");
+            return rejectPromise(err)
+        } else if (_.isEmpty(args.minToMint)) {
+            const err = new Error("minToMint be passed in AddLiquidityParams");
+            return rejectPromise(err)
+        }
+
         const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId, args.signer);
 
         return swapInstance.addLiquidity(
@@ -172,6 +197,17 @@ export namespace TokenSwap {
     }
 
     export async function removeLiquidity(args: RemoveLiquidityParams): Promise<TransactionResponse> {
+        if (_.isEmpty(args.signer)) {
+            const err = new Error("signer be passed in RemoveLiquidityParams");
+            return rejectPromise(err)
+        } else if (_.isEmpty(args.deadline)) {
+            const err = new Error("deadline be passed in RemoveLiquidityParams");
+            return rejectPromise(err)
+        } else if (_.isEmpty(args.minAmounts)) {
+            const err = new Error("minAmounts be passed in RemoveLiquidityParams");
+            return rejectPromise(err)
+        }
+
         const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId, args.signer);
 
         return swapInstance.removeLiquidity(
