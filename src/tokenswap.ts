@@ -124,6 +124,12 @@ export namespace TokenSwap {
         minAmounts?: BigNumber[];
     }
 
+    export interface RemoveLiquidityOneParams extends AddRemoveLiquidityParams {
+        token:            Token;
+        lpTokenAmount:    BigNumber;
+        wantTokenAmount?: BigNumber;
+    }
+
     export type EstimatedSwapRate = {
         amountOut: BigNumber
     }
@@ -175,15 +181,34 @@ export namespace TokenSwap {
         return swapInstance.calculateRemoveLiquidity(args.amount)
     }
 
+    export async function calculateRemoveLiquidityOneToken(args: RemoveLiquidityOneParams): Promise<BigNumber> {
+        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId);
+
+        const tokenAddress = args.token.address(args.chainId);
+        if (!tokenAddress) {
+            const err = new Error(`no address for token ${args.token.name} found for chain id ${args.chainId}`);
+            return rejectPromise(err)
+        }
+
+        let tokenIndex: number;
+        try {
+            tokenIndex = await swapInstance.getTokenIndex(tokenAddress);
+        } catch (e) {
+            return rejectPromise(e)
+        }
+
+        return swapInstance.calculateRemoveLiquidityOneToken(args.lpTokenAmount, tokenIndex)
+    }
+
     export async function addLiquidity(args: AddLiquidityParams): Promise<TransactionResponse> {
         if (_.isEmpty(args.signer)) {
-            const err = new Error("signer be passed in AddLiquidityParams");
+            const err = new Error("signer must be passed in AddLiquidityParams");
             return rejectPromise(err)
         } else if (_.isEmpty(args.deadline)) {
-            const err = new Error("deadline be passed in AddLiquidityParams");
+            const err = new Error("deadline must be passed in AddLiquidityParams");
             return rejectPromise(err)
         } else if (_.isEmpty(args.minToMint)) {
-            const err = new Error("minToMint be passed in AddLiquidityParams");
+            const err = new Error("minToMint must be passed in AddLiquidityParams");
             return rejectPromise(err)
         }
 
@@ -198,13 +223,13 @@ export namespace TokenSwap {
 
     export async function removeLiquidity(args: RemoveLiquidityParams): Promise<TransactionResponse> {
         if (_.isEmpty(args.signer)) {
-            const err = new Error("signer be passed in RemoveLiquidityParams");
+            const err = new Error("signer must be passed in RemoveLiquidityParams");
             return rejectPromise(err)
         } else if (_.isEmpty(args.deadline)) {
-            const err = new Error("deadline be passed in RemoveLiquidityParams");
+            const err = new Error("deadline must be passed in RemoveLiquidityParams");
             return rejectPromise(err)
         } else if (_.isEmpty(args.minAmounts)) {
-            const err = new Error("minAmounts be passed in RemoveLiquidityParams");
+            const err = new Error("minAmounts must be passed in RemoveLiquidityParams");
             return rejectPromise(err)
         }
 
@@ -213,6 +238,41 @@ export namespace TokenSwap {
         return swapInstance.removeLiquidity(
             args.amount,
             args.minAmounts,
+            args.deadline
+        )
+    }
+
+    export async function removeLiquidityOneToken(args: RemoveLiquidityOneParams): Promise<TransactionResponse> {
+        if (_.isEmpty(args.signer)) {
+            const err = new Error("signer must be passed in RemoveLiquidityOneParams");
+            return rejectPromise(err)
+        } else if (_.isEmpty(args.deadline)) {
+            const err = new Error("deadline must be passed in RemoveLiquidityOneParams");
+            return rejectPromise(err)
+        } else if (_.isEmpty(args.wantTokenAmount)) {
+            const err = new Error("wantTokenAmountmust  be passed in RemoveLiquidityOneParams");
+            return rejectPromise(err)
+        }
+
+        const swapInstance = await swapContractFromAddress(args.lpTokenAddress, args.chainId, args.signer);
+
+        const tokenAddress = args.token.address(args.chainId);
+        if (!tokenAddress) {
+            const err = new Error(`no address for token ${args.token.name} found for chain id ${args.chainId}`);
+            return rejectPromise(err)
+        }
+
+        let tokenIndex: number;
+        try {
+            tokenIndex = await swapInstance.getTokenIndex(tokenAddress);
+        } catch (e) {
+            return rejectPromise(e)
+        }
+
+        return swapInstance.removeLiquidityOneToken(
+            args.lpTokenAmount,
+            tokenIndex,
+            args.wantTokenAmount,
             args.deadline
         )
     }
