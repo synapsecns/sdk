@@ -460,14 +460,15 @@ export namespace TokenSwap {
     async function swapContract(token: Token, chainId: number): Promise<SwapContract> {
         const provider = rpcProviderForChain(chainId);
 
-        if (token.isEqual(Tokens.NUSD) && chainId === ChainId.CRONOS) {
+        const lpToken = _intermediateToken(token, chainId);
+
+        // temp fix until BridgeConfig is updated
+        if (lpToken.isEqual(Tokens.NUSD) && chainId === ChainId.CRONOS) {
             return swapContractFromLPAddress(
                 SwapPools.stableswapPoolForNetwork(chainId).swapAddress,
                 chainId
             )
         }
-
-        const lpToken = _intermediateToken(token, chainId);
 
         return BRIDGE_CONFIG_INSTANCE.getPoolConfig(lpToken.address(chainId), chainId)
             .then(({poolAddress}) => SwapFactory.connect(poolAddress, provider))
