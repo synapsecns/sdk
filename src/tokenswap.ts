@@ -9,6 +9,8 @@ import {Tokens}        from "@tokens";
 import {SwapPools}     from "@swappools";
 import {rejectPromise} from "@common/utils";
 
+import {ERC20} from "@bridge/erc20";
+
 import {BridgeConfigV3ContractInstance} from "@entities";
 
 import {
@@ -25,8 +27,8 @@ import {
     type BigNumberish
 } from "@ethersproject/bignumber";
 
+import type {Signer} from "@ethersproject/abstract-signer";
 import type {PopulatedTransaction} from "@ethersproject/contracts";
-import {Signer} from "ethers";
 import {TransactionResponse} from "@ethersproject/providers";
 
 export namespace UnsupportedSwapErrors {
@@ -107,7 +109,20 @@ export namespace TokenSwap {
         chainIdTo:   number;
     }
 
-    interface AddRemoveLiquidityParams {
+    /**
+     * @param chainId Chain ID of the network on which to fetch the spend allowance of `spender` for `owner`s `token`
+     * @param token Token to fetch allowance information of
+     * @param owner Address for owner of `token`
+     * @param spender Address for spender of `owner`s `token`
+     */
+    export interface CheckTokenAllowanceParams {
+        chainId:  number;
+        token:    Token;
+        owner:    string;
+        spender:  string;
+    }
+
+    export interface AddRemoveLiquidityParams {
         chainId:        number;
         lpSwapAddress:  string;
         deadline?:      BigNumber;
@@ -164,6 +179,24 @@ export namespace TokenSwap {
     export function bridgeSwapSupported(args: BridgeSwapSupportedParams): SwapSupportedResult {
         const {tokenFrom, tokenTo, chainIdFrom, chainIdTo} = args;
         return checkCanSwap(tokenFrom, tokenTo, chainIdFrom, chainIdTo);
+    }
+
+    /**
+     * checkTokenAllowance returns the amount of `args.token` belonging to `args.owner`
+     * which `args.spender` is allowed to spend on behalf of `args.owner`.
+     * @param {CheckTokenAllowanceParams} args
+     */
+    export async function checkTokenAllowance(args: CheckTokenAllowanceParams): Promise<BigNumber> {
+        const tokenParams: ERC20.ERC20TokenParams = {
+            chainId:      args.chainId,
+            tokenAddress: args.token.address(args.chainId)
+        };
+
+        return ERC20.allowanceOf(
+            args.owner,
+            args.spender,
+            tokenParams
+        )
     }
 
     export async function calculateAddLiquidity(args: AddLiquidityParams): Promise<BigNumber> {
