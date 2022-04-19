@@ -149,11 +149,13 @@ export class MiniRpcProvider implements ExternalProvider {
             .then(result =>
                 currentBatch.forEach((req, idx) => {
                     const payload = result[idx];
-                    if (payload.error) {
-                        const {message, code, data} = payload.error;
-                        req.reject(new RequestError(message, code, data));
-                    } else {
-                        req.resolve(payload.result);
+                    if (payload) {
+                        if (payload.error) {
+                            const {message, code, data} = payload.error;
+                            req.reject(new RequestError(message, code, data));
+                        } else {
+                            req.resolve(payload.result);
+                        }
                     }
                 })
             )
