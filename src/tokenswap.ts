@@ -109,19 +109,6 @@ export namespace TokenSwap {
         chainIdTo:   number;
     }
 
-    /**
-     * @param chainId Chain ID of the network on which to fetch the spend allowance of `spender` for `owner`s `token`
-     * @param token Token to fetch allowance information of
-     * @param owner Address for owner of `token`
-     * @param spender Address for spender of `owner`s `token`
-     */
-    export interface CheckTokenAllowanceParams {
-        chainId:  number;
-        token:    Token;
-        owner:    string;
-        spender:  string;
-    }
-
     export interface AddRemoveLiquidityParams {
         chainId:        number;
         lpSwapAddress:  string;
@@ -179,24 +166,6 @@ export namespace TokenSwap {
     export function bridgeSwapSupported(args: BridgeSwapSupportedParams): SwapSupportedResult {
         const {tokenFrom, tokenTo, chainIdFrom, chainIdTo} = args;
         return checkCanSwap(tokenFrom, tokenTo, chainIdFrom, chainIdTo);
-    }
-
-    /**
-     * checkTokenAllowance returns the amount of `args.token` belonging to `args.owner`
-     * which `args.spender` is allowed to spend on behalf of `args.owner`.
-     * @param {CheckTokenAllowanceParams} args
-     */
-    export async function checkTokenAllowance(args: CheckTokenAllowanceParams): Promise<BigNumber> {
-        const tokenParams: ERC20.ERC20TokenParams = {
-            chainId:      args.chainId,
-            tokenAddress: args.token.address(args.chainId)
-        };
-
-        return ERC20.allowanceOf(
-            args.owner,
-            args.spender,
-            tokenParams
-        )
     }
 
     export async function calculateAddLiquidity(args: AddLiquidityParams): Promise<BigNumber> {

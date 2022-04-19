@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {ChainId, SwapPools, Token, TokenSwap} from "@sdk";
+import {ChainId, SwapPools, Token, Tokens} from "@sdk";
 import {BigNumber} from "@ethersproject/bignumber";
 
 
@@ -32,7 +32,7 @@ describe("TokenSwap -- checkTokenAllowance tests", function(this: Mocha.Suite) {
 		const testTitle: string = makeTestTitle(tc);
 
 		it(testTitle, async function(this: Mocha.Context) {
-			const gotProm: Promise<BigNumber> = TokenSwap.checkTokenAllowance(tc);
+			const gotProm: Promise<BigNumber> = Tokens.checkTokenAllowance(tc);
 
 			return (await expect(gotProm).to.eventually.be.fulfilled)
 		});

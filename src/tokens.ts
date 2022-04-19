@@ -8,7 +8,10 @@ import {ChainId, type ChainIdTypeMap} from "@chainid";
 
 import {SwapType} from "@internal/swaptype"
 import {tokenSwitch} from "@internal/utils";
-
+import {BigNumber} from "@ethersproject/bignumber";
+import {ERC20} from "@bridge/erc20";
+import type {TransactionResponse} from "@ethersproject/providers";
+import type {Signer} from "@ethersproject/abstract-signer";
 
 export namespace Tokens {
     // Stablecoins
@@ -707,6 +710,79 @@ export namespace Tokens {
 
         return null
     }
+
+    /**
+     * @param {number} chainId Chain ID of the network on which to fetch the spend allowance of `spender` for `owner`'s `token`
+     * @param {Token} token Token to fetch allowance information of
+     * @param {string} owner Address for owner of `token`
+     * @param {string} spender Address for spender of `owner`'s `token`
+     */
+    export interface CheckTokenAllowanceParams {
+        chainId:  number;
+        token:    Token;
+        owner:    string;
+        spender:  string;
+    }
+
+    /**
+     * checkTokenAllowance returns the amount of `args.token` belonging to `args.owner`
+     * which `args.spender` is allowed to spend on behalf of `args.owner`.
+     * @param {CheckTokenAllowanceParams} args {@link CheckTokenAllowanceParams} object containing arguments
+     * @param {number} args.chainId Chain ID of the network on which to fetch the spend allowance of `spender` for `owner`'s `token`.
+     * @param {Token} args.token Token to fetch allowance information of.
+     * @param {string} args.owner Address for owner of `token`
+     * @param {string} args.spender Address for spender of `owner`'s `token`
+     */
+    export async function checkTokenAllowance(args: CheckTokenAllowanceParams): Promise<BigNumber> {
+        const tokenParams: ERC20.ERC20TokenParams = {
+            chainId:      args.chainId,
+            tokenAddress: args.token.address(args.chainId)
+        };
+
+        return ERC20.allowanceOf(
+            args.owner,
+            args.spender,
+            tokenParams
+        )
+    }
+
+    // /**
+    //  * @param {number} chainId Chain ID of the network on which to approve the spend allowance of `spender` for `signer`'s `token`
+    //  * @param {Token} token Token to approve
+    //  * @param {string} spender Address of spender to approve use of `signer`'s `token`
+    //  * @param {BigNumber} amount [Optional] amount of `owner`'s `token` to approve for spend by `spender`. Defaults to uint256 max (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) if not provided.
+    //  */
+    // export interface ApproveTokenParams extends Omit<CheckTokenAllowanceParams, "owner"> {
+    //     amount?: BigNumber;
+    //     signer:  Signer;
+    // }
+    //
+    // /**
+    //  * approveTokenSpend approves `args.spender` to spend `args.amount` (or the ERC20 max approval amount)
+    //  * of `args.token` belonging to `args.signer`
+    //  * @param {ApproveTokenParams} args {@link ApproveTokenParams} object containing arguments
+    //  * @param {number} args.chainId Chain ID of the network on which to approve the spend allowance of `spender` for `signer`'s `token`
+    //  * @param {Token} args.token Token to approve
+    //  * @param {string} args.spender Address of spender to approve use of `signer`'s `token`
+    //  * @param {BigNumber} args.amount [Optional] amount of `owner`'s `token` to approve for spend by `spender`. Defaults to uint256 max (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) if not provided.
+    //  */
+    // export async function approveTokenSpend(args: ApproveTokenParams): Promise<TransactionResponse> {
+    //     const tokenParams: ERC20.ERC20TokenParams = {
+    //         tokenAddress: args.token.address(args.chainId),
+    //         chainId:      args.chainId
+    //     };
+    //
+    //     const approveArgs: ERC20.ApproveArgs = {
+    //         spender: args.spender,
+    //         amount:  args.amount
+    //     };
+    //
+    //     return ERC20.approve(
+    //         approveArgs,
+    //         tokenParams,
+    //         args.signer
+    //     )
+    // }
 
     export const AllTokens: Token[] = [
         DAI, BUSD, USDC, USDT, UST,
