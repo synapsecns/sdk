@@ -12,6 +12,7 @@ import {BigNumber} from "@ethersproject/bignumber";
 import {ERC20} from "@bridge/erc20";
 import type {TransactionResponse} from "@ethersproject/providers";
 import type {Signer} from "@ethersproject/abstract-signer";
+import {ContractTransaction} from "@ethersproject/contracts";
 
 export namespace Tokens {
     // Stablecoins
@@ -52,6 +53,7 @@ export namespace Tokens {
         symbol: "USDC",
         decimals: {
             [ChainId.ETH]:       6,
+            [ChainId.CRONOS]:    6,
             [ChainId.BSC]:       18,
             [ChainId.POLYGON]:   6,
             [ChainId.FANTOM]:    6,
@@ -83,6 +85,7 @@ export namespace Tokens {
         symbol:   "USDT",
         decimals: {
             [ChainId.ETH]:       6,
+            [ChainId.CRONOS]:    6,
             [ChainId.BSC]:       18,
             [ChainId.POLYGON]:   6,
             [ChainId.FANTOM]:    6,
@@ -746,43 +749,45 @@ export namespace Tokens {
         )
     }
 
-    // /**
-    //  * @param {number} chainId Chain ID of the network on which to approve the spend allowance of `spender` for `signer`'s `token`
-    //  * @param {Token} token Token to approve
-    //  * @param {string} spender Address of spender to approve use of `signer`'s `token`
-    //  * @param {BigNumber} amount [Optional] amount of `owner`'s `token` to approve for spend by `spender`. Defaults to uint256 max (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) if not provided.
-    //  */
-    // export interface ApproveTokenParams extends Omit<CheckTokenAllowanceParams, "owner"> {
-    //     amount?: BigNumber;
-    //     signer:  Signer;
-    // }
-    //
-    // /**
-    //  * approveTokenSpend approves `args.spender` to spend `args.amount` (or the ERC20 max approval amount)
-    //  * of `args.token` belonging to `args.signer`
-    //  * @param {ApproveTokenParams} args {@link ApproveTokenParams} object containing arguments
-    //  * @param {number} args.chainId Chain ID of the network on which to approve the spend allowance of `spender` for `signer`'s `token`
-    //  * @param {Token} args.token Token to approve
-    //  * @param {string} args.spender Address of spender to approve use of `signer`'s `token`
-    //  * @param {BigNumber} args.amount [Optional] amount of `owner`'s `token` to approve for spend by `spender`. Defaults to uint256 max (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) if not provided.
-    //  */
-    // export async function approveTokenSpend(args: ApproveTokenParams): Promise<TransactionResponse> {
-    //     const tokenParams: ERC20.ERC20TokenParams = {
-    //         tokenAddress: args.token.address(args.chainId),
-    //         chainId:      args.chainId
-    //     };
-    //
-    //     const approveArgs: ERC20.ApproveArgs = {
-    //         spender: args.spender,
-    //         amount:  args.amount
-    //     };
-    //
-    //     return ERC20.approve(
-    //         approveArgs,
-    //         tokenParams,
-    //         args.signer
-    //     )
-    // }
+    /**
+     * @param {number} chainId Chain ID of the network on which to approve the spend allowance of `spender` for `signer`'s `token`
+     * @param {Token} token Token to approve
+     * @param {string} spender Address of spender to approve use of `signer`'s `token`
+     * @param {BigNumber} amount [Optional] amount of `owner`'s `token` to approve for spend by `spender`. Defaults to uint256 max (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) if not provided.
+     */
+    export interface ApproveTokenParams extends Omit<CheckTokenAllowanceParams, "owner"> {
+        amount?: BigNumber;
+        signer:  Signer;
+    }
+
+    /**
+     * approveTokenSpend approves `args.spender` to spend `args.amount` (or the ERC20 max approval amount)
+     * of `args.token` belonging to `args.signer`
+     * @param {ApproveTokenParams} args {@link ApproveTokenParams} object containing arguments
+     * @param {number} args.chainId Chain ID of the network on which to approve the spend allowance of `spender` for `signer`'s `token`
+     * @param {Token} args.token Token to approve
+     * @param {string} args.spender Address of spender to approve use of `signer`'s `token`
+     * @param {BigNumber} args.amount [Optional] amount of `owner`'s `token` to approve for spend by `spender`. Defaults to uint256 max (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) if not provided.
+     *
+     * @return {Promise<ContractTransaction>} Executed transaction object.
+     */
+    export async function approveTokenSpend(args: ApproveTokenParams): Promise<ContractTransaction> {
+        const tokenParams: ERC20.ERC20TokenParams = {
+            tokenAddress: args.token.address(args.chainId),
+            chainId:      args.chainId
+        };
+
+        const approveArgs: ERC20.ApproveArgs = {
+            spender: args.spender,
+            amount:  args.amount
+        };
+
+        return ERC20.approve(
+            approveArgs,
+            tokenParams,
+            args.signer
+        )
+    }
 
     export const AllTokens: Token[] = [
         DAI, BUSD, USDC, USDT, UST,
