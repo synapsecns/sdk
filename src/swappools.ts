@@ -32,6 +32,7 @@ export namespace SwapPools {
 
     export interface SwapPoolToken extends IBaseToken, LPToken {
         readonly baseToken:       BaseToken;
+        readonly chainId:         number;
         readonly poolId:          number;
         readonly poolName:        string;
         readonly poolType:        string;
@@ -46,6 +47,7 @@ export namespace SwapPools {
     interface SwapTokenArgs {
         name:           string;
         symbol:         string;
+        chainId:        number;
         decimals:       number | DecimalsMap;
         addresses:      AddressMap;
         poolId:         number;
@@ -81,10 +83,11 @@ export namespace SwapPools {
 
     const makeSwapToken = (args: makeSwapTokenArgs): SwapToken =>
         new SwapToken({
-            decimals:        18,
-            name:         `Synapse nUSD LP Token${args.netName != "BSC" ? ` ${args.netName}` : ""}`,
-            poolName:     `${args.netName} Stableswap Pool `,
+            name:           `Synapse nUSD LP Token${args.netName != "BSC" ? ` ${args.netName}` : ""}`,
+            poolName:       `${args.netName} Stableswap Pool `,
             symbol:          args.symbol ?? ((args.notLP ?? false) ? "nUSD" : "nUSD-LP"),
+            chainId:         args.chainId,
+            decimals:        18,
             poolId:          args.poolId,
             poolTokens:      args.poolTokens,
             addresses:     {[args.chainId]: args.address},
@@ -94,10 +97,11 @@ export namespace SwapPools {
 
     const makeETHSwapToken = (args: makeETHSwapTokenArgs): ETHSwapToken =>
         new ETHSwapToken({
-            decimals:         18,
-            name:          `Synapse ${args.poolName ?? "ETH"} LP Token ${args.netName}`,
-            poolName:      `${args.netName} ${args.poolName ?? "ETH"} Pool `,
+            name:            `Synapse ${args.poolName ?? "ETH"} LP Token ${args.netName}`,
+            poolName:        `${args.netName} ${args.poolName ?? "ETH"} Pool `,
             symbol:           args.symbol ?? "nETH-LP",
+            chainId:          args.chainId,
+            decimals:         18,
             poolId:           args.poolId,
             addresses:      {[args.chainId]: args.address},
             swapAddress:      args.swapAddress,
@@ -110,6 +114,7 @@ export namespace SwapPools {
 
     export class SwapToken implements SwapPoolToken {
         readonly baseToken: BaseToken;
+        readonly chainId:   number;
 
         readonly poolId:   number;
         readonly poolName: string;
@@ -128,11 +133,12 @@ export namespace SwapPools {
                 swapType:  args.poolType
             });
 
-            this.poolId = args.poolId;
-            this.poolName = args.poolName;
-            this.poolType = args.poolType;
+            this.chainId     = args.chainId;
+            this.poolId      = args.poolId;
+            this.poolName    = args.poolName;
+            this.poolType    = args.poolType;
             this.swapAddress = args.swapAddress;
-            this.poolTokens = args.poolTokens;
+            this.poolTokens  = args.poolTokens;
         }
 
         get id(): ID {
@@ -406,6 +412,7 @@ export namespace SwapPools {
     });
 
     export const HARMONY_AVAX_SWAP_TOKEN = new SwapToken({
+        chainId:  ChainId.HARMONY,
         name:     "AVAX LP Token Harmony ",
         symbol:   "AVAXLP",
         decimals: 18,
@@ -420,6 +427,7 @@ export namespace SwapPools {
     });
 
     export const HARMONY_JEWEL_SWAP_TOKEN = new SwapToken({
+        chainId:  ChainId.HARMONY,
         name:     "Jewel LP Token Harmony ",
         symbol:   "JEWELP",
         decimals: 18,
