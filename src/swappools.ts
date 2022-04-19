@@ -256,7 +256,7 @@ export namespace SwapPools {
         address:     "0x8415D4EB17F0949e2388fdF52909db4cC0a2B082",
         netName:     "Cronos",
         poolId:      0, // may need to change
-        swapAddress: "0x3b1601c386247a127287b094f9ccb585d4d0b99b",
+        swapAddress: "0x3b1601c386247A127287b094F9CCB585D4D0B99b",
         poolTokens:  USDPoolTokens(),
     })
 
