@@ -28,7 +28,7 @@ import {
 } from "@ethersproject/bignumber";
 
 import type {Signer} from "@ethersproject/abstract-signer";
-import type {PopulatedTransaction} from "@ethersproject/contracts";
+import type {ContractTransaction, PopulatedTransaction} from "@ethersproject/contracts";
 import {TransactionResponse} from "@ethersproject/providers";
 
 export namespace UnsupportedSwapErrors {
@@ -111,7 +111,7 @@ export namespace TokenSwap {
 
     export interface AddRemoveLiquidityParams {
         chainId:        number;
-        lpSwapAddress:  string;
+        lpToken:        SwapPools.SwapPoolToken;
         deadline?:      BigNumber;
         signer?:        Signer;
     }
@@ -127,9 +127,9 @@ export namespace TokenSwap {
     }
 
     export interface RemoveLiquidityOneParams extends AddRemoveLiquidityParams {
-        token:            Token;
-        lpTokenAmount:    BigNumber;
-        wantTokenAmount?: BigNumber;
+        token:      Token;
+        amount:     BigNumber;
+        minAmount?: BigNumber;
     }
 
     export type EstimatedSwapRate = {
@@ -168,8 +168,22 @@ export namespace TokenSwap {
         return checkCanSwap(tokenFrom, tokenTo, chainIdFrom, chainIdTo);
     }
 
+    /**
+     * calculateAddLiquidity returns the estimated number of LP tokens which a user would receive
+     * were they to deposit a given number of liquidity tokens into a pool.
+     *
+     * @param {AddLiquidityParams} args {@link AddLiquidityParams} object containing arguments.
+     * @param {number} args.chainId Chain ID of the Liquidity Pool.
+     * @param {SwapPools.SwapPoolToken} args.lpToken LP Token/Pool with which to interact.
+     * @param {BigNumber[]} args.amounts Pool-index-relative array of token amounts to add as liquidity to the pool.
+     *
+     * @return {BigNumber} Amount of LP tokens a user would receive if the deposited liquidity tokens into the pool.
+     */
     export async function calculateAddLiquidity(args: AddLiquidityParams): Promise<BigNumber> {
-        const swapInstance = await swapContractFromLPAddress(args.lpSwapAddress, args.chainId);
+        const swapInstance = await swapContractFromLPSwapAddress(
+            args.lpToken.swapAddress,
+            args.chainId
+        );
 
         return swapInstance.calculateTokenAmount(
             args.amounts,
@@ -177,14 +191,44 @@ export namespace TokenSwap {
         )
     }
 
+    /**
+     * calculateRemoveLiquidity returns the estimated number of pooled tokens which a user would receive
+     * were they to return some amount of their LP tokens to the Pool.
+     *
+     * @param {RemoveLiquidityParams} args {@link RemoveLiquidityParams} object containing arguments.
+     * @param {number} args.chainId Chain ID of the Liquidity Pool.
+     * @param {SwapPools.SwapPoolToken} args.lpToken LP Token/Pool with which to interact.
+     * @param {BigNumber} args.amount Amount of LP tokens to exchange for pooled liquidity tokens.
+     *
+     * @return {BigNumber[]} Pool-index-relative array of token amounts which a user would receive if they remove the passed amount of LP tokens.
+     */
     export async function calculateRemoveLiquidity(args: RemoveLiquidityParams): Promise<BigNumber[]> {
-        const swapInstance = await swapContractFromLPAddress(args.lpSwapAddress, args.chainId);
+        const swapInstance = await swapContractFromLPSwapAddress(
+            args.lpToken.swapAddress,
+            args.chainId
+        );
 
         return swapInstance.calculateRemoveLiquidity(args.amount)
     }
 
+    /**
+     * calculateRemoveLiquidityOneToken returns the estimated number of a single pooled token
+     * which would be removed from a Liquidity Pool and transferred to a user
+     * were they to return some amount of their LP tokens to the Pool.
+     *
+     * @param {RemoveLiquidityOneParams} args {@link RemoveLiquidityOneParams} object containing arguments.
+     * @param {number} args.chainId Chain ID of the Liquidity Pool.
+     * @param {SwapPools.SwapPoolToken} args.lpToken LP Token/Pool with which to interact.
+     * @param {Token} args.token Token which will be removed as liquidity from the Liquidity Pool and transferred to the user in exchange for their LP tokens.
+     * @param {BigNumber} args.amount Amount of LP tokens to exchange for desired pooled liquidity token.
+     *
+     * @return {BigNumber} Amount of a single pooled liquidity token which would be removed from the Liquidity Pool and transferred to the user.
+     */
     export async function calculateRemoveLiquidityOneToken(args: RemoveLiquidityOneParams): Promise<BigNumber> {
-        const swapInstance = await swapContractFromLPAddress(args.lpSwapAddress, args.chainId);
+        const swapInstance = await swapContractFromLPSwapAddress(
+            args.lpToken.swapAddress,
+            args.chainId
+        );
 
         const tokenAddress = args.token.address(args.chainId);
         if (!tokenAddress) {
@@ -199,10 +243,24 @@ export namespace TokenSwap {
             return rejectPromise(e)
         }
 
-        return swapInstance.calculateRemoveLiquidityOneToken(args.lpTokenAmount, tokenIndex)
+        return swapInstance.calculateRemoveLiquidityOneToken(args.amount, tokenIndex)
     }
 
-    export async function addLiquidity(args: AddLiquidityParams): Promise<TransactionResponse> {
+    /**
+     * addLiquidity adds a given amount of a user's tokens (such as USDC for Stableswap pools)
+     * as liquidity to a Liquidity Pool, providing the user with LP tokens which can be staked.
+     *
+     * @param {AddLiquidityParams} args {@link AddLiquidityParams} object containing arguments.
+     * @param {number} args.chainId Chain ID of the Liquidity Pool.
+     * @param {SwapPools.SwapPoolToken} args.lpToken LP Token with which to interact.
+     * @param {BigNumber} args.deadline Latest deadline which transaction will be accepted at.
+     * @param {Signer} args.signer EthersJS-compatible transaction signer.
+     * @param {BigNumber[]} args.amounts Pool-index-relative array of token amounts to add as liquidity to the pool.
+     * @param {BigNumber} args.minToMint Amount of LP tokens to mint. Can be calculated with {@link calculateAddLiquidity}.
+     *
+     * @return {Promise<ContractTransaction>} Executed transaction object.
+     */
+    export async function addLiquidity(args: AddLiquidityParams): Promise<ContractTransaction> {
         if (_.isEmpty(args.signer)) {
             const err = new Error("signer must be passed in AddLiquidityParams");
             return rejectPromise(err)
@@ -214,7 +272,11 @@ export namespace TokenSwap {
             return rejectPromise(err)
         }
 
-        const swapInstance = await swapContractFromLPAddress(args.lpSwapAddress, args.chainId, args.signer);
+        const swapInstance = await swapContractFromLPSwapAddress(
+            args.lpToken.swapAddress,
+            args.chainId,
+            args.signer
+        );
 
         return swapInstance.addLiquidity(
             args.amounts,
@@ -223,7 +285,21 @@ export namespace TokenSwap {
         )
     }
 
-    export async function removeLiquidity(args: RemoveLiquidityParams): Promise<TransactionResponse> {
+    /**
+     * removeLiquidity exchanges a given amount of a user's LP tokens for a given Liquidity Pool for
+     * various amounts of pooled liquidity tokens, thereby removing liquidity from the Pool.
+     *
+     * @param {RemoveLiquidityParams} args {@link RemoveLiquidityParams} object containing arguments.
+     * @param {number} args.chainId Chain ID of the Liquidity Pool.
+     * @param {SwapPools.SwapPoolToken} args.lpToken LP Token with which to interact.
+     * @param {BigNumber} args.deadline Latest deadline which transaction will be accepted at.
+     * @param {Signer} args.signer EthersJS-compatible transaction signer.
+     * @param {BigNumber} args.amount Amount of LP tokens to exchange for pooled liquidity tokens.
+     * @param {BigNumber[]} args.minAmounts Pool-index-relative array of pooled liquidity token amounts to return in exchange for LP tokens. Can be calculated with {@link calculateRemoveLiquidity}.
+     *
+     * @return {Promise<ContractTransaction>} Executed transaction object.
+     */
+    export async function removeLiquidity(args: RemoveLiquidityParams): Promise<ContractTransaction> {
         if (_.isEmpty(args.signer)) {
             const err = new Error("signer must be passed in RemoveLiquidityParams");
             return rejectPromise(err)
@@ -235,7 +311,11 @@ export namespace TokenSwap {
             return rejectPromise(err)
         }
 
-        const swapInstance = await swapContractFromLPAddress(args.lpSwapAddress, args.chainId, args.signer);
+        const swapInstance = await swapContractFromLPSwapAddress(
+            args.lpToken.swapAddress,
+            args.chainId,
+            args.signer
+        );
 
         return swapInstance.removeLiquidity(
             args.amount,
@@ -244,19 +324,39 @@ export namespace TokenSwap {
         )
     }
 
-    export async function removeLiquidityOneToken(args: RemoveLiquidityOneParams): Promise<TransactionResponse> {
+    /**
+     * removeLiquidityOneToken exchanges a given amount of a user's LP tokens for a given Liquidity Pool for
+     * an amount of a single liquidity token in the given Liquidity Pool, removing that amount from available liquidity
+     * and transferring it to the user.
+     *
+     * @param {RemoveLiquidityOneParams} args {@link RemoveLiquidityOneParams} object containing arguments.
+     * @param {number} args.chainId Chain ID of the Liquidity Pool.
+     * @param {SwapPools.SwapPoolToken} args.lpToken LP Token/Pool with which to interact.
+     * @param {BigNumber} args.deadline Latest deadline which transaction will be accepted at.
+     * @param {Signer} args.signer EthersJS-compatible transaction signer.
+     * @param {Token} args.token Token which will be returned to the user in exchange for their LP tokens.
+     * @param {BigNumber} args.amount Amount of LP tokens to exchange for desired pooled liquidity token.
+     * @param {BigNumber} args.minAmount Minimum amount of pooled liquidity token to be removed from the Liquidity Pool and transferred to the user.
+     *
+     * @return {Promise<ContractTransaction>} Executed transaction object.
+     */
+    export async function removeLiquidityOneToken(args: RemoveLiquidityOneParams): Promise<ContractTransaction> {
         if (_.isEmpty(args.signer)) {
             const err = new Error("signer must be passed in RemoveLiquidityOneParams");
             return rejectPromise(err)
         } else if (_.isEmpty(args.deadline)) {
             const err = new Error("deadline must be passed in RemoveLiquidityOneParams");
             return rejectPromise(err)
-        } else if (_.isEmpty(args.wantTokenAmount)) {
-            const err = new Error("wantTokenAmountmust  be passed in RemoveLiquidityOneParams");
+        } else if (_.isEmpty(args.minAmount)) {
+            const err = new Error("minAmount must be passed in RemoveLiquidityOneParams");
             return rejectPromise(err)
         }
 
-        const swapInstance = await swapContractFromLPAddress(args.lpSwapAddress, args.chainId, args.signer);
+        const swapInstance = await swapContractFromLPSwapAddress(
+            args.lpToken.swapAddress,
+            args.chainId,
+            args.signer
+        );
 
         const tokenAddress = args.token.address(args.chainId);
         if (!tokenAddress) {
@@ -272,9 +372,9 @@ export namespace TokenSwap {
         }
 
         return swapInstance.removeLiquidityOneToken(
-            args.lpTokenAmount,
+            args.amount,
             tokenIndex,
-            args.wantTokenAmount,
+            args.minAmount,
             args.deadline
         )
     }
@@ -466,7 +566,7 @@ export namespace TokenSwap {
 
         // temp fix until BridgeConfig is updated
         if (lpToken.isEqual(Tokens.NUSD) && chainId === ChainId.CRONOS) {
-            return swapContractFromLPAddress(
+            return swapContractFromLPSwapAddress(
                 SwapPools.stableswapPoolForNetwork(chainId).swapAddress,
                 chainId
             )
@@ -477,7 +577,7 @@ export namespace TokenSwap {
             .catch(rejectPromise)
     }
 
-    async function swapContractFromLPAddress(lpSwapAddress: string, chainId: number, signer?: Signer): Promise<SwapContract> {
+    async function swapContractFromLPSwapAddress(lpSwapAddress: string, chainId: number, signer?: Signer): Promise<SwapContract> {
         const provider = signer ? signer : rpcProviderForChain(chainId);
 
         return SwapFactory.connect(lpSwapAddress, provider)
