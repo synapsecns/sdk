@@ -54,7 +54,8 @@
     "@ethersproject/wallet": "^5.5.0",
     "@ethersproject/web": "^5.5.1",
     "ethers": "^5.5.1",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21"
   },
   "devDependencies": {
     "@ethereum-waffle/chai": "3.4.4",
