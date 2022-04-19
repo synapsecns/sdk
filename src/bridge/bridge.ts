@@ -126,8 +126,8 @@ export namespace Bridge {
      * SynapseBridge is a wrapper around any Synapse Bridge contract which exists on chains supported by the Synapse Protocol.
      */
     export class SynapseBridge {
+        readonly chainId: number;
         protected network: Networks.Network;
-        protected chainId: number;
         protected provider: Provider;
 
         private readonly bridgeAddress:    string;
