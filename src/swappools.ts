@@ -757,6 +757,77 @@ export namespace SwapPools {
         HARMONY_AVAX_SWAP_TOKEN,
         HARMONY_JEWEL_SWAP_TOKEN,
     ];
+
+    function checkChainId(t: SwapPoolToken, chainId?: number): boolean {
+        if (typeof chainId !== 'undefined' && chainId !== null) {
+            return chainId === t.chainId
+        }
+
+        return true
+    }
+
+    enum CheckAddressKind {
+        LpTokenAddress,
+        SwapAddress
+    }
+
+    function checkSwapPoolTokenAddress(address: string, field: CheckAddressKind, chainId?: number): SwapPoolToken {
+        let res: SwapPoolToken = null;
+
+        for (const t of AllSwapPoolTokens) {
+            let checkAddress: string;
+            switch (field) {
+                case CheckAddressKind.LpTokenAddress:
+                    checkAddress = t.address(t.chainId);
+                    break;
+                case CheckAddressKind.SwapAddress:
+                    checkAddress = t.swapAddress;
+                    break;
+            }
+
+            if (checkAddress === address) {
+                if (checkChainId(t, chainId)) {
+                    res = t;
+                    break;
+                }
+            }
+        }
+
+        return res
+    }
+
+    export function swapPoolTokenFromLPTokenAddress(lpTokenAddress: string, chainId?: number): SwapPoolToken {
+        return checkSwapPoolTokenAddress(lpTokenAddress, CheckAddressKind.LpTokenAddress, chainId)
+    }
+
+    export function swapPoolTokenFromSwapAddress(swapAddress: string, chainId?: number): SwapPoolToken {
+        return checkSwapPoolTokenAddress(swapAddress, CheckAddressKind.SwapAddress, chainId)
+    }
+
+    export function swapPoolTokenForTypeForChain(chainId: number, swapType: SwapType): SwapPoolToken {
+        let res: SwapPoolToken = null;
+
+        for (const t of swapPoolTokensForChainId(chainId)) {
+            if (t.swapType === swapType) {
+                res = t;
+                break;
+            }
+        }
+
+        return res
+    }
+
+    export function swapPoolTokensForChainId(chainId: number): SwapPoolToken[] {
+        let res: SwapPoolToken[] = [];
+
+        AllSwapPoolTokens.forEach(t => {
+            if (t.chainId === chainId) {
+                res.push(t);
+            }
+        });
+
+        return res
+    }
 }
 
 export type NetworkSwappableTokensMap     = ChainIdTypeMap<Token[]>;

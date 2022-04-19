@@ -22,6 +22,7 @@ import {
     wrapExpect,
 } from "@tests/helpers";
 
+
 describe("SwapPools Tests", function(this: Mocha.Suite) {
     describe("Pool tokens tests", function(this: Mocha.Suite) {
         interface TestCase {
@@ -276,6 +277,170 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                         expectEqual(addrsMap[tc.chainId], tc.wantAddress);
                     });
                 }
+            });
+        });
+    });
+
+    describe("SwapPool from lpTokenAddress/swapAddress/chainId tests", function(this: Mocha.Suite) {
+        function makeChainIdString(chainId: number): string {
+            let cidStr: string;
+
+            for (const k of Object.keys(ChainId)) {
+                if (ChainId[k] === chainId) {
+                    cidStr = k;
+                    break;
+                }
+            }
+
+            return `ChainId.${cidStr}`
+        }
+
+        describe("- swapPoolTokenFrom[x]Address tests", function(this: Mocha.Suite) {
+            interface TestCase {
+                address:  string;
+                chainId?: number;
+                want:     string | null;
+            }
+
+            function makeTestCase(address: string, want: string | null, chainId?: number): TestCase {
+                return {address, chainId, want}
+            }
+
+            function makeTestTitle(tc: TestCase, fnName: string): string {
+                const
+                    testParams: string = `${tc.address}, ${tc.chainId ? makeChainIdString(tc.chainId) : 'null'}`,
+                    wantStr:    string = `${tc.want !== null ? tc.want : 'null'}`;
+
+                return `${fnName}(${testParams}) should return ${wantStr}`
+            }
+
+            describe("- swapPoolTokenFromLPTokenAddress tests", function(this: Mocha.Suite) {
+                const fnName: string = "swapPoolTokenFromLPTokenAddress";
+
+                const testCases: TestCase[] = [
+                    makeTestCase("0xa4b7Bc06EC817785170C2DbC1dD3ff86CDcdcc4C", "Synapse nUSD LP Token"),
+                    makeTestCase("0xa4b7Bc06EC817785170C2DbC1dD3ff86CDcdcc4C", "Synapse nUSD LP Token",   ChainId.BSC),
+                    makeTestCase("0x28ec0B36F0819ecB5005cAB836F4ED5a2eCa4D13",  null,                     ChainId.BSC),
+                    makeTestCase("0xa4b7Bc06EC817785170C2DbC1dD3ff86CDcdcc4C",  null,                     ChainId.FANTOM),
+                    makeTestCase("0x02f7D17f126BD54573c8EbAD9e05408A56f46452", "AVAX LP Token Harmony "),
+                    makeTestCase("0x02f7D17f126BD54573c8EbAD9e05408A56f46452", "AVAX LP Token Harmony ",  ChainId.HARMONY),
+                    makeTestCase("0x0000000000000000000000000000000000000000", "Jewel LP Token Harmony "),
+                    makeTestCase("0x0000000000000000000000000000000000000000", "Jewel LP Token Harmony ", ChainId.HARMONY),
+                    makeTestCase("0x0000000000000000000000000000000000000000",  null,                     ChainId.AVALANCHE),
+                ];
+
+                testCases.forEach(tc => {
+                    const testTitle: string = makeTestTitle(tc, fnName);
+
+                    it(testTitle, function(this: Mocha.Context) {
+                        const got = SwapPools.swapPoolTokenFromLPTokenAddress(tc.address, tc.chainId);
+
+                        if (tc.want === null) {
+                            expect(got).to.be.null;
+                        } else {
+                            expect(got.name).to.equal(tc.want);
+                        }
+                    });
+                });
+            });
+
+            describe("- swapPoolTokenFromSwapAddress tests", function(this: Mocha.Suite) {
+                const fnName: string = "swapPoolTokenFromSwapAddress";
+
+                const testCases: TestCase[] = [
+                    makeTestCase("0x28ec0B36F0819ecB5005cAB836F4ED5a2eCa4D13", "Synapse nUSD LP Token"),
+                    makeTestCase("0x28ec0B36F0819ecB5005cAB836F4ED5a2eCa4D13", "Synapse nUSD LP Token",   ChainId.BSC),
+                    makeTestCase("0xa4b7Bc06EC817785170C2DbC1dD3ff86CDcdcc4C",  null,                     ChainId.BSC),
+                    makeTestCase("0x28ec0B36F0819ecB5005cAB836F4ED5a2eCa4D13",  null,                     ChainId.FANTOM),
+                    makeTestCase("0x00A4F57D926781f62D09bb05ec76e6D8aE4268da", "AVAX LP Token Harmony "),
+                    makeTestCase("0x00A4F57D926781f62D09bb05ec76e6D8aE4268da", "AVAX LP Token Harmony ",  ChainId.HARMONY),
+                    makeTestCase("0x7bE461cce1501f07969BCE24Ccb2140fCA0a35b3", "Jewel LP Token Harmony "),
+                    makeTestCase("0x0000000000000000000000000000000000000000",  null),
+                    makeTestCase("0x7bE461cce1501f07969BCE24Ccb2140fCA0a35b3", "Jewel LP Token Harmony ", ChainId.HARMONY),
+                    makeTestCase("0x7bE461cce1501f07969BCE24Ccb2140fCA0a35b3",  null,                     ChainId.AVALANCHE),
+                ];
+
+                testCases.forEach(tc => {
+                    const testTitle: string = makeTestTitle(tc, fnName);
+
+                    it(testTitle, function(this: Mocha.Context) {
+                        const got = SwapPools.swapPoolTokenFromSwapAddress(tc.address, tc.chainId);
+
+                        if (tc.want === null) {
+                            expect(got).to.be.null;
+                        } else {
+                            expect(got.name).to.equal(tc.want);
+                        }
+                    });
+                });
+            });
+        });
+
+        describe("- swapPoolTokensForChainId tests", function(this: Mocha.Suite) {
+            interface TestCase {
+                chainId:    number;
+                wantLength: number;
+            }
+
+            function makeTestCase(chainId: number, wantLength: number): TestCase {
+                return {chainId, wantLength}
+            }
+
+            function makeTestTitle(tc: TestCase): string {
+                return `swapPoolTokensForChainId(${makeChainIdString(tc.chainId)}) should return array of length ${tc.wantLength}`
+            }
+
+            const testCases: TestCase[] = [
+                makeTestCase(ChainId.BSC,     1),
+                makeTestCase(ChainId.ETH,     1),
+                makeTestCase(ChainId.HARMONY, 4),
+                makeTestCase(ChainId.DFK,     0)
+            ];
+
+            testCases.forEach(tc => {
+                const testTitle: string = makeTestTitle(tc);
+
+                it(testTitle, function(this: Mocha.Context) {
+                    const got = SwapPools.swapPoolTokensForChainId(tc.chainId);
+
+                    expect(got).to.have.a.lengthOf(tc.wantLength);
+                });
+            });
+        });
+
+        describe("- swapPoolTokenForTypeForChain tests", function(this: Mocha.Suite) {
+            interface TestCase {
+                chainId:  number;
+                swapType: SwapType;
+                want:     string | null;
+            }
+
+            function makeTestCase(chainId: number, swapType: SwapType, want: string | null): TestCase {
+                return {chainId, swapType, want}
+            }
+
+            function makeTestTitle(tc: TestCase): string {
+                return `swapPoolTokenForTypeForChain(${makeChainIdString(tc.chainId)}, ${tc.swapType}) should return ${tc.want !== null ? tc.want : 'null'}`
+            }
+
+            const testCases: TestCase[] = [
+                makeTestCase(ChainId.HARMONY, SwapType.JEWEL, "Jewel LP Token Harmony "),
+                makeTestCase(ChainId.HARMONY, SwapType.AVAX,  "AVAX LP Token Harmony "),
+                makeTestCase(ChainId.METIS,   SwapType.ETH,   "Synapse ETH LP Token Metis"),
+            ];
+
+            testCases.forEach(tc => {
+                const testTitle: string = makeTestTitle(tc);
+
+                it(testTitle, function(this: Mocha.Context) {
+                    const got = SwapPools.swapPoolTokenForTypeForChain(tc.chainId, tc.swapType);
+
+                    if (tc.want === null) {
+                        expect(got).to.be.null;
+                    } else {
+                        expect(got.name).to.equal(tc.want);
+                    }
+                });
             });
         });
     });
