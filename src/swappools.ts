@@ -726,6 +726,29 @@ export namespace SwapPools {
 
         return undefined
     }
+
+    export const AllSwapPoolTokens: SwapPoolToken[] = [
+        ETH_POOL_SWAP_TOKEN,
+        OPTIMISM_ETH_SWAP_TOKEN,
+        CRONOS_POOL_SWAP_TOKEN,
+        BSC_POOL_SWAP_TOKEN,
+        POLYGON_POOL_SWAP_TOKEN,
+        FANTOM_POOL_SWAP_TOKEN,
+        FANTOM_ETH_SWAP_TOKEN,
+        BOBA_POOL_SWAP_TOKEN,
+        BOBA_ETH_SWAP_TOKEN,
+        METIS_POOL_SWAP_TOKEN,
+        METIS_ETH_SWAP_TOKEN,
+        ARBITRUM_POOL_SWAP_TOKEN,
+        ARBITRUM_ETH_SWAP_TOKEN,
+        AVALANCHE_POOL_SWAP_TOKEN,
+        AVALANCHE_ETH_SWAP_TOKEN,
+        AURORA_POOL_SWAP_TOKEN,
+        HARMONY_POOL_SWAP_TOKEN,
+        HARMONY_ONEETH_TOKEN,
+        HARMONY_AVAX_SWAP_TOKEN,
+        HARMONY_JEWEL_SWAP_TOKEN,
+    ];
 }
 
 export type NetworkSwappableTokensMap     = ChainIdTypeMap<Token[]>;
