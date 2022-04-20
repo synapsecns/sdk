@@ -3,8 +3,15 @@ import {Tokens} from "@tokens";
 
 import {useSignerFromEthereumFn} from "./signer";
 
-import {BigNumber} from "@ethersproject/bignumber";
+import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 import {ContractTransaction} from "@ethersproject/contracts";
+
+function bignumFromBignumberish(n: BigNumberish, token: Token, chainId: number): BigNumber {
+	return n instanceof BigNumber
+		? n as BigNumber
+		: token.etherToWei(n, chainId)
+}
+
 
 export function useApproveTokenSpend(ethereum: any, chainId: number) {
 	const [getSigner] = useSignerFromEthereumFn();
@@ -14,8 +21,16 @@ export function useApproveTokenSpend(ethereum: any, chainId: number) {
 		spender: string,
 		amount?: BigNumber
 	}): Promise<ContractTransaction> {
+		const amt = args.amount
+			? bignumFromBignumberish(args.amount, args.token, chainId)
+			: undefined
 
-		return Tokens.approveTokenSpend({...args, chainId, signer: getSigner(ethereum)})
+		return Tokens.approveTokenSpend({
+			...args,
+			amount: amt,
+			chainId,
+			signer: getSigner(ethereum)
+		})
 	}
 
 	return [fn]

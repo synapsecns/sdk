@@ -1,9 +1,4 @@
 import {
-    Web3ReactNetworkContextName,
-    NETWORK_CONNECTOR,
-    useEagerConnect,
-    useWeb3Provider,
-    useGetSigner,
     useApproveBridgeSwap,
     useExecuteBridgeSwap,
     useCalculateBridgeSwapOutput,
@@ -24,11 +19,6 @@ import {
 } from "./hooks/index";
 
 export {
-    Web3ReactNetworkContextName,
-    NETWORK_CONNECTOR,
-    useEagerConnect,
-    useWeb3Provider,
-    useGetSigner,
     useApproveBridgeSwap,
     useExecuteBridgeSwap,
     useCalculateBridgeSwapOutput,

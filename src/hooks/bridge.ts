@@ -3,8 +3,14 @@ import {Bridge} from "@bridge/bridge";
 
 import {useSignerFromEthereumFn} from "./signer";
 
-import {BigNumber} from "@ethersproject/bignumber";
+import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 import {ContractTransaction} from "@ethersproject/contracts";
+
+function bignumFromBignumberish(n: BigNumberish, token: Token, chainId: number): BigNumber {
+	return n instanceof BigNumber
+		? n as BigNumber
+		: token.etherToWei(n, chainId)
+}
 
 function useApproveBridgeSwap(ethereum: any, chainId: number) {
 	const [getSigner] = useSignerFromEthereumFn();
@@ -13,8 +19,17 @@ function useApproveBridgeSwap(ethereum: any, chainId: number) {
 		token:   Token,
 		amount?: BigNumber
 	}): Promise<ContractTransaction> => {
+		const amt = args.amount
+			? bignumFromBignumberish(args.amount, args.token, chainId)
+			: undefined
+
+		const fnArgs = {
+			...args,
+			amount: amt
+		};
+
 		const synapseBridge = new Bridge.SynapseBridge({network: chainId});
-		return synapseBridge.executeApproveTransaction(args, getSigner(ethereum))
+		return synapseBridge.executeApproveTransaction(fnArgs, getSigner(ethereum))
 	}
 
 	return [fn]
@@ -31,8 +46,14 @@ function useExecuteBridgeSwap(ethereum: any, chainId: number) {
 		chainIdTo:  number,
 		addressTo?: string
 	}): Promise<ContractTransaction> => {
+		const fnArgs = {
+			...args,
+			amountFrom: bignumFromBignumberish(args.amountFrom, args.tokenFrom, chainId),
+			amountTo:   bignumFromBignumberish(args.amountTo,   args.tokenTo,   args.chainIdTo)
+		};
+
 		const synapseBridge = new Bridge.SynapseBridge({network: chainId});
-		return synapseBridge.executeBridgeTokenTransaction(args, getSigner(ethereum))
+		return synapseBridge.executeBridgeTokenTransaction(fnArgs, getSigner(ethereum))
 	}
 
 	return [fn]
@@ -46,8 +67,13 @@ function useCalculateBridgeSwapOutput(ethereum: any, chainId: number) {
 		amountFrom: BigNumber,
 		chainIdTo:  number
 	}): Promise<Bridge.BridgeOutputEstimate> => {
+		const fnArgs = {
+			...args,
+			amountFrom: bignumFromBignumberish(args.amountFrom, args.tokenFrom, chainId),
+		};
+
 		const synapseBridge = new Bridge.SynapseBridge({network: chainId});
-		return synapseBridge.estimateBridgeTokenOutput(args)
+		return synapseBridge.estimateBridgeTokenOutput(fnArgs)
 	}
 
 	return [fn]
