@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
+      "@hooks/*":          ["./src/hooks/*"],
       "@bridge":           ["./src/bridge"],
       "@bridge/*":         ["./src/bridge/*"],
       "@common/*":         ["./src/common/*"],
@@ -27,10 +28,17 @@
     "declaration": true,
     "removeComments": false,
     "types": [
-      "node",
+      "node"
+    ],
+    "lib": [
+      "es2017",
+      "esnext",
+      "dom",
+      "dom.iterable"
     ],
     "isolatedModules": true,
     "skipLibCheck": true,
+    "jsx": "react-jsx"
   },
   "include": [
     "src/**/*"
