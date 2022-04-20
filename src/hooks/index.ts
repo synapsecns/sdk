@@ -1,9 +1,12 @@
 export {
-	useWeb3Signer
+	Web3ReactNetworkContextName,
+	NETWORK_CONNECTOR,
+	useEagerConnect,
+	useWeb3Provider,
+	useGetSigner
 } from "./signer";
 
 export {
-	useSynapseBridge,
 	useApproveBridgeSwap,
 	useExecuteBridgeSwap,
 	useCalculateBridgeSwapOutput

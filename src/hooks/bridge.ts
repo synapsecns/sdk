@@ -1,83 +1,60 @@
 import type {Token} from "@token";
 import {Bridge} from "@bridge/bridge";
 
-import {useWeb3Signer} from "./signer";
-
-import {useEffect, useState} from "react";
-import {useWeb3React} from "@web3-react/core";
+import {useSignerFromEthereumFn} from "./signer";
 
 import {BigNumber} from "@ethersproject/bignumber";
 import {ContractTransaction} from "@ethersproject/contracts";
 
-export function useSynapseBridge() {
-	const {chainId} = useWeb3React();
+function useApproveBridgeSwap(ethereum: any, chainId: number) {
+	const [getSigner] = useSignerFromEthereumFn();
 
-	let [synapseBridge, setSynapseBridge] = useState<Bridge.SynapseBridge>(null);
-
-	function setNewBridge(cid: number) {
-		let newBridge = new Bridge.SynapseBridge({network: cid});
-		setSynapseBridge(newBridge);
-	}
-
-	useEffect(() => {
-		if (typeof chainId !== 'undefined' && chainId !== null) {
-			if (synapseBridge !== null) {
-				if (synapseBridge.chainId !== chainId) {
-					setNewBridge(chainId)
-				}
-			} else {
-				setNewBridge(chainId)
-			}
-		}
-	}, [chainId]);
-
-	return [synapseBridge]
-}
-
-export function useApproveBridgeSwap() {
-	const [signer] = useWeb3Signer();
-	let [synapseBridge] = useSynapseBridge();
-
-	async function fn(args: {
+	const fn = async (args: {
 		token:   Token,
 		amount?: BigNumber
-	}): Promise<ContractTransaction> {
-		return synapseBridge.executeApproveTransaction(args, signer)
+	}): Promise<ContractTransaction> => {
+		const synapseBridge = new Bridge.SynapseBridge({network: chainId});
+		return synapseBridge.executeApproveTransaction(args, getSigner(ethereum))
 	}
 
 	return [fn]
 }
 
-export function useExecuteBridgeSwap() {
-	const [signer] = useWeb3Signer();
-	let [synapseBridge] = useSynapseBridge();
+function useExecuteBridgeSwap(ethereum: any, chainId: number) {
+	const [getSigner] = useSignerFromEthereumFn();
 
-	async function fn(args: {
+	const fn = async (args: {
 		tokenFrom:  Token,
 		tokenTo:    Token,
 		amountFrom: BigNumber,
 		amountTo:   BigNumber,
 		chainIdTo:  number,
 		addressTo?: string
-	}): Promise<ContractTransaction> {
-		return synapseBridge.executeBridgeTokenTransaction(args, signer)
+	}): Promise<ContractTransaction> => {
+		const synapseBridge = new Bridge.SynapseBridge({network: chainId});
+		return synapseBridge.executeBridgeTokenTransaction(args, getSigner(ethereum))
 	}
 
 	return [fn]
 }
 
-export function useCalculateBridgeSwapOutput() {
-	const [signer] = useWeb3Signer();
-	let [synapseBridge] = useSynapseBridge();
+function useCalculateBridgeSwapOutput(ethereum: any, chainId: number) {
 
-	async function fn(args: {
+	const fn = async(args: {
 		tokenFrom:  Token,
 		tokenTo:    Token,
 		amountFrom: BigNumber,
 		chainIdTo:  number
-	}): Promise<Bridge.BridgeOutputEstimate> {
+	}): Promise<Bridge.BridgeOutputEstimate> => {
+		const synapseBridge = new Bridge.SynapseBridge({network: chainId});
 		return synapseBridge.estimateBridgeTokenOutput(args)
 	}
 
 	return [fn]
+}
+
+export {
+	useApproveBridgeSwap,
+	useExecuteBridgeSwap,
+	useCalculateBridgeSwapOutput
 }

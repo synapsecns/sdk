@@ -3,17 +3,14 @@ import {Tokens} from "@tokens";
 import {SwapPools} from "@swappools";
 import {TokenSwap} from "@tokenswap";
 
-import {useWeb3Signer} from "./signer";
+import {useSignerFromEthereum, useSignerFromEthereumFn} from "./signer";
 
 import {useEffect, useState} from "react";
-import {useWeb3React} from "@web3-react/core";
 
 import {BigNumber} from "@ethersproject/bignumber";
 import {ContractTransaction} from "@ethersproject/contracts";
 
-export function useChainStableswapLPToken() {
-	const {chainId} = useWeb3React();
-
+export function useChainStableswapLPToken(ethereum: any, chainId: number) {
 	const [lpToken, setLpToken] = useState<SwapPools.SwapPoolToken>(null);
 
 	useEffect(() => {
@@ -31,9 +28,7 @@ export function useChainStableswapLPToken() {
 	return [lpToken]
 }
 
-export function useChainETHSwapLPToken() {
-	const {chainId} = useWeb3React();
-
+export function useChainETHSwapLPToken(ethereum: any, chainId: number) {
 	const [lpToken, setLpToken] = useState<SwapPools.SwapPoolToken>(null);
 
 	useEffect(() => {
@@ -51,17 +46,15 @@ export function useChainETHSwapLPToken() {
 	return [lpToken]
 }
 
-export function useHarmonyJewelLPToken() {
+export function useHarmonyJewelLPToken(ethereum: any, chainId: number) {
 	return [SwapPools.HARMONY_JEWEL_SWAP_TOKEN]
 }
 
-export function useHarmonyAVAXLPToken() {
+export function useHarmonyAVAXLPToken(ethereum: any, chainId: number) {
 	return [SwapPools.HARMONY_AVAX_SWAP_TOKEN]
 }
 
-export function useCalculateAddLiquidity() {
-	const {chainId} = useWeb3React();
-
+export function useCalculateAddLiquidity(ethereum: any, chainId: number) {
 	async function fn(args: {
 		lpToken: SwapPools.SwapPoolToken,
 		amounts: BigNumber[]
@@ -72,9 +65,7 @@ export function useCalculateAddLiquidity() {
 	return [fn]
 }
 
-export function useCalculateRemoveLiquidity() {
-	const {chainId} = useWeb3React();
-
+export function useCalculateRemoveLiquidity(ethereum: any, chainId: number) {
 	async function fn(args: {
 		lpToken: SwapPools.SwapPoolToken,
 		amount:  BigNumber
@@ -85,9 +76,7 @@ export function useCalculateRemoveLiquidity() {
 	return [fn]
 }
 
-export function useCalculateRemoveLiquidityOneToken() {
-	const {chainId} = useWeb3React();
-
+export function useCalculateRemoveLiquidityOneToken(ethereum: any, chainId: number) {
 	async function fn(args: {
 		lpToken: SwapPools.SwapPoolToken,
 		token:   Token,
@@ -99,9 +88,8 @@ export function useCalculateRemoveLiquidityOneToken() {
 	return [fn]
 }
 
-export function useAddLiquidity() {
-	const {chainId} = useWeb3React();
-	const [signer] = useWeb3Signer();
+export function useAddLiquidity(ethereum: any, chainId: number) {
+	const [getSigner] = useSignerFromEthereumFn();
 
 	async function fn(args: {
 		lpToken:   SwapPools.SwapPoolToken,
@@ -109,15 +97,14 @@ export function useAddLiquidity() {
 		amounts:   BigNumber[],
 		minToMint: BigNumber
 	}): Promise<ContractTransaction> {
-		return TokenSwap.addLiquidity({...args, chainId, signer})
+		return TokenSwap.addLiquidity({...args, chainId, signer: getSigner(ethereum)})
 	}
 
 	return [fn]
 }
 
-export function useRemoveLiquidity() {
-	const {chainId} = useWeb3React();
-	const [signer] = useWeb3Signer();
+export function useRemoveLiquidity(ethereum: any, chainId: number) {
+	const [getSigner] = useSignerFromEthereumFn();
 
 	async function fn(args: {
 		lpToken:    SwapPools.SwapPoolToken,
@@ -125,15 +112,14 @@ export function useRemoveLiquidity() {
 		amount:     BigNumber
 		minAmounts: BigNumber[],
 	}): Promise<ContractTransaction> {
-		return TokenSwap.removeLiquidity({...args, chainId, signer})
+		return TokenSwap.removeLiquidity({...args, chainId, signer: getSigner(ethereum)})
 	}
 
 	return [fn]
 }
 
-export function useRemoveLiquidityOneToken() {
-	const {chainId} = useWeb3React();
-	const [signer] = useWeb3Signer();
+export function useRemoveLiquidityOneToken(ethereum: any, chainId: number) {
+	const [getSigner] = useSignerFromEthereumFn();
 
 	async function fn(args: {
 		lpToken:    SwapPools.SwapPoolToken,
@@ -142,15 +128,13 @@ export function useRemoveLiquidityOneToken() {
 		minAmount:  BigNumber,
 		token:		Token
 	}): Promise<ContractTransaction> {
-		return TokenSwap.removeLiquidityOneToken({...args, chainId, signer})
+		return TokenSwap.removeLiquidityOneToken({...args, chainId, signer: getSigner(ethereum)})
 	}
 
 	return [fn]
 }
 
-export function useCalculateSwapRate() {
-	const {chainId} = useWeb3React();
-
+export function useCalculateSwapRate(ethereum: any, chainId: number) {
 	async function fn(args: {
 		tokenFrom: Token;
 		tokenTo:   Token;
@@ -163,9 +147,8 @@ export function useCalculateSwapRate() {
 	return [fn]
 }
 
-export function useApproveLPToken() {
-	const {chainId} = useWeb3React();
-	const [signer] = useWeb3Signer();
+export function useApproveLPToken(ethereum: any, chainId: number) {
+	const [getSigner] = useSignerFromEthereumFn();
 
 	async function fn(args: {
 		lpToken: SwapPools.SwapPoolToken,
@@ -178,7 +161,7 @@ export function useApproveLPToken() {
 			}
 		} = args;
 
-		return Tokens.approveTokenSpend({...args, spender, token, signer, chainId})
+		return Tokens.approveTokenSpend({...args, spender, token, chainId, signer: getSigner(ethereum)})
 	}
 
 	return [fn]

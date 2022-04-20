@@ -1,16 +1,13 @@
 import type {Token} from "@token";
 import {Tokens} from "@tokens";
 
-import {useWeb3Signer} from "./signer";
-
-import {useWeb3React} from "@web3-react/core";
+import {useSignerFromEthereum, useSignerFromEthereumFn} from "./signer";
 
 import {BigNumber} from "@ethersproject/bignumber";
 import {ContractTransaction} from "@ethersproject/contracts";
 
-export function useApproveTokenSpend() {
-	const {chainId} = useWeb3React();
-	const [signer] = useWeb3Signer();
+export function useApproveTokenSpend(ethereum: any, chainId: number) {
+	const [getSigner] = useSignerFromEthereumFn();
 
 	async function fn(args: {
 		token:   Token,
@@ -18,7 +15,7 @@ export function useApproveTokenSpend() {
 		amount?: BigNumber
 	}): Promise<ContractTransaction> {
 
-		return Tokens.approveTokenSpend({...args, signer, chainId})
+		return Tokens.approveTokenSpend({...args, chainId, signer: getSigner(ethereum)})
 	}
 
 	return [fn]

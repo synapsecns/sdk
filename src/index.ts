@@ -1,3 +1,51 @@
+import {
+    Web3ReactNetworkContextName,
+    NETWORK_CONNECTOR,
+    useEagerConnect,
+    useWeb3Provider,
+    useGetSigner,
+    useApproveBridgeSwap,
+    useExecuteBridgeSwap,
+    useCalculateBridgeSwapOutput,
+    useChainStableswapLPToken,
+    useChainETHSwapLPToken,
+    useHarmonyJewelLPToken,
+    useHarmonyAVAXLPToken,
+    useCalculateAddLiquidity,
+    useCalculateRemoveLiquidity,
+    useCalculateRemoveLiquidityOneToken,
+    useAddLiquidity,
+    useRemoveLiquidity,
+    useRemoveLiquidityOneToken,
+    useCalculateSwapRate,
+    useApproveLPToken,
+    useApproveTokenSpend
+} from "./hooks/index";
+
+export {
+    Web3ReactNetworkContextName,
+    NETWORK_CONNECTOR,
+    useEagerConnect,
+    useWeb3Provider,
+    useGetSigner,
+    useApproveBridgeSwap,
+    useExecuteBridgeSwap,
+    useCalculateBridgeSwapOutput,
+    useChainStableswapLPToken,
+    useChainETHSwapLPToken,
+    useHarmonyJewelLPToken,
+    useHarmonyAVAXLPToken,
+    useCalculateAddLiquidity,
+    useCalculateRemoveLiquidity,
+    useCalculateRemoveLiquidityOneToken,
+    useAddLiquidity,
+    useRemoveLiquidity,
+    useRemoveLiquidityOneToken,
+    useCalculateSwapRate,
+    useApproveLPToken,
+    useApproveTokenSpend
+};
+
 export {
     SynapseBridgeContractInstance,
     L1BridgeZapContractInstance,
