@@ -166,3 +166,21 @@ export function useApproveLPToken(ethereum: any, chainId: number) {
 
 	return [fn]
 }
+
+export function useSwapTokens(ethereum: any, chainId: number) {
+	const [getSigner] = useSignerFromEthereumFn();
+
+	async function fn(args: {
+		tokenFrom:    Token,
+		tokenTo:   	  Token,
+		amountIn:  	  BigNumber,
+		minAmountOut: BigNumber,
+		deadline?:    number
+	}): Promise<ContractTransaction> {
+		const fnParams = {...args, chainId, signer: getSigner(ethereum)};
+
+		return TokenSwap.swapTokens(fnParams)
+	}
+
+	return [fn]
+}

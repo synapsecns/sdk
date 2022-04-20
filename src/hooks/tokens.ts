@@ -1,7 +1,7 @@
 import type {Token} from "@token";
 import {Tokens} from "@tokens";
 
-import {useSignerFromEthereum, useSignerFromEthereumFn} from "./signer";
+import {useSignerFromEthereumFn} from "./signer";
 
 import {BigNumber} from "@ethersproject/bignumber";
 import {ContractTransaction} from "@ethersproject/contracts";

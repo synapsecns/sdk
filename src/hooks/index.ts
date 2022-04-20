@@ -24,7 +24,8 @@ export {
 	useRemoveLiquidity,
 	useRemoveLiquidityOneToken,
 	useCalculateSwapRate,
-	useApproveLPToken
+	useApproveLPToken,
+	useSwapTokens
 } from "./lptokens";
 
 export {

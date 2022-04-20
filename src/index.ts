@@ -19,7 +19,8 @@ import {
     useRemoveLiquidityOneToken,
     useCalculateSwapRate,
     useApproveLPToken,
-    useApproveTokenSpend
+    useApproveTokenSpend,
+    useSwapTokens
 } from "./hooks/index";
 
 export {
@@ -43,7 +44,8 @@ export {
     useRemoveLiquidityOneToken,
     useCalculateSwapRate,
     useApproveLPToken,
-    useApproveTokenSpend
+    useApproveTokenSpend,
+    useSwapTokens
 };
 
 export {
