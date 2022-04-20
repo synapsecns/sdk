@@ -394,6 +394,36 @@ export namespace TokenSwap {
             .catch(rejectPromise)
     }
 
+    export async function swapTokens(args: SwapTokensParams & {signer: Signer}): Promise<ContractTransaction> {
+        const {swapSupported: canSwap, reasonNotSupported} = swapSupported(args);
+        if (!canSwap) {
+            return rejectPromise(reasonNotSupported)
+        }
+
+        return resolveSwapData(args)
+            .then(swapSetup => {
+                let {deadline, chainId, tokenFrom, signer} = args;
+                const {tokenIndexFrom, tokenIndexTo} = swapSetup;
+
+                return swapContract(tokenFrom, chainId, signer)
+                    .then(swapInstance => {
+                        deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
+
+                        const overrides: any = args.tokenFrom.isGasToken ? {value:args.amountIn} : {};
+
+                        return swapInstance.swap(
+                            tokenIndexFrom,
+                            tokenIndexTo,
+                            args.amountIn,
+                            args.minAmountOut,
+                            deadline,
+                            overrides
+                        )
+                    })
+            })
+            .catch(rejectPromise)
+    }
+
     export async function buildSwapTokensTransaction(args: SwapTokensParams): Promise<PopulatedTransaction> {
         const {swapSupported: canSwap, reasonNotSupported} = swapSupported(args);
         if (!canSwap) {
@@ -559,8 +589,8 @@ export namespace TokenSwap {
         tokenIndexTo:   number,
     }
 
-    async function swapContract(token: Token, chainId: number): Promise<SwapContract> {
-        const provider = rpcProviderForChain(chainId);
+    async function swapContract(token: Token, chainId: number, signer?: Signer): Promise<SwapContract> {
+        const provider = signer ? signer : rpcProviderForChain(chainId);
 
         const lpToken = _intermediateToken(token, chainId);
 
