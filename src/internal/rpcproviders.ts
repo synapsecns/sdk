@@ -51,7 +51,7 @@ const CHAIN_RPC_URIS: StringMap = {
     [ChainId.HARMONY]:   "https://api.harmony.one/",
 }
 
-const CHAINID_URI_MAP: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, _getChainRpcUri(cid)]));
+const CHAINID_URI_MAP: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, getChainRpcUri(cid)]));
 
 const RPC_BATCH_INTERVAL = Number(process.env["RPC_BATCH_INTERVAL"]) || 60;
 
@@ -60,7 +60,7 @@ const RPC_CONNECTOR = new RpcConnector({
     batchInterval: RPC_BATCH_INTERVAL
 });
 
-function _getChainRpcUri(chainId: number): string {
+export function getChainRpcUri(chainId: number): string {
     const
         rpcEnvKey: string           = ENV_KEY_MAP[chainId],
         rpcEnvVal: string|undefined = rpcEnvKey in process.env ? process.env[rpcEnvKey] : undefined;
