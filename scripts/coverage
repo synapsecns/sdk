@@ -17,7 +17,7 @@ run_tests () {
 }
 
 run_report () {
-    c8 \
+    c8 report \
       --reports-dir $REPORTS_DIR \
       --include "${SRC_INCLUDES}" \
       --include "${BRIDGE_INCLUDES}" \
