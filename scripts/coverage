@@ -23,7 +23,7 @@ run_report () {
       --include "${BRIDGE_INCLUDES}" \
       --include "${COMMON_INCLUDES}" \
       --include "${INTERNAL_INCLUDES}" \
-      --reporter=text > $REPORTS_DIR/lcov.info
+      --reporter=text-lcov > $REPORTS_DIR/lcov.info
 }
 
 case $1 in
