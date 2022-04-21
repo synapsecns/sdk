@@ -58,6 +58,18 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     {token: Tokens.FRAX, want: false},
                 ],
             },
+            {
+                chainId:       ChainId.OPTIMISM,
+                swapToken:     SwapPools.OPTIMISM_POOL_SWAP_TOKEN,
+                tokens: [
+                    {token: Tokens.NUSD, want: true},
+                    {token: Tokens.BUSD, want: false},
+                    {token: Tokens.USDC, want: true},
+                    {token: Tokens.USDT, want: false},
+                    {token: Tokens.DAI,  want: false},
+                    {token: Tokens.FRAX, want: false},
+                ],
+            },
         ];
 
         testCases.forEach((tc: TestCase) => {
@@ -96,7 +108,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
 
         const testCases: TestCase[] = [
             makeTestCase(ChainId.ETH,       true,  false),
-            makeTestCase(ChainId.OPTIMISM,  false, true),
+            makeTestCase(ChainId.OPTIMISM,  true,  true),
             makeTestCase(ChainId.CRONOS,    true,  false),
             makeTestCase(ChainId.BSC,       true,  false),
             makeTestCase(ChainId.POLYGON,   true,  false),
