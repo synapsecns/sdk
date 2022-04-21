@@ -25,6 +25,7 @@ import {
     type SwapTypeMap
 } from "@internal/swaptype";
 
+import {BigNumber} from "@ethersproject/bignumber";
 import type {BigNumberish} from "@ethersproject/bignumber";
 
 export namespace SwapPools {
