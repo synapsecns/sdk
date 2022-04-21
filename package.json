@@ -60,7 +60,8 @@
     "@web3-react/network-connector": "^6.2.9",
     "ethers": "^5.5.1",
     "lodash": "^4.17.21",
-    "lodash-es": "^4.17.21"
+    "lodash-es": "^4.17.21",
+    "react": "^18.0.0"
   },
   "devDependencies": {
     "@ethereum-waffle/chai": "3.4.4",
