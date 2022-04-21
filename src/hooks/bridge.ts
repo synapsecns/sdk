@@ -1,15 +1,19 @@
 import type {Token} from "@token";
 import {Bridge} from "@bridge/bridge";
 
-import {useApproveStatus} 		 from "./tokens";
 import {parseBigNumberish} 		 from "./helpers";
 import {useSignerFromEthereumFn} from "./signer";
+import {
+	useApproveStatus,
+	useCheckAllowance
+} from "./tokens";
 
 import type {
 	ApproveTokenState,
 	CalculateBridgeSwapOutputHook,
 	ExecuteBridgeSwapHook,
-	ApproveBridgeSwapHook
+	ApproveBridgeSwapHook,
+	BridgeAllowanceHook
 } from "./types";
 
 import {BigNumber} from "@ethersproject/bignumber";
@@ -134,8 +138,27 @@ function useApproveBridgeSwap(ethereum: any, chainId: number): ApproveBridgeSwap
 	return [fn, approveTx, approvelStatus]
 }
 
+function useBridgeAllowance(ethereum: any, chainId: number): BridgeAllowanceHook {
+	const [checkAllowance, allowance] = useCheckAllowance(ethereum, chainId);
+
+	async function fn(token: Token) {
+		const synapseBridge = new Bridge.SynapseBridge({network: chainId});
+		const [{spender}] = synapseBridge.buildERC20ApproveArgs({token});
+
+		try {
+			await checkAllowance({token, spender})
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err)
+		}
+	}
+
+	return [fn, allowance]
+}
+
 export {
 	useApproveBridgeSwap,
 	useExecuteBridgeSwap,
-	useCalculateBridgeSwapOutput
+	useCalculateBridgeSwapOutput,
+	useBridgeAllowance
 }

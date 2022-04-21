@@ -5,7 +5,11 @@ import {SwapPools} from "@swappools";
 import {TokenSwap} from "@tokenswap";
 
 import {useSignerFromEthereumFn} from "./signer";
-import {useApproveStatus, useApproveTokenSpend} from "./tokens";
+import {
+	useApproveStatus,
+	useApproveTokenSpend,
+	useCheckAllowance
+} from "./tokens";
 
 import {
 	parseBigNumberish,
@@ -24,7 +28,9 @@ import type {
 	CalculateSwapRateHook,
 	SwapTokensHook,
 	ApproveLPTokenHook,
-	ApproveTokenForLPHook
+	ApproveTokenForLPHook,
+	LPTokenAllowanceHook,
+	TokenForLPAllowanceHook
 } from "./types";
 
 import {useEffect, useState} from "react";
@@ -441,6 +447,51 @@ function useApproveTokenForLP(ethereum: any, chainId: number): ApproveTokenForLP
 	return [fn, approveTx, approveStatus]
 }
 
+function useLPTokenAllowance(ethereum: any, chainId: number): LPTokenAllowanceHook {
+	const [checkAllowance, allowance] = useCheckAllowance(ethereum, chainId);
+
+	async function fn(lpToken: SwapPools.SwapPoolToken) {
+		const {
+			baseToken:   token,
+			swapAddress: spender
+		} = lpToken;
+
+		try {
+			await checkAllowance({token, spender})
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err)
+		}
+	}
+
+	return [fn, allowance]
+}
+
+function useTokenForLPAllowance(ethereum: any, chainId: number): TokenForLPAllowanceHook {
+	const [checkAllowance, allowance] = useCheckAllowance(ethereum, chainId);
+
+	async function fn(args: {
+		lpToken: SwapPools.SwapPoolToken,
+		token:   Token
+	}) {
+		const {
+			token,
+			lpToken: {
+				swapAddress: spender
+			}
+		} = args;
+
+		try {
+			await checkAllowance({token, spender})
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err)
+		}
+	}
+
+	return [fn, allowance]
+}
+
 export {
 	useChainStableswapLPToken,
 	useChainETHSwapLPToken,
@@ -455,5 +506,7 @@ export {
 	useCalculateSwapRate,
 	useSwapTokens,
 	useApproveLPToken,
-	useApproveTokenForLP
+	useApproveTokenForLP,
+	useLPTokenAllowance,
+	useTokenForLPAllowance
 }

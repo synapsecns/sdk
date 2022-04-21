@@ -56,6 +56,7 @@ import {
     useApproveBridgeSwap,
     useExecuteBridgeSwap,
     useCalculateBridgeSwapOutput,
+    useBridgeAllowance,
     useChainStableswapLPToken,
     useChainETHSwapLPToken,
     useHarmonyJewelLPToken,
@@ -69,9 +70,11 @@ import {
     useCalculateSwapRate,
     useSwapTokens,
     useApproveLPToken,
-    useApproveTokenForLP,
     useApproveStatus,
     useApproveTokenSpend,
+    useApproveTokenForLP,
+    useLPTokenAllowance,
+    useTokenForLPAllowance,
     AllowanceError,
     TransactionError
 } from "./hooks/index";
@@ -80,6 +83,7 @@ export {
     useApproveBridgeSwap,
     useExecuteBridgeSwap,
     useCalculateBridgeSwapOutput,
+    useBridgeAllowance,
     useChainStableswapLPToken,
     useChainETHSwapLPToken,
     useHarmonyJewelLPToken,
@@ -96,6 +100,8 @@ export {
     useApproveTokenForLP,
     useApproveStatus,
     useApproveTokenSpend,
+    useLPTokenAllowance,
+    useTokenForLPAllowance,
     AllowanceError,
     TransactionError
 };
@@ -106,6 +112,9 @@ export type {
     TransactionHook,
     ContractCallHook,
     TokenApproveHook,
+    TokenAllowanceHook,
+    CheckAllowanceArgs,
+    CheckAllowanceHook,
     ApproveTokenSpendArgs,
     ApproveTokenSpendHook,
     ApproveStatusArgs,
@@ -116,6 +125,7 @@ export type {
     ExecuteBridgeSwapHook,
     ApproveBridgeSwapArgs,
     ApproveBridgeSwapHook,
+    BridgeAllowanceHook,
     LPTokenHook,
     CalculateAddLiquidityArgs,
     CalculateAddLiquidityHook,
@@ -135,5 +145,8 @@ export type {
     SwapTokensHook,
     ApproveLPTokenArgs,
     ApproveLPTokenHook,
-    ApproveTokenForLPHook
+    ApproveTokenForLPHook,
+    LPTokenAllowanceHook,
+    TokenForLPAllowanceArgs,
+    TokenForLPAllowanceHook
 } from "./hooks/index";

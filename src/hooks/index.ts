@@ -7,7 +7,8 @@ export {
 export {
 	useApproveBridgeSwap,
 	useExecuteBridgeSwap,
-	useCalculateBridgeSwapOutput
+	useCalculateBridgeSwapOutput,
+	useBridgeAllowance
 } from "./bridge";
 
 export {
@@ -24,7 +25,9 @@ export {
 	useCalculateSwapRate,
 	useSwapTokens,
 	useApproveLPToken,
-	useApproveTokenForLP
+	useApproveTokenForLP,
+	useLPTokenAllowance,
+	useTokenForLPAllowance
 } from "./lptokens";
 
 export {
@@ -40,6 +43,9 @@ export type {
 	TransactionHook,
 	ContractCallHook,
 	TokenApproveHook,
+	TokenAllowanceHook,
+	CheckAllowanceArgs,
+	CheckAllowanceHook,
 	ApproveTokenSpendArgs,
 	ApproveTokenSpendHook,
 	ApproveStatusArgs,
@@ -50,6 +56,7 @@ export type {
 	ExecuteBridgeSwapHook,
 	ApproveBridgeSwapArgs,
 	ApproveBridgeSwapHook,
+	BridgeAllowanceHook,
 	LPTokenHook,
 	CalculateAddLiquidityArgs,
 	CalculateAddLiquidityHook,
@@ -69,5 +76,8 @@ export type {
 	SwapTokensHook,
 	ApproveLPTokenArgs,
 	ApproveLPTokenHook,
-	ApproveTokenForLPHook
+	ApproveTokenForLPHook,
+	LPTokenAllowanceHook,
+	TokenForLPAllowanceArgs,
+	TokenForLPAllowanceHook
 } from "./types";

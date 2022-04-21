@@ -19,6 +19,15 @@ export type ContractCallHook<T, U> = [AsyncContractFunction<T>, U]
 
 export type TokenApproveHook<T> = [AsyncContractFunction<T>, ContractTransaction, boolean]
 
+export type TokenAllowanceHook<T> = ContractCallHook<T, BigNumber>
+
+export interface CheckAllowanceArgs {
+	token:   Token;
+	spender: string;
+}
+
+export type CheckAllowanceHook = TokenAllowanceHook<CheckAllowanceArgs>
+
 export interface ApproveTokenSpendArgs {
 	token:   Token;
 	spender: string;
@@ -62,6 +71,8 @@ export interface ApproveBridgeSwapArgs {
 }
 
 export type ApproveBridgeSwapHook = TokenApproveHook<ApproveBridgeSwapArgs>
+
+export type BridgeAllowanceHook = TokenAllowanceHook<Token>
 
 export type LPTokenHook = [SwapPools.SwapPoolToken]
 
@@ -147,3 +158,12 @@ export interface ApproveTokenForLPArgs {
 }
 
 export type ApproveTokenForLPHook = TokenApproveHook<ApproveTokenForLPArgs>
+
+export type LPTokenAllowanceHook = TokenAllowanceHook<SwapPools.SwapPoolToken>
+
+export interface TokenForLPAllowanceArgs {
+	lpToken: SwapPools.SwapPoolToken;
+	token:   Token;
+}
+
+export type TokenForLPAllowanceHook = TokenAllowanceHook<TokenForLPAllowanceArgs>
