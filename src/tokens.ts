@@ -6,13 +6,15 @@ import {
 
 import {ChainId, type ChainIdTypeMap} from "@chainid";
 
-import {SwapType} from "@internal/swaptype"
-import {tokenSwitch} from "@internal/utils";
-import {BigNumber} from "@ethersproject/bignumber";
 import {ERC20} from "@bridge/erc20";
-import type {TransactionResponse} from "@ethersproject/providers";
+
+import {ID}          from "@internal/types";
+import {SwapType}    from "@internal/swaptype"
+import {tokenSwitch} from "@internal/utils";
+
+import {BigNumber} from "@ethersproject/bignumber";
 import type {Signer} from "@ethersproject/abstract-signer";
-import {ContractTransaction} from "@ethersproject/contracts";
+import type {ContractTransaction} from "@ethersproject/contracts";
 
 export namespace Tokens {
     // Stablecoins
@@ -800,4 +802,31 @@ export namespace Tokens {
         SYN_JEWEL, XJEWEL, MULTIJEWEL, DFK_USDC,
         MULTI_AVAX, VSTA,
     ];
+
+    /**
+     * Returns a {@link Token} object based on the passed `tokenSymbol`, if such token exists.
+     *
+     * @param tokenSymbol Actual token symbol ("DAI", "SYN") or the `id` field of a {@link Token} object.
+     *
+     * @return A {@link Token} if one matches the passed `tokenSymbol`, null otherwise.
+     */
+    export function tokenFromSymbol(tokenSymbol: string | ID | symbol): Token | null {
+        let res: Token = null;
+
+        for (const t of AllTokens) {
+            if (typeof tokenSymbol === 'symbol') {
+                if (t.id === (tokenSymbol as ID)) {
+                    res = t;
+                    break;
+                }
+            } else if (typeof tokenSymbol === 'string') {
+                if (t.symbol === (tokenSymbol as string)) {
+                    res = t;
+                    break;
+                }
+            }
+        }
+
+        return res
+    }
 }
