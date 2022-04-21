@@ -157,7 +157,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
         ): {[p: number]: Token[], token: Token} | undefined =>
             toksMap.find((sm) => sm.token.isEqual(tok));
 
-        [
+        const testCases: TestCase[] = [
             {
                 chainId:       ChainId.BSC,
                 chainTokens:   [
@@ -208,6 +208,8 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.DFK,       token: Tokens.MULTIJEWEL},
                     {chainId: ChainId.DFK,       token: Tokens.USDC},
                     {chainId: ChainId.DFK,       token: Tokens.DAI},
+                    {chainId: ChainId.OPTIMISM,  token: Tokens.DAI},
+                    {chainId: ChainId.OPTIMISM,  token: Tokens.NUSD},
                 ],
             },
             {
@@ -218,9 +220,12 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.HARMONY,   token: Tokens.XJEWEL},
                     {chainId: ChainId.BSC,       token: Tokens.DFK_USDC},
                     {chainId: ChainId.AVALANCHE, token: Tokens.DFK_USDC},
+                    {chainId: ChainId.OPTIMISM,  token: Tokens.DFK_USDC},
                 ],
             },
-        ].forEach((tc: TestCase) => {
+        ];
+
+        testCases.forEach((tc: TestCase) => {
             const describeTitle: string = `${Networks.networkName(tc.chainId)} needs certain results`;
 
             describe(describeTitle, function(this: Mocha.Suite) {
