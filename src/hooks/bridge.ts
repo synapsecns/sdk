@@ -16,7 +16,7 @@ import type {
 	BridgeAllowanceHook
 } from "./types";
 
-import {BigNumber} from "@ethersproject/bignumber";
+import type {BigNumberish} from "@ethersproject/bignumber";
 import type {ContractTransaction} from "@ethersproject/contracts";
 
 import {useEffect, useState} from "react";
@@ -28,7 +28,7 @@ function useCalculateBridgeSwapOutput(ethereum: any, chainId: number): Calculate
 	async function fn (args: {
 		tokenFrom:  Token,
 		tokenTo:    Token,
-		amountFrom: BigNumber,
+		amountFrom: BigNumberish,
 		chainIdTo:  number
 	}) {
 		const fnArgs = {
@@ -58,8 +58,8 @@ function useExecuteBridgeSwap(ethereum: any, chainId: number): ExecuteBridgeSwap
 	async function fn(args: {
 		tokenFrom:  Token,
 		tokenTo:    Token,
-		amountFrom: BigNumber,
-		amountTo:   BigNumber,
+		amountFrom: BigNumberish,
+		amountTo:   BigNumberish,
 		chainIdTo:  number,
 		addressTo?: string
 	}) {
@@ -94,7 +94,7 @@ function useApproveBridgeSwap(ethereum: any, chainId: number): ApproveBridgeSwap
 
 	async function fn(args: {
 		token:   Token,
-		amount?: BigNumber
+		amount?: BigNumberish
 	}) {
 		const amt = args.amount
 			? parseBigNumberish(args.amount, args.token, chainId)
