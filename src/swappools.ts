@@ -298,6 +298,15 @@ export namespace SwapPools {
         notLP:        true
     });
 
+    export const OPTIMISM_POOL_SWAP_TOKEN = makeSwapToken({
+        chainId:     ChainId.OPTIMISM,
+        address:     "0x2c6d91accC5Aa38c84653F28A80AEC69325BDd12",
+        netName:     "Optimism",
+        poolId:      1, // might need to be changed
+        swapAddress: "0xF44938b0125A6662f9536281aD2CD6c499F22004",
+        poolTokens:  [Tokens.NUSD, Tokens.USDC],
+    });
+
     export const OPTIMISM_ETH_SWAP_TOKEN = makeETHSwapToken({
         chainId:         ChainId.OPTIMISM,
         address:        "0x4619a06ddd3b8f0f951354ec5e75c09cd1cd1aef",
@@ -602,7 +611,8 @@ export namespace SwapPools {
         ),
         [ChainId.OPTIMISM]: makeSwapTypeMap(
             {
-                ethPool: [OPTIMISM_ETH_SWAP_TOKEN, OPTIMISM_ETH_SWAP_TOKEN.poolTokens]
+                usdPool: [OPTIMISM_POOL_SWAP_TOKEN, OPTIMISM_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+                ethPool: [OPTIMISM_ETH_SWAP_TOKEN,  OPTIMISM_ETH_SWAP_TOKEN.poolTokens]
             },
             LUNA_Pool,
         ),
@@ -747,6 +757,8 @@ export namespace SwapPools {
         switch (chainId) {
             case ChainId.ETH:
                 return ETH_POOL_SWAP_TOKEN
+            case ChainId.OPTIMISM:
+                return OPTIMISM_POOL_SWAP_TOKEN
             case ChainId.CRONOS:
                 return CRONOS_POOL_SWAP_TOKEN
             case ChainId.BSC:
@@ -795,6 +807,7 @@ export namespace SwapPools {
 
     export const AllSwapPoolTokens: SwapPoolToken[] = [
         ETH_POOL_SWAP_TOKEN,
+        OPTIMISM_POOL_SWAP_TOKEN,
         OPTIMISM_ETH_SWAP_TOKEN,
         CRONOS_POOL_SWAP_TOKEN,
         BSC_POOL_SWAP_TOKEN,
