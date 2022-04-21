@@ -31,7 +31,7 @@ export namespace SynapseContracts {
 
     export const Optimism = new SynapseContract({
         bridge:    "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
-        bridgeZap: "0x9CD619c50562a38edBdC3451ade7B58CaA71Ab32",
+        bridgeZap: "0x470f9522ff620eE45DF86C58E54E6A645fE3b4A7",
     });
 
     export const Cronos = new SynapseContract({
