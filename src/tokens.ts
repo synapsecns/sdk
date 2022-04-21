@@ -55,6 +55,7 @@ export namespace Tokens {
         symbol: "USDC",
         decimals: {
             [ChainId.ETH]:       6,
+            [ChainId.OPTIMISM]:  6,
             [ChainId.CRONOS]:    6,
             [ChainId.BSC]:       18,
             [ChainId.POLYGON]:   6,
@@ -68,6 +69,7 @@ export namespace Tokens {
         },
         addresses: {
             [ChainId.ETH]:       "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            [ChainId.OPTIMISM]:  "0x7f5c764cbc14f9669b88837ca1490cca17c31607",
             [ChainId.CRONOS]:    "0xc21223249ca28397b4b6541dffaecc539bff0c59",
             [ChainId.BSC]:       "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
             [ChainId.POLYGON]:   "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
@@ -287,6 +289,7 @@ export namespace Tokens {
         decimals:    18,
         addresses: {
             [ChainId.ETH]:       "0x1B84765dE8B7566e4cEAF4D0fD3c5aF52D3DdE4F",
+            [ChainId.OPTIMISM]:  "0x67C10C397dD0Ba417329543c1a40eb48AAa7cd00",
             [ChainId.CRONOS]:    "0x396c9c192dd323995346632581BEF92a31AC623b",
             [ChainId.BSC]:       "0x23b891e5c62e0955ae2bd185990103928ab817b3",
             [ChainId.POLYGON]:   "0xb6c473756050de474286bed418b77aeac39b02af",
