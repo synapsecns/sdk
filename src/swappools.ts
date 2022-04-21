@@ -1,3 +1,5 @@
+import {isEqual} from "lodash-es";
+
 import {Tokens} from "@tokens";
 
 import {
@@ -11,11 +13,19 @@ import type {
     DecimalsMap
 } from "@common/types";
 
-import {BaseToken, type IBaseToken, type Token} from "@token";
+import {
+    BaseToken,
+    type IBaseToken,
+    type Token
+} from "@token";
 
 import type {ID} from "@internal/types";
-import {type SwapTypeMap, SwapType} from "@internal/swaptype";
+import {
+    SwapType,
+    type SwapTypeMap
+} from "@internal/swaptype";
 
+import {BigNumber} from "@ethersproject/bignumber";
 
 export namespace SwapPools {
     function moveFirstToLast(arr: Token[]) {
@@ -30,6 +40,10 @@ export namespace SwapPools {
         readonly swapType:   SwapType;
     }
 
+    export type PoolTokensAmountsMap = {
+        [k: string]: BigNumber;
+    }
+
     export interface SwapPoolToken extends IBaseToken, LPToken {
         readonly baseToken:       BaseToken;
         readonly chainId:         number;
@@ -42,6 +56,9 @@ export namespace SwapPools {
         readonly swapETHAddress:  string | null;
 
         readonly poolTokensForBridgeSwaps: Token[]
+
+        liquidityAmountsMap:     () => PoolTokensAmountsMap;
+        liquidityAmountsFromMap: (m: PoolTokensAmountsMap) => BigNumber[];
     }
 
     interface SwapTokenArgs {
@@ -175,6 +192,35 @@ export namespace SwapPools {
 
         get swapETHAddress(): string | null {
             return null
+        }
+
+        liquidityAmountsMap(): PoolTokensAmountsMap {
+            let m: PoolTokensAmountsMap = {};
+
+            for (const t of this.poolTokens) {
+                m[t.symbol] = BigNumber.from(0);
+            }
+
+            return m
+        }
+
+        liquidityAmountsFromMap(m: PoolTokensAmountsMap): BigNumber[] {
+            let amounts: BigNumber[] = new Array<BigNumber>(this.poolTokens.length);
+
+            const mapKeys = Object.keys(m);
+            const wantMapKeys = Object.keys(this.liquidityAmountsMap());
+
+            if (!isEqual(mapKeys, wantMapKeys)) {
+                const err = new Error(`expected passed PoolTokensAmountsMap to have keys ${wantMapKeys}; got ${mapKeys}`);
+                console.error(err);
+                return amounts;
+            }
+
+            mapKeys.forEach((k, idx) => {
+                amounts[idx] = m[k];
+            });
+
+            return amounts
         }
     }
 
