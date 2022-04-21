@@ -33,7 +33,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
 
         const makeWantString = (tc: {want: boolean}, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
 
-        [
+        const testCases: TestCase[] = [
             {
                 chainId:       ChainId.BSC,
                 swapToken:     SwapPools.BSC_POOL_SWAP_TOKEN,
@@ -58,7 +58,9 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     {token: Tokens.FRAX, want: false},
                 ],
             },
-        ].forEach((tc: TestCase) => {
+        ];
+
+        testCases.forEach((tc: TestCase) => {
             const
                 describeTitle: string = `test ${Networks.networkName(tc.chainId)} ${tc.swapToken.name.trimEnd()} pool tokens`,
                 poolSymbols: string[] = tc.swapToken.poolTokens.map((t: Token) => t.symbol);
