@@ -30,3 +30,8 @@ export function parseApproveAmount(amount: BigNumberish, token: Token, chainId: 
 		? parseBigNumberish(amount, token, chainId)
 		: undefined
 }
+
+export function logError(e: any) {
+	const err = e instanceof Error ? e : new Error(e);
+	console.error(err);
+}

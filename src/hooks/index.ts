@@ -1,14 +1,10 @@
 export {
-	useEagerConnect,
-	useWeb3Provider,
-	useGetSigner
-} from "./signer";
-
-export {
 	useApproveBridgeSwap,
 	useExecuteBridgeSwap,
 	useCalculateBridgeSwapOutput,
-	useBridgeAllowance
+	useBridgeAllowance,
+	useNeedsBridgeSwapApproval,
+	useBridgeSwapApproval
 } from "./bridge";
 
 export {
@@ -25,9 +21,13 @@ export {
 	useCalculateSwapRate,
 	useSwapTokens,
 	useApproveLPToken,
-	useApproveTokenForLP,
+	useApprovePoolToken,
 	useLPTokenAllowance,
-	useTokenForLPAllowance
+	useLPTokenNeedsApproval,
+	useLPTokenApproval,
+	usePoolTokenAllowance,
+	usePoolTokenNeedsApproval,
+	usePoolTokenApproval
 } from "./lptokens";
 
 export {
@@ -36,48 +36,3 @@ export {
 	AllowanceError,
 	TransactionError
 } from "./tokens";
-
-export type {
-	ApproveTokenState,
-	AsyncContractFunction,
-	TransactionHook,
-	ContractCallHook,
-	TokenApproveHook,
-	TokenAllowanceHook,
-	CheckAllowanceArgs,
-	CheckAllowanceHook,
-	ApproveTokenSpendArgs,
-	ApproveTokenSpendHook,
-	ApproveStatusArgs,
-	ApproveStatusHook,
-	CalculateBridgeSwapOutputArgs,
-	CalculateBridgeSwapOutputHook,
-	ExecuteBridgeSwapArgs,
-	ExecuteBridgeSwapHook,
-	ApproveBridgeSwapArgs,
-	ApproveBridgeSwapHook,
-	BridgeAllowanceHook,
-	LPTokenHook,
-	CalculateAddLiquidityArgs,
-	CalculateAddLiquidityHook,
-	CalculateRemoveLiquidityArgs,
-	CalculateRemoveLiquidityHook,
-	CalculateRemoveLiquidityOneTokenArgs,
-	CalculateRemoveLiquidityOneTokenHook,
-	AddLiquidityArgs,
-	AddLiquidityHook,
-	RemoveLiquidityArgs,
-	RemoveLiquidityHook,
-	RemoveLiquidityOneTokenArgs,
-	RemoveLiquidityOneTokenHook,
-	CalculateSwapRateArgs,
-	CalculateSwapRateHook,
-	SwapTokensArgs,
-	SwapTokensHook,
-	ApproveLPTokenArgs,
-	ApproveLPTokenHook,
-	ApproveTokenForLPHook,
-	LPTokenAllowanceHook,
-	TokenForLPAllowanceArgs,
-	TokenForLPAllowanceHook
-} from "./types";
