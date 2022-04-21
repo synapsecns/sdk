@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+SRC_DIR="src"
+SRC_INCLUDES="${SRC_DIR}/*.ts"
+BRIDGE_INCLUDES="${SRC_DIR}/bridge/*.ts"
+COMMON_INCLUDES="${SRC_DIR}/common/*.ts"
+INTERNAL_INCLUDES="${SRC_DIR}/internal/**/*.ts"
+
+run_tests () {
+  c8 \
+    --reports-dir $REPORTS_DIR \
+    --include "${SRC_INCLUDES}" \
+    --include "${BRIDGE_INCLUDES}" \
+    --include "${COMMON_INCLUDES}" \
+    --include "${INTERNAL_INCLUDES}" \
+    ts-mocha -p test/tsconfig.json
+}
+
+run_report () {
+    c8 \
+      --reports-dir $REPORTS_DIR \
+      --include "${SRC_INCLUDES}" \
+      --include "${BRIDGE_INCLUDES}" \
+      --include "${COMMON_INCLUDES}" \
+      --include "${INTERNAL_INCLUDES}" \
+      --reporter=text > $REPORTS_DIR/lcov.info
+}
+
+case $1 in
+  "test")
+    run_tests
+    ;;
+  "report")
+    run_report
+    ;;
+  *)
+    echo "please pass either \"test\" or \"report\""
+esac
