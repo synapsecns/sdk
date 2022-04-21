@@ -25,7 +25,7 @@ import {
     type SwapTypeMap
 } from "@internal/swaptype";
 
-import {BigNumber} from "@ethersproject/bignumber";
+import type {BigNumberish} from "@ethersproject/bignumber";
 
 export namespace SwapPools {
     function moveFirstToLast(arr: Token[]) {
@@ -41,7 +41,7 @@ export namespace SwapPools {
     }
 
     export type PoolTokensAmountsMap = {
-        [k: string]: BigNumber;
+        [k: string]: BigNumberish;
     }
 
     export interface SwapPoolToken extends IBaseToken, LPToken {
@@ -217,7 +217,18 @@ export namespace SwapPools {
             }
 
             mapKeys.forEach((k, idx) => {
-                amounts[idx] = m[k];
+                const amt = m[k];
+
+                let realAmt: BigNumber;
+
+                if (amt instanceof BigNumber) {
+                    realAmt = amt as BigNumber;
+                } else {
+                    const token = this.poolTokens[idx];
+                    realAmt = token.etherToWei(amt, this.chainId);
+                }
+
+                amounts[idx] = realAmt;
             });
 
             return amounts
