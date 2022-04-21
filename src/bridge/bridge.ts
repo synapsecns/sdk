@@ -451,7 +451,7 @@ export namespace Bridge {
             )
         }
 
-        private buildERC20ApproveArgs(args: {
+        buildERC20ApproveArgs(args: {
             token:   Token | string,
             amount?: BigNumberish
         }): [ERC20.ApproveArgs, string] {
