@@ -1,6 +1,4 @@
 export {
-	Web3ReactNetworkContextName,
-	NETWORK_CONNECTOR,
 	useEagerConnect,
 	useWeb3Provider,
 	useGetSigner
@@ -24,10 +22,52 @@ export {
 	useRemoveLiquidity,
 	useRemoveLiquidityOneToken,
 	useCalculateSwapRate,
+	useSwapTokens,
 	useApproveLPToken,
-	useSwapTokens
+	useApproveTokenForLP
 } from "./lptokens";
 
 export {
-	useApproveTokenSpend
+	useApproveStatus,
+	useApproveTokenSpend,
+	AllowanceError,
+	TransactionError
 } from "./tokens";
+
+export type {
+	ApproveTokenState,
+	AsyncContractFunction,
+	TransactionHook,
+	ContractCallHook,
+	TokenApproveHook,
+	ApproveTokenSpendArgs,
+	ApproveTokenSpendHook,
+	ApproveStatusArgs,
+	ApproveStatusHook,
+	CalculateBridgeSwapOutputArgs,
+	CalculateBridgeSwapOutputHook,
+	ExecuteBridgeSwapArgs,
+	ExecuteBridgeSwapHook,
+	ApproveBridgeSwapArgs,
+	ApproveBridgeSwapHook,
+	LPTokenHook,
+	CalculateAddLiquidityArgs,
+	CalculateAddLiquidityHook,
+	CalculateRemoveLiquidityArgs,
+	CalculateRemoveLiquidityHook,
+	CalculateRemoveLiquidityOneTokenArgs,
+	CalculateRemoveLiquidityOneTokenHook,
+	AddLiquidityArgs,
+	AddLiquidityHook,
+	RemoveLiquidityArgs,
+	RemoveLiquidityHook,
+	RemoveLiquidityOneTokenArgs,
+	RemoveLiquidityOneTokenHook,
+	CalculateSwapRateArgs,
+	CalculateSwapRateHook,
+	SwapTokensArgs,
+	SwapTokensHook,
+	ApproveLPTokenArgs,
+	ApproveLPTokenHook,
+	ApproveTokenForLPHook
+} from "./types";

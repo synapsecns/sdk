@@ -1,26 +1,99 @@
 import type {Token} from "@token";
 import {Bridge} from "@bridge/bridge";
 
+import {useApproveStatus} 		 from "./tokens";
+import {parseBigNumberish} 		 from "./helpers";
 import {useSignerFromEthereumFn} from "./signer";
 
-import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
-import {ContractTransaction} from "@ethersproject/contracts";
+import type {
+	ApproveTokenState,
+	CalculateBridgeSwapOutputHook,
+	ExecuteBridgeSwapHook,
+	ApproveBridgeSwapHook
+} from "./types";
 
-function bignumFromBignumberish(n: BigNumberish, token: Token, chainId: number): BigNumber {
-	return n instanceof BigNumber
-		? n as BigNumber
-		: token.etherToWei(n, chainId)
+import {BigNumber} from "@ethersproject/bignumber";
+import type {ContractTransaction} from "@ethersproject/contracts";
+
+import {useEffect, useState} from "react";
+
+
+function useCalculateBridgeSwapOutput(ethereum: any, chainId: number): CalculateBridgeSwapOutputHook {
+	const [result, setResult] = useState<Bridge.BridgeOutputEstimate>(null);
+
+	async function fn (args: {
+		tokenFrom:  Token,
+		tokenTo:    Token,
+		amountFrom: BigNumber,
+		chainIdTo:  number
+	}) {
+		const fnArgs = {
+			...args,
+			amountFrom: parseBigNumberish(args.amountFrom, args.tokenFrom, chainId),
+		};
+
+		try {
+			const synapseBridge = new Bridge.SynapseBridge({network: chainId});
+			const res = await synapseBridge.estimateBridgeTokenOutput(fnArgs);
+
+			setResult(res);
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err);
+		}
+
+	}
+
+	return [fn, result]
 }
 
-function useApproveBridgeSwap(ethereum: any, chainId: number) {
+function useExecuteBridgeSwap(ethereum: any, chainId: number): ExecuteBridgeSwapHook {
+	const [getSigner] = useSignerFromEthereumFn();
+	const [tx, setTx] = useState<ContractTransaction>(null);
+
+	async function fn(args: {
+		tokenFrom:  Token,
+		tokenTo:    Token,
+		amountFrom: BigNumber,
+		amountTo:   BigNumber,
+		chainIdTo:  number,
+		addressTo?: string
+	}) {
+		const fnArgs = {
+			...args,
+			amountFrom: parseBigNumberish(args.amountFrom, args.tokenFrom, chainId),
+			amountTo:   parseBigNumberish(args.amountTo,   args.tokenTo,   args.chainIdTo)
+		};
+
+		try {
+			const synapseBridge = new Bridge.SynapseBridge({network: chainId});
+			const res = await synapseBridge.executeBridgeTokenTransaction(fnArgs, getSigner(ethereum));
+
+			setTx(res);
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err);
+		}
+	}
+
+	return [fn, tx]
+}
+
+function useApproveBridgeSwap(ethereum: any, chainId: number): ApproveBridgeSwapHook {
 	const [getSigner] = useSignerFromEthereumFn();
 
-	const fn = async (args: {
+	const [queryApproveStatus, approvelStatus] = useApproveStatus(ethereum, chainId);
+
+	const
+		[approveTx,   setApproveTx]   = useState<ContractTransaction>(null),
+		[approveData, setApproveData] = useState<ApproveTokenState>(null);
+
+	async function fn(args: {
 		token:   Token,
 		amount?: BigNumber
-	}): Promise<ContractTransaction> => {
+	}) {
 		const amt = args.amount
-			? bignumFromBignumberish(args.amount, args.token, chainId)
+			? parseBigNumberish(args.amount, args.token, chainId)
 			: undefined
 
 		const fnArgs = {
@@ -28,55 +101,37 @@ function useApproveBridgeSwap(ethereum: any, chainId: number) {
 			amount: amt
 		};
 
-		const synapseBridge = new Bridge.SynapseBridge({network: chainId});
-		return synapseBridge.executeApproveTransaction(fnArgs, getSigner(ethereum))
+		try {
+			const synapseBridge = new Bridge.SynapseBridge({network: chainId});
+
+			const [{spender}] = synapseBridge.buildERC20ApproveArgs(fnArgs);
+
+			const res = await synapseBridge.executeApproveTransaction(fnArgs, getSigner(ethereum));
+
+			setApproveTx(res);
+			setApproveData({
+				...fnArgs,
+				spender
+			});
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err);
+		}
 	}
 
-	return [fn]
-}
+	useEffect(() => {
+		if (approveTx && approveData && !approvelStatus) {
+			const {token, spender, amount} = approveData;
+			queryApproveStatus({
+				token,
+				spender,
+				amount,
+				approveTx
+			});
+		}
+	}, [approveTx, approveData, approvelStatus]);
 
-function useExecuteBridgeSwap(ethereum: any, chainId: number) {
-	const [getSigner] = useSignerFromEthereumFn();
-
-	const fn = async (args: {
-		tokenFrom:  Token,
-		tokenTo:    Token,
-		amountFrom: BigNumber,
-		amountTo:   BigNumber,
-		chainIdTo:  number,
-		addressTo?: string
-	}): Promise<ContractTransaction> => {
-		const fnArgs = {
-			...args,
-			amountFrom: bignumFromBignumberish(args.amountFrom, args.tokenFrom, chainId),
-			amountTo:   bignumFromBignumberish(args.amountTo,   args.tokenTo,   args.chainIdTo)
-		};
-
-		const synapseBridge = new Bridge.SynapseBridge({network: chainId});
-		return synapseBridge.executeBridgeTokenTransaction(fnArgs, getSigner(ethereum))
-	}
-
-	return [fn]
-}
-
-function useCalculateBridgeSwapOutput(ethereum: any, chainId: number) {
-
-	const fn = async(args: {
-		tokenFrom:  Token,
-		tokenTo:    Token,
-		amountFrom: BigNumber,
-		chainIdTo:  number
-	}): Promise<Bridge.BridgeOutputEstimate> => {
-		const fnArgs = {
-			...args,
-			amountFrom: bignumFromBignumberish(args.amountFrom, args.tokenFrom, chainId),
-		};
-
-		const synapseBridge = new Bridge.SynapseBridge({network: chainId});
-		return synapseBridge.estimateBridgeTokenOutput(fnArgs)
-	}
-
-	return [fn]
+	return [fn, approveTx, approvelStatus]
 }
 
 export {

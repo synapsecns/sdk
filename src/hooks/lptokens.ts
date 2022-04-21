@@ -1,22 +1,50 @@
+import {isArray} from "lodash-es";
+
 import type {Token} from "@token";
-import {Tokens} from "@tokens";
 import {SwapPools} from "@swappools";
 import {TokenSwap} from "@tokenswap";
 
 import {useSignerFromEthereumFn} from "./signer";
+import {useApproveStatus, useApproveTokenSpend} from "./tokens";
+
+import {
+	parseBigNumberish,
+	parseLPTokenBigNumberishArray
+} from "./helpers";
+
+import type {
+	ApproveTokenState,
+	LPTokenHook,
+	CalculateAddLiquidityHook,
+	CalculateRemoveLiquidityHook,
+	CalculateRemoveLiquidityOneTokenHook,
+	AddLiquidityHook,
+	RemoveLiquidityHook,
+	RemoveLiquidityOneTokenHook,
+	CalculateSwapRateHook,
+	SwapTokensHook,
+	ApproveLPTokenHook,
+	ApproveTokenForLPHook
+} from "./types";
 
 import {useEffect, useState} from "react";
 
-import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
-import {ContractTransaction} from "@ethersproject/contracts";
+import {
+	BigNumber,
+	type BigNumberish
+} from "@ethersproject/bignumber";
+import type {ContractTransaction} from "@ethersproject/contracts";
 
-function bignumFromBignumberish(n: BigNumberish, token: Token, chainId: number): BigNumber {
-	return n instanceof BigNumber
-		? n as BigNumber
-		: token.etherToWei(n, chainId)
-}
 
-export function useChainStableswapLPToken(ethereum: any, chainId: number) {
+/**
+ * Returns the Stableswap LP token object for a given Chain ID, if one exists.
+ *
+ * @param ethereum
+ * @param chainId
+ *
+ * @return Single-item array containing LP token object
+ */
+function useChainStableswapLPToken(ethereum: any, chainId: number): LPTokenHook {
 	const [lpToken, setLpToken] = useState<SwapPools.SwapPoolToken>(null);
 
 	useEffect(() => {
@@ -34,7 +62,15 @@ export function useChainStableswapLPToken(ethereum: any, chainId: number) {
 	return [lpToken]
 }
 
-export function useChainETHSwapLPToken(ethereum: any, chainId: number) {
+/**
+ * Returns the ETHSwap LP token object for a given Chain ID, if one exists.
+ *
+ * @param ethereum
+ * @param chainId
+ *
+ * @return Single-item array containing LP token object
+ */
+function useChainETHSwapLPToken(ethereum: any, chainId: number): LPTokenHook {
 	const [lpToken, setLpToken] = useState<SwapPools.SwapPoolToken>(null);
 
 	useEffect(() => {
@@ -52,106 +88,178 @@ export function useChainETHSwapLPToken(ethereum: any, chainId: number) {
 	return [lpToken]
 }
 
-export function useHarmonyJewelLPToken(ethereum: any, chainId: number) {
+function useHarmonyJewelLPToken(ethereum: any, chainId: number): LPTokenHook {
 	return [SwapPools.HARMONY_JEWEL_SWAP_TOKEN]
 }
 
-export function useHarmonyAVAXLPToken(ethereum: any, chainId: number) {
+function useHarmonyAVAXLPToken(ethereum: any, chainId: number): LPTokenHook {
 	return [SwapPools.HARMONY_AVAX_SWAP_TOKEN]
 }
 
-export function useCalculateAddLiquidity(ethereum: any, chainId: number) {
+function useCalculateAddLiquidity(ethereum: any, chainId: number): CalculateAddLiquidityHook {
+	const [amount, setAmount] = useState<BigNumber>(null);
+
 	async function fn(args: {
 		lpToken: SwapPools.SwapPoolToken,
-		amounts: BigNumberish[]
-	}): Promise<BigNumber> {
-		return TokenSwap.calculateAddLiquidity({
-			...args,
-			amounts: args.amounts.map((n, idx) => bignumFromBignumberish(n, args.lpToken.poolTokens[idx], chainId)),
-			chainId
-		})
+		amounts: BigNumberish[] | SwapPools.PoolTokensAmountsMap
+	}) {
+		let amountsArray: BigNumber[];
+		if (isArray(args.amounts)) {
+			const amts = args.amounts as BigNumberish[];
+			amountsArray = parseLPTokenBigNumberishArray(args.lpToken, amts, chainId);
+		} else {
+			amountsArray = args.lpToken.liquidityAmountsFromMap(args.amounts as SwapPools.PoolTokensAmountsMap);
+		}
+
+		try {
+			const res = await TokenSwap.calculateAddLiquidity({
+				...args,
+				amounts: amountsArray,
+				chainId
+			});
+
+			setAmount(res);
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err);
+		}
 	}
 
-	return [fn]
+	return [fn, amount]
 }
 
-export function useCalculateRemoveLiquidity(ethereum: any, chainId: number) {
+function useCalculateRemoveLiquidity(ethereum: any, chainId: number): CalculateRemoveLiquidityHook {
+	const [amounts, setAmounts] = useState<BigNumber[]>(null);
+
 	async function fn(args: {
 		lpToken: SwapPools.SwapPoolToken,
 		amount:  BigNumberish
-	}): Promise<BigNumber[]> {
-		return TokenSwap.calculateRemoveLiquidity({
-			...args,
-			amount: bignumFromBignumberish(args.amount, args.lpToken.baseToken, chainId),
-			chainId
-		})
+	}) {
+		try {
+			const res = await TokenSwap.calculateRemoveLiquidity({
+				...args,
+				amount: parseBigNumberish(args.amount, args.lpToken.baseToken, chainId),
+				chainId
+			});
+
+			setAmounts(res);
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err);
+		}
+		return
 	}
 
-	return [fn]
+	return [fn, amounts]
 }
 
-export function useCalculateRemoveLiquidityOneToken(ethereum: any, chainId: number) {
+function useCalculateRemoveLiquidityOneToken(ethereum: any, chainId: number): CalculateRemoveLiquidityOneTokenHook {
+	const [amount, setAmount] = useState<BigNumber>(null);
+
 	async function fn(args: {
 		lpToken: SwapPools.SwapPoolToken,
 		token:   Token,
 		amount:  BigNumberish
-	}): Promise<BigNumber[]> {
-		return TokenSwap.calculateRemoveLiquidity({
-			...args,
-			amount: bignumFromBignumberish(args.amount, args.token, chainId),
-			chainId
-		})
+	}) {
+		try {
+			const res = await TokenSwap.calculateRemoveLiquidityOneToken({
+				...args,
+				amount: parseBigNumberish(args.amount, args.token, chainId),
+				chainId
+			});
+
+			setAmount(res);
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err);
+		}
 	}
 
-	return [fn]
+	return [fn, amount]
 }
 
-export function useAddLiquidity(ethereum: any, chainId: number) {
+function useAddLiquidity(ethereum: any, chainId: number): AddLiquidityHook {
 	const [getSigner] = useSignerFromEthereumFn();
+
+	const [tx, setTx] = useState<ContractTransaction>(null);
 
 	async function fn(args: {
 		lpToken:   SwapPools.SwapPoolToken,
 		deadline:  BigNumberish,
-		amounts:   BigNumberish[],
+		amounts:   BigNumberish[] | SwapPools.PoolTokensAmountsMap,
 		minToMint: BigNumberish
-	}): Promise<ContractTransaction> {
-		return TokenSwap.addLiquidity({
-			...args,
-			deadline:   BigNumber.from(args.deadline),
-			amounts:    args.amounts.map((n, idx) => bignumFromBignumberish(n, args.lpToken.poolTokens[idx], chainId)),
-			minToMint:  bignumFromBignumberish(args.minToMint, args.lpToken.baseToken, chainId),
-			chainId,
-			signer: getSigner(ethereum)
-		})
+	}) {
+		let amountsArray: BigNumber[];
+		if (isArray(args.amounts)) {
+			const amts = args.amounts as BigNumberish[];
+			amountsArray = parseLPTokenBigNumberishArray(args.lpToken, amts, chainId);
+		} else {
+			amountsArray = args.lpToken.liquidityAmountsFromMap(args.amounts as SwapPools.PoolTokensAmountsMap);
+		}
+
+		try {
+			const res = await TokenSwap.addLiquidity({
+				...args,
+				deadline:   BigNumber.from(args.deadline),
+				amounts:    amountsArray,
+				minToMint:  parseBigNumberish(args.minToMint, args.lpToken.baseToken, chainId),
+				chainId,
+				signer: getSigner(ethereum)
+			});
+
+			setTx(res);
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err);
+		}
 	}
 
-	return [fn]
+	return [fn, tx]
 }
 
-export function useRemoveLiquidity(ethereum: any, chainId: number) {
+function useRemoveLiquidity(ethereum: any, chainId: number): RemoveLiquidityHook {
 	const [getSigner] = useSignerFromEthereumFn();
+
+	const [tx, setTx] = useState<ContractTransaction>(null);
 
 	async function fn(args: {
 		lpToken:    SwapPools.SwapPoolToken,
 		deadline:   BigNumberish,
 		amount:     BigNumberish
-		minAmounts: BigNumberish[],
-	}): Promise<ContractTransaction> {
-		return TokenSwap.removeLiquidity({
-			...args,
-			deadline:   BigNumber.from(args.deadline),
-			amount:     bignumFromBignumberish(args.amount, args.lpToken.baseToken, chainId),
-			minAmounts: args.minAmounts.map((n, idx) => bignumFromBignumberish(n, args.lpToken.poolTokens[idx], chainId)),
-			chainId,
-			signer: getSigner(ethereum)
-		})
+		minAmounts: BigNumberish[] | SwapPools.PoolTokensAmountsMap,
+	}) {
+		let minAmountsArray: BigNumber[];
+		if (isArray(args.minAmounts)) {
+			const amts = args.minAmounts as BigNumberish[];
+			minAmountsArray = parseLPTokenBigNumberishArray(args.lpToken, amts, chainId);
+		} else {
+			minAmountsArray = args.lpToken.liquidityAmountsFromMap(args.minAmounts as SwapPools.PoolTokensAmountsMap);
+		}
+
+		try {
+			const res = await TokenSwap.removeLiquidity({
+				...args,
+				deadline:   BigNumber.from(args.deadline),
+				amount:     parseBigNumberish(args.amount, args.lpToken.baseToken, chainId),
+				minAmounts: minAmountsArray,
+				chainId,
+				signer: getSigner(ethereum)
+			});
+
+			setTx(res);
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err);
+		}
 	}
 
-	return [fn]
+	return [fn, tx]
 }
 
-export function useRemoveLiquidityOneToken(ethereum: any, chainId: number) {
+function useRemoveLiquidityOneToken(ethereum: any, chainId: number): RemoveLiquidityOneTokenHook {
 	const [getSigner] = useSignerFromEthereumFn();
+
+	const [tx, setTx] = useState<ContractTransaction>(null);
 
 	async function fn(args: {
 		lpToken:    SwapPools.SwapPoolToken,
@@ -159,69 +267,57 @@ export function useRemoveLiquidityOneToken(ethereum: any, chainId: number) {
 		amount:     BigNumberish
 		minAmount:  BigNumberish,
 		token:		Token
-	}): Promise<ContractTransaction> {
-		return TokenSwap.removeLiquidityOneToken({
-			...args,
-			deadline:  BigNumber.from(args.deadline),
-			amount:    bignumFromBignumberish(args.amount, args.token, chainId),
-			minAmount: bignumFromBignumberish(args.minAmount, args.lpToken.baseToken, chainId),
-			chainId,
-			signer: getSigner(ethereum)
-		})
+	}) {
+		try {
+			const res = await TokenSwap.removeLiquidityOneToken({
+				...args,
+				deadline:  BigNumber.from(args.deadline),
+				amount:    parseBigNumberish(args.amount, args.token, chainId),
+				minAmount: parseBigNumberish(args.minAmount, args.lpToken.baseToken, chainId),
+				chainId,
+				signer: getSigner(ethereum)
+			});
+
+			setTx(res);
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err);
+		}
 	}
 
-	return [fn]
+	return [fn, tx]
 }
 
-export function useCalculateSwapRate(ethereum: any, chainId: number) {
+function useCalculateSwapRate(ethereum: any, chainId: number): CalculateSwapRateHook {
+	const [swapRate, setSwapRate] = useState<BigNumber>(null);
+
 	async function fn(args: {
 		tokenFrom: Token,
 		tokenTo:   Token,
-		amountIn:  BigNumberish,
-	}): Promise<BigNumber> {
-		return TokenSwap.calculateSwapRate({
-			...args,
-			amountIn: bignumFromBignumberish(args.amountIn, args.tokenFrom, chainId),
-			chainId
-		}).then(res => res.amountOut)
+		amountIn:  BigNumberish
+	}) {
+		try {
+			const res = await TokenSwap.calculateSwapRate({
+				...args,
+				amountIn: parseBigNumberish(args.amountIn, args.tokenFrom, chainId),
+				chainId
+			});
+
+			setSwapRate(res.amountOut);
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err);
+		}
+
 	}
 
-	return [fn]
+	return [fn, swapRate]
 }
 
-export function useApproveLPToken(ethereum: any, chainId: number) {
+function useSwapTokens(ethereum: any, chainId: number): SwapTokensHook{
 	const [getSigner] = useSignerFromEthereumFn();
 
-	async function fn(args: {
-		lpToken: SwapPools.SwapPoolToken,
-		amount?: BigNumberish
-	}): Promise<ContractTransaction> {
-		const {
-			lpToken: {
-				swapAddress: spender,
-				baseToken:   token
-			}
-		} = args;
-
-		const amt = args.amount
-			? bignumFromBignumberish(args.amount, args.lpToken.baseToken, chainId)
-			: undefined
-
-		return Tokens.approveTokenSpend({
-			...args,
-			amount: amt,
-			spender,
-			token,
-			chainId,
-			signer: getSigner(ethereum)
-		})
-	}
-
-	return [fn]
-}
-
-export function useSwapTokens(ethereum: any, chainId: number) {
-	const [getSigner] = useSignerFromEthereumFn();
+	const [tx, setTx] = useState<ContractTransaction>(null);
 
 	async function fn(args: {
 		tokenFrom:    Token,
@@ -229,17 +325,135 @@ export function useSwapTokens(ethereum: any, chainId: number) {
 		amountIn:  	  BigNumberish,
 		minAmountOut: BigNumberish,
 		deadline?:    number
-	}): Promise<ContractTransaction> {
+	}) {
 		const fnParams = {
 			...args,
-			amountIn:     bignumFromBignumberish(args.amountIn, args.tokenFrom, chainId),
-			minAmountOut: bignumFromBignumberish(args.minAmountOut, args.tokenTo, chainId),
+			amountIn:     parseBigNumberish(args.amountIn, args.tokenFrom, chainId),
+			minAmountOut: parseBigNumberish(args.minAmountOut, args.tokenTo, chainId),
 			chainId,
 			signer: getSigner(ethereum)
 		};
 
-		return TokenSwap.swapTokens(fnParams)
+		try {
+			const swapTx = await TokenSwap.swapTokens(fnParams);
+			setTx(swapTx);
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err);
+		}
 	}
 
-	return [fn]
+	return [fn, tx]
+}
+
+function useApproveLPToken(ethereum: any, chainId: number): ApproveLPTokenHook {
+	const
+		[approveSpend,       approveTx] 	= useApproveTokenSpend(ethereum, chainId),
+		[queryApproveStatus, approveStatus] = useApproveStatus(ethereum, chainId);
+
+	const [approveData, setApproveData] = useState<ApproveTokenState>(null);
+
+	async function fn(args: {
+		lpToken: SwapPools.SwapPoolToken,
+		amount?: BigNumberish
+	}) {
+		const {
+			amount,
+			lpToken: {
+				swapAddress: spender,
+				baseToken:   token
+			},
+		} = args;
+
+		try {
+			await approveSpend({
+				token,
+				spender,
+				amount
+			});
+
+			setApproveData({token, spender, amount});
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err);
+		}
+	}
+
+	useEffect(() => {
+		if (approveTx && approveData && !approveStatus) {
+			const {token, spender, amount} = approveData;
+			queryApproveStatus({
+				token,
+				spender,
+				amount,
+				approveTx
+			});
+		}
+	}, [approveTx, approveData, approveStatus]);
+
+	return [fn, approveTx, approveStatus]
+}
+
+function useApproveTokenForLP(ethereum: any, chainId: number): ApproveTokenForLPHook {
+	const
+		[approveSpend,       approveTx]     = useApproveTokenSpend(ethereum, chainId),
+		[queryApproveStatus, approveStatus] = useApproveStatus(ethereum, chainId);
+
+	const [approveData, setApproveData] = useState<ApproveTokenState>(null);
+
+	async function fn(args: {
+		lpToken: SwapPools.SwapPoolToken,
+		token:   Token,
+		amount?: BigNumberish
+	}) {
+		const {
+			amount,
+			token,
+			lpToken: {swapAddress: spender},
+		} = args;
+
+		try {
+			await approveSpend({
+				token,
+				spender,
+				amount
+			});
+
+			setApproveData({token, spender, amount});
+		} catch (e) {
+			const err = e instanceof Error ? e : new Error(e);
+			console.error(err);
+		}
+	}
+
+	useEffect(() => {
+		if (approveTx && approveData && !approveStatus) {
+			const {token, spender, amount} = approveData;
+			queryApproveStatus({
+				token,
+				spender,
+				amount,
+				approveTx
+			});
+		}
+	}, [approveTx, approveData, approveStatus]);
+
+	return [fn, approveTx, approveStatus]
+}
+
+export {
+	useChainStableswapLPToken,
+	useChainETHSwapLPToken,
+	useHarmonyJewelLPToken,
+	useHarmonyAVAXLPToken,
+	useCalculateAddLiquidity,
+	useCalculateRemoveLiquidity,
+	useCalculateRemoveLiquidityOneToken,
+	useAddLiquidity,
+	useRemoveLiquidity,
+	useRemoveLiquidityOneToken,
+	useCalculateSwapRate,
+	useSwapTokens,
+	useApproveLPToken,
+	useApproveTokenForLP
 }
