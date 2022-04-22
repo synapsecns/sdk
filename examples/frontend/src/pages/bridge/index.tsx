@@ -1,17 +1,29 @@
+import {useMetaMask, useConnectedMetaMask} from "metamask-react";
+import {MetamaskStatus} from "@utils";
+
+import BridgeSwap from "./components/BridgeSwap";
 
 
+function BridgePageContent(props) {
+    const {status} = useMetaMask();
 
-
-function BridgePageContent(props: {className?: string}) {
+    if (status !== MetamaskStatus.CONNECTED) {
+        return (
+            <div className={"w-1/4"}>
+                Loading...
+            </div>
+        )
+    }
 
     return(
         <div className={"w-1/4"}>
+            <BridgeSwap />
         </div>
     )
 }
 
-export function BridgePage(props: {className?: string}) {
+export default function BridgePage(props) {
     return (
-        <BridgePageContent className={props.className}/>
+        <BridgePageContent {...props}/>
     )
 }

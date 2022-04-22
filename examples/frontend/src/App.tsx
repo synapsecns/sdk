@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 
-import {BridgePage} from "@pages/bridge";
+import BridgePage from "@pages/bridge";
 
 function App() {
   return (
