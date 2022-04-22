@@ -1341,14 +1341,6 @@
     "@ethersproject/bytes" "^5.5.0"
     js-sha3 "0.8.0"
 
-"@ethersproject/keccak256@^5.0.0-beta.130":
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/@ethersproject/keccak256/-/keccak256-5.6.0.tgz#fea4bb47dbf8f131c2e1774a1cecbfeb9d606459"
-  integrity sha512-tk56BJ96mdj/ksi7HWZVWGjCq0WVl/QvfhFQNeL8fxhBlGoP+L80uDCiQcpJPd+2XxkivS3lwRm3E0CXTfol0w==
-  dependencies:
-    "@ethersproject/bytes" "^5.6.0"
-    js-sha3 "0.8.0"
-
 "@ethersproject/logger@5.5.0", "@ethersproject/logger@^5.5.0":
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@ethersproject/logger/-/logger-5.5.0.tgz#0c2caebeff98e10aefa5aef27d7441c7fd18cf5d"
@@ -1990,10 +1982,10 @@
     "@svgr/plugin-svgo" "^5.5.0"
     loader-utils "^2.0.0"
 
-"@synapseprotocol/sdk@0.95.1-alpha.0":
-  version "0.95.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@synapseprotocol/sdk/-/sdk-0.95.1-alpha.0.tgz#0230c0bb8e31f99f87bc2d569652a9ba9e9fa84c"
-  integrity sha512-hhCET5pAiFwzPKLTD2U62UhzQMziFmYPxAHnbQkP5GihulO/Nj9oOPEnGXXZOAijxXYZ1RGj9Ctu+M0OfPTrSw==
+"@synapseprotocol/sdk@0.95.1-alpha.3":
+  version "0.95.1-alpha.3"
+  resolved "https://registry.yarnpkg.com/@synapseprotocol/sdk/-/sdk-0.95.1-alpha.3.tgz#db374ef6bbfafba1e16cb5f9a391a0be8dcd6423"
+  integrity sha512-qNN+UD8r2XOJLuJeCD2wbAJUGMCQArSi3OwBoO1nrlFj0npMKQdxWDW19DkyWe0jmkUzBb1itdEzIiUvX785+A==
   dependencies:
     "@ethersproject/abi" "^5.5.0"
     "@ethersproject/abstract-signer" "^5.5.0"
@@ -2008,13 +2000,11 @@
     "@ethersproject/web" "^5.5.1"
     "@types/react" "^18.0.5"
     "@web3-react/abstract-connector" "^6.0.7"
-    "@web3-react/core" "^6.1.9"
     "@web3-react/injected-connector" "^6.0.7"
     "@web3-react/network-connector" "^6.2.9"
     ethers "^5.5.1"
     lodash "^4.17.21"
     lodash-es "^4.17.21"
-    react "^18.0.0"
 
 "@testing-library/dom@^8.0.0":
   version "8.11.3"
@@ -2486,17 +2476,6 @@
   integrity sha512-RhQasA4Ox8CxUC0OENc1AJJm8UTybu/oOCM61Zjg6y0iF7Z0sqv1Ai1VdhC33hrQpA8qSBgoXN9PaP8jKmtdqg==
   dependencies:
     "@web3-react/types" "^6.0.7"
-
-"@web3-react/core@^6.1.9":
-  version "6.1.9"
-  resolved "https://registry.yarnpkg.com/@web3-react/core/-/core-6.1.9.tgz#5f5daa0545a8ea07770a699580ced552583afc97"
-  integrity sha512-P877DslsbAkWIlMANpWiK7pCvNwlz0kJC0EGckuVh0wlA23J4UnFxq6xyOaxkxaDCu14rA/tAO0NbwjcXTQgSA==
-  dependencies:
-    "@ethersproject/keccak256" "^5.0.0-beta.130"
-    "@web3-react/abstract-connector" "^6.0.7"
-    "@web3-react/types" "^6.0.7"
-    tiny-invariant "^1.0.6"
-    tiny-warning "^1.0.3"
 
 "@web3-react/injected-connector@^6.0.7":
   version "6.0.7"
