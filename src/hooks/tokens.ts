@@ -11,8 +11,9 @@ import {
 } from "./errors";
 
 import {useEffect, useState} from "react";
-import type {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+import {BigNumber, type BigNumberish} from "@ethersproject/bignumber";
 import type {ContractTransaction} from "@ethersproject/contracts";
+import {ApproveTokenState} from "@hooks/types";
 
 const TX_STATUS_SUCCESS: number = 1;
 
@@ -30,7 +31,7 @@ function useCheckAllowance(ethereum: any, chainId: number) {
 				const {token, spender} = args;
 				const tokenArgs = {tokenAddress: token.address(chainId), chainId};
 				ERC20.allowanceOf(ownerAddress, spender, tokenArgs)
-					.then(res => setAllowance(res))
+					.then(setAllowance)
 					.catch(e => {
 						const err = e instanceof Error ? e : new Error(e);
 						const allowanceErr = new AllowanceError(
@@ -72,9 +73,8 @@ function useApproveTokenSpend(ethereum: any, chainId: number) {
 }
 
 function useApproveStatus(ethereum: any, chainId: number) {
-	const [checkAllowance, allowance] = useCheckAllowance(ethereum, chainId);
 	const [approveComplete, setApproveComplete] = useState<boolean>(false);
-	const [wantApproveAmount, setWantApproveAmount] = useState<BigNumber>(null);
+	const [approveState, setApproveState] = useState<ApproveTokenState>(null);
 
 	function fn(args: {
 		token:      Token,
@@ -82,6 +82,10 @@ function useApproveStatus(ethereum: any, chainId: number) {
 		amount?:    BigNumberish,
 		approveTx:  ContractTransaction
 	}) {
+		if (approveComplete) {
+			return
+		}
+
 		const {
 			token,
 			spender,
@@ -89,9 +93,25 @@ function useApproveStatus(ethereum: any, chainId: number) {
 			approveTx
 		} = args;
 
-		const txHash = approveTx.hash;
 
 		const wantAmt: BigNumber = amount ? parseApproveAmount(amount, token, chainId) : MAX_APPROVAL_AMOUNT;
+		if (!approveTx) {
+			return
+		}
+
+		const txHash = approveTx.hash;
+		const confirmations = approveTx.confirmations;
+
+		if (confirmations >= 1) {
+			setApproveState({
+				token,
+				spender,
+				amount: wantAmt
+			});
+
+			return
+		}
+
 		approveTx.wait(1)
 			.then(txResult => {
 				const {status: txStatus} = txResult;
@@ -103,7 +123,11 @@ function useApproveStatus(ethereum: any, chainId: number) {
 					}
 				}
 
-				Promise.resolve(checkAllowance({spender, token})).then(() => setWantApproveAmount(wantAmt))
+				setApproveState({
+					token,
+					spender,
+					amount: wantAmt
+				});
 			})
 			.catch(e => {
 				const err = e instanceof Error ? e : new Error(e);
@@ -112,11 +136,21 @@ function useApproveStatus(ethereum: any, chainId: number) {
 			})
 	}
 
-	useEffect(() => {
-		if (allowance && wantApproveAmount) {
-			let checkAmt: BigNumber = wantApproveAmount;
+	const [checkAllowance, allowance] = useCheckAllowance(ethereum, chainId);
+	const [checkFired, setCheckFired] = useState<boolean>(false);
 
-			if (wantApproveAmount.eq(MAX_APPROVAL_AMOUNT)) {
+	useEffect(() => {
+		if (!checkFired && approveState) {
+			checkAllowance(approveState);
+			setCheckFired(true);
+		}
+	}, [checkFired, approveState])
+
+	useEffect(() => {
+		if (allowance && approveState) {
+			let checkAmt: BigNumber = BigNumber.from(approveState.amount);
+
+			if (MAX_APPROVAL_AMOUNT.eq(approveState.amount)) {
 				checkAmt = MAX_APPROVAL_AMOUNT.sub(5);
 			}
 
@@ -124,7 +158,7 @@ function useApproveStatus(ethereum: any, chainId: number) {
 				setApproveComplete(true);
 			}
 		}
-	}, [allowance, wantApproveAmount]);
+	}, [allowance, approveState]);
 
 	return [fn, approveComplete, allowance] as const
 }

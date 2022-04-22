@@ -11,12 +11,20 @@ import {
 	useCheckAllowance
 } from "./tokens";
 
-import type {ApproveTokenState} from "./types";
+import type {
+	ActionHook,
+	ApproveActionHook,
+	ContractTransactionHook,
+	AllowanceHook,
+	NeedsApprovalHook,
+	ApproveTokenState
+} from "./types";
 
-import type {BigNumberish} from "@ethersproject/bignumber";
+import {BigNumber, type BigNumberish} from "@ethersproject/bignumber";
 import type {ContractTransaction} from "@ethersproject/contracts";
 
 import {useEffect, useState} from "react";
+import {UseApproveHook} from "./types";
 
 
 function useCalculateBridgeSwapOutput(args: {
@@ -26,24 +34,24 @@ function useCalculateBridgeSwapOutput(args: {
 	tokenTo:    Token,
 	amountFrom: BigNumberish,
 	chainIdTo:  number
-}) {
+}): ActionHook<Bridge.BridgeOutputEstimate> {
 	const {ethereum, chainId, ...rest} = args;
 
 	const [result, setResult] = useState<Bridge.BridgeOutputEstimate>(null);
 
-	const fnArgs = {
-		...rest,
-		amountFrom: parseBigNumberish(rest.amountFrom, rest.tokenFrom, chainId),
-	};
-
 	function fn() {
+		const fnArgs = {
+			...rest,
+			amountFrom: parseBigNumberish(rest.amountFrom, rest.tokenFrom, chainId),
+		};
+
 		const synapseBridge = new Bridge.SynapseBridge({network: chainId});
 		synapseBridge.estimateBridgeTokenOutput(fnArgs)
 			.then(setResult)
 			.catch(logError)
 	}
 
-	return [fn, result] as const
+	return [fn, result]
 }
 
 function useExecuteBridgeSwap(args: {
@@ -55,25 +63,25 @@ function useExecuteBridgeSwap(args: {
 	amountTo:   BigNumberish,
 	chainIdTo:  number,
 	addressTo?: string
-}) {
+}): ContractTransactionHook {
 	const {ethereum, chainId, ...rest} = args;
 	const [getSigner] = useSignerFromEthereum();
 	const [tx, setTx] = useState<ContractTransaction>(null);
 
-	const fnArgs = {
-		...rest,
-		amountFrom: parseBigNumberish(rest.amountFrom, rest.tokenFrom, chainId),
-		amountTo:   parseBigNumberish(rest.amountTo,   rest.tokenTo,   rest.chainIdTo)
-	};
-
 	function fn() {
+		const fnArgs = {
+			...rest,
+			amountFrom: parseBigNumberish(rest.amountFrom, rest.tokenFrom, chainId),
+			amountTo:   parseBigNumberish(rest.amountTo,   rest.tokenTo,   rest.chainIdTo)
+		};
+
 		const synapseBridge = new Bridge.SynapseBridge({network: chainId});
 		synapseBridge.executeBridgeTokenTransaction(fnArgs, getSigner(ethereum))
 			.then(setTx)
 			.catch(logError)
 	}
 
-	return [fn, tx] as const
+	return [fn, tx]
 }
 
 function useApproveBridgeSwap(args: {
@@ -81,7 +89,7 @@ function useApproveBridgeSwap(args: {
 	chainId:  number,
 	token:    Token,
 	amount?:  BigNumberish
-}) {
+}): ApproveActionHook {
 	const {ethereum, chainId, ...rest} = args;
 
 	const [getSigner] = useSignerFromEthereum();
@@ -118,7 +126,11 @@ function useApproveBridgeSwap(args: {
 	}
 
 	useEffect(() => {
-		if (approveTx && approveData && !approvalStatus) {
+		if (approvalStatus !== null) {
+			return
+		}
+
+		if ((approveTx && approveData)) {
 			const {token, spender, amount} = approveData;
 			queryApproveStatus({
 				token,
@@ -129,24 +141,26 @@ function useApproveBridgeSwap(args: {
 		}
 	}, [approveTx, approveData, approvalStatus]);
 
-	return [fn, approveTx, approvalStatus] as const
+	return [fn, approveTx, approvalStatus]
 }
 
 function useBridgeAllowance(args: {
 	ethereum: any,
 	chainId:  number,
 	token:    Token,
-}) {
+}): AllowanceHook {
 	const {ethereum, chainId, token} = args;
 
 	const [checkAllowance, allowance] = useCheckAllowance(ethereum, chainId);
 
-	const synapseBridge = new Bridge.SynapseBridge({network: chainId});
-	const [{spender}] = synapseBridge.buildERC20ApproveArgs({token});
+	useEffect(() => {
+		const synapseBridge = new Bridge.SynapseBridge({network: chainId});
+		const [{spender}] = synapseBridge.buildERC20ApproveArgs({token});
 
-	checkAllowance({token, spender});
+		checkAllowance({token, spender});
+	}, [chainId, token])
 
-	return [allowance] as const
+	return [allowance]
 }
 
 function useNeedsBridgeSwapApproval(args: {
@@ -154,7 +168,7 @@ function useNeedsBridgeSwapApproval(args: {
 	chainId:  number,
 	token:    Token,
 	amount:   BigNumberish
-}) {
+}): NeedsApprovalHook {
 	const {chainId, token, amount} = args;
 
 	const amt = parseBigNumberish(amount, token, chainId);
@@ -167,9 +181,9 @@ function useNeedsBridgeSwapApproval(args: {
 		if (allowance) {
 			setNeedsApprove(allowance.lt(amt));
 		}
-	}, [allowance]);
+	}, [allowance, chainId, token, amount]);
 
-	return [needsApprove, allowance] as const
+	return [needsApprove, allowance]
 }
 
 function useBridgeSwapApproval(args: {
@@ -177,7 +191,7 @@ function useBridgeSwapApproval(args: {
 	chainId:  number,
 	token:    Token,
 	amount:   BigNumberish
-}) {
+}): UseApproveHook {
 	const [needsApprove, allowance] = useNeedsBridgeSwapApproval(args)
 	const [execApprove, approveTx, approveStatus] = useApproveBridgeSwap({...args, amount: undefined});
 
