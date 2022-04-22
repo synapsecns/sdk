@@ -2,7 +2,7 @@ import {useMetaMask, useConnectedMetaMask} from "metamask-react";
 import {MetamaskStatus} from "@utils";
 
 import BridgeSwap from "./components/BridgeSwap";
-
+import AddLiquiditySingleToken from "./components/AddLiquiditySingleToken";
 
 function BridgePageContent(props) {
     const {status} = useMetaMask();
@@ -17,7 +17,8 @@ function BridgePageContent(props) {
 
     return(
         <div className={"w-1/4"}>
-            <BridgeSwap />
+            {/*<BridgeSwap />*/}
+            <AddLiquiditySingleToken />
         </div>
     )
 }

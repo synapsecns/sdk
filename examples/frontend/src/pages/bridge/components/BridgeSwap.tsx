@@ -14,13 +14,20 @@ import {
 import {Grid} from "@components/Grid";
 import Button from "@components/Button";
 
+import {
+	ColBreak,
+	DataRow,
+	NeedsApprovalCol,
+	ApproveButton,
+	LOADING,
+	LOADING_COLOR
+} from "./VariousComponents";
+
 import {useEffect, useState} from "react";
 import {MetamaskStatus} from "@utils";
 import {BigNumber} from "@ethersproject/bignumber";
 import {formatEther} from "@ethersproject/units";
 
-const LOADING = "Loading...";
-const LOADING_COLOR = "text-sky-500";
 
 export default function BridgeSwap(props) {
 	const {ethereum, chainId: cid, status} = useConnectedMetaMask();
@@ -82,9 +89,9 @@ export default function BridgeSwap(props) {
 				<ColBreak />
 				<BridgeFeeCol tokenFrom={tokenFrom} bridgeSwapEstimate={bridgeSwapEstimate}/>
 				<ColBreak />
-				<NeedsApprovalCol tokenFrom={tokenFrom} needsApproval={needsApprove}/>
+				<NeedsApprovalCol token={tokenFrom} needsApproval={needsApprove}/>
 				<ColBreak />
-				<ApproveButton execApprove={execApprove} tokenFrom={tokenFrom} approveStatus={approveStatus}/>
+				<ApproveButton execApprove={execApprove} token={tokenFrom} approveStatus={approveStatus}/>
 				<ColBreak />
 				<BridgeButton executeBridgeSwap={executeBridgeSwap}/>
 			</Grid>
@@ -92,9 +99,7 @@ export default function BridgeSwap(props) {
 	)
 }
 
-const ColBreak = () => (<div className={"col-span-1"}/>)
 
-const DataRow = ({children}) => (<div className={"col-span-1 pb-8"}>{children}</div>)
 
 function SwapHeader(args: {tokenFrom, tokenTo, chainId, chainIdTo}) {
 	const headerStr: string = `${args.tokenFrom.symbol} (${args.chainId}) - ${args.tokenTo.symbol} (${args.chainIdTo})`
@@ -145,45 +150,6 @@ function BridgeFeeCol(args: {tokenFrom, bridgeSwapEstimate}) {
 		<DataRow>
 			<p>Bridge fee</p>
 			<span className={`${textColor} position-relative`}>{formattedEstimate}</span> {tokenFrom.symbol}
-		</DataRow>
-	)
-}
-
-function NeedsApprovalCol(args: {tokenFrom, needsApproval}) {
-	const {tokenFrom, needsApproval} = args;
-
-	const [text, setText] = useState<string>(LOADING);
-	const [textColor, setTextColor] = useState<string>(LOADING_COLOR);
-
-	useEffect(() => {
-		if (needsApproval !== null && text === LOADING) {
-			setText(`${needsApproval ? "Yes" : "No"}`);
-			if (needsApproval) {
-				setTextColor("text-amber-500");
-			} else {
-				setTextColor("text-emerald-600");
-			}
-		}
-	}, [needsApproval])
-
-	return (
-		<DataRow>
-			<p>{tokenFrom.symbol} approval required</p>
-			<p className={textColor}>{text}</p>
-		</DataRow>
-	)
-}
-
-function ApproveButton(args: {execApprove, tokenFrom, approveStatus}) {
-	const {execApprove, tokenFrom, approveStatus} = args;
-
-	return (
-		<DataRow>
-			<Button
-				text={`Approve ${tokenFrom.symbol}`}
-				onClick={execApprove}
-				disabled={approveStatus}
-			/>
 		</DataRow>
 	)
 }
