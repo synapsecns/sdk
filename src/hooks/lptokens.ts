@@ -26,7 +26,6 @@ import {
 	type BigNumberish
 } from "@ethersproject/bignumber";
 import type {ContractTransaction} from "@ethersproject/contracts";
-import {Bridge} from "@bridge/bridge";
 
 
 /**

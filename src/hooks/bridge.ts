@@ -17,14 +17,14 @@ import type {
 	ContractTransactionHook,
 	AllowanceHook,
 	NeedsApprovalHook,
-	ApproveTokenState
+	ApproveTokenState,
+	UseApproveHook
 } from "./types";
 
-import {BigNumber, type BigNumberish} from "@ethersproject/bignumber";
+import type {BigNumberish} from "@ethersproject/bignumber";
 import type {ContractTransaction} from "@ethersproject/contracts";
 
 import {useEffect, useState} from "react";
-import {UseApproveHook} from "./types";
 
 
 function useCalculateBridgeSwapOutput(args: {

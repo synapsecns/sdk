@@ -9,11 +9,11 @@ import {
 	AllowanceError,
 	TransactionError
 } from "./errors";
+import {ApproveTokenState} from "./types";
 
 import {useEffect, useState} from "react";
 import {BigNumber, type BigNumberish} from "@ethersproject/bignumber";
 import type {ContractTransaction} from "@ethersproject/contracts";
-import {ApproveTokenState} from "@hooks/types";
 
 const TX_STATUS_SUCCESS: number = 1;
 
