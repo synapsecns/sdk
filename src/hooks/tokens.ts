@@ -42,6 +42,7 @@ function useCheckAllowance(ethereum: any, chainId: number) {
 							err
 						);
 						console.error(allowanceErr);
+						console.error(allowanceErr.cause);
 					})
 			})
 	}
@@ -133,6 +134,7 @@ function useApproveStatus(ethereum: any, chainId: number) {
 				const err = e instanceof Error ? e : new Error(e);
 				const txErr = new TransactionError(txHash, "exception thrown from .wait(1)", err);
 				console.error(txErr);
+				console.error(txErr.cause)
 			})
 	}
 
