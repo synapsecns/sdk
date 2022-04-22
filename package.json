@@ -87,6 +87,6 @@
     "typescript-transform-paths": "^3.3.1"
   },
   "peerDependencies": {
-    "react": "^17.0.0"
+    "react": "^17.0.0 || ^18.0.0"
   }
 }
