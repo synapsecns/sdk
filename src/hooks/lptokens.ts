@@ -17,7 +17,7 @@ import {
 	parseLPTokenBigNumberishArray
 } from "./helpers";
 
-import type {ApproveTokenState} from "./types";
+import type {AllowanceHook, ApproveTokenState} from "./types";
 
 import {useEffect, useState} from "react";
 
@@ -26,6 +26,7 @@ import {
 	type BigNumberish
 } from "@ethersproject/bignumber";
 import type {ContractTransaction} from "@ethersproject/contracts";
+import {ApproveActionHook, NeedsApprovalHook, UseApproveHook} from "./types";
 
 
 /**
@@ -362,7 +363,11 @@ function useApproveLPToken(args: {
 	}
 
 	useEffect(() => {
-		if (approveTx && approveData && !approveStatus) {
+		if (approveStatus !== null) {
+			return
+		}
+
+		if (approveTx && approveData) {
 			const {token, spender, amount} = approveData;
 			queryApproveStatus({
 				token,
@@ -382,7 +387,7 @@ function useApprovePoolToken(args: {
 	lpToken:  SwapPools.SwapPoolToken,
 	token:    Token,
 	amount?:  BigNumberish
-}) {
+}): ApproveActionHook {
 	const {ethereum, chainId, ...rest} = args;
 
 	const
@@ -398,12 +403,18 @@ function useApprovePoolToken(args: {
 			lpToken: {swapAddress: spender},
 		} = rest;
 
-		approveSpend({token, spender});
-		setApproveData({token, spender, amount});
+		Promise.resolve(approveSpend({token, spender}))
+			.then(() => {
+				setApproveData({token, spender, amount});
+			})
 	}
 
 	useEffect(() => {
-		if (approveTx && approveData && !approveStatus) {
+		if (approveStatus !== null) {
+			return
+		}
+
+		if (approveTx && approveData) {
 			const {token, spender, amount} = approveData;
 			queryApproveStatus({
 				token,
@@ -490,7 +501,7 @@ function usePoolTokenAllowance(args: {
 	chainId: number,
 	lpToken: SwapPools.SwapPoolToken,
 	token: Token
-}) {
+}): AllowanceHook {
 	const {ethereum, chainId, lpToken, token} = args;
 
 	const [checkAllowance, allowance] = useCheckAllowance(ethereum, chainId);
@@ -502,7 +513,7 @@ function usePoolTokenAllowance(args: {
 		}
 	}, [chainId, token, lpToken])
 
-	return [allowance] as const
+	return [allowance]
 }
 
 function usePoolTokenNeedsApproval(args: {
@@ -511,8 +522,8 @@ function usePoolTokenNeedsApproval(args: {
 	lpToken:  SwapPools.SwapPoolToken,
 	token:    Token,
 	amount:   BigNumberish
-}) {
-	const {chainId, token, amount} = args;
+}): NeedsApprovalHook {
+	const {chainId, token, amount, lpToken} = args;
 
 	const [allowance] = usePoolTokenAllowance(args);
 
@@ -523,9 +534,9 @@ function usePoolTokenNeedsApproval(args: {
 			const amt = parseBigNumberish(amount, token, chainId);
 			setNeedsApprove(allowance.lt(amt));
 		}
-	}, [allowance, chainId, token, amount]);
+	}, [allowance, chainId, token, amount, lpToken]);
 
-	return [needsApprove, allowance] as const
+	return [needsApprove, allowance]
 }
 
 function usePoolTokenApproval(args: {
@@ -534,7 +545,7 @@ function usePoolTokenApproval(args: {
 	lpToken:  SwapPools.SwapPoolToken,
 	token:    Token,
 	amount:   BigNumberish
-}) {
+}): UseApproveHook {
 	const [needsApprove, allowance] = usePoolTokenNeedsApproval(args)
 	const [execApprove, approveTx, approveStatus] = useApprovePoolToken({...args, amount: undefined});
 

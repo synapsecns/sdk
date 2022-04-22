@@ -37,7 +37,7 @@ export default function AddLiquiditySingleToken(props) {
 
 	const [stableswapPool] = useChainStableswapLPToken(ethereum, chainId);
 
-	const liquidityToken = Tokens.USDC;
+	// const liquidityToken = Tokens.USDC;
 	const addLiquidityAmount = "55";
 
 	// console.log(stableswapPool);
