@@ -352,7 +352,7 @@ function useApproveLPToken(args: {
 			},
 		} = rest;
 
-		approveSpend({token, spender, amount});
+		approveSpend({token, spender});
 		setApproveData({token, spender, amount});
 	}
 
@@ -393,7 +393,7 @@ function useApprovePoolToken(args: {
 			lpToken: {swapAddress: spender},
 		} = rest;
 
-		approveSpend({token, spender, amount});
+		approveSpend({token, spender});
 		setApproveData({token, spender, amount});
 	}
 
