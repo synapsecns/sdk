@@ -26,6 +26,7 @@ import {
 	type BigNumberish
 } from "@ethersproject/bignumber";
 import type {ContractTransaction} from "@ethersproject/contracts";
+import {Bridge} from "@bridge/bridge";
 
 
 /**
@@ -432,7 +433,11 @@ function useLPTokenAllowance(args: {
 		swapAddress: spender
 	} = lpToken;
 
-	checkAllowance({token, spender});
+	useEffect(() => {
+		const {swapAddress: spender} = lpToken;
+
+		checkAllowance({token, spender});
+	}, [chainId, token, lpToken])
 
 	return [allowance] as const
 }
@@ -459,7 +464,7 @@ function useLPTokenNeedsApproval(args: {
 		if (allowance) {
 			setNeedsApprove(allowance.lt(amt));
 		}
-	}, [allowance])
+	}, [allowance, chainId, token, amount]);
 
 	return [needsApprove, allowance] as const
 }
@@ -492,9 +497,11 @@ function usePoolTokenAllowance(args: {
 
 	const [checkAllowance, allowance] = useCheckAllowance(ethereum, chainId);
 
-	const {swapAddress: spender} = lpToken;
+	useEffect(() => {
+		const {swapAddress: spender} = lpToken;
 
-	checkAllowance({token, spender});
+		checkAllowance({token, spender});
+	}, [chainId, token, lpToken])
 
 	return [allowance] as const
 }
@@ -518,7 +525,7 @@ function usePoolTokenNeedsApproval(args: {
 		if (allowance) {
 			setNeedsApprove(allowance.lt(amt));
 		}
-	}, [allowance]);
+	}, [allowance, chainId, token, lpToken, amount]);
 
 	return [needsApprove, allowance] as const
 }
