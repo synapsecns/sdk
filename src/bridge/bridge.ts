@@ -571,12 +571,17 @@ export namespace Bridge {
                         tokenIndexTo
                     );
             } else {
-                amountToReceive_to_prom = l2BridgeZapTo.calculateSwap(
-                    intermediateToken.address(chainIdTo),
-                    0,
-                    tokenIndexTo,
-                    amountToReceive_from
-                );
+                if (chainIdTo === ChainId.CRONOS) {
+                    const swapContract = await TokenSwap.swapContract(intermediateToken, chainIdTo);
+                    amountToReceive_to_prom = swapContract.calculateSwap(0, tokenIndexTo, amountToReceive_from)
+                } else {
+                    amountToReceive_to_prom = l2BridgeZapTo.calculateSwap(
+                        intermediateToken.address(chainIdTo),
+                        0,
+                        tokenIndexTo,
+                        amountToReceive_from
+                    );
+                }
             }
 
             let amountToReceive: BigNumber;
