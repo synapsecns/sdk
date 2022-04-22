@@ -394,7 +394,11 @@ export namespace TokenSwap {
             .catch(rejectPromise)
     }
 
-    export async function swapTokens(args: SwapTokensParams & {signer: Signer}): Promise<ContractTransaction> {
+    interface SwapTokensFnParams extends SwapTokensParams {
+        signer: Signer
+    }
+
+    export async function swapTokens(args: SwapTokensFnParams): Promise<ContractTransaction> {
         const {swapSupported: canSwap, reasonNotSupported} = swapSupported(args);
         if (!canSwap) {
             return rejectPromise(reasonNotSupported)
@@ -589,7 +593,7 @@ export namespace TokenSwap {
         tokenIndexTo:   number,
     }
 
-    async function swapContract(token: Token, chainId: number, signer?: Signer): Promise<SwapContract> {
+    export async function swapContract(token: Token, chainId: number, signer?: Signer): Promise<SwapContract> {
         const provider = signer ? signer : rpcProviderForChain(chainId);
 
         const lpToken = _intermediateToken(token, chainId);
@@ -598,7 +602,8 @@ export namespace TokenSwap {
         if (lpToken.isEqual(Tokens.NUSD) && chainId === ChainId.CRONOS) {
             return swapContractFromLPSwapAddress(
                 SwapPools.stableswapPoolForNetwork(chainId).swapAddress,
-                chainId
+                chainId,
+                signer
             )
         }
 
