@@ -525,7 +525,7 @@ function usePoolTokenNeedsApproval(args: {
 		if (allowance) {
 			setNeedsApprove(allowance.lt(amt));
 		}
-	}, [allowance, chainId, token, lpToken, amount]);
+	}, [allowance, chainId, token, amount]);
 
 	return [needsApprove, allowance] as const
 }
