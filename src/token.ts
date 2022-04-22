@@ -8,7 +8,7 @@ import {
     type BigNumberish
 } from "@ethersproject/bignumber";
 
-import {parseUnits} from "@ethersproject/units";
+import {formatEther, parseEther, parseUnits} from "@ethersproject/units";
 
 
 export interface IBaseToken extends Distinct {
@@ -52,6 +52,8 @@ export interface Token extends IBaseToken {
      * @param chainId
      */
     weiToEther:       (amt: BigNumberish, chainId: number) => BigNumber;
+
+    weiToEtherString: (amt: BigNumberish, chainId: number) => string;
 
     /**
      * Returns the passed Ether amount as a value in units of Wei as determined
@@ -171,6 +173,14 @@ export class BaseToken implements Token {
             multiplier = BigNumber.from(10).pow(18 - decimals);
 
         return BigNumber.from(amt).mul(multiplier)
+    }
+
+    weiToEtherString(amt: BigNumberish, chainId: number): string {
+        const
+            decimals   = this.decimals(chainId) || 18,
+            multiplier = BigNumber.from(10).pow(18 - decimals);
+
+        return formatEther(BigNumber.from(amt).mul(multiplier))
     }
 
     etherToWei(amt: BigNumberish, chainId: number): BigNumber {
