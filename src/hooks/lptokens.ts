@@ -41,13 +41,7 @@ function useChainStableswapLPToken(ethereum: any, chainId: number) {
 
 	useEffect(() => {
 		if (typeof chainId !== 'undefined' && chainId !== null) {
-			if (lpToken !== null) {
-				if (lpToken.chainId !== chainId) {
-					setLpToken(SwapPools.stableswapPoolForNetwork(chainId));
-				}
-			} else {
-				setLpToken(SwapPools.stableswapPoolForNetwork(chainId));
-			}
+			setLpToken(SwapPools.stableswapPoolForNetwork(chainId));
 		}
 	}, [chainId]);
 
@@ -349,15 +343,15 @@ function useApproveLPToken(args: {
 
 	const [approveData, setApproveData] = useState<ApproveTokenState>(null);
 
-	const {
-		amount,
-		lpToken: {
-			swapAddress: spender,
-			baseToken:   token
-		},
-	} = rest;
-
 	function fn() {
+		const {
+			amount,
+			lpToken: {
+				swapAddress: spender,
+				baseToken:   token
+			},
+		} = rest;
+
 		approveSpend({token, spender, amount});
 		setApproveData({token, spender, amount});
 	}
@@ -392,13 +386,13 @@ function useApprovePoolToken(args: {
 
 	const [approveData, setApproveData] = useState<ApproveTokenState>(null);
 
-	const {
-		amount,
-		token,
-		lpToken: {swapAddress: spender},
-	} = rest;
-
 	function fn() {
+		const {
+			amount,
+			token,
+			lpToken: {swapAddress: spender},
+		} = rest;
+
 		approveSpend({token, spender, amount});
 		setApproveData({token, spender, amount});
 	}
@@ -427,16 +421,16 @@ function useLPTokenAllowance(args: {
 
 	const [checkAllowance, allowance] = useCheckAllowance(ethereum, chainId);
 
-	const {
-		baseToken:   token,
-		swapAddress: spender
-	} = lpToken;
-
 	useEffect(() => {
-		const {swapAddress: spender} = lpToken;
+		if (lpToken) {
+			const {
+				baseToken:   token,
+				swapAddress: spender
+			} = lpToken;
 
-		checkAllowance({token, spender});
-	}, [chainId, token, lpToken])
+			checkAllowance({token, spender});
+		}
+	}, [chainId, lpToken])
 
 	return [allowance] as const
 }
@@ -450,20 +444,20 @@ function useLPTokenNeedsApproval(args: {
 	const {
 		chainId,
 		amount,
-		lpToken: {baseToken: token}
+		lpToken
 	} = args;
-
-	const amt = parseBigNumberish(amount, token, chainId);
 
 	const [allowance] = useLPTokenAllowance(args);
 
 	const [needsApprove, setNeedsApprove] = useState<boolean>(null);
 
 	useEffect(() => {
-		if (allowance) {
+		if (allowance && amount && lpToken) {
+			const {baseToken: token} = lpToken;
+			const amt = parseBigNumberish(amount, token, chainId);
 			setNeedsApprove(allowance.lt(amt));
 		}
-	}, [allowance, chainId, token, amount]);
+	}, [allowance, chainId, lpToken, amount]);
 
 	return [needsApprove, allowance] as const
 }
@@ -497,9 +491,10 @@ function usePoolTokenAllowance(args: {
 	const [checkAllowance, allowance] = useCheckAllowance(ethereum, chainId);
 
 	useEffect(() => {
-		const {swapAddress: spender} = lpToken;
-
-		checkAllowance({token, spender});
+		if (lpToken) {
+			const {swapAddress: spender} = lpToken;
+			checkAllowance({token, spender});
+		}
 	}, [chainId, token, lpToken])
 
 	return [allowance] as const
@@ -514,14 +509,13 @@ function usePoolTokenNeedsApproval(args: {
 }) {
 	const {chainId, token, amount} = args;
 
-	const amt = parseBigNumberish(amount, token, chainId);
-
 	const [allowance] = usePoolTokenAllowance(args);
 
 	const [needsApprove, setNeedsApprove] = useState<boolean>(null);
 
 	useEffect(() => {
-		if (allowance) {
+		if (allowance && amount) {
+			const amt = parseBigNumberish(amount, token, chainId);
 			setNeedsApprove(allowance.lt(amt));
 		}
 	}, [allowance, chainId, token, amount]);
