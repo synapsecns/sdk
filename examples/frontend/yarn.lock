@@ -1982,10 +1982,10 @@
     "@svgr/plugin-svgo" "^5.5.0"
     loader-utils "^2.0.0"
 
-"@synapseprotocol/sdk@0.95.1-alpha.3":
-  version "0.95.1-alpha.3"
-  resolved "https://registry.yarnpkg.com/@synapseprotocol/sdk/-/sdk-0.95.1-alpha.3.tgz#db374ef6bbfafba1e16cb5f9a391a0be8dcd6423"
-  integrity sha512-qNN+UD8r2XOJLuJeCD2wbAJUGMCQArSi3OwBoO1nrlFj0npMKQdxWDW19DkyWe0jmkUzBb1itdEzIiUvX785+A==
+"@synapseprotocol/sdk@0.95.1-alpha.5":
+  version "0.95.1-alpha.5"
+  resolved "https://registry.yarnpkg.com/@synapseprotocol/sdk/-/sdk-0.95.1-alpha.5.tgz#3fbfaa907e171fd75fcb994ed117c40dd6ccbddb"
+  integrity sha512-ixoqIgSBvFgtnVAxziCSMNGZ0AsBG2uGE1Gzb9ibmmyEXMFzI188zVFCdt60XuGV5YOJWeZvBKmNQiFtP/5w2g==
   dependencies:
     "@ethersproject/abi" "^5.5.0"
     "@ethersproject/abstract-signer" "^5.5.0"

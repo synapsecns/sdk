@@ -1,8 +1,10 @@
 import {useConnectedMetaMask} from "metamask-react";
 
 import {
+	type Token,
 	Tokens,
-	ChainId
+	ChainId,
+	SwapPools
 } from "@synapseprotocol/sdk";
 
 import {
@@ -18,6 +20,7 @@ import Button from "@components/Button";
 import {
 	ApproveButton,
 	ExecuteButton,
+	RowBreak,
 	ColBreak,
 	DataRow,
 	LOADING,
@@ -26,33 +29,43 @@ import {
 
 import {useEffect, useState} from "react";
 import {MetamaskStatus} from "@utils";
-import {BigNumber} from "@ethersproject/bignumber";
 import {formatEther} from "@ethersproject/units";
+import {
+	BigNumber,
+	type BigNumberish
+} from "@ethersproject/bignumber";
+
+interface BaseProps {
+	ethereum: any;
+	chainId:  number;
+	status:   string;
+}
+
+interface AddLiquiditySingleTokenProps extends BaseProps {
+	lpToken: 		 SwapPools.SwapPoolToken;
+	liquidityToken:  Token;
+	liquidityAmount: BigNumberish;
+}
 
 
-export default function AddLiquiditySingleToken(props) {
+export default function AddLiquidity(props) {
 	const {ethereum, chainId: cid, status} = useConnectedMetaMask();
-
 	const chainId = status === MetamaskStatus.CONNECTED ? BigNumber.from(cid).toNumber() : ChainId.ETH;
 
 	const [stableswapPool] = useChainStableswapLPToken(ethereum, chainId);
 
-	// const liquidityToken = Tokens.USDC;
-	const addLiquidityAmount = "55";
-
-	// console.log(stableswapPool);
-
 	const [liquidityAmountsMap, setLiquidityAmountsMap] = useState(null);
+
+	const addLiquidityAmount = "55";
+	const deadline = Math.round((new Date().getTime() / 1000) + 60 * 10);
 
 	useEffect(() => {
 		if (stableswapPool && !liquidityAmountsMap) {
 			const amountsMap = stableswapPool.liquidityAmountsMap();
-			amountsMap[liquidityToken.symbol] = addLiquidityAmount;
+			Object.keys(amountsMap).forEach(k => amountsMap[k] = addLiquidityAmount)
 			setLiquidityAmountsMap(amountsMap);
 		}
 	}, [stableswapPool])
-
-	const deadline = Math.round((new Date().getTime() / 1000) + 60 * 10);
 
 	const [calculateAddLiquidity, addLiquidityEstimate] = useCalculateAddLiquidity({
 		ethereum,
@@ -65,20 +78,6 @@ export default function AddLiquiditySingleToken(props) {
 		calculateAddLiquidity();
 	}
 
-	const {
-		needsApprove,
-		allowance: swapPoolSpendAllowance,
-		execApprove,
-		approveTx,
-		approveStatus
-	} = usePoolTokenApproval({
-		ethereum,
-		chainId,
-		token:   liquidityToken,
-		lpToken: stableswapPool,
-		amount:  addLiquidityAmount
-	});
-
 	const [addLiquidity, addLiquidityTx] = useAddLiquidity({
 		ethereum,
 		chainId,
@@ -88,18 +87,80 @@ export default function AddLiquiditySingleToken(props) {
 		minToMint: addLiquidityEstimate
 	});
 
+	let baseProps: BaseProps;
+
+	if (stableswapPool && liquidityAmountsMap) {
+		baseProps = {
+			ethereum,
+			chainId,
+			status
+		};
+
+		return (
+			<div className={"w-auto"}>
+				<Grid className={"grid-flow-row"} rows={10} cols={2} gapX={4} gapY={4}>
+					<EstimatedLPTokenCol lpToken={stableswapPool} addLiquidityEstimate={addLiquidityEstimate}/>
+					{/*<RowBreak />*/}
+					<ExecuteButton text={"Add Liquidity"} execFn={addLiquidity}/>
+					<RowBreak />
+					<div className={"row-span-4 pt-8"}>{stableswapPool.poolTokens.map((liquidityToken) => {
+						const tokenSymbol = liquidityToken.symbol;
+						const liquidityAmount = liquidityAmountsMap[`${tokenSymbol}`];
+
+						const componentProps: AddLiquiditySingleTokenProps = {
+							...baseProps,
+							lpToken: stableswapPool,
+							liquidityToken,
+							liquidityAmount
+						};
+
+						return (
+							<DataRow>
+								<AddLiquiditySingleToken {...componentProps} />
+							</DataRow>
+						)
+					})}</div>
+				</Grid>
+			</div>
+		)
+	}
+
+
 	return (
-		<div className={"w-auto"}>
-			<Grid className={"grid-flow-row"} rows={4} cols={3} gapX={4} gapY={4}>
-				<EstimatedLPTokenCol lpToken={stableswapPool} addLiquidityEstimate={addLiquidityEstimate}/>
-				<ColBreak />
-				<NeedsApprovalCol token={liquidityToken} needsApproval={needsApprove}/>
-				<ColBreak />
-				<ApproveButton execApprove={execApprove} token={liquidityToken} approveStatus={approveStatus}/>
-				<ColBreak />
-				<ExecuteButton text={"Add Liquidity"} execFn={addLiquidity}/>
-			</Grid>
-		</div>
+		<div className={"w-auto"}>{LOADING}</div>
+	)
+}
+
+function AddLiquiditySingleToken(props: AddLiquiditySingleTokenProps) {
+	const {
+		ethereum,
+		chainId,
+		lpToken,
+		liquidityToken,
+		liquidityAmount
+	} = props;
+
+	const {
+		needsApprove,
+		allowance: swapPoolSpendAllowance,
+		execApprove,
+		approveTx,
+		approveStatus
+	} = usePoolTokenApproval({
+		ethereum,
+		chainId,
+		lpToken,
+		token:   liquidityToken,
+		amount:  liquidityAmount
+	});
+
+	return (
+		<Grid className={"grid-flow-row"} rows={2} cols={1} gapY={4}>
+			<NeedsApprovalCol token={liquidityToken} needsApproval={needsApprove}/>
+			{/*<RowBreak/>*/}
+			<ApproveButton execApprove={execApprove} token={liquidityToken} approveStatus={approveStatus}/>
+			<RowBreak />
+		</Grid>
 	)
 }
 
@@ -119,7 +180,7 @@ function EstimatedLPTokenCol(args: {addLiquidityEstimate, lpToken}) {
 
 	if (!lpToken) {
 		return (
-			<DataRow>
+			<DataRow pb={2}>
 				<p>Estimated LP Tokens received</p>
 				<span className={`${textColor} position-relative`}>{formattedEstimate}</span>
 			</DataRow>
@@ -127,7 +188,7 @@ function EstimatedLPTokenCol(args: {addLiquidityEstimate, lpToken}) {
 	}
 
 	return (
-		<DataRow>
+		<DataRow pb={2}>
 			<p>Estimated LP Tokens received</p>
 			<span className={`${textColor} position-relative`}>{formattedEstimate}</span> {lpToken.symbol}
 		</DataRow>

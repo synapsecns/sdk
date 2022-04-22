@@ -4,10 +4,11 @@ import Button from "@components/Button";
 export const LOADING = "Loading...";
 export const LOADING_COLOR = "text-sky-500";
 
-
+export const RowBreak = () => (<div className={"row-span-1"}/>)
 export const ColBreak = () => (<div className={"col-span-1"}/>)
 
-export const DataRow = ({children}) => (<div className={"col-span-1 pb-8"}>{children}</div>)
+export const DataRow = ({children, pb=8}) => (<div className={`row-span-1 pb-${pb}`}>{children}</div>)
+export const DataCol = ({children, pb=8}) => (<div className={`col-span-1 pb-${pb}`}>{children}</div>)
 
 export function NeedsApprovalCol(args: {token, needsApproval}) {
 	const {token, needsApproval} = args;
@@ -27,7 +28,7 @@ export function NeedsApprovalCol(args: {token, needsApproval}) {
 	}, [needsApproval])
 
 	return (
-		<DataRow>
+		<DataRow pb={2}>
 			<p>{token.symbol} approval required</p>
 			<p className={textColor}>{text}</p>
 		</DataRow>
