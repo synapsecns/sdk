@@ -126,9 +126,14 @@ function useCalculateRemoveLiquidity(args: {
 	const [amounts, setAmounts] = useState<BigNumber[]>(null);
 
 	function fn() {
+		const {
+			amount,
+			lpToken: {baseToken}
+		} = rest
+
 		TokenSwap.calculateRemoveLiquidity({
 			...rest,
-			amount: parseBigNumberish(rest.amount, rest.lpToken.baseToken, chainId),
+			amount: parseBigNumberish(amount, baseToken, chainId),
 			chainId
 		})
 			.then(setAmounts)
