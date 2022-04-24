@@ -1,7 +1,7 @@
 import type {Token} from "@token";
 import {Tokens} from "@tokens";
 
-import {ERC20, MAX_APPROVAL_AMOUNT} from "@bridge/erc20";
+import {allowanceOf, MAX_APPROVAL_AMOUNT} from "@bridge/erc20";
 
 import {useSignerFromEthereum} from "./signer";
 import {logError, parseApproveAmount} from "./helpers";
@@ -30,7 +30,7 @@ function useCheckAllowance(ethereum: any, chainId: number) {
 			.then(ownerAddress => {
 				const {token, spender} = args;
 				const tokenArgs = {tokenAddress: token.address(chainId), chainId};
-				ERC20.allowanceOf(ownerAddress, spender, tokenArgs)
+				allowanceOf(ownerAddress, spender, tokenArgs)
 					.then(setAllowance)
 					.catch(e => {
 						const err = e instanceof Error ? e : new Error(e);
