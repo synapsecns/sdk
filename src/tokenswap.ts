@@ -1,4 +1,10 @@
-import _ from "lodash";
+import {
+    isNil,
+    isNull,
+    isEmpty,
+    isUndefined
+} from "lodash-es";
+
 import {
     ChainId, ChainIdTypeMap,
     supportedChainIds
@@ -8,6 +14,11 @@ import type {Token}    from "@token";
 import {Tokens}        from "@tokens";
 import {SwapPools}     from "@swappools";
 import {rejectPromise} from "@common/utils";
+import {
+    GasOptions,
+    populateGasOptions,
+    makeTransactionGasOverrides
+} from "@common/gasoptions";
 
 import {BridgeConfigV3ContractInstance} from "@entities";
 
@@ -31,9 +42,7 @@ import {
     type ContractTransaction,
     type PopulatedTransaction,
 } from "@ethersproject/contracts";
-import {Zero} from "@ethersproject/constants";
 
-import {GasOptions, makeTransactionGasOverrides, populateGasOptions} from "@common/gasoptions";
 
 export namespace UnsupportedSwapErrors {
     export enum UnsupportedSwapErrorKind {
@@ -269,11 +278,11 @@ export namespace TokenSwap {
      * @return {Promise<ContractTransaction>} Executed transaction object.
      */
     export async function addLiquidity(args: AddLiquidityParams): Promise<ContractTransaction> {
-        if (_.isEmpty(args.signer)) {
+        if (isEmpty(args.signer)) {
             return rejectPromiseMissingField("signer", "AddLiquidityParams")
-        } else if (_.isEmpty(args.deadline)) {
+        } else if (isEmpty(args.deadline)) {
             return rejectPromiseMissingField("deadline", "AddLiquidityParams")
-        } else if (_.isEmpty(args.minToMint)) {
+        } else if (isEmpty(args.minToMint)) {
             return rejectPromiseMissingField("minToMint", "AddLiquidityParams")
         }
 
@@ -305,11 +314,11 @@ export namespace TokenSwap {
      * @return {Promise<ContractTransaction>} Executed transaction object.
      */
     export async function removeLiquidity(args: RemoveLiquidityParams): Promise<ContractTransaction> {
-        if (_.isEmpty(args.signer)) {
+        if (isEmpty(args.signer)) {
             return rejectPromiseMissingField("signer", "RemoveLiquidityParams")
-        } else if (_.isEmpty(args.deadline)) {
+        } else if (isEmpty(args.deadline)) {
             return rejectPromiseMissingField("deadline", "RemoveLiquidityParams")
-        } else if (_.isEmpty(args.minAmounts)) {
+        } else if (isEmpty(args.minAmounts)) {
             return rejectPromiseMissingField("minAmounts", "RemoveLiquidityParams")
         }
 
@@ -343,11 +352,11 @@ export namespace TokenSwap {
      * @return {Promise<ContractTransaction>} Executed transaction object.
      */
     export async function removeLiquidityOneToken(args: RemoveLiquidityOneParams): Promise<ContractTransaction> {
-        if (_.isEmpty(args.signer)) {
+        if (isEmpty(args.signer)) {
             return rejectPromiseMissingField("signer", "RemoveLiquidityOneParams")
-        } else if (_.isEmpty(args.deadline)) {
+        } else if (isEmpty(args.deadline)) {
             return rejectPromiseMissingField("deadline", "RemoveLiquidityOneParams")
-        } else if (_.isEmpty(args.minAmount)) {
+        } else if (isEmpty(args.minAmount)) {
             return rejectPromiseMissingField("minAmount", "RemoveLiquidityOneParams")
         }
 
@@ -531,7 +540,7 @@ export namespace TokenSwap {
                     fromAvax    = chainId === ChainId.AVALANCHE,
                     fromHarmony = chainId === ChainId.HARMONY;
 
-                if (!_.isNil(otherChainId)) {
+                if (!isNil(otherChainId)) {
                     if (fromAvax && otherChainId === ChainId.HARMONY) {
                         intermediateToken             = Tokens.WAVAX;
                         bridgeConfigIntermediateToken = Tokens.SYN_AVAX;
@@ -578,7 +587,7 @@ export namespace TokenSwap {
             res[c1] = networkTokens.map((t: Token) => {
                 let swapType = t.swapType;
 
-                if (!_.isNull(chainGasToken)) {
+                if (!isNull(chainGasToken)) {
                     const gasWrapper = Tokens.gasTokenWrapper(chainGasToken);
                     if (gasWrapper.isEqual(t)) {
                         return
@@ -601,7 +610,7 @@ export namespace TokenSwap {
                     if (outToks.length === 0) continue
 
                     outToks = outToks.filter((t2: Token) => {
-                        if (!_.isNull(chain2GasToken)) {
+                        if (!isNull(chain2GasToken)) {
                             return !Tokens.gasTokenWrapper(chain2GasToken).isEqual(t2)
                         }
 
@@ -612,7 +621,7 @@ export namespace TokenSwap {
                 }
 
                 return tokSwapMap
-            }).filter(t => !_.isUndefined(t))
+            }).filter(t => !isUndefined(t))
         }
 
         return res
@@ -701,7 +710,7 @@ export namespace TokenSwap {
         chainIdFrom: number,
         chainIdTo?:  number
     ): SwapSupportedResult {
-        const hasDestChain: boolean = !_.isUndefined(chainIdTo);
+        const hasDestChain: boolean = !isUndefined(chainIdTo);
 
         const
             unsupportedFromErr = hasDestChain ? UnsupportedSwapErrors.tokenNotSupportedNetFrom : UnsupportedSwapErrors.tokenNotSupported,
