@@ -35,7 +35,8 @@
   "exclude": [
     "**/node_modules/**/*",
     "**/dist/**/*",
-    "**/examples/**/*"
+    "**/examples/**/*",
+    "../src/hooks"
   ],
   "include": [
     "../src",
