@@ -15,9 +15,7 @@ import {rejectPromise} from "@sdk/common/utils";
 
 import {
     DEFAULT_TEST_TIMEOUT,
-    expectFulfilled,
-    expectRejected,
-    getTestAmount,
+    getTestAmount
 } from "@tests/helpers";
 
 import {Zero}         from "@ethersproject/constants";
