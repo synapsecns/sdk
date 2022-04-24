@@ -28,6 +28,9 @@ export {
     chainSupportsEIP1559
 } from "@common/chainid";
 
+export type {ChainGasPrices} from "./gasprice";
+export {fetchChainGasPrices} from "./gasprice";
+
 export type {GasOptions} from "@common/gasoptions";
 export {populateGasOptions, makeTransactionGasOverrides} from "@common/gasoptions";
 

@@ -9,7 +9,10 @@ import {
     networkSwapTokensMap,
     supportedChainIds,
     Tokens,
-    type Token, chainSupportsEIP1559
+    type Token,
+    chainSupportsEIP1559,
+    fetchChainGasPrices,
+    type ChainGasPrices
 } from "@sdk";
 
 import {
@@ -27,6 +30,7 @@ import {
 import {Web3Provider} from "@ethersproject/providers";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 import {fixWeiValue} from "@common/utils";
+import {Zero} from "@ethersproject/constants";
 
 const makeWantString = (tc: {want: boolean}, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
 
@@ -276,5 +280,49 @@ describe("Basic tests", function(this: Mocha.Suite) {
        it("Passing ChainId.ETH to chainSupportsEIP1559 should return true", function(this: Mocha.Context) {
            expect(chainSupportsEIP1559(ChainId.ETH)).to.be.true;
        });
+    });
+
+    describe("fetchChainGasPrices tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            chainId: number;
+        }
+
+        const testCases: TestCase[] = [
+            {chainId: ChainId.AVALANCHE},
+            {chainId: ChainId.BSC},
+        ];
+
+        testCases.forEach(tc => {
+           describe(`fetchChainGasPrices() for ${Networks.networkName(tc.chainId)}) should return data`, function(this: Mocha.Suite) {
+               this.timeout(10 * 1000);
+               let gotData: ChainGasPrices;
+
+               step("- fetch data", async function(this: Mocha.Context) {
+                   const prom = fetchChainGasPrices(tc.chainId);
+                   try {
+                       gotData = await prom;
+                       return
+                   } catch (e) {
+                       return (await expect(prom).to.eventually.not.be.rejected)
+                   }
+               });
+
+               it("min should not be Zero", function(this: Mocha.Context) {
+                   expect(gotData.min).to.not.equal(Zero);
+               });
+
+               it("avg should not be Zero", function(this: Mocha.Context) {
+                   expect(gotData.avg).to.not.equal(Zero);
+               });
+
+               it("max should not be Zero", function(this: Mocha.Context) {
+                   expect(gotData.max).to.not.equal(Zero);
+               });
+
+               it("last should not be Zero", function(this: Mocha.Context) {
+                   expect(gotData.last).to.not.equal(Zero);
+               });
+           });
+        });
     });
 });
