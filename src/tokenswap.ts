@@ -270,14 +270,11 @@ export namespace TokenSwap {
      */
     export async function addLiquidity(args: AddLiquidityParams): Promise<ContractTransaction> {
         if (_.isEmpty(args.signer)) {
-            const err = new Error("signer must be passed in AddLiquidityParams");
-            return rejectPromise(err)
+            return rejectPromiseMissingField("signer", "AddLiquidityParams")
         } else if (_.isEmpty(args.deadline)) {
-            const err = new Error("deadline must be passed in AddLiquidityParams");
-            return rejectPromise(err)
+            return rejectPromiseMissingField("deadline", "AddLiquidityParams")
         } else if (_.isEmpty(args.minToMint)) {
-            const err = new Error("minToMint must be passed in AddLiquidityParams");
-            return rejectPromise(err)
+            return rejectPromiseMissingField("minToMint", "AddLiquidityParams")
         }
 
         const swapInstance = await swapContractFromLPSwapAddress(
@@ -309,14 +306,11 @@ export namespace TokenSwap {
      */
     export async function removeLiquidity(args: RemoveLiquidityParams): Promise<ContractTransaction> {
         if (_.isEmpty(args.signer)) {
-            const err = new Error("signer must be passed in RemoveLiquidityParams");
-            return rejectPromise(err)
+            return rejectPromiseMissingField("signer", "RemoveLiquidityParams")
         } else if (_.isEmpty(args.deadline)) {
-            const err = new Error("deadline must be passed in RemoveLiquidityParams");
-            return rejectPromise(err)
+            return rejectPromiseMissingField("deadline", "RemoveLiquidityParams")
         } else if (_.isEmpty(args.minAmounts)) {
-            const err = new Error("minAmounts must be passed in RemoveLiquidityParams");
-            return rejectPromise(err)
+            return rejectPromiseMissingField("minAmounts", "RemoveLiquidityParams")
         }
 
         const swapInstance = await swapContractFromLPSwapAddress(
@@ -350,14 +344,11 @@ export namespace TokenSwap {
      */
     export async function removeLiquidityOneToken(args: RemoveLiquidityOneParams): Promise<ContractTransaction> {
         if (_.isEmpty(args.signer)) {
-            const err = new Error("signer must be passed in RemoveLiquidityOneParams");
-            return rejectPromise(err)
+            return rejectPromiseMissingField("signer", "RemoveLiquidityOneParams")
         } else if (_.isEmpty(args.deadline)) {
-            const err = new Error("deadline must be passed in RemoveLiquidityOneParams");
-            return rejectPromise(err)
+            return rejectPromiseMissingField("deadline", "RemoveLiquidityOneParams")
         } else if (_.isEmpty(args.minAmount)) {
-            const err = new Error("minAmount must be passed in RemoveLiquidityOneParams");
-            return rejectPromise(err)
+            return rejectPromiseMissingField("minAmount", "RemoveLiquidityOneParams")
         }
 
         const swapInstance = await swapContractFromLPSwapAddress(
@@ -385,6 +376,11 @@ export namespace TokenSwap {
             args.minAmount,
             args.deadline
         )
+    }
+
+    function rejectPromiseMissingField(fieldName: string, paramsType: string): Promise<never> {
+        const err = new Error(`${fieldName} must be passed in ${paramsType}`);
+        return rejectPromise(err)
     }
 
     export async function calculateSwapRate(args: SwapParams): Promise<EstimatedSwapRate> {
