@@ -10,7 +10,13 @@ import type {
     ContractTransaction,
 } from "@ethersproject/contracts";
 
-export function rejectPromise(e: any): Promise<never> { return Promise.reject(e instanceof Error ? e : new Error(e)) }
+export function makeError(e: any): Error {
+    return e instanceof Error ? e : new Error(e)
+}
+
+export function rejectPromise(e: any): Promise<never> {
+    return Promise.reject(makeError(e))
+}
 
 type Resolveable<T> = T | Promise<T>
 
