@@ -26,9 +26,12 @@
     "setup:dev": "yarn install --frozen-lockfile",
     "setup": "yarn && yarn -s run typegen",
     " -----------": "",
+    "pretest": "yarn run react:add",
+    "pretest:coverage": "yarn run react:add",
     "test": "ts-mocha -p test/tsconfig.json",
     "test:coverage": "scripts/coverage test",
     "coverage:report": "scripts/coverage report",
+    "posttest": "yarn run react:remove",
     "  -----------": "",
     "prebuild": "yarn prepare && rm -rf ./dist",
     "build": "tsc --project tsconfig.build.json",
@@ -39,7 +42,10 @@
     "abigen": "scripts/abigen",
     "abigen:use_solc": "ABIGEN_USE_SOLC=1 scripts/abigen",
     "typegen": "typechain --target ethers-v5 --out-dir src/internal/gen ./abigen/*.json",
-    "posttypegen": "rm -rf ./abigen"
+    "posttypegen": "rm -rf ./abigen",
+    "    -----------": "",
+    "react:add": "yarn add --dev react@^17.0.0",
+    "react:remove": "yarn remove react --dev && yarn add --peer react@^17.0.0"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",
