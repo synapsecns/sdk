@@ -4,7 +4,11 @@ import {Tokens}    from "@tokens";
 import {ChainId}   from "@chainid";
 import {SwapPools} from "@swappools";
 
-import * as SynapseEntities from "@entities";
+import {
+    L1BridgeZapContractInstance,
+    L2BridgeZapContractInstance,
+    GenericZapBridgeContractInstance
+} from "@entities";
 
 import type {Token} from "@token";
 
@@ -146,9 +150,9 @@ export namespace BridgeUtils {
     export const entityParams = (chainId: number) => ({chainId, signerOrProvider: rpcProviderForChain(chainId)});
 
     export const
-        newL1BridgeZap = (chainId: number) => SynapseEntities.L1BridgeZapContractInstance(entityParams(chainId)),
-        newL2BridgeZap = (chainId: number) => SynapseEntities.L2BridgeZapContractInstance(entityParams(chainId)),
-        newBridgeZap   = (chainId: number) => SynapseEntities.GenericZapBridgeContractInstance(entityParams(chainId));
+        newL1BridgeZap = (chainId: number) => L1BridgeZapContractInstance(entityParams(chainId)),
+        newL2BridgeZap = (chainId: number) => L2BridgeZapContractInstance(entityParams(chainId)),
+        newBridgeZap   = (chainId: number) => GenericZapBridgeContractInstance(entityParams(chainId));
 
     export const subBigNumSafe = (a: BigNumber, b: BigNumber): BigNumber => a.gt(b) ? a.sub(b) : Zero
 
