@@ -3,7 +3,17 @@ import {
     ChainId,
 } from "@sdk";
 
-import {ERC20}            from "@sdk/bridge/erc20";
+import {
+    balanceOf,
+    allowanceOf,
+    buildApproveTransaction
+} from "@sdk/bridge/erc20";
+
+import type {
+    TokenParams,
+    ApproveArgs
+} from "@sdk/bridge/erc20";
+
 import {SynapseContracts} from "@sdk/common/synapse_contracts";
 
 import {
@@ -21,7 +31,7 @@ import type {PopulatedTransaction} from "@ethersproject/contracts";
 describe("ERC20 tests", function(this: Mocha.Suite) {
     const testAddr: string = "0xe972647539816442e0987817DF777a9fd9878650";
 
-    const tokenParams = (c: number): ERC20.ERC20TokenParams => ({
+    const tokenParams = (c: number): TokenParams => ({
         chainId:      c,
         tokenAddress: Tokens.NUSD.address(c),
     });
@@ -53,12 +63,12 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
         testCases.forEach(tc => {
             let {chainId, address: spender, amount} = tc;
 
-            const args: ERC20.ApproveArgs = {spender, amount};
+            const args: ApproveArgs = {spender, amount};
 
             it("should build a transaction successfully", async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                let prom: Promise<PopulatedTransaction> = ERC20.buildApproveTransaction(args, tokenParams(chainId));
+                let prom: Promise<PopulatedTransaction> = buildApproveTransaction(args, tokenParams(chainId));
 
                 try {
                     return expectNull(await prom, false)
@@ -73,7 +83,7 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
         it("should have an nUSD balance greater than zero", async function(this: Mocha.Context) {
             this.timeout(DEFAULT_TEST_TIMEOUT);
 
-            return expectNotZero(await ERC20.balanceOf(testAddr, tokenParams(ChainId.BSC)))
+            return expectNotZero(await balanceOf(testAddr, tokenParams(ChainId.BSC)))
         });
     });
 
@@ -81,7 +91,7 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
         it("synapsebridgezap should have an nUSD allowance gte zero", async function(this: Mocha.Context) {
             this.timeout(DEFAULT_TEST_TIMEOUT);
 
-            return expectGteZero(await ERC20.allowanceOf(
+            return expectGteZero(await allowanceOf(
                 testAddr,
                 SynapseContracts.contractsForChainId(ChainId.BSC).bridgeZapAddress,
                 tokenParams(ChainId.BSC)
