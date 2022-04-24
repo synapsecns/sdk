@@ -94,8 +94,6 @@ jobs:
 
       - run: yarn install
 
-      - run: yarn add --dev react@latest
-
       - name: Run Tests (Node ${{ matrix.node-version }})
         run: yarn -s run test:coverage
         env:
