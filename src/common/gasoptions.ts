@@ -89,6 +89,7 @@ export function populateGasOptions(
 	return txn
 }
 
+/* c8 ignore start */
 export function makeTransactionGasOverrides(
 	gasOptions:  GasOptions,
 	chainId:     number,
@@ -118,3 +119,4 @@ export function makeTransactionGasOverrides(
 
 	return overrides
 }
+/* c8 ignore stop */
