@@ -250,11 +250,7 @@ export namespace Bridge {
             return newTxn
                 .then(txn =>
                     GasUtils.populateGasParams(this.chainId, txn, "bridge")
-                        .then(txn =>
-                            gasOptions
-                                ? populateGasOptions(txn, gasOptions, this.chainId, true)
-                                : txn
-                        )
+                        .then(txn => populateGasOptions(txn, gasOptions, this.chainId, true))
                 )
         }
 
@@ -323,13 +319,7 @@ export namespace Bridge {
             const [approveArgs, tokenAddress] = this.buildERC20ApproveArgs(args);
 
             return ERC20.buildApproveTransaction(approveArgs, {tokenAddress, chainId: this.chainId})
-                .then(txn => {
-                    if (gasOptions) {
-                        txn = populateGasOptions(txn, gasOptions, this.chainId);
-                    }
-
-                    return txn
-                })
+                .then(txn => populateGasOptions(txn, gasOptions, this.chainId))
         }
 
         /**

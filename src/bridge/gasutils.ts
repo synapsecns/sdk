@@ -64,6 +64,7 @@ export namespace GasUtils {
         }
     }
 
+    /* c8 ignore next 8 */
     export function approveLimit(chainId: number): BigNumber | null {
         if (chainId in CHAIN_GAS_PARAMS) {
             const gasParams = CHAIN_GAS_PARAMS[chainId];
@@ -73,6 +74,7 @@ export namespace GasUtils {
         return null
     }
 
+    /* c8 ignore next 8 */
     export function bridgeGasLimit(chainId: number): BigNumber | null {
         if (chainId in CHAIN_GAS_PARAMS) {
             const gasParams = CHAIN_GAS_PARAMS[chainId]
@@ -87,7 +89,7 @@ export namespace GasUtils {
     export const populateGasParams = (
         chainId:      number,
         txn:          PopulatedTransaction|Promise<PopulatedTransaction>,
-        gasLimitKind: string
+        gasLimitKind: "bridge" | "approve"
     ): Promise<PopulatedTransaction> =>
         Promise.resolve(txn)
             .then((tx: PopulatedTransaction): PopulatedTransaction => {
