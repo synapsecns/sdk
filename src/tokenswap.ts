@@ -479,6 +479,7 @@ export namespace TokenSwap {
         return txnProm.then(txn => populateGasOptions(txn, gasOpts, args.chainId))
     }
 
+    /* c8 ignore start */
     function buildSwapTokensOverrides(
         args:         SwapTokensParams,
         gasOptions?:  GasOptions
@@ -496,6 +497,7 @@ export namespace TokenSwap {
 
         return overrides
     }
+    /* c8 ignore stop */
 
     export function intermediateTokens(chainId: number, token: Token, otherChainId?: number): IntermediateSwapTokens {
         if (mintBurnSwapTypes.includes(token.swapType)) {
