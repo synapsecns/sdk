@@ -4,17 +4,19 @@ import {expect} from "chai";
 import {step}   from "mocha-steps";
 
 import {
+    type Token,
     Tokens,
-    Bridge,
+    SynapseBridge,
     ChainId,
     Networks,
     supportedChainIds,
-    type Token
+    getRequiredConfirmationsForBridge,
+    checkBridgeTransactionComplete
 } from "@sdk";
 
-import {ERC20}               from "@sdk/bridge/erc20";
-import {contractAddressFor}  from "@sdk/common/utils";
-import {rpcProviderForChain} from "@sdk/internal/rpcproviders";
+import {allowanceOf, approve} from "@sdk/bridge/erc20";
+import {contractAddressFor}   from "@sdk/common/utils";
+import {rpcProviderForChain}  from "@sdk/internal/rpcproviders";
 
 import {
     DEFAULT_TEST_TIMEOUT,
@@ -50,7 +52,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
         ALL_CHAIN_IDS.forEach(network => {
             const
                 provider          = rpcProviderForChain(network),
-                bridgeInstance    = new Bridge.SynapseBridge({ network, provider}),
+                bridgeInstance    = new SynapseBridge({ network, provider}),
                 testTitle: string = `Should return ${expected.toString()} on Chain ID ${network}`;
 
             it(testTitle, async function(this: Mocha.Context) {
@@ -65,7 +67,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
         ALL_CHAIN_IDS.forEach(network => {
             const
                 provider = rpcProviderForChain(network),
-                bridgeInstance = new Bridge.SynapseBridge({ network, provider }),
+                bridgeInstance = new SynapseBridge({ network, provider }),
                 expected: string = ((): string => {
                     switch (network) {
                         case ChainId.ETH:
@@ -135,7 +137,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
             it(title, async function (this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                let bridgeInstance = new Bridge.SynapseBridge({network, provider});
+                let bridgeInstance = new SynapseBridge({network, provider});
 
                 const
                     {address, token} = tc,
@@ -167,7 +169,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 const tokenParams = {tokenAddress: Tokens.BUSD.address(ChainId.BSC), chainId: ChainId.BSC};
 
                 try {
-                    const allowance = await ERC20.allowanceOf(
+                    const allowance = await allowanceOf(
                         infiniteApprovalsPrivkey.address,
                         bscZapAddr,
                         tokenParams
@@ -181,7 +183,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
                         const approveArgs = {spender: bscZapAddr};
 
-                        let txn: ContractTransaction = (await ERC20.approve(
+                        let txn: ContractTransaction = (await approve(
                             approveArgs,
                             tokenParams,
                             wallet
@@ -189,7 +191,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
                         await txn.wait(1);
 
-                        const newAllowance = await ERC20.allowanceOf(
+                        const newAllowance = await allowanceOf(
                             infiniteApprovalsPrivkey.address,
                             bscZapAddr,
                             tokenParams
@@ -239,7 +241,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
            const testTitle: string = `getRequiredConfirmationsForBridge(${tc.chainId}) should return ${tc.want ? `'${tc.want}'` : 'null'}`;
 
            it(testTitle, function(this: Mocha.Context) {
-               const got = Bridge.getRequiredConfirmationsForBridge(tc.chainId);
+               const got = getRequiredConfirmationsForBridge(tc.chainId);
 
                if (tc.want !== null) {
                    expect(got).to.equal(tc.want);
@@ -270,7 +272,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
               this.timeout(5.5 * 1000);
               this.slow(2 * 1000);
 
-              const got = await Bridge.checkBridgeTransactionComplete(tc);
+              const got = await checkBridgeTransactionComplete(tc);
 
               if (tc.want) {
                   return expect(got).to.be.true

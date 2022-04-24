@@ -7,7 +7,7 @@ import {
     getTestAmount,
     makeWalletSignerWithProvider
 } from "@tests/helpers";
-import {Bridge, ChainId, Networks, Token, Tokens} from "@sdk";
+import {SynapseBridge, ChainId, Networks, Token, Tokens} from "@sdk";
 
 import {TransactionDescription} from "@ethersproject/abi";
 import {AvaxJewelMigrationFactory, L1BridgeZapFactory, L2BridgeZapFactory} from "@contracts";
@@ -187,7 +187,7 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
                 let {args: { chainIdFrom }, args} = tc;
 
                 const
-                    bridgeInstance    = new Bridge.SynapseBridge({ network: chainIdFrom }),
+                    bridgeInstance    = new SynapseBridge({ network: chainIdFrom }),
                     addressTo: string = makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey1).address;
 
                 let prom = bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo});
@@ -200,7 +200,7 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
 
 
             step(`tx should be a call to function ${tc.expected.wantFn}()`, function(this: Mocha.Context) {
-                const {chainIdFrom, chainIdTo, tokenFrom, tokenTo} = tc.args;
+                const {chainIdFrom, tokenFrom, tokenTo} = tc.args;
                 const dataObj = {data: builtTxn.data || ""};
 
                 if (chainIdFrom === ChainId.ETH || chainIdFrom === ChainId.DFK) {

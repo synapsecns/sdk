@@ -4,7 +4,8 @@ import {
     ChainId,
     Networks,
     Tokens,
-    Bridge,
+    SynapseBridge,
+    type BridgeOutputEstimate,
     type Token
 } from "@sdk";
 
@@ -250,9 +251,9 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
 
                 let {args: { chainIdFrom, ...testArgs }, expected: {notZero, wantError}} = tc;
 
-                const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
+                const bridgeInstance = new SynapseBridge({ network: chainIdFrom });
 
-                let prom: Promise<Bridge.BridgeOutputEstimate> = bridgeInstance.estimateBridgeTokenOutput(testArgs);
+                let prom: Promise<BridgeOutputEstimate> = bridgeInstance.estimateBridgeTokenOutput(testArgs);
 
                 let amountToReceive: BigNumber;
 
@@ -285,7 +286,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
                     },
                 } = tc;
 
-                const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
+                const bridgeInstance = new SynapseBridge({ network: chainIdFrom });
 
                 switch (tokenSwitch(tokenFrom)) {
                     case Tokens.ETH:
@@ -318,7 +319,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
                 let {args: { chainIdFrom }, args, expected: {wantError, noAddrTo}} = tc;
 
                 const
-                    bridgeInstance    = new Bridge.SynapseBridge({ network: chainIdFrom }),
+                    bridgeInstance    = new SynapseBridge({ network: chainIdFrom }),
                     addressTo: string = noAddrTo
                         ? _.shuffle(undefEmptyArr)[0]
                         : makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey1).address;

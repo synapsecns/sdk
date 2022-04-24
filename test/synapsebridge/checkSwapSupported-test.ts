@@ -1,11 +1,11 @@
 import {BridgeSwapTestCase, makeBridgeSwapTestCase} from "./bridge_test_utils";
-import {Bridge, ChainId, Networks, Tokens} from "@sdk";
+import {SynapseBridge, ChainId, Networks, Tokens} from "@sdk";
 import {expectEqual} from "@tests/helpers";
 
 describe("SynapseBridge - checkSwapSupported tests", function(this: Mocha.Suite) {
     type TestCase = BridgeSwapTestCase<boolean>
 
-    [
+    const testCases: TestCase[] = [
         makeBridgeSwapTestCase(ChainId.ETH,       Tokens.DAI,        ChainId.BSC,       Tokens.USDC,   true),
         makeBridgeSwapTestCase(ChainId.ETH,       Tokens.ETH,        ChainId.BSC,       Tokens.USDC,   false),
         makeBridgeSwapTestCase(ChainId.ARBITRUM,  Tokens.WETH,       ChainId.ETH,       Tokens.ETH,    true),
@@ -87,7 +87,9 @@ describe("SynapseBridge - checkSwapSupported tests", function(this: Mocha.Suite)
         makeBridgeSwapTestCase(ChainId.OPTIMISM,  Tokens.USDC,       ChainId.AVALANCHE, Tokens.DAI,    true),
         makeBridgeSwapTestCase(ChainId.AVALANCHE, Tokens.DAI,        ChainId.OPTIMISM,  Tokens.NUSD,   true),
         makeBridgeSwapTestCase(ChainId.METIS,     Tokens.USDC,       ChainId.OPTIMISM,  Tokens.USDC,   true),
-    ].forEach((tc: TestCase) => {
+    ];
+
+    testCases.forEach((tc: TestCase) => {
         const {args, expected} = tc;
 
         const {
@@ -105,7 +107,7 @@ describe("SynapseBridge - checkSwapSupported tests", function(this: Mocha.Suite)
 
         it(testTitle, function(this: Mocha.Context) {
             let { chainIdFrom, ...testArgs } = args;
-            const bridgeInstance = new Bridge.SynapseBridge({ network: chainIdFrom });
+            const bridgeInstance = new SynapseBridge({ network: chainIdFrom });
 
             const [swapAllowed, errReason] = bridgeInstance.swapSupported({ ...testArgs, chainIdTo });
             expectEqual(swapAllowed, expected, errReason);

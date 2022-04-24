@@ -11,8 +11,18 @@ import {parseEther, parseUnits} from "@ethersproject/units";
 
 import {Wallet} from "@ethersproject/wallet";
 
-import type {Token} from "@sdk";
-import {Bridge, ChainId, Networks, Tokens} from "@sdk";
+import type {
+    Token,
+    BridgeOutputEstimate,
+    BridgeTransactionParams
+} from "@sdk";
+
+import {
+    SynapseBridge,
+    ChainId,
+    Networks,
+    Tokens
+} from "@sdk";
 
 import {rejectPromise, staticCallPopulatedTransaction} from "@sdk/common/utils";
 
@@ -48,14 +58,14 @@ function callStatic(prom: Promise<StaticCallResult>): Promise<void> {
 }
 
 interface EstimateOutputs {
-    outputEstimate: Bridge.BridgeOutputEstimate;
-    bridgeArgs:     Bridge.BridgeTransactionParams;
+    outputEstimate: BridgeOutputEstimate;
+    bridgeArgs:     BridgeTransactionParams;
 }
 
 interface WalletArgs {
     wallet:         Wallet;
     address:        string;
-    bridgeInstance: Bridge.SynapseBridge;
+    bridgeInstance: SynapseBridge;
 }
 
 function buildWalletArgs(chainId: number, privkey: string=bridgeTestPrivkey1): WalletArgs {
@@ -64,7 +74,7 @@ function buildWalletArgs(chainId: number, privkey: string=bridgeTestPrivkey1): W
     return {
         wallet,
         address:       wallet.address,
-        bridgeInstance: new Bridge.SynapseBridge({ network: Networks.fromChainId(chainId) })
+        bridgeInstance: new SynapseBridge({ network: Networks.fromChainId(chainId) })
     }
 }
 
@@ -216,8 +226,8 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
             let
                 canBridge:      boolean,
-                outputEstimate: Bridge.BridgeOutputEstimate,
-                doBridgeArgs:   Bridge.BridgeTransactionParams;
+                outputEstimate: BridgeOutputEstimate,
+                doBridgeArgs:   BridgeTransactionParams;
 
             step("[*] acquire output estimate", async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
