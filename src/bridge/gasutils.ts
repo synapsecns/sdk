@@ -1,5 +1,7 @@
 import {ChainId, type ChainIdTypeMap} from "@chainid";
 
+import {GasOptions, populateGasOptions} from "@common/gasoptions";
+
 import {parseUnits} from "@ethersproject/units";
 import {BigNumber}  from "@ethersproject/bignumber";
 
@@ -62,6 +64,24 @@ export namespace GasUtils {
         }
     }
 
+    export function approveLimit(chainId: number): BigNumber | null {
+        if (chainId in CHAIN_GAS_PARAMS) {
+            const gasParams = CHAIN_GAS_PARAMS[chainId];
+            return gasParams.approveGasLimit ?? null
+        }
+
+        return null
+    }
+
+    export function bridgeGasLimit(chainId: number): BigNumber | null {
+        if (chainId in CHAIN_GAS_PARAMS) {
+            const gasParams = CHAIN_GAS_PARAMS[chainId]
+            return gasParams.bridgeGasLimit ?? null
+        }
+
+        return null
+    }
+
     export const makeGasParams = (chainId: number): GasParams => CHAIN_GAS_PARAMS[chainId] ?? {};
 
     export const populateGasParams = (
@@ -81,24 +101,26 @@ export namespace GasUtils {
 
                 tx.chainId = chainId;
 
+                let gasOpts: GasOptions = {};
+
                 if (gasPrice) {
-                    tx.gasPrice = gasPrice;
+                    gasOpts.gasPrice = gasPrice;
                 } else if (maxFeePerGas) {
-                    tx.maxFeePerGas = maxFeePerGas;
+                    gasOpts.maxFeePerGas = maxFeePerGas;
                     if (maxPriorityFee) {
-                        tx.maxPriorityFeePerGas = maxPriorityFee;
+                        gasOpts.maxPriorityFeePerGas = maxPriorityFee;
                     }
                 }
 
                 switch (gasLimitKind) {
                     case "bridge":
-                        if (bridgeGasLimit) tx.gasLimit = bridgeGasLimit;
+                        if (bridgeGasLimit) gasOpts.gasLimit = bridgeGasLimit;
                         break;
                     case "approve":
-                        if (approveGasLimit) tx.gasLimit = approveGasLimit;
+                        if (approveGasLimit) gasOpts.gasLimit = approveGasLimit;
                         break;
                 }
 
-                return tx
+                return populateGasOptions(tx, gasOpts, chainId)
             })
 }

@@ -59,8 +59,12 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 				wantTitle:   string = `calculateAddLiquidity (${titleParams}) ${titleSuffix}`;
 
 			it(wantTitle, async function(this: Mocha.Context) {
-				this.timeout(8 * 1000);
-				this.slow(2 * 1000);
+				this.slow(3.5 * 1000);
+				if (tc.chainId === ChainId.CRONOS) {
+					this.timeout(12 * 1000);
+				} else {
+					this.timeout(8 * 1000);
+				}
 
 				const gotProm: Promise<BigNumber> = TokenSwap.calculateAddLiquidity({
 					chainId:  tc.chainId,
@@ -131,8 +135,12 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 				wantTitle:   string = `calculateRemoveLiquidity (${titleParams}) ${titleSuffix}`;
 
 			it(wantTitle, async function(this: Mocha.Context) {
-				this.timeout(8 * 1000);
 				this.slow(3.5 * 1000);
+				if (tc.chainId === ChainId.CRONOS) {
+					this.timeout(12 * 1000);
+				} else {
+					this.timeout(8 * 1000);
+				}
 
 				const gotProm: Promise<BigNumber[]> = TokenSwap.calculateRemoveLiquidity({
 					chainId:  tc.chainId,
@@ -206,8 +214,12 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 				wantTitle:   string = `calculateRemoveLiquidityOneToken (${titleParams}) ${titleSuffix}`;
 
 			it(wantTitle, async function(this: Mocha.Context) {
-				this.timeout(8 * 1000);
 				this.slow(3.5 * 1000);
+				if (tc.chainId === ChainId.CRONOS) {
+					this.timeout(12 * 1000);
+				} else {
+					this.timeout(8 * 1000);
+				}
 
 				const gotProm: Promise<BigNumber> = TokenSwap.calculateRemoveLiquidityOneToken({
 					chainId:  tc.chainId,

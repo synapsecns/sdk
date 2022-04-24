@@ -146,13 +146,24 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             const wantUndefined: boolean = !(stableSwap ? tc.wantStableSwapPool : tc.wantEthSwapPool);
 
             return function(this: Mocha.Context) {
+                if (tc.chainId === ChainId.CRONOS) {
+                    this.timeout(12 * 1000);
+                } else {
+                    this.timeout(8 * 1000);
+                }
+
                 expectUndefined(getPoolFn(tc.chainId), wantUndefined);
             }
         }
 
         const swapContractTestFn = (tc: TestCase, stableSwap: boolean): ((this: Mocha.Context, done: Mocha.Done) => void) => {
             return function(this: Mocha.Context, done: Mocha.Done) {
-                this.timeout(6.5 * 1000);
+                if (tc.chainId === ChainId.CRONOS) {
+                    this.timeout(12 * 1000);
+                } else {
+                    this.timeout(6.5 * 1000);
+                }
+
                 this.slow(3.5 * 1000);
 
                 const getPoolFn: (chainId: number) => SwapPools.SwapPoolToken = stableSwap

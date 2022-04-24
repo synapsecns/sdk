@@ -9,8 +9,13 @@ export {Slippages} from "@bridge/slippages";
 
 export {
     ChainId,
-    supportedChainIds
+    supportedChainIds,
+    EIP1559Chains,
+    chainSupportsEIP1559
 } from "@common/chainid";
+
+export type {GasOptions} from "@common/gasoptions";
+export {populateGasOptions, makeTransactionGasOverrides} from "@common/gasoptions";
 
 export {
     Networks,

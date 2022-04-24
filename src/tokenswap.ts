@@ -1,6 +1,6 @@
 import _ from "lodash";
 import {
-    ChainId,
+    ChainId, ChainIdTypeMap,
     supportedChainIds
 } from "@chainid";
 import {Networks}      from "@networks";
@@ -8,8 +8,6 @@ import type {Token}    from "@token";
 import {Tokens}        from "@tokens";
 import {SwapPools}     from "@swappools";
 import {rejectPromise} from "@common/utils";
-
-import {ERC20} from "@bridge/erc20";
 
 import {BridgeConfigV3ContractInstance} from "@entities";
 
@@ -28,8 +26,14 @@ import {
 } from "@ethersproject/bignumber";
 
 import type {Signer} from "@ethersproject/abstract-signer";
-import type {ContractTransaction, PopulatedTransaction} from "@ethersproject/contracts";
-import {TransactionResponse} from "@ethersproject/providers";
+import {
+    Overrides,
+    type ContractTransaction,
+    type PopulatedTransaction,
+} from "@ethersproject/contracts";
+import {Zero} from "@ethersproject/constants";
+
+import {GasOptions, makeTransactionGasOverrides, populateGasOptions} from "@common/gasoptions";
 
 export namespace UnsupportedSwapErrors {
     export enum UnsupportedSwapErrorKind {
@@ -156,6 +160,10 @@ export namespace TokenSwap {
     interface TokenSwapMap {
         token: Token;
         [chainId: number]: Token[];
+    }
+
+    const CHAIN_SWAPS_GAS_LIMITS: ChainIdTypeMap<GasOptions> = {
+        [ChainId.AVALANCHE]: {gasLimit: BigNumber.from("165000")}
     }
 
     export function swapSupported(args: SwapParams): SwapSupportedResult {
@@ -398,7 +406,10 @@ export namespace TokenSwap {
         signer: Signer
     }
 
-    export async function swapTokens(args: SwapTokensFnParams): Promise<ContractTransaction> {
+    export async function swapTokens(
+        args:        SwapTokensFnParams,
+        gasOptions?: GasOptions
+    ): Promise<ContractTransaction> {
         const {swapSupported: canSwap, reasonNotSupported} = swapSupported(args);
         if (!canSwap) {
             return rejectPromise(reasonNotSupported)
@@ -406,36 +417,34 @@ export namespace TokenSwap {
 
         return resolveSwapData(args)
             .then(swapSetup => {
-                let {deadline, chainId, tokenFrom, signer} = args;
-                const {tokenIndexFrom, tokenIndexTo} = swapSetup;
+                const {deadline} = args;
 
-                return swapContract(tokenFrom, chainId, signer)
+                return swapContract(args.tokenFrom, args.chainId, args.signer)
                     .then(swapInstance => {
-                        deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
-
-                        const overrides: any = args.tokenFrom.isGasToken ? {value:args.amountIn} : {};
-
                         return swapInstance.swap(
-                            tokenIndexFrom,
-                            tokenIndexTo,
+                            swapSetup.tokenIndexFrom,
+                            swapSetup.tokenIndexTo,
                             args.amountIn,
                             args.minAmountOut,
-                            deadline,
-                            overrides
+                            deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10),
+                            buildSwapTokensOverrides(args, gasOptions)
                         )
                     })
             })
             .catch(rejectPromise)
     }
 
-    export async function buildSwapTokensTransaction(args: SwapTokensParams): Promise<PopulatedTransaction> {
+    export async function buildSwapTokensTransaction(
+        args:        SwapTokensParams,
+        gasOptions?: GasOptions
+    ): Promise<PopulatedTransaction> {
         const {swapSupported: canSwap, reasonNotSupported} = swapSupported(args);
         if (!canSwap) {
             return rejectPromise(reasonNotSupported)
         }
 
         return resolveSwapData(args)
-            .then(populateSwapTransaction(args))
+            .then(swapData => populateSwapTransaction(args, swapData, gasOptions))
             .catch(rejectPromise)
     }
 
@@ -444,24 +453,48 @@ export namespace TokenSwap {
         return Promise.resolve(swapData ? swapData : await swapSetup(args.tokenFrom, args.tokenTo, args.chainId))
     }
 
-    function populateSwapTransaction(args: SwapTokensParams): (swapSetup: SwapSetup) => Promise<PopulatedTransaction> {
-        return (swapSetup: SwapSetup): Promise<PopulatedTransaction> => {
-            let {deadline} = args;
-            const {swapInstance, tokenIndexFrom, tokenIndexTo} = swapSetup;
+    function populateSwapTransaction(
+        args:        SwapTokensParams,
+        swapSetup:   SwapSetup,
+        gasOptions?: GasOptions
+    ): Promise<PopulatedTransaction> {
+        const {deadline} = args;
+        const {swapInstance} = swapSetup;
 
-            deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
+        let txnProm = swapInstance.populateTransaction.swap(
+            swapSetup.tokenIndexFrom,
+            swapSetup.tokenIndexTo,
+            args.amountIn,
+            args.minAmountOut,
+            deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
+        );
 
-            const overrides: any = args.tokenFrom.isGasToken ? {value:args.amountIn} : {};
+        const gasLimit = CHAIN_SWAPS_GAS_LIMITS[args.chainId]?.gasLimit;
 
-            return swapInstance.populateTransaction.swap(
-                tokenIndexFrom,
-                tokenIndexTo,
-                args.amountIn,
-                args.minAmountOut,
-                deadline,
-                overrides
-            )
+        let gasOpts: GasOptions = gasOptions ? gasOptions : {};
+        if (gasLimit) {
+            gasOpts.gasLimit = gasLimit;
         }
+
+        return txnProm.then(txn => populateGasOptions(txn, gasOpts, args.chainId))
+    }
+
+    function buildSwapTokensOverrides(
+        args:         SwapTokensParams,
+        gasOptions?:  GasOptions
+    ): Overrides | null {
+        const {chainId} = args;
+
+        const overrides: Overrides = {
+            ...makeTransactionGasOverrides(gasOptions, chainId, true),
+            ...makeTransactionGasOverrides(CHAIN_SWAPS_GAS_LIMITS[chainId], chainId)
+        };
+
+        if (Object.keys(overrides).length === 0) {
+            return null
+        }
+
+        return overrides
     }
 
     export function intermediateTokens(chainId: number, token: Token, otherChainId?: number): IntermediateSwapTokens {

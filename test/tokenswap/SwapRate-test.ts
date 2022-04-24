@@ -115,11 +115,15 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
 
                 let prom = TokenSwap.buildSwapTokensTransaction(args);
 
-                return (await (
-                    tc.wantError
-                        ? expectRejected(prom)
-                        : expectFulfilled(prom)
-                ))
+                try {
+                    await prom;
+                } catch (e) {
+                    if (tc.wantError) {
+                        return (await expect(prom).to.eventually.be.rejected);
+                    }
+                }
+
+                return (await expect(prom).to.eventually.be.fulfilled)
             });
 
             step(testTitle3, async function(this: Mocha.Context) {
