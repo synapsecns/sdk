@@ -9,12 +9,13 @@ import {
 
 import {
     wrapExpect,
-    expectProperty,
     expectLength,
     expectUndefined,
     expectBoolean,
 } from "@tests/helpers";
 import {expect} from "chai";
+import {instanceOfToken} from "@token";
+import {SwapType} from "@internal/swaptype";
 
 
 describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
@@ -151,18 +152,46 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
             chainTokens:   TokenOnChain[];
         }
 
-        const findTokenMap = (
-            tok:     Token,
-            toksMap: {[p: number]: Token[], token: Token}[]
-        ): {[p: number]: Token[], token: Token} | undefined =>
-            toksMap.find((sm) => {
-                if (tok.isWrapperToken) {
-                    return sm.token.isEqual(tok.underlyingToken) || sm.token.isEqual(tok)
+        const isETHLikeToken = (t: Token): boolean =>
+            [Tokens.WETH_E.id, Tokens.ONE_ETH.id, Tokens.FTM_ETH.id, Tokens.METIS_ETH.id].includes(t.id)
+
+        interface TokMap {[p: number]: Token[], token: Token}
+
+        function findTokenMap(
+            chainToken: TokenOnChain,
+            toksMap:    TokMap[]
+        ): TokMap | undefined {
+            let found: TokMap = undefined;
+
+            const {chainId, token} = chainToken;
+
+            for (const tokMap of toksMap) {
+                const {token: tokMapToken} = tokMap;
+                const tokChainMap = tokMap[chainId];
+                if (!tokChainMap) {
+                    continue;
                 }
 
-                return sm.token.isEqual(tok)
-            });
+                if (token.isEqual(Tokens.ETH) || token.isEqual(Tokens.WETH)) {
+                    if (isETHLikeToken(tokMapToken)) {
+                        found = tokMap;
+                        break;
+                    }
 
+                    if (tokMapToken.isEqual(Tokens.NETH)) {
+                        found = tokMap;
+                        break;
+                    }
+                }
+
+                if (tokMapToken.isEqual(token)) {
+                    found = tokMap;
+                    break;
+                }
+            }
+
+            return found
+        }
         const testCases: TestCase[] = [
             {
                 chainId:       ChainId.BSC,
@@ -202,6 +231,10 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                 chainTokens:   [
                     {chainId: ChainId.AVALANCHE, token: Tokens.NEWO},
                     {chainId: ChainId.HARMONY,   token: Tokens.GOHM},
+                    {chainId: ChainId.AVALANCHE, token: Tokens.ETH},
+                    {chainId: ChainId.HARMONY,   token: Tokens.ETH},
+                    {chainId: ChainId.AVALANCHE, token: Tokens.WETH},
+                    {chainId: ChainId.HARMONY,   token: Tokens.WETH},
                 ],
             },
             {
@@ -216,6 +249,8 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     {chainId: ChainId.DFK,       token: Tokens.DAI},
                     {chainId: ChainId.OPTIMISM,  token: Tokens.DAI},
                     {chainId: ChainId.OPTIMISM,  token: Tokens.NUSD},
+                    {chainId: ChainId.HARMONY,   token: Tokens.WETH_E},
+                    {chainId: ChainId.OPTIMISM,  token: Tokens.WETH_E},
                 ],
             },
             {
@@ -253,13 +288,20 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                     wrapExpect(expectUndefined(toksMap, false))
                 );
 
-                tc.chainTokens.forEach(tok => {
+                tc.chainTokens.forEach(chainToken => {
                     const
-                        testTitle: string = `should be able to send token ${tok.token.name} to ${Networks.networkName(tok.chainId)}`,
-                        tokMap            = findTokenMap(tok.token, toksMap);
+                        testTitle: string = `should be able to send token ${chainToken.token.name} to ${Networks.networkName(chainToken.chainId)}`,
+                        tokMap            = findTokenMap(chainToken, toksMap);
 
                     it(testTitle, function(this: Mocha.Context) {
-
+                        // if (tc.chainId === ChainId.OPTIMISM) {
+                        //     for (const tm of toksMap) {
+                        //         console.log(Object.keys(tm));
+                        //     }
+                        // }
+                        expect(tokMap).to.exist;
+                        // const isEqual = tok.token.isEqual(tokMap.token);
+                        // expect(isEqual).to.be.true;
                     });
                 });
             });
