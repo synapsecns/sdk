@@ -1,7 +1,7 @@
+import {chainSupportsEIP1559} from "@chainid";
 import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
 import type {PopulatedTransaction} from "@ethersproject/contracts";
 
-import {chainSupportsEIP1559} from "@chainid";
 import {parseUnits} from "@ethersproject/units";
 
 /**

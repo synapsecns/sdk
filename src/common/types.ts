@@ -9,6 +9,8 @@ export type DecimalsMap = ChainIdTypeMap<number>
 
 export type AddressMap  = StringMap
 
+export type Resolveable<T> = T | Promise<T>
+
 export enum StaticCallResult {
     Success,
     Failure

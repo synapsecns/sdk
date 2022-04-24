@@ -1,6 +1,9 @@
 import {ChainId}          from "@chainid";
 import {SynapseContracts} from "@synapsecontracts";
-import {StaticCallResult} from "./types";
+import {
+    StaticCallResult,
+    type Resolveable
+} from "./types";
 
 import {BigNumber} from "@ethersproject/bignumber";
 
@@ -17,8 +20,6 @@ export function makeError(e: any): Error {
 export function rejectPromise(e: any): Promise<never> {
     return Promise.reject(makeError(e))
 }
-
-type Resolveable<T> = T | Promise<T>
 
 export function executePopulatedTransaction(
     populatedTxn: Resolveable<PopulatedTransaction>,
