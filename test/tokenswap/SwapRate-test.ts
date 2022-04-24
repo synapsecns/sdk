@@ -47,7 +47,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                 wantError: wantError ?? false,
             });
 
-        [
+        const testCases: TestCase[] = [
             makeTestCase(ChainId.ETH,        Tokens.DAI,        Tokens.USDC),
             makeTestCase(ChainId.ETH,        Tokens.ETH,        Tokens.NETH, null, true),
             makeTestCase(ChainId.OPTIMISM,   Tokens.WETH,       Tokens.NETH),
@@ -55,7 +55,10 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
             makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.BUSD),
             makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.DAI,  null, true),
             makeTestCase(ChainId.ARBITRUM,   Tokens.NEWO,       Tokens.UST,  null, true),
-        ].forEach((tc: TestCase) => {
+            makeTestCase(ChainId.AVALANCHE,  Tokens.DAI,        Tokens.USDT),
+        ];
+
+        testCases.forEach((tc: TestCase) => {
             const
                 titleSuffix: string = tc.wantError ? "should fail" : "should pass",
                 tokFrom: string     = tc.tokenFrom.symbol,
@@ -96,7 +99,6 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
 
                     return (await expect(prom).to.eventually.be.rejected)
                 }
-
 
                 return (await expect(prom).to.eventually
                         .haveOwnProperty("amountOut")
