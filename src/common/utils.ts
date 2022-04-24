@@ -51,7 +51,7 @@ export function fixWeiValue(amt: BigNumber, decimals: number): BigNumber {
     return amt.mul(multiplier)
 }
 
-export function contractAddressFor(chainId: number, key: string): string {
+export function contractAddressFor(chainId: number, key: "bridgeAddress" | "bridgeZapAddress"): string {
     let address: string;
 
     const contractsForChain = contractsForChainId(chainId);
@@ -63,7 +63,6 @@ export function contractAddressFor(chainId: number, key: string): string {
         case "bridgeZapAddress":
             address = contractsForChain.bridgeZapAddress;
             break;
-
     }
 
     return address
