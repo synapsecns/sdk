@@ -32,6 +32,9 @@ describe("TokenSwap -- checkTokenAllowance tests", function(this: Mocha.Suite) {
 		const testTitle: string = makeTestTitle(tc);
 
 		it(testTitle, async function(this: Mocha.Context) {
+			this.timeout(8 * 1000);
+			this.slow(2 * 1000);
+
 			const gotProm: Promise<BigNumber> = Tokens.checkTokenAllowance(tc);
 
 			return (await expect(gotProm).to.eventually.be.fulfilled)
