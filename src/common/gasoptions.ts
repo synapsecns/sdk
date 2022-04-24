@@ -66,7 +66,7 @@ export function populateGasOptions(
 	chainId:     number,
 	ignoreLimit: boolean = false
 ): PopulatedTransaction {
-	if (chainSupportsEIP1559(chainId)) {
+	if (!chainSupportsEIP1559(chainId)) {
 		if (gasOptions?.gasPrice) {
 			txn.gasPrice = gasOptions.gasPrice;
 		}
@@ -97,7 +97,7 @@ export function makeTransactionGasOverrides(
 ): TransactionGasOverrides {
 	let overrides: TransactionGasOverrides = {};
 
-	if (chainSupportsEIP1559(chainId)) {
+	if (!chainSupportsEIP1559(chainId)) {
 		if (gasOptions?.gasPrice) {
 			overrides.gasPrice = gasOptions.gasPrice;
 		}
