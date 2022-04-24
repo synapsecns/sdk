@@ -19,7 +19,7 @@ import {
     populateGasOptions
 } from "@common/gasoptions";
 
-import {SynapseContracts}    from "@synapsecontracts";
+import {SynapseContracts} from "@synapsecontracts";
 
 import type {
     SynapseBridgeContract,
@@ -39,7 +39,15 @@ import * as SynapseEntities from "@entities";
 import {BridgeConfig}               from "./bridgeconfig";
 import {GasUtils}                   from "./gasutils";
 import {BridgeUtils}                from "./bridgeutils";
-import {ERC20, MAX_APPROVAL_AMOUNT} from "./erc20";
+import {
+    MAX_APPROVAL_AMOUNT,
+    approve,
+    balanceOf,
+    allowanceOf,
+    buildApproveTransaction
+} from "./erc20";
+
+import type {ApproveArgs} from "./erc20";
 
 import {id as makeKappa} from "@ethersproject/hash";
 import {Zero}            from "@ethersproject/constants";
@@ -144,7 +152,6 @@ export namespace Bridge {
         private readonly bridgeConfig:   BridgeConfig = new BridgeConfig();
 
         private readonly isL2ETHChain: boolean;
-        readonly requiredConfirmations: number;
 
         constructor(args: {
             network: Networks.Network | number,
@@ -155,8 +162,6 @@ export namespace Bridge {
             this.network = network instanceof Networks.Network ? network : Networks.fromChainId(network);
             this.chainId = this.network.chainId;
             this.provider = provider ?? rpcProviderForChain(this.chainId);
-
-            this.requiredConfirmations = getRequiredConfirmationsForBridge(this.network);
 
             this.isL2ETHChain = BridgeUtils.isL2ETHChain(this.chainId);
 
@@ -186,6 +191,10 @@ export namespace Bridge {
 
         kappaExists(kappa: string): Promise<boolean> {
             return this.bridgeInstance.kappaExists(kappa)
+        }
+
+        get requiredConfirmations(): number {
+            return getRequiredConfirmationsForBridge(this.chainId)
         }
 
         /**
@@ -318,7 +327,7 @@ export namespace Bridge {
         ): Promise<PopulatedTransaction> {
             const [approveArgs, tokenAddress] = this.buildERC20ApproveArgs(args);
 
-            return ERC20.buildApproveTransaction(approveArgs, {tokenAddress, chainId: this.chainId})
+            return buildApproveTransaction(approveArgs, {tokenAddress, chainId: this.chainId})
                 .then(txn => populateGasOptions(txn, gasOptions, this.chainId))
         }
 
@@ -343,7 +352,7 @@ export namespace Bridge {
                 [approveArgs, tokenAddress] = this.buildERC20ApproveArgs(args),
                 tokenParams = {tokenAddress, chainId: this.chainId};
 
-            return ERC20.approve(approveArgs, tokenParams, signer)
+            return approve(approveArgs, tokenParams, signer)
         }
 
         async getAllowanceForAddress(args: {
@@ -353,7 +362,7 @@ export namespace Bridge {
             let { address, token } = args;
             let tokenAddress = token.address(this.chainId);
 
-            return ERC20.allowanceOf(address, this.zapBridgeAddress, {tokenAddress, chainId: this.chainId})
+            return allowanceOf(address, this.zapBridgeAddress, {tokenAddress, chainId: this.chainId})
         }
 
         private async resolveApproveFunc(
@@ -384,7 +393,7 @@ export namespace Bridge {
         }: CheckCanBridgeParams): Promise<NeedsTokenApproveResult> {
             const [{spender}, tokenAddress] = this.buildERC20ApproveArgs({token, amount});
 
-            return ERC20.allowanceOf(address, spender, {tokenAddress, chainId: this.chainId})
+            return allowanceOf(address, spender, {tokenAddress, chainId: this.chainId})
                 .then(currentAllowance => ({needsApproval: currentAllowance.lt(amount), currentAllowance}))
         }
 
@@ -454,7 +463,7 @@ export namespace Bridge {
                 tokenAddress: string = token.address(this.chainId);
 
             return this.resolveBalanceFunc(
-                ERC20.balanceOf(address, {tokenAddress, chainId: this.chainId}),
+                balanceOf(address, {tokenAddress, chainId: this.chainId}),
                 amount,
                 token
             )
@@ -463,7 +472,7 @@ export namespace Bridge {
         buildERC20ApproveArgs(args: {
             token:   Token | string,
             amount?: BigNumberish
-        }): [ERC20.ApproveArgs, string] {
+        }): [ApproveArgs, string] {
             const {token, amount} = args;
             let spender: string = this.zapBridgeAddress;
 
@@ -1184,3 +1193,27 @@ export namespace Bridge {
             .catch(rejectPromise)
     }
 }
+
+import SynapseBridge = Bridge.SynapseBridge;
+import getRequiredConfirmationsForBridge = Bridge.getRequiredConfirmationsForBridge;
+import bridgeSwapSupported = Bridge.bridgeSwapSupported;
+import checkBridgeTransactionComplete = Bridge.checkBridgeTransactionComplete;
+
+export {
+    SynapseBridge,
+    getRequiredConfirmationsForBridge,
+    bridgeSwapSupported,
+    checkBridgeTransactionComplete
+};
+
+import CanBridgeResult = Bridge.CanBridgeResult;
+import BridgeOutputEstimate = Bridge.BridgeOutputEstimate;
+import BridgeParams = Bridge.BridgeParams;
+import BridgeTransactionParams = Bridge.BridgeTransactionParams;
+
+export type {
+    CanBridgeResult,
+    BridgeOutputEstimate,
+    BridgeParams,
+    BridgeTransactionParams
+};

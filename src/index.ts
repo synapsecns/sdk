@@ -4,7 +4,21 @@ export {
     L2BridgeZapContractInstance
 } from "@entities";
 
-export {Bridge}    from "@bridge/bridge";
+export {
+    Bridge,
+    SynapseBridge,
+    getRequiredConfirmationsForBridge,
+    bridgeSwapSupported,
+    checkBridgeTransactionComplete
+} from "@bridge/bridge";
+
+export type {
+    CanBridgeResult,
+    BridgeOutputEstimate,
+    BridgeParams,
+    BridgeTransactionParams
+} from "@bridge/bridge";
+
 export {Slippages} from "@bridge/slippages";
 
 export {
