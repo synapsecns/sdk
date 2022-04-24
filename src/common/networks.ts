@@ -27,7 +27,7 @@ export namespace Networks {
         {chainId: ChainId.DFK,       token: Tokens.JEWEL},
     ];
 
-    const checkWrappedToken = (chainId: ChainId, token: Token): boolean => {
+    function checkWrappedToken(chainId: ChainId, token: Token): boolean {
         let check = tokenSupportChecks.find((check) =>
             check.chainId === chainId && check.token.isEqual(token)
         );
@@ -220,22 +220,29 @@ export namespace Networks {
         [ChainId.HARMONY]:    HARMONY,
     }
 
-    export const networkName = (chainId: number): string => fromChainId(chainId).name
+    export function networkName(chainId: number): string {
+        return fromChainId(chainId).name
+    }
 
-    export const fromChainId = (chainId: number): Network => CHAINID_NETWORK_MAP[chainId] ?? null
+    export function fromChainId(chainId: number): Network {
+        return CHAINID_NETWORK_MAP[chainId] ?? null
+    }
 
     /**
      * Returns true if the passed network supports the passed token.
      * @param {Network | number} network Either a {@link Network} instance, or the Chain ID of a supported network.
      * @param {Token} token A {@link Token} object.
      */
-    export const networkSupportsToken = (network: Network | ChainId, token: Token): boolean =>
-        (network instanceof Network
-            ? network
-            : fromChainId(network)
+    export function networkSupportsToken(network: Network | ChainId, token: Token): boolean {
+        return (network instanceof Network
+                ? network
+                : fromChainId(network)
         ).supportsToken(token)
+    }
 
-    export const supportedNetworks = (): Network[] => Object.values(CHAINID_NETWORK_MAP)
+    export function supportedNetworks(): Network[] {
+        return Object.values(CHAINID_NETWORK_MAP)
+    }
 }
 
 export const supportedNetworks = Networks.supportedNetworks;
