@@ -6,7 +6,15 @@ import {
 
 import {ChainId, type ChainIdTypeMap} from "@chainid";
 
-import {ERC20} from "@bridge/erc20";
+import {
+    approve,
+    allowanceOf
+} from "@bridge/erc20";
+
+import type {
+    ApproveArgs,
+    TokenParams
+} from "@bridge/erc20";
 
 import {ID}          from "@internal/types";
 import {SwapType}    from "@internal/swaptype"
@@ -742,12 +750,12 @@ export namespace Tokens {
      * @param {string} args.spender Address for spender of `owner`'s `token`
      */
     export async function checkTokenAllowance(args: CheckTokenAllowanceParams): Promise<BigNumber> {
-        const tokenParams: ERC20.ERC20TokenParams = {
+        const tokenParams: TokenParams = {
             chainId:      args.chainId,
             tokenAddress: args.token.address(args.chainId)
         };
 
-        return ERC20.allowanceOf(
+        return allowanceOf(
             args.owner,
             args.spender,
             tokenParams
@@ -777,17 +785,17 @@ export namespace Tokens {
      * @return {Promise<ContractTransaction>} Executed transaction object.
      */
     export async function approveTokenSpend(args: ApproveTokenParams): Promise<ContractTransaction> {
-        const tokenParams: ERC20.ERC20TokenParams = {
+        const tokenParams: TokenParams = {
             tokenAddress: args.token.address(args.chainId),
             chainId:      args.chainId
         };
 
-        const approveArgs: ERC20.ApproveArgs = {
+        const approveArgs: ApproveArgs = {
             spender: args.spender,
             amount:  args.amount
         };
 
-        return ERC20.approve(
+        return approve(
             approveArgs,
             tokenParams,
             args.signer
