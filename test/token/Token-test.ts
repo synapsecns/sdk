@@ -1,7 +1,5 @@
 import {expect} from "chai";
 
-import _ from "lodash";
-
 import {
     ChainId,
     Tokens,
