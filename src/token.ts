@@ -8,7 +8,7 @@ import {
     type BigNumberish
 } from "@ethersproject/bignumber";
 
-import {formatEther, parseEther, parseUnits} from "@ethersproject/units";
+import {formatEther, parseUnits} from "@ethersproject/units";
 
 
 export interface IBaseToken extends Distinct {
