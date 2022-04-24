@@ -28,3 +28,29 @@ export function supportedChainIds(): number[] {
         .map(k => Number.isNaN(Number(k)) ? null : Number(k))
         .filter(c => c !== null);
 }
+
+export const EIP1559Chains: ChainIdTypeMap<boolean> = {
+    [ChainId.ETH]: 		 true,
+    [ChainId.OPTIMISM]:  false,
+    [ChainId.CRONOS]:    false,
+    [ChainId.BSC]:       false,
+    [ChainId.POLYGON]:   true,
+    [ChainId.FANTOM]:    false,
+    [ChainId.BOBA]:      false,
+    [ChainId.METIS]:     false,
+    [ChainId.MOONBEAM]:  true,
+    [ChainId.MOONRIVER]: true,
+    [ChainId.ARBITRUM]:  false,
+    [ChainId.AVALANCHE]: true,
+    [ChainId.DFK]: 		 true,
+    [ChainId.AURORA]:    false,
+    [ChainId.HARMONY]:   false,
+} as const;
+
+export function chainSupportsEIP1559(chainId: number): boolean {
+    if (chainId in EIP1559Chains) {
+        return EIP1559Chains[chainId]
+    }
+
+    return false
+}

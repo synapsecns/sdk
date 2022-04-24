@@ -9,7 +9,7 @@ import {
     networkSwapTokensMap,
     supportedChainIds,
     Tokens,
-    type Token
+    type Token, chainSupportsEIP1559
 } from "@sdk";
 
 import {
@@ -269,6 +269,12 @@ describe("Basic tests", function(this: Mocha.Suite) {
            expect(Networks.fromChainId(775)).to.be.null;
        });
 
+       it("Passing an unknown Chain ID to chainSupportsEIP1559 should return false", function(this: Mocha.Context) {
+           expect(chainSupportsEIP1559(775)).to.be.false;
+       });
 
+       it("Passing ChainId.ETH to chainSupportsEIP1559 should return true", function(this: Mocha.Context) {
+           expect(chainSupportsEIP1559(ChainId.ETH)).to.be.true;
+       });
     });
 });
