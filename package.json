@@ -39,7 +39,7 @@
     "abigen": "scripts/abigen",
     "abigen:use_solc": "ABIGEN_USE_SOLC=1 scripts/abigen",
     "typegen": "typechain --target ethers-v5 --out-dir src/internal/gen ./abigen/*.json",
-    "posttypegen": "rm -rf ./abigen",
+    "posttypegen": "rm -rf ./abigen"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",
