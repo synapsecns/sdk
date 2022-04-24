@@ -112,28 +112,34 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
         gasPrice: makeGwei("65")
     }
 
-    const failAllOpts = (callStatic: boolean): TestOpts & {callStatic: boolean} => ({executeSuccess: false, canBridge: false, callStatic})
+    type MakeOpts = TestOpts & {callStatic: boolean}
+
+    const
+        failAllOpts            = (callStatic: boolean): MakeOpts => ({executeSuccess: false,  canBridge: false, callStatic}),
+        passAllOpts            = (callStatic: boolean): MakeOpts => ({executeSuccess: true,   canBridge: true,  callStatic}),
+        canBridgeExecFailOpts  = (callStatic: boolean): MakeOpts => ({executeSuccess: false,  canBridge: true,  callStatic}),
+        bridgeFailExecPassOpts = (callStatic: boolean): MakeOpts => ({executeSuccess: true,   canBridge: false, callStatic});
 
     let testCases: TestCase[] = [
-        makeTestCase(Tokens.ETH,    Tokens.WETH_E, ChainId.ARBITRUM,  ChainId.AVALANCHE, testAmts.small,       {executeSuccess: false,  canBridge: false, callStatic: false}),
+        makeTestCase(Tokens.ETH,    Tokens.WETH_E, ChainId.ARBITRUM,  ChainId.AVALANCHE, testAmts.small,       failAllOpts(false)),
         makeTestCase(Tokens.ETH,    Tokens.WETH,   ChainId.OPTIMISM,  ChainId.ETH,       testAmts.executeFail, failAllOpts(true)),
         makeTestCase(Tokens.ETH,    Tokens.WETH,   ChainId.BOBA,      ChainId.ETH,       testAmts.executeFail, failAllOpts(true)),
         makeTestCase(Tokens.ETH,    Tokens.NETH,   ChainId.ETH,       ChainId.OPTIMISM,  testAmts.executeFail, failAllOpts(true)),
     ];
 
     const dfkTestCases: TestCase[] = [
-        makeTestCase(Tokens.AVAX,        Tokens.SYN_AVAX,    ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("0.6"),   {executeSuccess: false,  canBridge: false,  callStatic: false, gasOptions: AVALANCHE_GAS_OPTIONS}),
-        makeTestCase(Tokens.AVAX,        Tokens.WAVAX,       ChainId.AVALANCHE,   ChainId.DFK,        parseEther("0.6"),   {executeSuccess: false,  canBridge: false,  callStatic: false}),
-        makeTestCase(Tokens.XJEWEL,      Tokens.XJEWEL,      ChainId.HARMONY,     ChainId.DFK,        parseEther("1.5"),   {executeSuccess: true,   canBridge: false,  callStatic: true,  gasOptions: HARMONY_GAS_OPTIONS}),
-        makeTestCase(Tokens.GAS_JEWEL,   Tokens.JEWEL,       ChainId.DFK,         ChainId.HARMONY,    parseEther("1.5"),   {executeSuccess: true,   canBridge: true,   callStatic: true}),
-        makeTestCase(Tokens.GAS_JEWEL,   Tokens.JEWEL,       ChainId.DFK,         ChainId.AVALANCHE,  parseEther("1.5"),   {executeSuccess: true,   canBridge: true,   callStatic: true}),
-        makeTestCase(Tokens.GAS_JEWEL,   Tokens.SYN_JEWEL,   ChainId.DFK,         ChainId.HARMONY,    parseEther("1.5"),   {executeSuccess: true,   canBridge: true,   callStatic: true}),
-        makeTestCase(Tokens.JEWEL,       Tokens.SYN_JEWEL,   ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("1.5"),   {executeSuccess: true,   canBridge: false,  callStatic: true}),
-        makeTestCase(Tokens.JEWEL,       Tokens.JEWEL,       ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("1.5"),   {executeSuccess: true,   canBridge: false,  callStatic: true}),
-        makeTestCase(Tokens.MULTIJEWEL,  Tokens.JEWEL,       ChainId.AVALANCHE,   ChainId.DFK,        parseEther("0.75"),  {executeSuccess: true,   canBridge: false,  callStatic: true}),
-        makeTestCase(Tokens.MULTIJEWEL,  Tokens.JEWEL,       ChainId.AVALANCHE,   ChainId.DFK,        parseEther("3"),     {executeSuccess: true,   canBridge: false,  callStatic: true}),
-        makeTestCase(Tokens.DFK_USDC,    Tokens.USDT,        ChainId.DFK,         ChainId.AVALANCHE,  parseEther("8"),     {executeSuccess: true,   canBridge: true,   callStatic: true}),
-        makeTestCase(Tokens.DFK_USDC,    Tokens.DAI,         ChainId.DFK,         ChainId.AVALANCHE,  parseEther("9"),     {executeSuccess: true,   canBridge: true,   callStatic: true}),
+        makeTestCase(Tokens.AVAX,        Tokens.SYN_AVAX,    ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("0.6"),   {...failAllOpts(false), gasOptions: AVALANCHE_GAS_OPTIONS}),
+        makeTestCase(Tokens.AVAX,        Tokens.WAVAX,       ChainId.AVALANCHE,   ChainId.DFK,        parseEther("0.6"),   failAllOpts(false)),
+        makeTestCase(Tokens.XJEWEL,      Tokens.XJEWEL,      ChainId.HARMONY,     ChainId.DFK,        parseEther("1.5"),   {...bridgeFailExecPassOpts(true), gasOptions: HARMONY_GAS_OPTIONS}),
+        makeTestCase(Tokens.GAS_JEWEL,   Tokens.JEWEL,       ChainId.DFK,         ChainId.HARMONY,    parseEther("1.5"),   passAllOpts(true)),
+        makeTestCase(Tokens.GAS_JEWEL,   Tokens.JEWEL,       ChainId.DFK,         ChainId.AVALANCHE,  parseEther("1.5"),   passAllOpts(true)),
+        makeTestCase(Tokens.GAS_JEWEL,   Tokens.SYN_JEWEL,   ChainId.DFK,         ChainId.HARMONY,    parseEther("1.5"),   passAllOpts(true)),
+        makeTestCase(Tokens.JEWEL,       Tokens.SYN_JEWEL,   ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("1.5"),   failAllOpts(true)),
+        makeTestCase(Tokens.JEWEL,       Tokens.JEWEL,       ChainId.AVALANCHE,   ChainId.HARMONY,    parseEther("1.5"),   failAllOpts(true)),
+        makeTestCase(Tokens.MULTIJEWEL,  Tokens.JEWEL,       ChainId.AVALANCHE,   ChainId.DFK,        parseEther("0.75"),  failAllOpts(true)),
+        makeTestCase(Tokens.MULTIJEWEL,  Tokens.JEWEL,       ChainId.AVALANCHE,   ChainId.DFK,        parseEther("3"),     failAllOpts(true)),
+        makeTestCase(Tokens.DFK_USDC,    Tokens.USDT,        ChainId.DFK,         ChainId.AVALANCHE,  parseEther("8"),     passAllOpts(true)),
+        makeTestCase(Tokens.DFK_USDC,    Tokens.DAI,         ChainId.DFK,         ChainId.AVALANCHE,  parseEther("9"),     passAllOpts(true)),
     ];
 
     testCases.push(...dfkTestCases);
