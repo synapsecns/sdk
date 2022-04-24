@@ -1,4 +1,4 @@
-import _ from "lodash";
+import {findKey, fromPairs} from "lodash-es";
 
 import type {Provider} from "@ethersproject/providers";
 
@@ -10,7 +10,7 @@ import {RpcConnector} from "./rpcconnector";
 const RPC_URI_SUFFIX: string = "RPC_URI";
 
 const makeRpcUriEnvKey = (chainId: number): string => {
-    const key: string = _.findKey(ChainId, (o) => o === chainId);
+    const key: string = findKey(ChainId, (o) => o === chainId);
 
     return `${key}_${RPC_URI_SUFFIX}`
 }
@@ -51,7 +51,7 @@ const CHAIN_RPC_URIS: StringMap = {
     [ChainId.HARMONY]:   "https://api.harmony.one/",
 }
 
-const CHAINID_URI_MAP: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, getChainRpcUri(cid)]));
+const CHAINID_URI_MAP: StringMap = fromPairs(supportedChainIds().map(cid => [cid, getChainRpcUri(cid)]));
 
 const RPC_BATCH_INTERVAL = Number(process.env["RPC_BATCH_INTERVAL"]) || 60;
 
