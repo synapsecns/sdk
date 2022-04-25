@@ -1,8 +1,7 @@
 import {
 	first,
 	last,
-	sortBy,
-	sortedUniqBy
+	sortBy
 } from "lodash-es";
 
 import {rpcProviderForChain} from "@internal/rpcproviders";
