@@ -14,6 +14,7 @@ import {getTestAmount} from "@tests/helpers";
 import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
 import {formatEther, formatUnits} from "@ethersproject/units";
+import {step} from "mocha-steps";
 
 
 describe("Liquidity tests", function(this: Mocha.Suite) {
@@ -58,7 +59,11 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 				titleSuffix: string = tc.wantError ? "should error out" : `should${tc.wantZero ? "" : " not"} return zero`,
 				wantTitle:   string = `calculateAddLiquidity (${titleParams}) ${titleSuffix}`;
 
-			it(wantTitle, async function(this: Mocha.Context) {
+			let minToMint: BigNumber;
+
+			const amountsArray = makeAmountsArray(tc.liquidityToken, tc.inputAmount, tc.lpToken);
+
+			step(wantTitle, async function(this: Mocha.Context) {
 				this.slow(3.5 * 1000);
 				if (tc.chainId === ChainId.CRONOS) {
 					this.timeout(12 * 1000);
@@ -69,13 +74,14 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 				const gotProm: Promise<BigNumber> = TokenSwap.calculateAddLiquidity({
 					chainId:  tc.chainId,
 					lpToken:  tc.lpToken,
-					amounts:  makeAmountsArray(tc.liquidityToken, tc.inputAmount, tc.lpToken)
+					amounts:  amountsArray,
 				});
 
 				let got: BigNumber;
 
 				try {
 					got = await gotProm;
+					minToMint = got;
 				} catch (e) {
 					if (tc.wantError) {
 						return (await expect(gotProm).to.eventually.be.rejected)
@@ -90,6 +96,22 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 
 				return expect(got).to.be.gt(Zero);
 			});
+
+			if (!tc.wantError && !tc.wantZero) {
+				step("buildAddLiquidityTransaction should succeed", async function(this: Mocha.Context) {
+					this.timeout(5 * 1000);
+
+					let prom = TokenSwap.buildAddLiquidityTransaction({
+						chainId:   tc.chainId,
+						lpToken:   tc.lpToken,
+						amounts:   amountsArray,
+						minToMint: minToMint,
+						deadline:  BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
+					});
+
+					return (await expect(prom).to.eventually.be.fulfilled)
+				});
+			}
 		});
 	});
 
@@ -134,7 +156,9 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 				titleSuffix: string = tc.wantError ? "should error out" : `should${tc.wantZero ? "" : " not"} return zero`,
 				wantTitle:   string = `calculateRemoveLiquidity (${titleParams}) ${titleSuffix}`;
 
-			it(wantTitle, async function(this: Mocha.Context) {
+			let minAmounts: BigNumber[];
+
+			step(wantTitle, async function(this: Mocha.Context) {
 				this.slow(3.5 * 1000);
 				if (tc.chainId === ChainId.CRONOS) {
 					this.timeout(12 * 1000);
@@ -152,6 +176,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 
 				try {
 					got = await gotProm;
+					minAmounts = got;
 				} catch (e) {
 					if (tc.wantError) {
 						return (await expect(gotProm).to.eventually.be.rejected)
@@ -166,6 +191,22 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 
 				return Promise.all(got.map(val => expect(val).to.be.gt(Zero)))
 			});
+
+			if (!tc.wantError && !tc.wantZero) {
+				this.timeout(5 * 1000);
+
+				step("buildRemoveLiquidityTransaction should succeed", async function(this: Mocha.Context) {
+					let prom = TokenSwap.buildRemoveLiquidityTransaction({
+						chainId:    tc.chainId,
+						lpToken:    tc.lpToken,
+						amount:     tc.withdrawAmount,
+						minAmounts: minAmounts,
+						deadline:   BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
+					});
+
+					return (await expect(prom).to.eventually.be.fulfilled)
+				});
+			}
 		});
 	});
 
@@ -213,7 +254,9 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 				titleSuffix: string = tc.wantError ? "should error out" : `should${tc.wantZero ? "" : " not"} return zero`,
 				wantTitle:   string = `calculateRemoveLiquidityOneToken (${titleParams}) ${titleSuffix}`;
 
-			it(wantTitle, async function(this: Mocha.Context) {
+			let minAmount: BigNumber;
+
+			step(wantTitle, async function(this: Mocha.Context) {
 				this.slow(3.5 * 1000);
 				if (tc.chainId === ChainId.CRONOS) {
 					this.timeout(12 * 1000);
@@ -232,6 +275,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 
 				try {
 					got = await gotProm;
+					minAmount = got;
 				} catch (e) {
 					if (tc.wantError) {
 						return (await expect(gotProm).to.eventually.be.rejected)
@@ -246,6 +290,23 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 
 				return expect(got).to.be.gt(Zero)
 			});
+
+			if (!tc.wantError && !tc.wantZero) {
+				step("buildRemoveLiquidityOneTokenTransaction should succeed", async function(this: Mocha.Context) {
+					this.timeout(5 * 1000);
+
+					let prom = TokenSwap.buildRemoveLiquidityOneTokenTransaction({
+						chainId:  tc.chainId,
+						lpToken:  tc.lpToken,
+						token:    tc.poolToken,
+						amount:   tc.withdrawAmount,
+						deadline: BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
+						minAmount,
+					});
+
+					return (await expect(prom).to.eventually.be.fulfilled)
+				});
+			}
 		});
 	});
 });
