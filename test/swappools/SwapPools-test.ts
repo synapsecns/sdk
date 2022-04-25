@@ -16,12 +16,14 @@ import {SwapType} from "@internal/swaptype";
 import {
     expectNull,
     expectEqual,
+    expectEqualArray,
     expectUndefined,
     expectIncludes,
     expectProperty,
     wrapExpect,
 } from "@tests/helpers";
 
+import {BigNumber} from "@ethersproject/bignumber";
 
 describe("SwapPools Tests", function(this: Mocha.Suite) {
     describe("Pool tokens tests", function(this: Mocha.Suite) {
@@ -75,6 +77,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
         testCases.forEach((tc: TestCase) => {
             const
                 describeTitle: string = `test ${Networks.networkName(tc.chainId)} ${tc.swapToken.name.trimEnd()} pool tokens`,
+                liqAmounts: SwapPools.PoolTokensAmountsMap = tc.swapToken.liquidityAmountsMap(),
                 poolSymbols: string[] = tc.swapToken.poolTokens.map((t: Token) => t.symbol);
 
             describe(describeTitle, function(this: Mocha.Suite) {
@@ -87,6 +90,25 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     it(
                         testTitle,
                         wrapExpect(expectIncludes(poolSymbols, tokSymbol, wantTok))
+                    );
+
+                    it(
+                        `${testTitle} for liquidity amounts`,
+                        wrapExpect(expectIncludes(Object.keys(liqAmounts), tokSymbol, wantTok))
+                    );
+
+                    for (const amt in liqAmounts) {
+                        liqAmounts[amt] = BigNumber.from(Math.round(Math.random() * 31337));
+                    }
+
+                    it(
+                        'pool should have working liquidity amounts creation',
+                        wrapExpect(
+                            expectEqualArray(
+                                Object.values(liqAmounts),
+                                tc.swapToken.liquidityAmountsFromMap(liqAmounts),
+                            ),
+                        )
                     );
                 });
             });

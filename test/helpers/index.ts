@@ -80,13 +80,14 @@ export const
     };
 
 export const
-    expectBoolean   = (data: boolean, want:      boolean):             Chai.Assertion => expectToBe(data)[want ? "true" : "false"],
-    expectNull      = (data: any,     wantNull:  boolean):             Chai.Assertion => toBeOrNotToBe(data, wantNull).null,
-    expectUndefined = (data: any,     wantUndef: boolean):             Chai.Assertion => toBeOrNotToBe(data, wantUndef).undefined,
-    expectProperty  = (data: any,     want: string):                   Chai.Assertion => expectTo(data).have.property(want),
-    expectEqual     = (data: any,     want: any,     errMsg?: string): Chai.Assertion => expectTo(data).equal(want, errMsg),
-    expectLength    = (data: any[],   want: number,  errMsg?: string): Chai.Assertion => expectTo(data).have.a.lengthOf(want, errMsg),
-    expectIncludes  = (
+    expectBoolean    = (data: boolean, want:      boolean):             Chai.Assertion => expectToBe(data)[want ? "true" : "false"],
+    expectNull       = (data: any,     wantNull:  boolean):             Chai.Assertion => toBeOrNotToBe(data, wantNull).null,
+    expectUndefined  = (data: any,     wantUndef: boolean):             Chai.Assertion => toBeOrNotToBe(data, wantUndef).undefined,
+    expectProperty   = (data: any,     want: string):                   Chai.Assertion => expectTo(data).have.property(want),
+    expectEqual      = (data: any,     want: any,     errMsg?: string): Chai.Assertion => expectTo(data).equal(want, errMsg),
+    expectEqualArray = (data: any,     want: any,     errMsg?: string): Chai.Assertion => expect(data).to.have.all.members(want, errMsg),
+    expectLength     = (data: any[],   want: number,  errMsg?: string): Chai.Assertion => expectTo(data).have.a.lengthOf(want, errMsg),
+    expectIncludes   = (
         data:         any,
         check:        any,
         wantIncludes: boolean,
