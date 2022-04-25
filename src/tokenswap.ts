@@ -278,13 +278,13 @@ export namespace TokenSwap {
      * @return {Promise<ContractTransaction>} Executed transaction object.
      */
     export async function addLiquidity(args: AddLiquidityParams): Promise<ContractTransaction> {
-        if (isEmpty(args.signer)) {
+        if (isEmpty(args.signer)) { /* c8 ignore start */
             return rejectPromiseMissingField("signer", "AddLiquidityParams")
         } else if (isEmpty(args.deadline)) {
             return rejectPromiseMissingField("deadline", "AddLiquidityParams")
         } else if (isEmpty(args.minToMint)) {
             return rejectPromiseMissingField("minToMint", "AddLiquidityParams")
-        }
+        } /* c8 ignore stop */
 
         const swapInstance = await swapContractFromLPSwapAddress(
             args.lpToken.swapAddress,
@@ -293,6 +293,36 @@ export namespace TokenSwap {
         );
 
         return swapInstance.addLiquidity(
+            args.amounts,
+            args.minToMint,
+            args.deadline
+        )
+    }
+
+    /**
+     * buildAddLiquidityTransaction populates a transaction which adds a given amount of a
+     * user's tokens (such as USDC for Stableswap pools) as liquidity to a Liquidity Pool,
+     * providing the user with LP tokens which can be staked.
+     *
+     * @param {AddLiquidityParams} args {@link AddLiquidityParams} object containing arguments.
+     * @param {number} args.chainId Chain ID of the Liquidity Pool.
+     * @param {SwapPools.SwapPoolToken} args.lpToken LP Token with which to interact.
+     * @param {BigNumber} args.deadline Latest deadline which transaction will be accepted at.
+     * @param {BigNumber[]} args.amounts Pool-index-relative array of token amounts to add as liquidity to the pool.
+     * @param {BigNumber} args.minToMint Amount of LP tokens to mint. Can be calculated with {@link calculateAddLiquidity}.
+     *
+     * @return {Promise<PopulatedTransaction>} Populated transaction object.
+     */
+    export async function buildAddLiquidityTransaction(args: AddLiquidityParams): Promise<PopulatedTransaction> {
+        if (isEmpty(args.deadline)) { /* c8 ignore start */
+            return rejectPromiseMissingField("deadline", "AddLiquidityParams")
+        } else if (isEmpty(args.minToMint)) {
+            return rejectPromiseMissingField("minToMint", "AddLiquidityParams")
+        } /* c8 ignore stop */
+
+        const swapInstance = await swapContractFromLPSwapAddress(args.lpToken.swapAddress, args.chainId);
+
+        return swapInstance.populateTransaction.addLiquidity(
             args.amounts,
             args.minToMint,
             args.deadline
@@ -314,13 +344,13 @@ export namespace TokenSwap {
      * @return {Promise<ContractTransaction>} Executed transaction object.
      */
     export async function removeLiquidity(args: RemoveLiquidityParams): Promise<ContractTransaction> {
-        if (isEmpty(args.signer)) {
+        if (isEmpty(args.signer)) { /* c8 ignore start */
             return rejectPromiseMissingField("signer", "RemoveLiquidityParams")
         } else if (isEmpty(args.deadline)) {
             return rejectPromiseMissingField("deadline", "RemoveLiquidityParams")
         } else if (isEmpty(args.minAmounts)) {
             return rejectPromiseMissingField("minAmounts", "RemoveLiquidityParams")
-        }
+        } /* c8 ignore stop */
 
         const swapInstance = await swapContractFromLPSwapAddress(
             args.lpToken.swapAddress,
@@ -329,6 +359,35 @@ export namespace TokenSwap {
         );
 
         return swapInstance.removeLiquidity(
+            args.amount,
+            args.minAmounts,
+            args.deadline
+        )
+    }
+
+    /**
+     * buildRemoveLiquidityTransaction populates a transaction which exchanges a given amount of a user's LP tokens for a given Liquidity Pool for
+     * various amounts of pooled liquidity tokens, thereby removing liquidity from the Pool.
+     *
+     * @param {RemoveLiquidityParams} args {@link RemoveLiquidityParams} object containing arguments.
+     * @param {number} args.chainId Chain ID of the Liquidity Pool.
+     * @param {SwapPools.SwapPoolToken} args.lpToken LP Token with which to interact.
+     * @param {BigNumber} args.deadline Latest deadline which transaction will be accepted at.
+     * @param {BigNumber} args.amount Amount of LP tokens to exchange for pooled liquidity tokens.
+     * @param {BigNumber[]} args.minAmounts Pool-index-relative array of pooled liquidity token amounts to return in exchange for LP tokens. Can be calculated with {@link calculateRemoveLiquidity}.
+     *
+     * @return {Promise<PopulatedTransaction>} Populated transaction object.
+     */
+    export async function buildRemoveLiquidityTransaction(args: RemoveLiquidityParams): Promise<PopulatedTransaction> {
+        if (isEmpty(args.deadline)) { /* c8 ignore start */
+            return rejectPromiseMissingField("deadline", "RemoveLiquidityParams")
+        } else if (isEmpty(args.minAmounts)) {
+            return rejectPromiseMissingField("minAmounts", "RemoveLiquidityParams")
+        } /* c8 ignore stop */
+
+        const swapInstance = await swapContractFromLPSwapAddress(args.lpToken.swapAddress, args.chainId);
+
+        return swapInstance.populateTransaction.removeLiquidity(
             args.amount,
             args.minAmounts,
             args.deadline
@@ -352,13 +411,13 @@ export namespace TokenSwap {
      * @return {Promise<ContractTransaction>} Executed transaction object.
      */
     export async function removeLiquidityOneToken(args: RemoveLiquidityOneParams): Promise<ContractTransaction> {
-        if (isEmpty(args.signer)) {
+        if (isEmpty(args.signer)) { /* c8 ignore start */
             return rejectPromiseMissingField("signer", "RemoveLiquidityOneParams")
         } else if (isEmpty(args.deadline)) {
             return rejectPromiseMissingField("deadline", "RemoveLiquidityOneParams")
         } else if (isEmpty(args.minAmount)) {
             return rejectPromiseMissingField("minAmount", "RemoveLiquidityOneParams")
-        }
+        } /* c8 ignore stop */
 
         const swapInstance = await swapContractFromLPSwapAddress(
             args.lpToken.swapAddress,
@@ -386,6 +445,52 @@ export namespace TokenSwap {
             args.deadline
         )
     }
+
+    /**
+     * buildRemoveLiquidityOneTokenTransaction populates a transaction exchanges a given amount of a user's LP tokens for a given Liquidity Pool for
+     * an amount of a single liquidity token in the given Liquidity Pool, removing that amount from available liquidity
+     * and transferring it to the user.
+     *
+     * @param {RemoveLiquidityOneParams} args {@link RemoveLiquidityOneParams} object containing arguments.
+     * @param {number} args.chainId Chain ID of the Liquidity Pool.
+     * @param {SwapPools.SwapPoolToken} args.lpToken LP Token/Pool with which to interact.
+     * @param {BigNumber} args.deadline Latest deadline which transaction will be accepted at.
+     * @param {Token} args.token Token which will be returned to the user in exchange for their LP tokens.
+     * @param {BigNumber} args.amount Amount of LP tokens to exchange for desired pooled liquidity token.
+     * @param {BigNumber} args.minAmount Minimum amount of pooled liquidity token to be removed from the Liquidity Pool and transferred to the user.
+     *
+     * @return {Promise<PopulatedTransaction>} Populated transaction object.
+     */
+    export async function buildRemoveLiquidityOneTokenTransaction(args: RemoveLiquidityOneParams): Promise<PopulatedTransaction> {
+        if (isEmpty(args.deadline)) { /* c8 ignore start */
+            return rejectPromiseMissingField("deadline", "RemoveLiquidityOneParams")
+        } else if (isEmpty(args.minAmount)) {
+            return rejectPromiseMissingField("minAmount", "RemoveLiquidityOneParams")
+        } /* c8 ignore stop */
+
+        const swapInstance = await swapContractFromLPSwapAddress(args.lpToken.swapAddress, args.chainId);
+
+        const tokenAddress = args.token.address(args.chainId);
+        if (!tokenAddress) {
+            const err = new Error(`no address for token ${args.token.name} found for chain id ${args.chainId}`);
+            return rejectPromise(err)
+        }
+
+        let tokenIndex: number;
+        try {
+            tokenIndex = await swapInstance.getTokenIndex(tokenAddress);
+        } catch (e) {
+            return rejectPromise(e)
+        }
+
+        return swapInstance.populateTransaction.removeLiquidityOneToken(
+            args.amount,
+            tokenIndex,
+            args.minAmount,
+            args.deadline
+        )
+    }
+
 
     function rejectPromiseMissingField(fieldName: string, paramsType: string): Promise<never> {
         const err = new Error(`${fieldName} must be passed in ${paramsType}`);
