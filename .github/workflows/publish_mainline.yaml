@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -34,7 +34,7 @@ jobs:
           gpg_private_key: ${{ secrets.BLEAKER_GPG_PRIVKEY }}
           passphrase:      ${{ secrets.BLEAKER_GPG_PASSPHRASE }}
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           cache: "yarn"
           scope: "@synapseprotocol"
@@ -52,7 +52,7 @@ jobs:
         run: gpg --armor --detach-sign ${{ steps.tarball_file.outputs.filename }}
 
       - name: Create and publish GitHub release
-        uses: "marvinpinto/action-automatic-releases@v1.2.1"
+        uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
