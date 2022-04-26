@@ -76,12 +76,12 @@ jobs:
           FLAGVAL=node-${{ matrix.node-version }}
           
           if [[ ${{ github.event_name }} == 'pull_request' ]]; then
-            FLAGVAL=${FLAGVAL}.pr.${{ github.event.pull_request.number }}
+            FLAGVAL="${FLAGVAL}.pr.${{ github.event.pull_request.number }}"
           else
-            FLAGVAL=${FLAGVAL}.${{ github.ref_name }}
+            FLAGVAL="${FLAGVAL}.${{ github.ref_name }}"
           fi
           
-          FLAGVAL=${FLAGVAL}.${{ github.run_id }}/${{ github.run_attempt }}
+          FLAGVAL="${FLAGVAL}.${{ github.run_id }}/${{ github.run_attempt }}"
           
           echo ::set-output name=coveralls_flag::${FLAGVAL}
 
