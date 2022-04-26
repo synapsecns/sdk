@@ -16,7 +16,9 @@ import {rpcProviderForChain} from "@sdk/internal/rpcproviders";
 const TEN_BN: BigNumber = BigNumber.from(10);
 
 // Completely clean privkey with low balances.
-export const bridgeTestPrivkey1: string = "53354287e3023f0629b7a5e187aa1ca3458c4b7ff9d66a6e3f4b2e821aafded7";
+export const
+    bridgeTestPrivkey1: string = "53354287e3023f0629b7a5e187aa1ca3458c4b7ff9d66a6e3f4b2e821aafded7",
+    fakeWalletPrivKey:  string = "0x8ab0e165c2ea461b01cdd49aec882d179dccdbdb5c85c3f9c94c448aa65c5ace";
 
 export const
     makeTimeout      = (seconds: number): number => seconds * 1000,
@@ -34,6 +36,10 @@ export const makeWalletSignerWithProvider = (
     chainId: number,
     privKey: string
 ): Wallet => new Wallet(privKey, rpcProviderForChain(chainId));
+
+export function makeFakeWallet(chainId: number): Wallet {
+    return new Wallet(fakeWalletPrivKey, rpcProviderForChain(chainId))
+}
 
 
 export const
