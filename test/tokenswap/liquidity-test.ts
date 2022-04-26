@@ -4,9 +4,20 @@ import {
 	type Token,
 	ChainId,
 	Tokens,
-	TokenSwap,
 	SwapPools
 } from "@sdk";
+
+import {
+	calculateAddLiquidity,
+	buildAddLiquidityTransaction,
+	addLiquidity,
+	calculateRemoveLiquidity,
+	buildRemoveLiquidityTransaction,
+	removeLiquidity,
+	calculateRemoveLiquidityOneToken,
+	buildRemoveLiquidityOneTokenTransaction,
+	removeLiquidityOneToken,
+} from "@sdk/tokenswap";
 
 
 import {getTestAmount, makeFakeWallet} from "@tests/helpers";
@@ -75,7 +86,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 			step(wantTitle, async function(this: Mocha.Context) {
 				setTimeout(this, tc.chainId);
 
-				const gotProm: Promise<BigNumber> = TokenSwap.calculateAddLiquidity({
+				const gotProm: Promise<BigNumber> = calculateAddLiquidity({
 					chainId:  tc.chainId,
 					lpToken:  tc.lpToken,
 					amounts:  amountsArray,
@@ -105,7 +116,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 				step("buildAddLiquidityTransaction should succeed", async function(this: Mocha.Context) {
 					this.timeout(5 * 1000);
 
-					let prom = TokenSwap.buildAddLiquidityTransaction({
+					let prom = buildAddLiquidityTransaction({
 						chainId:   tc.chainId,
 						lpToken:   tc.lpToken,
 						amounts:   amountsArray,
@@ -121,7 +132,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 
 					const fakeWallet = makeFakeWallet(tc.chainId);
 
-					let prom = TokenSwap.addLiquidity({
+					let prom = addLiquidity({
 						chainId:   tc.chainId,
 						lpToken:   tc.lpToken,
 						amounts:   amountsArray,
@@ -182,7 +193,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 			step(wantTitle, async function(this: Mocha.Context) {
 				setTimeout(this, tc.chainId);
 
-				const gotProm: Promise<BigNumber[]> = TokenSwap.calculateRemoveLiquidity({
+				const gotProm: Promise<BigNumber[]> = calculateRemoveLiquidity({
 					chainId:  tc.chainId,
 					lpToken:  tc.lpToken,
 					amount:   tc.withdrawAmount
@@ -212,7 +223,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 				this.timeout(5 * 1000);
 
 				step("buildRemoveLiquidityTransaction should succeed", async function(this: Mocha.Context) {
-					let prom = TokenSwap.buildRemoveLiquidityTransaction({
+					let prom = buildRemoveLiquidityTransaction({
 						chainId:    tc.chainId,
 						lpToken:    tc.lpToken,
 						amount:     tc.withdrawAmount,
@@ -228,7 +239,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 
 					const fakeWallet = makeFakeWallet(tc.chainId);
 
-					let prom = TokenSwap.removeLiquidity({
+					let prom = removeLiquidity({
 						chainId:    tc.chainId,
 						lpToken:    tc.lpToken,
 						amount:     tc.withdrawAmount,
@@ -292,7 +303,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 			step(wantTitle, async function(this: Mocha.Context) {
 				setTimeout(this, tc.chainId);
 
-				const gotProm: Promise<BigNumber> = TokenSwap.calculateRemoveLiquidityOneToken({
+				const gotProm: Promise<BigNumber> = calculateRemoveLiquidityOneToken({
 					chainId:  tc.chainId,
 					lpToken:  tc.lpToken,
 					token:    tc.poolToken,
@@ -323,7 +334,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 				step("buildRemoveLiquidityOneTokenTransaction should succeed", async function(this: Mocha.Context) {
 					this.timeout(5 * 1000);
 
-					let prom = TokenSwap.buildRemoveLiquidityOneTokenTransaction({
+					let prom = buildRemoveLiquidityOneTokenTransaction({
 						chainId:  tc.chainId,
 						lpToken:  tc.lpToken,
 						token:    tc.poolToken,
@@ -340,7 +351,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 
 					const fakeWallet = makeFakeWallet(tc.chainId);
 
-					let prom = TokenSwap.removeLiquidityOneToken({
+					let prom = removeLiquidityOneToken({
 						chainId:  tc.chainId,
 						lpToken:  tc.lpToken,
 						token:    tc.poolToken,

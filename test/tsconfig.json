@@ -22,6 +22,7 @@
       "@token":            ["../src/token"],
       "@tokens":           ["../src/tokens"],
       "@tokenswap":        ["../src/tokenswap"],
+      "@namespaces/*":     ["../src/namespaces/*"]
     },
     "types": [
       "node",

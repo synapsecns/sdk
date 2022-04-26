@@ -6,8 +6,6 @@ import {Web3Provider} from "@ethersproject/providers";
 
 import {MiniRpcProvider} from "./minirpc";
 
-import { AbstractConnector } from "@web3-react/abstract-connector";
-
 interface RpcConnectorArgs {
     urls:           StringMap;
     batchInterval?: number;

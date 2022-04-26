@@ -6,8 +6,13 @@ import {
     instanceOfToken
 } from "@token";
 
-import {Tokens}    from "@tokens";
-import {TokenSwap} from "@tokenswap";
+import {Tokens} from "@tokens";
+import {
+    swapContract,
+    intermediateTokens,
+    bridgeSwapSupported as checkBridgeSwapSupported
+} from "@tokenswap";
+import type {BridgeSwapSupportedParams, SwapSupportedResult} from "@tokenswap";
 
 import {
     rejectPromise,
@@ -28,7 +33,6 @@ import type {
     GenericZapBridgeContract
 } from "@contracts";
 
-// import {type ID, SwapType, rpcProviderForChain, tokenSwitch} from "@internal/index";
 import type {ID} from "@internal/types";
 import {SwapType} from "@internal/swaptype";
 import {rpcProviderForChain} from "@internal/rpcproviders";
@@ -36,9 +40,9 @@ import {tokenSwitch} from "@internal/utils";
 
 import * as SynapseEntities from "@entities";
 
-import {BridgeConfig}               from "./bridgeconfig";
-import {GasUtils}                   from "./gasutils";
-import {BridgeUtils}                from "./bridgeutils";
+import {BridgeConfig} from "./bridgeconfig";
+import {GasUtils}     from "./gasutils";
+import {BridgeUtils}  from "./bridgeutils";
 import {
     MAX_APPROVAL_AMOUNT,
     approve,
@@ -516,7 +520,7 @@ export namespace Bridge {
             } = this.makeBridgeTokenArgs(args);
 
 
-            let {intermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom, this.chainId);
+            let {intermediateToken} = intermediateTokens(chainIdTo, tokenFrom, this.chainId);
 
             const {
                 bridgeFee:  bridgeFeeRequest,
@@ -590,8 +594,8 @@ export namespace Bridge {
                     );
             } else {
                 if (chainIdTo === ChainId.CRONOS) {
-                    const swapContract = await TokenSwap.swapContract(intermediateToken, chainIdTo);
-                    amountToReceive_to_prom = swapContract.calculateSwap(0, tokenIndexTo, amountToReceive_from)
+                    const swapInstance = await swapContract(intermediateToken, chainIdTo);
+                    amountToReceive_to_prom = swapInstance.calculateSwap(0, tokenIndexTo, amountToReceive_from)
                 } else {
                     amountToReceive_to_prom = l2BridgeZapTo.calculateSwap(
                         intermediateToken.address(chainIdTo),
@@ -1173,8 +1177,8 @@ export namespace Bridge {
         return null
     }
 
-    export function bridgeSwapSupported(args: TokenSwap.BridgeSwapSupportedParams): TokenSwap.SwapSupportedResult {
-        return TokenSwap.bridgeSwapSupported(args)
+    export function bridgeSwapSupported(args: BridgeSwapSupportedParams): SwapSupportedResult {
+        return checkBridgeSwapSupported(args)
     }
 
     export interface BridgeTransactionCompleteParams {
