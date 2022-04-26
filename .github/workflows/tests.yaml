@@ -105,6 +105,7 @@ jobs:
           ARBITRUM_RPC_URI:   ${{ secrets.ARBITRUM_RPC_URI }}
           AVALANCHE_RPC_URI:  ${{ secrets.AVALANCHE_RPC_URI }}
           HARMONY_RPC_URI:    "https://harmony-0-rpc.gateway.pokt.network"
+          CRONOS_RPC_URI:     "https://cronos-rpc.heavenswail.one"
           INFINITE_APPROVALS_PRIVKEY:          ${{ secrets.INFINITE_APPROVALS_PRIVKEY }}
           INFINITE_APPROVALS_PRIVKEY_ADDRESS:  ${{ secrets.INFINITE_APPROVALS_PRIVKEY_ADDRESS }}
           BRIDGE_INTERACTIONS_PRIVKEY:         ${{ secrets.BRIDGE_INTERACTIONS_PRIVKEY }}
