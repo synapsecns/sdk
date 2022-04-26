@@ -9,7 +9,7 @@ cat <<"HEREDOC"
 gen_changelog
 
 Description:
-  Generate a changelog.md file
+  Generate a CHANGELOG.md file from a pull request.
 
 Usage:
   gen_changelog [-h] [-c] <PULL_REQUEST> <PACKAGE_VERSION>
@@ -19,14 +19,14 @@ Parameters:
   <PACKAGE_VERSION>   : Package version to add to the header of the changelog
 
 Options:
-  -c|--git-commit   : add and commit the generated changelog to the current git branch. Default: false
-  -h|--help         : show this usage text
+  -c|--commit   : add and commit the generated changelog to the current git branch. Default: false
+  -h|--help     : show this usage text
 HEREDOC
 
   exit $return_code
 }
 
-genchangelog () {
+make_changelog () {
   if [[ -z "${1-}" ]]; then
     echo -e "Parameter PULL_REQUEST must be passed.\n"
     echo -e "USAGE:\n"
@@ -79,7 +79,7 @@ if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
 fi
 
 OPTIONS=hc
-LONGOPTS=help,git-commit
+LONGOPTS=help,commit
 
 # -regarding ! and PIPESTATUS see above
 # -temporarily store output to be able to check for errors
@@ -101,7 +101,7 @@ while true; do
     -h|--help)
       usage 0
       ;;
-    -c|--git-commit)
+    -c|--commit)
       gitcommit=y
       shift
       ;;
@@ -112,4 +112,4 @@ while true; do
   esac
 done
 
-genchangelog "$@" "$gitcommit"
+make_changelog "$@" "$gitcommit"
