@@ -7,9 +7,15 @@ import {
     ChainId,
     Networks,
     Tokens,
-    TokenSwap,
     UnsupportedSwapErrors
 } from "@sdk";
+
+import {
+    swapSetup,
+    calculateSwapRate,
+    buildSwapTokensTransaction,
+} from "@sdk/tokenswap";
+import type {SwapTokensParams, EstimatedSwapRate} from "@sdk/tokenswap";
 
 import {rejectPromise} from "@sdk/common/utils";
 
@@ -72,7 +78,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
             step(testTitle1, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                let prom: Promise<TokenSwap.EstimatedSwapRate> = Promise.resolve(TokenSwap.calculateSwapRate({
+                let prom: Promise<EstimatedSwapRate> = Promise.resolve(calculateSwapRate({
                     chainId:   tc.chainId,
                     tokenFrom: tc.tokenFrom,
                     tokenTo:   tc.tokenTo,
@@ -109,12 +115,12 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
             step(testTitle2, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                const args: TokenSwap.SwapTokensParams = {
+                const args: SwapTokensParams = {
                     ...tc,
                     minAmountOut: amountOut,
                 };
 
-                let prom = TokenSwap.buildSwapTokensTransaction(args);
+                let prom = buildSwapTokensTransaction(args);
 
                 try {
                     await prom;
@@ -130,7 +136,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
             step(testTitle3, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                let prom = TokenSwap.swapSetup(
+                let prom = swapSetup(
                     tc.tokenFrom,
                     tc.tokenTo,
                     tc.chainId,

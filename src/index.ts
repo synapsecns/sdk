@@ -54,11 +54,7 @@ export {
     type NetworkSwappableTokensMap
 } from "@swappools";
 
-import {TokenSwap, UnsupportedSwapErrors} from "@tokenswap";
-
-import detailedTokenSwapMap = TokenSwap.detailedTokenSwapMap;
-
-export {TokenSwap, UnsupportedSwapErrors, detailedTokenSwapMap};
+export * from "@tokenswap";
 
 export {
     type RPCEndpointsConfig,
@@ -73,6 +69,10 @@ export type {
     SynapseERC20Contract,
     BridgeConfigV3Contract
 } from "@contracts";
+
+export {
+    TokenSwap
+} from "@namespaces/index";
 
 import {
     useApproveBridgeSwap,

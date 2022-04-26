@@ -1,5 +1,5 @@
 import type {Token} from "@token";
-import {TokenSwap} from "@tokenswap";
+import {intermediateTokens} from "@tokenswap";
 
 import {pow10} from "@common/utils";
 
@@ -34,7 +34,7 @@ export class BridgeConfig {
 	calculateSwapFee(args: BridgeConfigSwapFeeParams): CalculateSwapFeeResult {
 		const {chainIdFrom, chainIdTo, tokenFrom, amountFrom: baseAmountFrom} = args;
 
-		const {bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom, chainIdFrom);
+		const {bridgeConfigIntermediateToken} = intermediateTokens(chainIdTo, tokenFrom, chainIdFrom);
 
 		const intermediateTokenAddress = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase();
 

@@ -2,10 +2,11 @@ import {
     ChainId,
     Networks,
     Tokens,
-    TokenSwap,
     supportedChainIds,
     type Token
 } from "@sdk";
+
+import {detailedTokenSwapMap, intermediateTokens} from "@sdk/tokenswap";
 
 import {
     wrapExpect,
@@ -14,8 +15,6 @@ import {
     expectBoolean,
 } from "@tests/helpers";
 import {expect} from "chai";
-import {instanceOfToken} from "@token";
-import {SwapType} from "@internal/swaptype";
 
 
 describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
@@ -92,7 +91,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                 testTitle:  string = `${testPrefix} ${testWant}`;
 
             it(testTitle, function(this: Mocha.Context) {
-                const got = TokenSwap.intermediateTokens(tc.chainId, tc.token, tc.otherChainId);
+                const got = intermediateTokens(tc.chainId, tc.token, tc.otherChainId);
 
                 typeof tc.wantA === "undefined"
                     ? expectUndefined(tc.wantA, true)
@@ -136,7 +135,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
     describe("detailedTokenSwapMap test", function(this: Mocha.Suite) {
         const
             allChains   = supportedChainIds(),
-            detailedMap = TokenSwap.detailedTokenSwapMap();
+            detailedMap = detailedTokenSwapMap();
 
         it(`should have ${allChains.length} entries`, function() {
             expectLength(Object.keys(detailedMap), allChains.length);

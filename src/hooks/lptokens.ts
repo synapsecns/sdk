@@ -2,7 +2,16 @@ import {isArray} from "lodash-es";
 
 import type {Token} from "@token";
 import {SwapPools} from "@swappools";
-import {TokenSwap} from "@tokenswap";
+import {
+	calculateAddLiquidity,
+	calculateRemoveLiquidity,
+	calculateRemoveLiquidityOneToken,
+	addLiquidity,
+	removeLiquidity,
+	removeLiquidityOneToken,
+	calculateSwapRate,
+	swapTokens,
+} from "@tokenswap";
 
 import {useSignerFromEthereum} from "./signer";
 import {
@@ -104,7 +113,7 @@ function useCalculateAddLiquidity(args: {
 			amountsArray = lpToken.liquidityAmountsFromMap(amounts as SwapPools.PoolTokensAmountsMap);
 		}
 
-		TokenSwap.calculateAddLiquidity({
+		calculateAddLiquidity({
 			...rest,
 			amounts: amountsArray,
 			chainId
@@ -132,7 +141,7 @@ function useCalculateRemoveLiquidity(args: {
 			lpToken: {baseToken}
 		} = rest
 
-		TokenSwap.calculateRemoveLiquidity({
+		calculateRemoveLiquidity({
 			...rest,
 			amount: parseBigNumberish(amount, baseToken, chainId),
 			chainId
@@ -156,7 +165,7 @@ function useCalculateRemoveLiquidityOneToken(args: {
 	const [amount, setAmount] = useState<BigNumber>(null);
 
 	function fn() {
-		TokenSwap.calculateRemoveLiquidityOneToken({
+		calculateRemoveLiquidityOneToken({
 			...rest,
 			amount: parseBigNumberish(rest.amount, rest.token, chainId),
 			chainId
@@ -193,7 +202,7 @@ function useAddLiquidity(args: {
 			amountsArray = lpToken.liquidityAmountsFromMap(amounts as SwapPools.PoolTokensAmountsMap);
 		}
 
-		TokenSwap.addLiquidity({
+		addLiquidity({
 			...rest,
 			chainId,
 			signer:     getSigner(ethereum),
@@ -233,7 +242,7 @@ function useRemoveLiquidity(args: {
 			minAmountsArray = lpToken.liquidityAmountsFromMap(minAmounts as SwapPools.PoolTokensAmountsMap);
 		}
 
-		TokenSwap.removeLiquidity({
+		removeLiquidity({
 			...rest,
 			chainId,
 			minAmounts: minAmountsArray,
@@ -264,7 +273,7 @@ function useRemoveLiquidityOneToken(args: {
 	const [tx, setTx] = useState<ContractTransaction>(null);
 
 	function fn() {
-		TokenSwap.removeLiquidityOneToken({
+		removeLiquidityOneToken({
 			...rest,
 			chainId,
 			signer:    getSigner(ethereum),
@@ -291,7 +300,7 @@ function useCalculateSwapRate(args: {
 	const [swapRate, setSwapRate] = useState<BigNumber>(null);
 
 	function fn() {
-		TokenSwap.calculateSwapRate({
+		calculateSwapRate({
 			...rest,
 			chainId,
 			amountIn: parseBigNumberish(rest.amountIn, rest.tokenFrom, chainId),
@@ -327,7 +336,7 @@ function useSwapTokens(args: {
 			minAmountOut: parseBigNumberish(rest.minAmountOut, rest.tokenTo, chainId),
 		};
 
-		TokenSwap.swapTokens(fnParams)
+		swapTokens(fnParams)
 			.then(setTx)
 			.catch(logError)
 	}

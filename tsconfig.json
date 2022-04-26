@@ -16,7 +16,8 @@
       "@swappools":        ["./src/swappools"],
       "@token":            ["./src/token"],
       "@tokens":           ["./src/tokens"],
-      "@tokenswap":        ["./src/tokenswap"]
+      "@tokenswap":        ["./src/tokenswap"],
+      "@namespaces/*":     ["./src/namespaces/*"]
     },
     "target": "ES5",
     "module": "ESNext",
