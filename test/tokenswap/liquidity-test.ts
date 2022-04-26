@@ -9,7 +9,7 @@ import {
 } from "@sdk";
 
 
-import {getTestAmount} from "@tests/helpers";
+import {getTestAmount, makeFakeWallet} from "@tests/helpers";
 
 import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
@@ -20,6 +20,15 @@ import {step} from "mocha-steps";
 describe("Liquidity tests", function(this: Mocha.Suite) {
 	function makeAmountsArray(t: Token, amount: BigNumber, swapPool: SwapPools.SwapPoolToken): BigNumber[] {
 		return swapPool.poolTokens.map((poolTok) => poolTok.isEqual(t) ? amount : Zero)
+	}
+
+	function setTimeout(ctx: Mocha.Context, chainId: number) {
+		ctx.slow(3.5 * 1000);
+		if (chainId === ChainId.CRONOS) {
+			ctx.timeout(12 * 1000);
+		} else {
+			ctx.timeout(8 * 1000);
+		}
 	}
 
 	describe("calculateAddLiquidity tests", function(this: Mocha.Suite) {
@@ -64,12 +73,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 			const amountsArray = makeAmountsArray(tc.liquidityToken, tc.inputAmount, tc.lpToken);
 
 			step(wantTitle, async function(this: Mocha.Context) {
-				this.slow(3.5 * 1000);
-				if (tc.chainId === ChainId.CRONOS) {
-					this.timeout(12 * 1000);
-				} else {
-					this.timeout(8 * 1000);
-				}
+				setTimeout(this, tc.chainId);
 
 				const gotProm: Promise<BigNumber> = TokenSwap.calculateAddLiquidity({
 					chainId:  tc.chainId,
@@ -110,6 +114,23 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 					});
 
 					return (await expect(prom).to.eventually.be.fulfilled)
+				});
+
+				step("addLiquidity should fail", async function(this: Mocha.Context) {
+					setTimeout(this, tc.chainId);
+
+					const fakeWallet = makeFakeWallet(tc.chainId);
+
+					let prom = TokenSwap.addLiquidity({
+						chainId:   tc.chainId,
+						lpToken:   tc.lpToken,
+						amounts:   amountsArray,
+						minToMint: minToMint,
+						deadline:  BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
+						signer:    fakeWallet,
+					});
+
+					return (await expect(prom).to.eventually.be.rejected)
 				});
 			}
 		});
@@ -159,12 +180,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 			let minAmounts: BigNumber[];
 
 			step(wantTitle, async function(this: Mocha.Context) {
-				this.slow(3.5 * 1000);
-				if (tc.chainId === ChainId.CRONOS) {
-					this.timeout(12 * 1000);
-				} else {
-					this.timeout(8 * 1000);
-				}
+				setTimeout(this, tc.chainId);
 
 				const gotProm: Promise<BigNumber[]> = TokenSwap.calculateRemoveLiquidity({
 					chainId:  tc.chainId,
@@ -205,6 +221,23 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 					});
 
 					return (await expect(prom).to.eventually.be.fulfilled)
+				});
+
+				step("removeLiquidity should fail", async function(this: Mocha.Context) {
+					setTimeout(this, tc.chainId);
+
+					const fakeWallet = makeFakeWallet(tc.chainId);
+
+					let prom = TokenSwap.removeLiquidity({
+						chainId:    tc.chainId,
+						lpToken:    tc.lpToken,
+						amount:     tc.withdrawAmount,
+						minAmounts: minAmounts,
+						deadline:   BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
+						signer:     fakeWallet,
+					});
+
+					return (await expect(prom).to.eventually.be.rejected)
 				});
 			}
 		});
@@ -257,12 +290,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 			let minAmount: BigNumber;
 
 			step(wantTitle, async function(this: Mocha.Context) {
-				this.slow(3.5 * 1000);
-				if (tc.chainId === ChainId.CRONOS) {
-					this.timeout(12 * 1000);
-				} else {
-					this.timeout(8 * 1000);
-				}
+				setTimeout(this, tc.chainId);
 
 				const gotProm: Promise<BigNumber> = TokenSwap.calculateRemoveLiquidityOneToken({
 					chainId:  tc.chainId,
@@ -305,6 +333,24 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 					});
 
 					return (await expect(prom).to.eventually.be.fulfilled)
+				});
+
+				step("removeLiquidityOneToken should fail", async function(this: Mocha.Context) {
+					setTimeout(this, tc.chainId);
+
+					const fakeWallet = makeFakeWallet(tc.chainId);
+
+					let prom = TokenSwap.removeLiquidityOneToken({
+						chainId:  tc.chainId,
+						lpToken:  tc.lpToken,
+						token:    tc.poolToken,
+						amount:   tc.withdrawAmount,
+						deadline: BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
+						signer:   fakeWallet,
+						minAmount,
+					});
+
+					return (await expect(prom).to.eventually.be.rejected)
 				});
 			}
 		});
