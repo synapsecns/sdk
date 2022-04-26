@@ -1,7 +1,7 @@
 import {ChainId, type ChainIdTypeMap} from "@chainid";
 import type {Token} from "@token";
 import {Tokens}     from "@tokens";
-import {SwapPools}  from "@swappools";
+import {getAllSwappableTokensForNetwork}  from "@swappools";
 
 import type {ID, Distinct} from "@internal/types";
 
@@ -54,7 +54,7 @@ export namespace Networks {
             this.chainId       = args.chainId;
             this.chainCurrency = args.chainCurrency;
 
-            this.tokens         = SwapPools.getAllSwappableTokensForNetwork(this.chainId);
+            this.tokens         = getAllSwappableTokensForNetwork(this.chainId);
             this.tokenAddresses = this.tokens.map((t) => t.address(this.chainId));
 
             this.id = Symbol(`${this.name}:${this.chainId}`);

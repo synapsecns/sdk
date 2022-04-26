@@ -47,12 +47,7 @@ export {
 
 export {Tokens} from "@tokens";
 
-export {
-    SwapPools,
-    networkSwapTokensMap,
-    allNetworksSwapTokensMap,
-    type NetworkSwappableTokensMap
-} from "@swappools";
+export * from "@swappools";
 
 export * from "@tokenswap";
 
@@ -71,7 +66,8 @@ export type {
 } from "@contracts";
 
 export {
-    TokenSwap
+    TokenSwap,
+    SwapPools
 } from "@namespaces/index";
 
 import {

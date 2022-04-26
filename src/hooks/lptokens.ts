@@ -1,7 +1,18 @@
 import {isArray} from "lodash-es";
 
 import type {Token} from "@token";
-import {SwapPools} from "@swappools";
+import {
+	stableswapPoolForNetwork,
+	ethSwapPoolForNetwork,
+	HARMONY_JEWEL_SWAP_TOKEN,
+	HARMONY_AVAX_SWAP_TOKEN,
+} from "@swappools";
+
+import type {
+	SwapPoolToken,
+	PoolTokensAmountsMap
+} from "@swappools";
+
 import {
 	calculateAddLiquidity,
 	calculateRemoveLiquidity,
@@ -47,11 +58,11 @@ import {ApproveActionHook, NeedsApprovalHook, UseApproveHook} from "./types";
  * @return Single-item array containing LP token object
  */
 function useChainStableswapLPToken(ethereum: any, chainId: number) {
-	const [lpToken, setLpToken] = useState<SwapPools.SwapPoolToken>(null);
+	const [lpToken, setLpToken] = useState<SwapPoolToken>(null);
 
 	useEffect(() => {
 		if (typeof chainId !== 'undefined' && chainId !== null) {
-			setLpToken(SwapPools.stableswapPoolForNetwork(chainId));
+			setLpToken(stableswapPoolForNetwork(chainId));
 		}
 	}, [chainId]);
 
@@ -67,16 +78,16 @@ function useChainStableswapLPToken(ethereum: any, chainId: number) {
  * @return Single-item array containing LP token object
  */
 function useChainETHSwapLPToken(ethereum: any, chainId: number) {
-	const [lpToken, setLpToken] = useState<SwapPools.SwapPoolToken>(null);
+	const [lpToken, setLpToken] = useState<SwapPoolToken>(null);
 
 	useEffect(() => {
 		if (typeof chainId !== 'undefined' && chainId !== null) {
 			if (lpToken !== null) {
 				if (lpToken.chainId !== chainId) {
-					setLpToken(SwapPools.ethSwapPoolForNetwork(chainId));
+					setLpToken(ethSwapPoolForNetwork(chainId));
 				}
 			} else {
-				setLpToken(SwapPools.ethSwapPoolForNetwork(chainId));
+				setLpToken(ethSwapPoolForNetwork(chainId));
 			}
 		}
 	}, [chainId]);
@@ -85,18 +96,18 @@ function useChainETHSwapLPToken(ethereum: any, chainId: number) {
 }
 
 function useHarmonyJewelLPToken() {
-	return [SwapPools.HARMONY_JEWEL_SWAP_TOKEN] as const
+	return [HARMONY_JEWEL_SWAP_TOKEN] as const
 }
 
 function useHarmonyAVAXLPToken() {
-	return [SwapPools.HARMONY_AVAX_SWAP_TOKEN] as const
+	return [HARMONY_AVAX_SWAP_TOKEN] as const
 }
 
 function useCalculateAddLiquidity(args: {
 	ethereum: any,
 	chainId:  number,
-	lpToken:  SwapPools.SwapPoolToken,
-	amounts:  BigNumberish[] | SwapPools.PoolTokensAmountsMap
+	lpToken:  SwapPoolToken,
+	amounts:  BigNumberish[] | PoolTokensAmountsMap
 }) {
 	const {ethereum, chainId, ...rest} = args;
 
@@ -110,7 +121,7 @@ function useCalculateAddLiquidity(args: {
 			const amts = amounts as BigNumberish[];
 			amountsArray = parseLPTokenBigNumberishArray(lpToken, amts, chainId);
 		} else {
-			amountsArray = lpToken.liquidityAmountsFromMap(amounts as SwapPools.PoolTokensAmountsMap);
+			amountsArray = lpToken.liquidityAmountsFromMap(amounts as PoolTokensAmountsMap);
 		}
 
 		calculateAddLiquidity({
@@ -128,7 +139,7 @@ function useCalculateAddLiquidity(args: {
 function useCalculateRemoveLiquidity(args: {
 	ethereum: any,
 	chainId:  number,
-	lpToken:  SwapPools.SwapPoolToken,
+	lpToken:  SwapPoolToken,
 	amount:   BigNumberish
 }) {
 	const {ethereum, chainId, ...rest} = args;
@@ -156,7 +167,7 @@ function useCalculateRemoveLiquidity(args: {
 function useCalculateRemoveLiquidityOneToken(args: {
 	ethereum: any,
 	chainId:  number,
-	lpToken:  SwapPools.SwapPoolToken,
+	lpToken:  SwapPoolToken,
 	token:    Token,
 	amount:   BigNumberish
 }) {
@@ -180,9 +191,9 @@ function useCalculateRemoveLiquidityOneToken(args: {
 function useAddLiquidity(args: {
 	ethereum:  any,
 	chainId:   number,
-	lpToken:   SwapPools.SwapPoolToken,
+	lpToken:   SwapPoolToken,
 	deadline:  BigNumberish,
-	amounts:   BigNumberish[] | SwapPools.PoolTokensAmountsMap,
+	amounts:   BigNumberish[] | PoolTokensAmountsMap,
 	minToMint: BigNumberish
 }) {
 	const {ethereum, chainId, ...rest} = args;
@@ -199,7 +210,7 @@ function useAddLiquidity(args: {
 			const amts = amounts as BigNumberish[];
 			amountsArray = parseLPTokenBigNumberishArray(lpToken, amts, chainId);
 		} else {
-			amountsArray = lpToken.liquidityAmountsFromMap(amounts as SwapPools.PoolTokensAmountsMap);
+			amountsArray = lpToken.liquidityAmountsFromMap(amounts as PoolTokensAmountsMap);
 		}
 
 		addLiquidity({
@@ -220,10 +231,10 @@ function useAddLiquidity(args: {
 function useRemoveLiquidity(args: {
 	ethereum:   any,
 	chainId:    number,
-	lpToken:    SwapPools.SwapPoolToken,
+	lpToken:    SwapPoolToken,
 	deadline:   BigNumberish,
 	amount:     BigNumberish
-	minAmounts: BigNumberish[] | SwapPools.PoolTokensAmountsMap,
+	minAmounts: BigNumberish[] | PoolTokensAmountsMap,
 }) {
 	const {ethereum, chainId, ...rest} = args;
 
@@ -239,7 +250,7 @@ function useRemoveLiquidity(args: {
 			const amts = minAmounts as BigNumberish[];
 			minAmountsArray = parseLPTokenBigNumberishArray(lpToken, amts, chainId);
 		} else {
-			minAmountsArray = lpToken.liquidityAmountsFromMap(minAmounts as SwapPools.PoolTokensAmountsMap);
+			minAmountsArray = lpToken.liquidityAmountsFromMap(minAmounts as PoolTokensAmountsMap);
 		}
 
 		removeLiquidity({
@@ -260,7 +271,7 @@ function useRemoveLiquidity(args: {
 function useRemoveLiquidityOneToken(args: {
 	ethereum:  any,
 	chainId:   number,
-	lpToken:   SwapPools.SwapPoolToken,
+	lpToken:   SwapPoolToken,
 	deadline:  BigNumberish,
 	amount:    BigNumberish
 	minAmount: BigNumberish,
@@ -347,7 +358,7 @@ function useSwapTokens(args: {
 function useApproveLPToken(args: {
 	ethereum: any,
 	chainId:  number,
-	lpToken:  SwapPools.SwapPoolToken,
+	lpToken:  SwapPoolToken,
 	amount?:  BigNumberish
 }) {
 	const {ethereum, chainId, ...rest} = args;
@@ -393,7 +404,7 @@ function useApproveLPToken(args: {
 function useApprovePoolToken(args: {
 	ethereum: any,
 	chainId:  number,
-	lpToken:  SwapPools.SwapPoolToken,
+	lpToken:  SwapPoolToken,
 	token:    Token,
 	amount?:  BigNumberish
 }): ApproveActionHook {
@@ -440,7 +451,7 @@ function useApprovePoolToken(args: {
 function useLPTokenAllowance(args: {
 	ethereum: any,
 	chainId: number,
-	lpToken: SwapPools.SwapPoolToken
+	lpToken: SwapPoolToken
 }) {
 	const {ethereum, chainId, lpToken} = args;
 
@@ -463,7 +474,7 @@ function useLPTokenAllowance(args: {
 function useLPTokenNeedsApproval(args: {
 	ethereum: any,
 	chainId: number,
-	lpToken: SwapPools.SwapPoolToken,
+	lpToken: SwapPoolToken,
 	amount:  BigNumberish
 }) {
 	const {
@@ -490,7 +501,7 @@ function useLPTokenNeedsApproval(args: {
 function useLPTokenApproval(args: {
 	ethereum: any,
 	chainId: number,
-	lpToken: SwapPools.SwapPoolToken,
+	lpToken: SwapPoolToken,
 	amount:  BigNumberish
 }) {
 	const [needsApprove, allowance] = useLPTokenNeedsApproval(args)
@@ -508,7 +519,7 @@ function useLPTokenApproval(args: {
 function usePoolTokenAllowance(args: {
 	ethereum: any,
 	chainId: number,
-	lpToken: SwapPools.SwapPoolToken,
+	lpToken: SwapPoolToken,
 	token: Token
 }): AllowanceHook {
 	const {ethereum, chainId, lpToken, token} = args;
@@ -528,7 +539,7 @@ function usePoolTokenAllowance(args: {
 function usePoolTokenNeedsApproval(args: {
 	ethereum: any,
 	chainId:  number,
-	lpToken:  SwapPools.SwapPoolToken,
+	lpToken:  SwapPoolToken,
 	token:    Token,
 	amount:   BigNumberish
 }): NeedsApprovalHook {
@@ -551,7 +562,7 @@ function usePoolTokenNeedsApproval(args: {
 function usePoolTokenApproval(args: {
 	ethereum: any,
 	chainId:  number,
-	lpToken:  SwapPools.SwapPoolToken,
+	lpToken:  SwapPoolToken,
 	token:    Token,
 	amount:   BigNumberish
 }): UseApproveHook {

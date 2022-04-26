@@ -3,10 +3,29 @@ import {expect} from "chai"
 import {
     ChainId,
     Networks,
-    SwapPools,
     Tokens,
     type Token
 } from "@sdk";
+
+import {
+    stableswapPoolForNetwork,
+    ethSwapPoolForNetwork,
+    swapPoolTokenFromLPTokenAddress,
+    swapPoolTokenFromSwapAddress,
+    swapPoolTokensForChainId,
+    swapPoolTokenForTypeForChain,
+    BSC_POOL_SWAP_TOKEN,
+    FANTOM_POOL_SWAP_TOKEN,
+    OPTIMISM_POOL_SWAP_TOKEN,
+    ETH_POOL_SWAP_TOKEN,
+    AVALANCHE_POOL_SWAP_TOKEN,
+    METIS_POOL_SWAP_TOKEN,
+} from "@sdk/swappools";
+
+import type {
+    SwapPoolToken,
+    PoolTokensAmountsMap
+} from "@sdk/swappools";
 
 import {SwapFactory} from "@sdk/contracts";
 import type {StringMap} from "@sdk/common/types";
@@ -29,7 +48,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
     describe("Pool tokens tests", function(this: Mocha.Suite) {
         interface TestCase {
             chainId:   number;
-            swapToken: SwapPools.SwapPoolToken;
+            swapToken: SwapPoolToken;
             tokens:    {token: Token, want: boolean}[];
         }
 
@@ -38,7 +57,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
         const testCases: TestCase[] = [
             {
                 chainId:       ChainId.BSC,
-                swapToken:     SwapPools.BSC_POOL_SWAP_TOKEN,
+                swapToken:     BSC_POOL_SWAP_TOKEN,
                 tokens: [
                     {token: Tokens.NUSD, want: true},
                     {token: Tokens.BUSD, want: true},
@@ -50,7 +69,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             },
             {
                 chainId:       ChainId.FANTOM,
-                swapToken:     SwapPools.FANTOM_POOL_SWAP_TOKEN,
+                swapToken:     FANTOM_POOL_SWAP_TOKEN,
                 tokens: [
                     {token: Tokens.NUSD, want: true},
                     {token: Tokens.BUSD, want: false},
@@ -62,7 +81,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             },
             {
                 chainId:       ChainId.OPTIMISM,
-                swapToken:     SwapPools.OPTIMISM_POOL_SWAP_TOKEN,
+                swapToken:     OPTIMISM_POOL_SWAP_TOKEN,
                 tokens: [
                     {token: Tokens.NUSD, want: true},
                     {token: Tokens.BUSD, want: false},
@@ -77,7 +96,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
         testCases.forEach((tc: TestCase) => {
             const
                 describeTitle: string = `test ${Networks.networkName(tc.chainId)} ${tc.swapToken.name.trimEnd()} pool tokens`,
-                liqAmounts: SwapPools.PoolTokensAmountsMap = tc.swapToken.liquidityAmountsMap(),
+                liqAmounts: PoolTokensAmountsMap = tc.swapToken.liquidityAmountsMap(),
                 poolSymbols: string[] = tc.swapToken.poolTokens.map((t: Token) => t.symbol);
 
             describe(describeTitle, function(this: Mocha.Suite) {
@@ -161,9 +180,9 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
         }
 
         const testFn = (tc: TestCase, stableSwap: boolean): ((this: Mocha.Context) => void) => {
-            const getPoolFn: (chainId: number) => SwapPools.SwapPoolToken = stableSwap
-                ? SwapPools.stableswapPoolForNetwork
-                : SwapPools.ethSwapPoolForNetwork;
+            const getPoolFn: (chainId: number) => SwapPoolToken = stableSwap
+                ? stableswapPoolForNetwork
+                : ethSwapPoolForNetwork;
 
             const wantUndefined: boolean = !(stableSwap ? tc.wantStableSwapPool : tc.wantEthSwapPool);
 
@@ -188,9 +207,9 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     this.timeout(7.5 * 1000);
                 }
 
-                const getPoolFn: (chainId: number) => SwapPools.SwapPoolToken = stableSwap
-                    ? SwapPools.stableswapPoolForNetwork
-                    : SwapPools.ethSwapPoolForNetwork;
+                const getPoolFn: (chainId: number) => SwapPoolToken = stableSwap
+                    ? stableswapPoolForNetwork
+                    : ethSwapPoolForNetwork;
 
                 const t: Token = stableSwap
                     ? Tokens.NUSD
@@ -227,7 +246,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             if (tc.wantStableSwapPool && tc.chainId !== ChainId.ETH) {
                 it(stableSwapContractTestTitle, swapContractTestFn(tc, true));
                 it(`${testPrefix} StableSwapToken's .swapETHAddress() should return null`, function(this: Mocha.Context) {
-                    expect(SwapPools.stableswapPoolForNetwork(tc.chainId).swapETHAddress).to.be.null;
+                    expect(stableswapPoolForNetwork(tc.chainId).swapETHAddress).to.be.null;
                 });
             }
 
@@ -236,7 +255,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             if (tc.wantEthSwapPool) {
                 it(ethSwapContractTestTitle, swapContractTestFn(tc, false));
 
-                const ethSwapPool = SwapPools.ethSwapPoolForNetwork(tc.chainId);
+                const ethSwapPool = ethSwapPoolForNetwork(tc.chainId);
                 if (ethSwapAddressChains.includes(tc.chainId)) {
                     it(`${testPrefix} ETHSwapToken's .swapETHAddress() should not return null`, function(this: Mocha.Context) {
                         expect(ethSwapPool.swapETHAddress).to.not.be.null;
@@ -254,7 +273,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
         interface TestCase {
             testName:     string;
             chainId:      number;
-            swapPool:     SwapPools.SwapPoolToken;
+            swapPool:     SwapPoolToken;
             wantSymbol:   string;
             wantSwapType: SwapType;
             wantAddress:  string|null;
@@ -265,7 +284,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             {
                 testName:     "Eth Stableswap Pool",
                 chainId:      ChainId.ETH,
-                swapPool:     SwapPools.ETH_POOL_SWAP_TOKEN,
+                swapPool:     ETH_POOL_SWAP_TOKEN,
                 wantSymbol:   "nUSD",
                 wantSwapType: SwapType.USD,
                 wantAddress:  Tokens.NUSD.address(ChainId.ETH),
@@ -274,7 +293,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             {
                 testName:     "AVAX Stableswap Pool",
                 chainId:      ChainId.BSC,
-                swapPool:     SwapPools.AVALANCHE_POOL_SWAP_TOKEN,
+                swapPool:     AVALANCHE_POOL_SWAP_TOKEN,
                 wantSymbol:   "nUSD-LP",
                 wantSwapType: SwapType.USD,
                 wantAddress:  null,
@@ -283,7 +302,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
             {
                 testName:     "METIS Stableswap Pool",
                 chainId:      ChainId.METIS,
-                swapPool:     SwapPools.METIS_POOL_SWAP_TOKEN,
+                swapPool:     METIS_POOL_SWAP_TOKEN,
                 wantSymbol:   "nUSD-LP",
                 wantSwapType: SwapType.USD,
                 wantAddress:  "0xC6f684aE516480A35f337a4dA8b40EB6550e07E0",
@@ -380,7 +399,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     const testTitle: string = makeTestTitle(tc, fnName);
 
                     it(testTitle, function(this: Mocha.Context) {
-                        const got = SwapPools.swapPoolTokenFromLPTokenAddress(tc.address, tc.chainId);
+                        const got = swapPoolTokenFromLPTokenAddress(tc.address, tc.chainId);
 
                         if (tc.want === null) {
                             expect(got).to.be.null;
@@ -411,7 +430,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     const testTitle: string = makeTestTitle(tc, fnName);
 
                     it(testTitle, function(this: Mocha.Context) {
-                        const got = SwapPools.swapPoolTokenFromSwapAddress(tc.address, tc.chainId);
+                        const got = swapPoolTokenFromSwapAddress(tc.address, tc.chainId);
 
                         if (tc.want === null) {
                             expect(got).to.be.null;
@@ -448,7 +467,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                 const testTitle: string = makeTestTitle(tc);
 
                 it(testTitle, function(this: Mocha.Context) {
-                    const got = SwapPools.swapPoolTokensForChainId(tc.chainId);
+                    const got = swapPoolTokensForChainId(tc.chainId);
 
                     expect(got).to.have.a.lengthOf(tc.wantLength);
                 });
@@ -480,7 +499,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                 const testTitle: string = makeTestTitle(tc);
 
                 it(testTitle, function(this: Mocha.Context) {
-                    const got = SwapPools.swapPoolTokenForTypeForChain(tc.chainId, tc.swapType);
+                    const got = swapPoolTokenForTypeForChain(tc.chainId, tc.swapType);
 
                     if (tc.want === null) {
                         expect(got).to.be.null;
