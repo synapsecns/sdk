@@ -1,5 +1,5 @@
 import type {Token} from "@token";
-import {SwapPools} from "@swappools";
+import type {SwapPoolToken} from "@swappools";
 
 import {
 	BigNumber,
@@ -14,7 +14,7 @@ export function parseBigNumberish(n: BigNumberish, token: Token, chainId: number
 }
 
 export function parseLPTokenBigNumberishArray(
-	lpToken: SwapPools.SwapPoolToken,
+	lpToken: SwapPoolToken,
 	amounts: BigNumberish[],
 	chainId: number
 ): BigNumber[] {

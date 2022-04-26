@@ -2,7 +2,7 @@ import {Slippages} from "./slippages";
 
 import {Tokens}    from "@tokens";
 import {ChainId}   from "@chainid";
-import {SwapPools} from "@swappools";
+import {bridgeSwappableMap} from "@swappools";
 
 import {
     L1BridgeZapContractInstance,
@@ -238,7 +238,7 @@ export namespace BridgeUtils {
 
     export function makeTokenArgs(chainId: number, t: Token): [Token[], number] {
         let
-            toks: Token[] = SwapPools.bridgeSwappableMap[chainId].swappableSwapGroups[t.swapType].poolTokens,
+            toks: Token[] = bridgeSwappableMap[chainId].swappableSwapGroups[t.swapType].poolTokens,
             idx  = toks.findIndex((tok: Token) => findSymbol(tok, t, chainId));
 
         return [toks, idx]
