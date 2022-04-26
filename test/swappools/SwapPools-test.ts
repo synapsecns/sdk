@@ -20,10 +20,10 @@ import {
     expectUndefined,
     expectIncludes,
     expectProperty,
+    randomBigNumber,
     wrapExpect,
 } from "@tests/helpers";
 
-import {BigNumber} from "@ethersproject/bignumber";
 
 describe("SwapPools Tests", function(this: Mocha.Suite) {
     describe("Pool tokens tests", function(this: Mocha.Suite) {
@@ -98,7 +98,7 @@ describe("SwapPools Tests", function(this: Mocha.Suite) {
                     );
 
                     for (const amt in liqAmounts) {
-                        liqAmounts[amt] = BigNumber.from(Math.round(Math.random() * 31337));
+                        liqAmounts[amt] = randomBigNumber();
                     }
 
                     it(
