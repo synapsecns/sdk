@@ -21,6 +21,37 @@ AVAX_JEWEL_MIGRATION="AvaxJewelMigration"
 
 JQ_WANT='{abi: .abi, userdoc: .userdoc, devdoc: .devdoc}'
 
+usage () {
+  return_code=$1
+
+cat <<"HEREDOC"
+abigen
+
+Description:
+  Download or locally compile ABIs for synapsecns EVM Smart Contracts.
+
+Usage:
+  Download from GitHub:
+    abigen [-h] download [git_branch]
+
+  Compile locally:
+    abigen [-h] compile <path_to_contracts_directory> <path_to_solc_binary>
+
+Parameters:
+  download:
+    [git_branch] : [Optional] branch to download ABI definitions from. Defaults to master
+
+  compile:
+    <path_to_contracts_directory> : Path to directory containing the synapse-contracts repository
+    <path_to_solc_binary>         : Path to solc binary, can be passed using something like $(which solc) or $(whence solc)
+
+Options:
+  -h|--help   : show this usage text
+HEREDOC
+
+  exit $return_code
+}
+
 check_or_fallback () {
   [[ -z "$1" ]] && echo "$2" || echo "$1"
 }
@@ -35,7 +66,7 @@ PY_HELPER () {
   echo $($PYTHON_PATH "${PYTHON_HELPER_PATH}" "$@")
 }
 
-process_abi () {
+compile_abi () {
   BASE_CONTRACTS_PATH=$(realpath "$1")
   SOLC_PATH=$(realpath "$2")
   CONTRACT_PATH="$3"
@@ -64,17 +95,21 @@ get_abi_from_gh () {
   output_json "$(curl -s "${REQUEST_ENDPOINT}" -u "${REQUEST_AUTH}")" "${CONTRACT}"
 }
 
-main_compiler () {
+main_help () {
+  usage $1
+}
+
+main_compile () {
   BRIDGE_PATH="contracts/bridge"
   WRAPPERS_PATH="${BRIDGE_PATH}/wrappers"
 
-  process_abi "$@" "${BRIDGE_PATH}/${SYNAPSE_BRIDGE}.sol"         "${SYNAPSE_BRIDGE}"
-  process_abi "$@" "${WRAPPERS_PATH}/${L1BRIDGEZAP}.sol"          "${L1BRIDGEZAP}"
-  process_abi "$@" "${WRAPPERS_PATH}/${L2BRIDGEZAP}.sol"          "${L2BRIDGEZAP}"
-  process_abi "$@" "${BRIDGE_PATH}/${BRIDGECONFIG}.sol"           "${BRIDGECONFIG}"
-  process_abi "$@" "contracts/amm/${SWAP_FLASH_LOAN}.sol"         "${SWAP_FLASH_LOAN}"
-  process_abi "$@" "${BRIDGE_PATH}/${SYNAPSE_ERC20}.sol"          "${SYNAPSE_ERC20}"
-  process_abi "$@" "${WRAPPERS_PATH}/${AVAX_JEWEL_MIGRATION}.sol" "${AVAX_JEWEL_MIGRATION}"
+  compile_abi "$@" "${BRIDGE_PATH}/${SYNAPSE_BRIDGE}.sol"         "${SYNAPSE_BRIDGE}"
+  compile_abi "$@" "${WRAPPERS_PATH}/${L1BRIDGEZAP}.sol"          "${L1BRIDGEZAP}"
+  compile_abi "$@" "${WRAPPERS_PATH}/${L2BRIDGEZAP}.sol"          "${L2BRIDGEZAP}"
+  compile_abi "$@" "${BRIDGE_PATH}/${BRIDGECONFIG}.sol"           "${BRIDGECONFIG}"
+  compile_abi "$@" "contracts/amm/${SWAP_FLASH_LOAN}.sol"         "${SWAP_FLASH_LOAN}"
+  compile_abi "$@" "${BRIDGE_PATH}/${SYNAPSE_ERC20}.sol"          "${SYNAPSE_ERC20}"
+  compile_abi "$@" "${WRAPPERS_PATH}/${AVAX_JEWEL_MIGRATION}.sol" "${AVAX_JEWEL_MIGRATION}"
 }
 
 DFK="dfk"
@@ -82,7 +117,7 @@ METIS="metis"
 MAINNET="mainnet"
 AVALANCHE="avalanche"
 
-main_curler () {
+main_download () {
   GIT_BRANCH=$(check_or_fallback "$1" "master")
 
   get_abi_from_gh "${GIT_BRANCH}" "${DFK}"       "${SYNAPSE_BRIDGE}"
@@ -94,10 +129,18 @@ main_curler () {
   get_abi_from_gh "${GIT_BRANCH}" "${AVALANCHE}" "${AVAX_JEWEL_MIGRATION}"
 }
 
-USE_SOLC=$(check_or_fallback "${ABIGEN_USE_SOLC}" "0")
-
-if [[ "${USE_SOLC}" = "1" ]]; then
-  main_compiler "$@"
-else
-  main_curler "$@"
-fi
+command=$1
+case $command in
+    "" | "-h" | "--help")
+        main_help
+        ;;
+    *)
+        shift
+        main_${command} $@
+        if [ $? = 127 ]; then
+            echo "Error: '$command' is not a known command." >&2
+            echo "       Run 'abigen --help' for usage." >&2
+            exit 1
+        fi
+        ;;
+esac
