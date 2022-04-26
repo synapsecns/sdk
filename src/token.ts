@@ -176,11 +176,7 @@ export class BaseToken implements Token {
     }
 
     weiToEtherString(amt: BigNumberish, chainId: number): string {
-        const
-            decimals   = this.decimals(chainId) || 18,
-            multiplier = BigNumber.from(10).pow(18 - decimals);
-
-        return formatEther(BigNumber.from(amt).mul(multiplier))
+        return formatEther(this.weiToEther(amt, chainId))
     }
 
     etherToWei(amt: BigNumberish, chainId: number): BigNumber {

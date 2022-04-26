@@ -11,6 +11,7 @@ import {tokenSwitch} from "@sdk/internal/utils";
 import {
     expectBnEqual,
     expectBoolean,
+    expectEqual,
     expectNull,
     wrapExpect,
 } from "@tests/helpers";
@@ -57,8 +58,13 @@ describe("Token Tests", function(this: Mocha.Suite) {
             },
         ].forEach((tc: TestCase) => {
             it(makeTestTitle(tc), function(this: Mocha.Context) {
-                const got: BigNumber = tc.token.valueToWei(tc.amount, tc.chainId);
+                const
+                    bnAmt: BigNumber = BigNumber.from(tc.amount),
+                    got: BigNumber = tc.token.etherToWei(tc.amount, tc.chainId),
+                    gotAnother: BigNumber = tc.token.weiToEther(got, tc.chainId);
 
+                expectEqual(bnAmt.toNumber(), parseInt(tc.token.weiToEtherString(got, tc.chainId)));
+                expectBnEqual(bnAmt.mul(BigNumber.from(10).pow(18)), gotAnother);
                 expectBnEqual(got, tc.wantAmount);
             });
         });
