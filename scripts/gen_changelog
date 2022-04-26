@@ -1,22 +1,113 @@
 #!/usr/bin/env bash
 
-source .env
 source ./scripts/utils
 
-PULL_REQUEST="$1"
-PACKAGE_VERSION="$2"
+usage () {
+  return_code=$1
 
-REQUEST_ENDPOINT="https://api.github.com/repos/synapsecns/sdk/pulls/${PULL_REQUEST}"
+cat <<"HEREDOC"
+gen_changelog
 
-FILENAME="pr_${PULL_REQUEST}_body.md"
+Description:
+  Generate a changelog.md file
 
-curl_github "${REQUEST_ENDPOINT}" | jq -r '.body' > "${FILENAME}"
+Usage:
+  gen_changelog [-h] [-c] <PULL_REQUEST> <PACKAGE_VERSION>
 
-CHANGELOG_HEADER="# Changelog and Release notes (v${PACKAGE_VERSION})"
+Parameters:
+  <PULL_REQUEST>      : Pull request number to generate a changelog from
+  <PACKAGE_VERSION>   : Package version to add to the header of the changelog
 
-echo -e "${CHANGELOG_HEADER}\n\n\n$(cat ${FILENAME})" > "${FILENAME}"
+Options:
+  -c|--git-commit   : add and commit the generated changelog to the current git branch. Default: false
+  -h|--help         : show this usage text
+HEREDOC
 
-mv "${FILENAME}" "CHANGELOG.md"
+  exit $return_code
+}
 
-git add CHANGELOG.md
-git commit -m "Changelog for v${PACKAGE_VERSION}"
+genchangelog () {
+  if [[ -z "${1-}" ]]; then
+    echo -e "Parameter PULL_REQUEST must be passed.\n"
+    echo -e "USAGE:\n"
+    usage 1
+  fi
+
+  if [[ -z "${2-}" ]]; then
+    echo -e "Parameter PACKAGE_VERSION must be passed.\n"
+    echo -e "USAGE:\n"
+    usage 1
+  fi
+
+  set +o noclobber
+
+  PULL_REQUEST="$1"
+  PACKAGE_VERSION="$2"
+  DO_GIT_COMMIT="$3"
+
+  REQUEST_ENDPOINT="https://api.github.com/repos/synapsecns/sdk/pulls/${PULL_REQUEST}"
+
+  FILENAME="pr_${PULL_REQUEST}_body.md"
+
+  CHANGELOG_HEADER="# Changelog and Release notes (v${PACKAGE_VERSION})"
+  BODY="$(curl_github "${REQUEST_ENDPOINT}" | jq -r '.body')"
+
+  CHANGELOG_BODY=$(echo -e "${CHANGELOG_HEADER}\n\n${BODY}")
+  echo "${CHANGELOG_BODY}" > "CHANGELOG.md"
+
+  if [[ $DO_GIT_COMMIT = "y" ]]; then
+      git add CHANGELOG.md
+      git commit -m "Generate changelog for v${PACKAGE_VERSION}"
+  fi
+}
+
+if [[ "$1" = "help" ]]; then usage 0; fi
+
+set -o errexit -o pipefail -o noclobber -o nounset
+
+# -allow a command to fail with !’s side effect on errexit
+# -use return value from ${PIPESTATUS[0]}, because ! hosed $?
+! getopt --test > /dev/null
+if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
+  echo '`getopt --test` failed in this environment.'
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo 'try running `brew install gnu-getopt` and then putting `export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"` into your shellrc file'
+  fi
+  exit 1
+fi
+
+OPTIONS=hc
+LONGOPTS=help,git-commit
+
+# -regarding ! and PIPESTATUS see above
+# -temporarily store output to be able to check for errors
+# -activate quoting/enhanced mode (e.g. by writing out “--options”)
+# -pass arguments only via   -- "$@"   to separate them correctly
+! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@")
+if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
+    # e.g. return value is 1
+    #  then getopt has complained about wrong arguments to stdout
+    exit 2
+fi
+# read getopt’s output this way to handle the quoting right:
+eval set -- "$PARSED"
+
+gitcommit=n
+# now enjoy the options in order and nicely split until we see --
+while true; do
+  case "$1" in
+    -h|--help)
+      usage 0
+      ;;
+    -c|--git-commit)
+      gitcommit=y
+      shift
+      ;;
+    --)
+      shift
+      break
+      ;;
+  esac
+done
+
+genchangelog "$@" "$gitcommit"
