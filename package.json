@@ -73,12 +73,12 @@
     "@typechain/ethers-v5": "10.0.0",
     "@types/chai-as-promised": "7.1.5",
     "@types/chai-things": "0.0.35",
-    "@types/lodash": "4.14.181",
-    "@types/lodash-es": "^4.17.6",
-    "@types/mocha": "9.1.0",
+    "@types/lodash": "4.14.182",
+    "@types/lodash-es": "4.17.6",
+    "@types/mocha": "9.1.1",
     "@types/node": "17.0.21",
     "@zoltu/typescript-transformer-append-js-extension": "1.0.1",
-    "c8": "7.11.0",
+    "c8": "7.11.2",
     "chai": "4.3.6",
     "chai-as-promised": "7.1.1",
     "chai-things": "0.2.0",
@@ -92,7 +92,7 @@
     "ts-patch": "2.0.1",
     "typechain": "8.0.0",
     "typescript": "4.6.3",
-    "typescript-transform-paths": "^3.3.1"
+    "typescript-transform-paths": "3.3.1"
   },
   "peerDependencies": {
     "react": "^17.0.0"
