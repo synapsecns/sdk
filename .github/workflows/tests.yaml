@@ -95,7 +95,7 @@ jobs:
       - run: yarn install
 
       - name: Run Tests (Node ${{ matrix.node-version }})
-        run: yarn -s run test:coverage
+        run: yarn -s run coverage:test
         env:
           REPORTS_DIR:        ${{ env.COVERAGE_DIR }}
           ETH_RPC_URI:        ${{ secrets.ETH_RPC_URI }}
