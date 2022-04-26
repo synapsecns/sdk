@@ -56,6 +56,18 @@ describe("Token Tests", function(this: Mocha.Suite) {
                 amount:     BigNumber.from("225"),
                 wantAmount: BigNumber.from("225000000")
             },
+            {
+                token:      Tokens.DFK_USDC,
+                chainId:    ChainId.DFK,
+                amount:     BigNumber.from("225"),
+                wantAmount: BigNumber.from("225000000000000000000")
+            },
+            {
+                token:      Tokens.NUSD,
+                chainId:    ChainId.DFK,
+                amount:     BigNumber.from("225"),
+                wantAmount: BigNumber.from("225000000000000000000")
+            },
         ].forEach((tc: TestCase) => {
             it(makeTestTitle(tc), function(this: Mocha.Context) {
                 const
@@ -207,6 +219,9 @@ describe("Token Tests", function(this: Mocha.Suite) {
     });
 
     describe("Test all tokens", function(this: Mocha.Suite) {
+        const makeTitle = (t: Token, cid: number, want: boolean): string =>
+            `${t.symbol} address for chain id ${cid} should${want ? " not" : ""} be null`;
+
         Tokens.AllTokens.forEach(t => {
             let supportedNets = Object.keys(t.addresses).map(c => Number(c));
 
@@ -215,14 +230,14 @@ describe("Token Tests", function(this: Mocha.Suite) {
 
                 it(`token ${t.symbol} should exist`, function(this: Mocha.Context) {
                     expect(Tokens.tokenFromSymbol(t.id), `${t.symbol}: ${cid}`).equals(t);
-                })
+                });
 
                 switch (tokenSwitch(t)) {
                     case Tokens.ETH:
                     case Tokens.AVAX:
                     case Tokens.MOVR:
                     case Tokens.GAS_JEWEL:
-                        it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
+                        it(makeTitle(t, cid, false), function(this: Mocha.Context) {
                             expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
                         });
                         return
@@ -232,11 +247,11 @@ describe("Token Tests", function(this: Mocha.Suite) {
                     if (t.isEqual(Tokens.FRAX) && cid === ChainId.MOONBEAM) {
                         return
                     }
-                    it(`${t.symbol} address for chain id ${cid} should not be null`, function(this: Mocha.Context) {
+                    it(makeTitle(t, cid, true), function(this: Mocha.Context) {
                         expect(tokenAddr, `${t.symbol}: ${cid}`).to.not.be.null;
                     });
                 } else {
-                    it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
+                    it(makeTitle(t, cid, false), function(this: Mocha.Context) {
                         expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
                     });
                 }
