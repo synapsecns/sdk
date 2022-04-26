@@ -5,12 +5,12 @@ source ./scripts/utils
 
 CURRENT_DIR="${PWD}"
 
-COMBINED_OUTPUTS_DIR=$(realpath "${CURRENT_DIR}/abigen")
-TEMP_INPUT=$(realpath "${CURRENT_DIR}/temp_input.json")
-TEMP_OUTPUT=$(realpath "${CURRENT_DIR}/temp_output.json")
+COMBINED_OUTPUTS_DIR=$(pwd_path "abigen")
+TEMP_INPUT=$(pwd_path "temp_input.json")
+TEMP_OUTPUT=$(pwd_path "temp_output.json")
 
 PYTHON_PATH=$(which python3)
-PYTHON_HELPER_PATH=$(realpath ./scripts/py_helpers.py)
+PYTHON_HELPER_PATH=$(pwd_path ./scripts/py_helpers.py)
 
 SYNAPSE_BRIDGE="SynapseBridge"
 L1BRIDGEZAP="L1BridgeZap"
@@ -82,9 +82,6 @@ compile_abi () {
 
   rm -rf "${TEMP_INPUT}" "${TEMP_OUTPUT}"
 }
-
-RAW_GITHUB_URI="https://raw.githubusercontent.com/synapsecns/synapse-contracts"
-REQUEST_AUTH="${GITHUB_USERNAME}:${GITHUB_API_KEY}"
 
 get_abi_from_gh () {
   BRANCH="$1"

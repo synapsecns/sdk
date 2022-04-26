@@ -22,3 +22,7 @@ curl_github () {
 
   curl -s -H "${GITHUB_REQUEST_HEADERS}" -u "${GITHUB_REQUEST_AUTH}" "${endpoint}"
 }
+
+pwd_path () {
+  echo "$(realpath "$PWD/$1")"
+}
