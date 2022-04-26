@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+source .env
+
+rebase_ () {
+  git rebase --committer-date-is-author-date --ignore-whitespace "$@"
+}
+
+rebase_branch () {
+  rebase_ "$1"
+}
+
+rebase_interactive () {
+  rebase_ -i HEAD~$1
+}
+
+GITHUB_REQUEST_AUTH="${GITHUB_USERNAME}:${GITHUB_API_KEY}"
+GITHUB_REQUEST_HEADERS='Accept: application/vnd.github.v3.full+json'
+
+curl_github () {
+  endpoint="$1"
+
+  curl -s -H "${GITHUB_REQUEST_HEADERS}" -u "${GITHUB_REQUEST_AUTH}" "${endpoint}"
+}

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 source .env
+source ./scripts/utils
 
 CURRENT_DIR="${PWD}"
 
@@ -92,7 +93,7 @@ get_abi_from_gh () {
 
   REQUEST_ENDPOINT="${RAW_GITHUB_URI}/${BRANCH}/deployments/${CHAIN}/${CONTRACT}.json"
 
-  output_json "$(curl -s "${REQUEST_ENDPOINT}" -u "${REQUEST_AUTH}")" "${CONTRACT}"
+  output_json "$(curl_github "${REQUEST_ENDPOINT}")" "${CONTRACT}"
 }
 
 main_help () {

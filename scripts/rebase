@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ./scripts/rebase-helpers
+source ./scripts/utils
 
 BRANCH=$([[ -n "$1" ]] && echo "$1" || echo "dev")
 

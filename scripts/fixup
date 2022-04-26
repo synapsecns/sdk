@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ./scripts/rebase-helpers
+source ./scripts/utils
 
 git commit -m "fixup commit"
 
