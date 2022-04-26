@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
+source ./scripts/rebase-helpers
+
 git commit -m "fixup commit"
 
 HEAD_COMMIT="$(git rev-parse --short HEAD)"
 
-GIT_SEQUENCE_EDITOR="sed -i -re 's/^pick ${HEAD_COMMIT} /fixup ${HEAD_COMMIT} /g'" git rebase --committer-date-is-author-date -i HEAD~2
+_SEQ="sed -i -re 's/^pick ${HEAD_COMMIT} /fixup ${HEAD_COMMIT} /g'"
+
+GIT_SEQUENCE_EDITOR="$_SEQ" rebase_interactive 2

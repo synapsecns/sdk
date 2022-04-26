@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source ./scripts/rebase-helpers
+
 BRANCH=$([[ -n "$1" ]] && echo "$1" || echo "dev")
 
-git rebase "${BRANCH}" --committer-date-is-author-date --ignore-whitespace
+rebase_branch "${BRANCH}"
