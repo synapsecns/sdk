@@ -25,16 +25,16 @@ import {
     expectGteZero,
     expectNotZero,
     expectNull,
+    makeFakeWallet
 } from "@tests/helpers";
 
 import type {BigNumberish}         from "@ethersproject/bignumber";
 import type {ContractTransaction, PopulatedTransaction} from "@ethersproject/contracts";
-import {Wallet} from "@ethersproject/wallet";
-import {rpcProviderForChain} from "@internal/rpcproviders";
+import {BigNumber} from "@ethersproject/bignumber";
 
 describe("ERC20 tests", function(this: Mocha.Suite) {
     const testAddr: string = "0xe972647539816442e0987817DF777a9fd9878650";
-    const fakePrivateKey: string = "0x8ab0e165c2ea461b01cdd49aec882d179dccdbdb5c85c3f9c94c448aa65c5ace"
+    const fakePrivateKey: string = ""
 
     const tokenParams = (c: number): TokenParams => ({
         chainId:      c,
@@ -82,16 +82,33 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
                 }
             });
 
-            function makeWallet(chainId: number): Wallet {
-                return new Wallet(fakePrivateKey, rpcProviderForChain(chainId))
-            }
-
             it("Should fail to fire approve() successfully", async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                const fakeWallet = makeWallet(chainId);
+                const fakeWallet = makeFakeWallet(chainId);
 
                 let prom: Promise<ContractTransaction> = approve(args, tokenParams(chainId), fakeWallet);
+
+                return (await expect(prom).to.eventually.be.rejected)
+            });
+
+            it("Should fail to fire approveTokenSpend() successfully", async function(this: Mocha.Context) {
+                this.timeout(DEFAULT_TEST_TIMEOUT);
+
+                const fakeWallet = makeFakeWallet(chainId);
+
+                let approveSpendArgs: Tokens.ApproveTokenParams = {
+                    spender,
+                    chainId,
+                    token:  Tokens.NUSD,
+                    signer: fakeWallet,
+                };
+
+                if (amount) {
+                    approveSpendArgs.amount = BigNumber.from(amount);
+                }
+
+                let prom: Promise<ContractTransaction> =  Tokens.approveTokenSpend(approveSpendArgs);
 
                 return (await expect(prom).to.eventually.be.rejected)
             });
