@@ -47,16 +47,18 @@ genchangelog () {
 
   REQUEST_ENDPOINT="https://api.github.com/repos/synapsecns/sdk/pulls/${PULL_REQUEST}"
 
-  FILENAME="pr_${PULL_REQUEST}_body.md"
+  FILENAME="CHANGELOG.md"
 
   CHANGELOG_HEADER="# Changelog and Release notes (v${PACKAGE_VERSION})"
   BODY="$(curl_github "${REQUEST_ENDPOINT}" | jq -r '.body')"
 
   CHANGELOG_BODY=$(echo -e "${CHANGELOG_HEADER}\n\n${BODY}")
-  echo "${CHANGELOG_BODY}" > "CHANGELOG.md"
+  echo "${CHANGELOG_BODY}" > $FILENAME
+
+  sed -i '' -r 's#(([0-9a-f]{7})[0-9a-f]{33})#[\2](https://github.com/synapsecns/sdk/commits/\1)#g' $FILENAME
 
   if [[ $DO_GIT_COMMIT = "y" ]]; then
-      git add CHANGELOG.md
+      git add $FILENAME
       git commit -m "Generate changelog for v${PACKAGE_VERSION}"
   fi
 }
