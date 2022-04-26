@@ -175,6 +175,12 @@ export namespace TokenSwap {
         [ChainId.AVALANCHE]: {gasLimit: BigNumber.from("165000")}
     }
 
+    const
+        ADD_LIQUIDITY_GAS_LIMT:         BigNumber = BigNumber.from("210000"),
+        REMOVE_LIQUIDITY_GAS_LIMT:      BigNumber = BigNumber.from("265000"),
+        REMOVE_LIQUIDITY_ONE_GAS_LIMIT: BigNumber = BigNumber.from("210000");
+
+
     export function swapSupported(args: SwapParams): SwapSupportedResult {
         const {tokenFrom, tokenTo, chainId} = args;
         return checkCanSwap(tokenFrom, tokenTo, chainId)
@@ -295,7 +301,8 @@ export namespace TokenSwap {
         return swapInstance.addLiquidity(
             args.amounts,
             args.minToMint,
-            args.deadline
+            args.deadline,
+            {gasLimit: ADD_LIQUIDITY_GAS_LIMT}
         )
     }
 
@@ -361,7 +368,8 @@ export namespace TokenSwap {
         return swapInstance.removeLiquidity(
             args.amount,
             args.minAmounts,
-            args.deadline
+            args.deadline,
+            {gasLimit: REMOVE_LIQUIDITY_GAS_LIMT}
         )
     }
 
@@ -442,7 +450,8 @@ export namespace TokenSwap {
             args.amount,
             tokenIndex,
             args.minAmount,
-            args.deadline
+            args.deadline,
+            {gasLimit: REMOVE_LIQUIDITY_ONE_GAS_LIMIT}
         )
     }
 
