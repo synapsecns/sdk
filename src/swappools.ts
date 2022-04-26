@@ -302,7 +302,7 @@ export namespace SwapPools {
         chainId:     ChainId.OPTIMISM,
         address:     "0x2c6d91accC5Aa38c84653F28A80AEC69325BDd12",
         netName:     "Optimism",
-        poolId:      1, // might need to be changed
+        poolId:      1,
         swapAddress: "0xF44938b0125A6662f9536281aD2CD6c499F22004",
         poolTokens:  [Tokens.NUSD, Tokens.USDC],
     });
@@ -322,7 +322,7 @@ export namespace SwapPools {
         chainId:     ChainId.CRONOS,
         address:     "0x8415D4EB17F0949e2388fdF52909db4cC0a2B082",
         netName:     "Cronos",
-        poolId:      0, // may need to change
+        poolId:      1,
         swapAddress: "0x3b1601c386247A127287b094F9CCB585D4D0B99b",
         poolTokens:  USDPoolTokens(),
     })
