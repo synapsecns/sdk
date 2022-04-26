@@ -15,24 +15,20 @@ import {rpcProviderForChain} from "@sdk/internal/rpcproviders";
 
 const TEN_BN: BigNumber = BigNumber.from(10);
 
-const testAmounts: string[] = [
-    "420", "1337", "31337",
-    "669", "555",
-];
-
 // Completely clean privkey with low balances.
 export const bridgeTestPrivkey1: string = "53354287e3023f0629b7a5e187aa1ca3458c4b7ff9d66a6e3f4b2e821aafded7";
 
 export const
     makeTimeout      = (seconds: number): number => seconds * 1000,
     valueIfUndefined = <T>(data: T, fallback: T): T => typeof data === "undefined" ? fallback : data,
-    getActualWei     = (n: BigNumber, decimals: number): BigNumber => n.mul(TEN_BN.pow(18 - decimals));
+    getActualWei     = (n: BigNumber, decimals: number): BigNumber => n.mul(TEN_BN.pow(18 - decimals)),
+    randomBigNumber = (max: number = 313337) => BigNumber.from(Math.round(Math.random() * max));
 
 export const getTestAmount = (
     t: Token,
     c: number,
     amt?: BigNumberish
-): BigNumber => t.etherToWei(amt ?? _.shuffle(testAmounts)[0], c);
+): BigNumber => t.etherToWei(amt ?? randomBigNumber(), c);
 
 export const makeWalletSignerWithProvider = (
     chainId: number,
