@@ -45,8 +45,8 @@
     "posttypegen": "rm -rf ./abigen",
     "    -----------": "",
     "fixup": "scripts/fixup",
-    "react:add": "yarn add --dev react@^17.0.0",
-    "react:remove": "yarn remove react --dev && yarn add --peer react@^17.0.0"
+    "react:add": "yarn add --frozen-lockfile --dev react@^17.0.0",
+    "react:remove": "yarn remove --frozen-lockfile react --dev && yarn add --frozen-lockfile --peer react@^17.0.0"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",
