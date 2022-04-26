@@ -18,9 +18,11 @@
 - synAVAX, synJEWEL, Gas JEWEL, xJEWEL, Wrapped JEWEL ([808373a](https://github.com/synapsecns/sdk/commits/808373aaee2fbb916abfd29c698b3d9d5fdfa9de), [b5be8ba](https://github.com/synapsecns/sdk/commits/b5be8bae7b1bea6cbc9eb257b9003b16410ca461))
 - USDC on DeFi Kingdoms mainnet ([ec92185](https://github.com/synapsecns/sdk/commits/ec92185afe6201bd45060c2f872494661228cb83))
 - MultiChain AVAX ([ce38787](https://github.com/synapsecns/sdk/commits/ce3878760cec74c7d64655fc775945c89f8fde12))
-- MultiChain JEWEL ([b75aa73](https://github.com/synapsecns/sdk/commits/b75aa75a84842a2626103ce00355b8fd046f98c3))
+- MultiChain JEWEL ([b75aa75](https://github.com/synapsecns/sdk/commits/b75aa75a84842a2626103ce00355b8fd046f98c3))
 - USD Balance (USDB) ([8354607](https://github.com/synapsecns/sdk/commits/835460717f9934fceea8bfc6277d61d2d31946b1))
 - Vesta (VSTA) ([5101623](https://github.com/synapsecns/sdk/commits/5101623f52770651fa729a328ea7a84ccca64221))
+- Gaia's Tears ([4d30ee5](https://github.com/synapsecns/sdk/commits/4d30ee5b7f8c967d6b368176d4d859c55ef19a8c))
+- H20 ([7575ae7](https://github.com/synapsecns/sdk/commits/7575ae7faf0375d706cd7adfa76e490a2b0c6455))
 
 ### New addresses for existing tokens
 
@@ -49,6 +51,8 @@
   - implement connection "cacheing" (more like reuse) for connections to contracts such as `SynapseBridge`, `L2BridgeZap`, etc. ([7359c56](https://github.com/synapsecns/sdk/commits/7359c56e63822942ee1d4dfafc22d8373ddf9f10))
 - tokens
   - Add `gasTokenForChain` function to `Tokens` namespace, which returns the native currency token object for the passed Chain ID -- if it exists. ([7d9b47d](https://github.com/synapsecns/sdk/commits/7d9b47d6f5f1c02ed4b2dd59529c77115228ff44))
+- token
+  - Add `hash` property to `Token` interface. `hash` is unique to an individual Token instance and can be used for uniqueness checks. Closes #111 ([28846fc](https://github.com/synapsecns/sdk/commits/28846fc6db39bb0cba1a0009d7f9cbac880261f5))
 
 - chainid
   - Implement function for checking if a (known) Chain ID supports EIP-1559 ([5aa1535](https://github.com/synapsecns/sdk/commits/5aa1535e0221e28662306a7e6440a49a82ec152d))
@@ -60,3 +64,12 @@
 
 - common/chainid, internal/swaptype
   - Refactor type of `ChainId` and `SwapType` from enum to `const object` using `as const` syntax, enabling better control of inputs, parameters, and types. ([3094359](https://github.com/synapsecns/sdk/commits/30943592bf29f1d9d790cd80b3a7c5a14ce8f8d4), [2afa767](https://github.com/synapsecns/sdk/commits/2afa767fce5c76e072973b43d21906f9cdf382a2)) 
+
+### Testing improvements
+
+Thank you @BlazeWasHere for adding several new test cases to the test suites:
+  - Better random value generation ([37cd132](https://github.com/synapsecns/sdk/commits/37cd1322fe4f5b6e7fb3ee78690086885e1c4dd9))
+  - Improved valueToWei testing ([00ab02e](https://github.com/synapsecns/sdk/commits/00ab02e516f90363a214f721ba8c125f5eb5e00b))
+  - Extra testing for Cronos ([4ae4cba](https://github.com/synapsecns/sdk/commits/4ae4cba6ee02176f338cf8b3657e8129019b7fa4))
+  - `Tokens.TokenFromSymbol` test cases ([82d395d](https://github.com/synapsecns/sdk/commits/82d395df7f19286bbcc5c05e054a1338997ef1b8))
+  - Liquidity amounts map tests ([7da69b7](https://github.com/synapsecns/sdk/commits/7da69b71fd6a1ca88a2f816e3d281d16b1fbdc02))
