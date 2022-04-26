@@ -22,7 +22,7 @@ export const
     makeTimeout      = (seconds: number): number => seconds * 1000,
     valueIfUndefined = <T>(data: T, fallback: T): T => typeof data === "undefined" ? fallback : data,
     getActualWei     = (n: BigNumber, decimals: number): BigNumber => n.mul(TEN_BN.pow(18 - decimals)),
-    randomBigNumber = (max: number = 313337) => BigNumber.from(Math.round(Math.random() * max));
+    randomBigNumber = (max: number = 313337) => BigNumber.from(Math.floor(Math.random() * max));
 
 export const getTestAmount = (
     t: Token,
