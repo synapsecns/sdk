@@ -213,6 +213,10 @@ describe("Token Tests", function(this: Mocha.Suite) {
             supportedChainIds().forEach(cid => {
                 let tokenAddr = t.address(cid);
 
+                it(`token ${t.symbol} should exist`, function(this: Mocha.Context) {
+                    expect(Tokens.tokenFromSymbol(t.id), `${t.symbol}: ${cid}`).equals(t);
+                })
+
                 switch (tokenSwitch(t)) {
                     case Tokens.ETH:
                     case Tokens.AVAX:
