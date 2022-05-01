@@ -36,7 +36,7 @@ export namespace SynapseContracts {
 
     export const Cronos = new SynapseContract({
         bridge:    "0xE27BFf97CE92C3e1Ff7AA9f86781FDd6D48F5eE9",
-        bridgeZap: "0x88E7af57270F70BCF32CD61fff0Ff635775C8f7c",
+        bridgeZap: "0x991adb00eF4c4a6D1eA6036811138Db4379377C2",
     });
 
     export const BSC = new SynapseContract({
