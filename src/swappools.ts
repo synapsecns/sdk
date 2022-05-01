@@ -320,12 +320,15 @@ export namespace SwapPools {
 
     export const CRONOS_POOL_SWAP_TOKEN = makeSwapToken({
         chainId:     ChainId.CRONOS,
-        address:     "0x8415D4EB17F0949e2388fdF52909db4cC0a2B082",
+        address:     "0xd5Da35646A79C42a0BAB148656192A22e8CBfad6",
         netName:     "Cronos",
         poolId:      1,
-        swapAddress: "0x3b1601c386247A127287b094F9CCB585D4D0B99b",
-        poolTokens:  USDPoolTokens(),
-    })
+        swapAddress: "0xCb6674548586F20ca39C97A52A0ded86f48814De",
+        poolTokens:  [
+            Tokens.NUSD,
+            Tokens.USDC,
+        ],
+    });
 
     export const BSC_POOL_SWAP_TOKEN = makeSwapToken({
         chainId:      ChainId.BSC,
