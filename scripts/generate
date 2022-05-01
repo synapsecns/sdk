@@ -35,14 +35,18 @@ Description:
   generate Typescript typings for the same.
 
 Usage:
-  Download from GitHub:
-    generate [-h] download [git_branch]
+  abigen:
+    Pre-setup:
+      generate [-h] abigen prepare
 
-  Compile locally:
-    generate [-h] compile <path_to_contracts_directory> <path_to_solc_binary>
+    Download from GitHub:
+      generate [-h] abigen download [git_branch]
+
+    Compile locally:
+      generate [-h] abigen compile <path_to_contracts_directory> <path_to_solc_binary>
 
   Generate typings:
-    generate -h typegen
+    generate [-h] typegen
 
 Parameters:
   download:
@@ -101,6 +105,10 @@ get_abi_from_gh () {
 
 main_help () {
   usage $1
+}
+
+abigen_prepare () {
+  mkdir -p ./abigen && cp ./scripts/ERC20.json ./abigen/ERC20.json
 }
 
 abigen_compile () {
