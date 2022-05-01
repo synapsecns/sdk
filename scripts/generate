@@ -22,21 +22,27 @@ AVAX_JEWEL_MIGRATION="AvaxJewelMigration"
 
 JQ_WANT='{abi: .abi, userdoc: .userdoc, devdoc: .devdoc}'
 
+RAW_GITHUB_URI="https://raw.githubusercontent.com/synapsecns/synapse-contracts"
+
 usage () {
   return_code=$1
 
 cat <<"HEREDOC"
-abigen
+generate
 
 Description:
-  Download or locally compile ABIs for synapsecns EVM Smart Contracts.
+  Download or locally compile ABIs for synapsecns EVM Smart Contracts, or
+  generate Typescript typings for the same.
 
 Usage:
   Download from GitHub:
-    abigen [-h] download [git_branch]
+    generate [-h] download [git_branch]
 
   Compile locally:
-    abigen [-h] compile <path_to_contracts_directory> <path_to_solc_binary>
+    generate [-h] compile <path_to_contracts_directory> <path_to_solc_binary>
+
+  Generate typings:
+    generate -h typegen
 
 Parameters:
   download:
@@ -97,7 +103,7 @@ main_help () {
   usage $1
 }
 
-main_compile () {
+abigen_compile () {
   BRIDGE_PATH="contracts/bridge"
   WRAPPERS_PATH="${BRIDGE_PATH}/wrappers"
 
@@ -115,7 +121,7 @@ METIS="metis"
 MAINNET="mainnet"
 AVALANCHE="avalanche"
 
-main_download () {
+abigen_download () {
   GIT_BRANCH=$(check_or_fallback "$1" "master")
 
   get_abi_from_gh "${GIT_BRANCH}" "${DFK}"       "${SYNAPSE_BRIDGE}"
@@ -125,6 +131,28 @@ main_download () {
   get_abi_from_gh "${GIT_BRANCH}" "${METIS}"     "${SWAP_FLASH_LOAN}"
   get_abi_from_gh "${GIT_BRANCH}" "${MAINNET}"   "${SYNAPSE_ERC20}"
   get_abi_from_gh "${GIT_BRANCH}" "${AVALANCHE}" "${AVAX_JEWEL_MIGRATION}"
+}
+
+main_typegen () {
+  typechain --target ethers-v5 --out-dir src/internal/gen ./abigen/*.json
+}
+
+main_abigen () {
+  command=$1
+  case $command in
+      "" | "-h" | "--help")
+          main_help
+          ;;
+      *)
+          shift
+          abigen_${command} $@
+          if [ $? = 127 ]; then
+              echo "Error: '$command' is not a known command." >&2
+              echo "       Run 'generate --help' for usage." >&2
+              exit 1
+          fi
+          ;;
+  esac
 }
 
 command=$1
@@ -137,7 +165,7 @@ case $command in
         main_${command} $@
         if [ $? = 127 ]; then
             echo "Error: '$command' is not a known command." >&2
-            echo "       Run 'abigen --help' for usage." >&2
+            echo "       Run 'generate --help' for usage." >&2
             exit 1
         fi
         ;;
