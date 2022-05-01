@@ -55,10 +55,10 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 		}
 
 		const testCases: TestCase[] = [
-			makeTestCase(ChainId.BSC,       SwapPools.BSC_POOL_SWAP_TOKEN,       Tokens.BUSD, false, false, "55"),
-			makeTestCase(ChainId.AVALANCHE, SwapPools.AVALANCHE_POOL_SWAP_TOKEN, Tokens.USDC, false, false, "55"),
-			makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.DAI,  false, false, "78"),
-			makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.DAI,  true,  false, "0")
+			makeTestCase(ChainId.BSC,       SwapPools.BSC_POOL_SWAP_TOKEN,       Tokens.BUSD,  false, false, "55"),
+			makeTestCase(ChainId.AVALANCHE, SwapPools.AVALANCHE_POOL_SWAP_TOKEN, Tokens.USDC,  false, false, "55"),
+			makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.USDC,  false, false, "78"),
+			makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.USDC,  true,  false, "0")
 		];
 
 		testCases.forEach(tc => {
