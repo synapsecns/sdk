@@ -2,7 +2,6 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "module": "ESNext",
     "paths": {
       "@tests/setup":      ["./test_setup"],
       "@tests/helpers":    ["./helpers"],

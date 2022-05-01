@@ -18,6 +18,56 @@
     "/tsconfig.json",
     "/package.json"
   ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./token": {
+      "types": "./dist/token.d.ts",
+      "import": "./dist/token.js"
+    },
+    "./swaptype": {
+      "types": "./dist/internal/swaptype.d.ts",
+      "import": "./dist/internal/swaptype.js"
+    },
+    "./tokens": {
+      "types": "./dist/tokens.d.ts",
+      "import": "./dist/tokens.js"
+    },
+    "./tokenswap": {
+      "types": "./dist/tokenswap.d.ts",
+      "import": "./dist/tokenswap.js"
+    },
+    "./swappools": {
+      "types": "./dist/swappools.d.ts",
+      "import": "./dist/swappools.js"
+    },
+    "./synapsebridge": {
+      "types": "./dist/bridge/bridge.d.ts",
+      "import": "./dist/bridge/bridge.js"
+    },
+    "./common/types": {
+      "types": "./dist/common/types.d.ts",
+      "import": "./dist/common/types.js"
+    },
+    "./common/utils": {
+      "types": "./dist/common/utils.d.ts",
+      "import": "./dist/common/utils.js"
+    },
+    "./common/chainid": {
+      "types": "./dist/common/chainid.d.ts",
+      "import": "./dist/common/chainid.js"
+    },
+    "./common/gasoptions": {
+      "types": "./dist/common/gasoptions.d.ts",
+      "import": "./dist/common/gasoptions.js"
+    },
+    "./common/networks": {
+      "types": "./dist/common/networks.d.ts",
+      "import": "./dist/common/networks.js"
+    }
+  },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -34,7 +84,7 @@
     "posttest": "yarn run react:remove",
     "  -----------": "",
     "prebuild": "yarn prepare && rm -rf ./dist",
-    "build": "tsc --project tsconfig.build.json",
+    "build": "tsc --moduleDetection force --project tsconfig.build.json",
     "prepublishOnly": "yarn build",
     "   -----------": "",
     "preabigen": "scripts/generate abigen prepare",
@@ -91,7 +141,7 @@
     "ts-node": "10.7.0",
     "ts-patch": "2.0.1",
     "typechain": "8.0.0",
-    "typescript": "4.6.4",
+    "typescript": "^4.7.0-beta",
     "typescript-transform-paths": "3.3.1"
   },
   "peerDependencies": {

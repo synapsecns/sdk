@@ -21,18 +21,17 @@
     },
     "target": "ES5",
     "module": "ESNext",
+    "moduleResolution": "Node",
     "outDir": "dist",
     "strict": false,
-    "esModuleInterop":   true,
-    "resolveJsonModule": true,
-    "moduleResolution": "node",
     "declaration": true,
     "removeComments": false,
     "types": [
       "node"
     ],
     "lib": [
-      "es2017",
+      "ES5",
+      "ES6",
       "esnext",
       "dom",
       "dom.iterable"
@@ -42,12 +41,12 @@
     "jsx": "react-jsx"
   },
   "include": [
-    "src/**/*"
+    "./src/**/*"
   ],
   "exclude": [
-    "node_modules",
-    "dist",
-    "test",
-    "examples"
+//    "**/node_modules/**/*",
+    "**/dist/**/*",
+    "**/test/**/*",
+    "**/examples/**/*"
   ]
 }

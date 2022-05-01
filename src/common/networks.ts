@@ -7,7 +7,7 @@ import type {ID, Distinct} from "@internal/types";
 
 import {BridgeUtils} from "@bridge/bridgeutils";
 
-import _ from "lodash";
+import {isNull} from "lodash-es";
 
 export namespace Networks {
     type supportedTokenEdgeCase = {
@@ -98,7 +98,7 @@ export namespace Networks {
             const chainGasToken = Tokens.gasTokenForChain(this.chainId);
 
             this.tokens.forEach(t => {
-                if (!_.isNull(chainGasToken)) {
+                if (!isNull(chainGasToken)) {
                     const gasWrapper = Tokens.gasTokenWrapper(chainGasToken);
                     if (gasWrapper.isEqual(t)) {
                         return
