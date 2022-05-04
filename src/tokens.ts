@@ -483,6 +483,17 @@ export namespace Tokens {
 
     // non-Synapse, non-stablecoin tokens
 
+    export const DFKTEARS = new BaseToken({
+        name:      "Gaia's Tears",
+        symbol:    "DFKTEARS",
+        decimals:  18,
+        addresses: {
+           [ChainId.DFK]:     "0x8fdD108FF5CfeCe51F0dd2a4F64D7F278d5EeB6B",
+           [ChainId.HARMONY]: "0x24eA0D436d3c2602fbfEfBe6a16bBc304C963D04",
+        },
+        swapType: SwapType.DFKTEARS,
+    });
+
     export const GOHM = new BaseToken({
         name:     "Olympus DAO",
         symbol:   "gOHM",
@@ -811,7 +822,7 @@ export namespace Tokens {
         SYN_FRAX, SOLAR, GMX, NEWO, SDT,
         LUNA, USDB, SYN_AVAX, GAS_JEWEL, JEWEL,
         SYN_JEWEL, XJEWEL, MULTIJEWEL, DFK_USDC,
-        MULTI_AVAX, VSTA,
+        DFKTEARS, MULTI_AVAX, VSTA,
     ];
 
     /**

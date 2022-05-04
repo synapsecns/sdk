@@ -28,7 +28,6 @@ import type {
     GenericZapBridgeContract
 } from "@contracts";
 
-// import {type ID, SwapType, rpcProviderForChain, tokenSwitch} from "@internal/index";
 import type {ID} from "@internal/types";
 import {SwapType} from "@internal/swaptype";
 import {rpcProviderForChain} from "@internal/rpcproviders";
@@ -175,6 +174,10 @@ export namespace Bridge {
             if (this.zapBridgeAddress && this.zapBridgeAddress !== "") {
                 this.zapBridge = BridgeUtils.newBridgeZap(this.chainId);
             }
+        }
+
+        private get l1BridgeZap(): L1BridgeZapContract {
+            return this.zapBridge as L1BridgeZapContract
         }
 
         private get l2BridgeZap(): L2BridgeZapContract {
@@ -532,6 +535,10 @@ export namespace Bridge {
                 c1 === ChainId.ETH && BridgeUtils.isL2ETHChain(c2) && t.swapType === SwapType.ETH
 
             const
+                isSpecialFrom: boolean = BridgeUtils.isSpecialToken(this.chainId, tokenFrom),
+                isSpecialTo:   boolean = BridgeUtils.isSpecialToken(chainIdTo,    tokenTo);
+
+            const
                 ethToEth:   boolean = checkEthBridge(this.chainId, chainIdTo,    tokenTo),
                 ethFromEth: boolean = checkEthBridge(chainIdTo,    this.chainId, tokenFrom);
 
@@ -539,7 +546,7 @@ export namespace Bridge {
 
             if (amountFrom.isZero()) {
                 amountToReceive_from_prom = Promise.resolve(Zero);
-            } else if (ethToEth || Tokens.isMintBurnToken(tokenFrom) || tokenFrom.isWrapperToken) {
+            } else if (ethToEth || Tokens.isMintBurnToken(tokenFrom) || tokenFrom.isWrapperToken || isSpecialFrom) {
                 amountToReceive_from_prom = Promise.resolve(amountFromFixedDecimals);
             } else if (this.chainId === ChainId.ETH) {
                 let liquidityAmounts = fromChainTokens.map((t) =>
@@ -580,7 +587,7 @@ export namespace Bridge {
 
             if (amountToReceive_from.isZero()) {
                 amountToReceive_to_prom = Promise.resolve(Zero);
-            } else if (ethFromEth || Tokens.isMintBurnToken(tokenTo) || tokenTo.isWrapperToken) {
+            } else if (ethFromEth || Tokens.isMintBurnToken(tokenTo) || tokenTo.isWrapperToken || isSpecialTo) {
                 amountToReceive_to_prom = Promise.resolve(amountToReceive_from);
             } else if (chainIdTo === ChainId.ETH) {
                 amountToReceive_to_prom =

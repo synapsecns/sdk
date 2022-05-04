@@ -677,6 +677,9 @@ export namespace TokenSwap {
             case SwapType.MOVR:
                 intermediateToken = Tokens.WMOVR;
                 break;
+            case SwapType.DFKTEARS:
+                intermediateToken = Tokens.DFKTEARS;
+                break;
             default:
                 intermediateToken = Tokens.NUSD;
                 break;

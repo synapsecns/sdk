@@ -535,6 +535,7 @@ export namespace SwapPools {
         USDB_Pool       = makeSingleTokenPool(Tokens.USDB),
         DFK_USDC_Pool   = makeSingleTokenPool(Tokens.DFK_USDC),
         XJEWEL_Pool     = makeSingleTokenPool(Tokens.XJEWEL),
+        DFKTEARS_Pool   = makeSingleTokenPool(Tokens.DFKTEARS),
         VSTA_Pool       = makeSingleTokenPool(Tokens.VSTA);
 
     const
@@ -702,16 +703,18 @@ export namespace SwapPools {
         ),
         [ChainId.DFK]: {
             swappableTokens: {
-                [SwapType.USD]:    DFK_USDC_Pool.poolTokens,
-                [SwapType.JEWEL]:  DFK_JEWEL_Pool.poolTokens,
-                [SwapType.XJEWEL]: XJEWEL_Pool.poolTokens,
-                [SwapType.AVAX]:   WAVAX_Pool.poolTokens
+                [SwapType.USD]:      DFK_USDC_Pool.poolTokens,
+                [SwapType.JEWEL]:    DFK_JEWEL_Pool.poolTokens,
+                [SwapType.XJEWEL]:   XJEWEL_Pool.poolTokens,
+                [SwapType.DFKTEARS]: DFKTEARS_Pool.poolTokens,
+                [SwapType.AVAX]:     WAVAX_Pool.poolTokens,
             },
             swappableSwapGroups: {
-                [SwapType.USD]:    DFK_USDC_Pool,
-                [SwapType.JEWEL]:  DFK_JEWEL_Pool,
-                [SwapType.XJEWEL]: XJEWEL_Pool,
-                [SwapType.AVAX]:   WAVAX_Pool
+                [SwapType.USD]:      DFK_USDC_Pool,
+                [SwapType.JEWEL]:    DFK_JEWEL_Pool,
+                [SwapType.XJEWEL]:   XJEWEL_Pool,
+                [SwapType.DFKTEARS]: DFKTEARS_Pool,
+                [SwapType.AVAX]:     WAVAX_Pool,
             }
         },
         [ChainId.AURORA]: makeSwapTypeMap(
@@ -729,6 +732,7 @@ export namespace SwapPools {
             SDT_Pool,
             HARMONY_AVAX_SWAP_TOKEN,
             XJEWEL_Pool,
+            DFKTEARS_Pool,
             HARMONY_JEWEL_Pool
         )
     };

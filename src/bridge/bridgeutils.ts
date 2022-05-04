@@ -44,6 +44,20 @@ export namespace BridgeUtils {
     export const isL2ETHChain          = (chainId: number): boolean => L2_ETH_CHAINS.includes(chainId);
     export const chainSupportsGasToken = (chainId: number): boolean => GAS_TOKEN_CHAINS.includes(chainId);
 
+    interface SpecialTokenInfo {
+        chainId: number;
+        token:   Token;
+    }
+
+    const SPECIAL_TOKEN_INFO: SpecialTokenInfo[] = [
+        {chainId: ChainId.DFK, token: Tokens.DFKTEARS},
+    ];
+
+    export const isSpecialToken = (chainId: number, token: Token): boolean => {
+        const found = SPECIAL_TOKEN_INFO.find(tokInfo => tokInfo.chainId === chainId && tokInfo.token.isEqual(token));
+        return typeof found !== 'undefined'
+    }
+
     interface DepositIfChainArgs {
         chainId:        number;
         tokens:         Token[];
@@ -52,23 +66,54 @@ export namespace BridgeUtils {
     }
 
     export const DepositIfChainTokens: DepositIfChainArgs[] = [
-        {chainId: ChainId.FANTOM,    tokens: [Tokens.JUMP],   redeemChainIds: [ChainId.BSC],  depositEth: false},
-        {chainId: ChainId.POLYGON,   tokens: [Tokens.NFD],    redeemChainIds: [],  depositEth: false},
-        {chainId: ChainId.MOONRIVER, tokens: [Tokens.SOLAR],  redeemChainIds: [],  depositEth: false},
+        {
+            chainId:         ChainId.FANTOM,
+            tokens:         [Tokens.JUMP],
+            redeemChainIds: [ChainId.BSC],
+            depositEth:      false,
+        },
+        {
+            chainId:         ChainId.POLYGON,
+            tokens:         [Tokens.NFD],
+            redeemChainIds: [],
+            depositEth:      false,
+        },
+        {
+            chainId:         ChainId.MOONRIVER,
+            tokens:         [Tokens.SOLAR],
+            redeemChainIds: [],
+            depositEth:      false,
+        },
         {
             chainId:        ChainId.AVALANCHE,
             tokens:         [Tokens.AVAX, Tokens.WAVAX, Tokens.SYN_AVAX],
             redeemChainIds: [ChainId.MOONBEAM, ChainId.DFK],
             depositEth:     true
         },
-        {chainId: ChainId.MOONRIVER, tokens: [Tokens.MOVR, Tokens.WMOVR], redeemChainIds: [ChainId.MOONBEAM], depositEth: true},
+        {
+            chainId:         ChainId.MOONRIVER,
+            tokens:         [Tokens.MOVR, Tokens.WMOVR],
+            redeemChainIds: [ChainId.MOONBEAM],
+            depositEth:      true,
+        },
         {
             chainId:         ChainId.HARMONY,
             tokens:         [Tokens.XJEWEL],
             redeemChainIds: [ChainId.DFK],
             depositEth:      false,
         },
-        {chainId: ChainId.ARBITRUM, tokens: [Tokens.VSTA], redeemChainIds: [], depositEth: false},
+        {
+            chainId:         ChainId.ARBITRUM,
+            tokens:         [Tokens.VSTA],
+            redeemChainIds: [],
+            depositEth:      false,
+        },
+        {
+            chainId:         ChainId.HARMONY,
+            tokens:         [Tokens.DFKTEARS],
+            redeemChainIds: [ChainId.DFK],
+            depositEth:      false,
+        },
     ]
 
     interface BridgeTxArgs {
