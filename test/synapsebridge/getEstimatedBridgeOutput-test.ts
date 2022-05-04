@@ -41,18 +41,14 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
     type TestCase = BridgeSwapTestCase<Expected>
 
     const makeTestCase = (
-        t1: Token, t2: Token,
+        t1: Token,  t2: Token,
         c1: number, c2: number,
         amt?:      string,
-        notZero?:  boolean,
-        wantErr?:  boolean,
-        noAddrTo?: boolean,
+        notZero:   boolean = true,
+        wantError: boolean = false,
+        noAddrTo:  boolean = false,
     ): TestCase => {
-        const expected: Expected = {
-            notZero:   valueIfUndefined(notZero,  true),
-            wantError: valueIfUndefined(wantErr,  false),
-            noAddrTo:  valueIfUndefined(noAddrTo, false),
-        };
+        const expected: Expected = {notZero, wantError, noAddrTo};
 
         return makeBridgeSwapTestCase(c1, t1, c2, t2, expected, getTestAmount(t1, c1, amt))
     }
@@ -240,6 +236,8 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         makeTestCase(Tokens.NUSD,        Tokens.USDT,      ChainId.OPTIMISM,    ChainId.AURORA),
         makeTestCase(Tokens.USDC,        Tokens.NUSD,      ChainId.METIS,       ChainId.OPTIMISM),
         makeTestCase(Tokens.DAI,         Tokens.USDC,      ChainId.BOBA,        ChainId.OPTIMISM),
+        makeTestCase(Tokens.DFKTEARS,    Tokens.DFKTEARS,  ChainId.HARMONY,     ChainId.DFK,     undefined, zeroEstimate, returnsError),
+        makeTestCase(Tokens.DFKTEARS,    Tokens.DFKTEARS,  ChainId.DFK,         ChainId.HARMONY, undefined, zeroEstimate, returnsError),
     ].forEach((tc: TestCase) => {
         const [describeTitle, bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc)
 
@@ -326,8 +324,12 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
 
                 let prom = bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo});
 
-                if (wantError || noAddrTo) {
-                    return (await expect(prom).to.eventually.be.rejected)
+                try {
+                    await prom;
+                } catch (e) {
+                    if (wantError || noAddrTo) {
+                        return (await expect(prom).to.eventually.be.rejected)
+                    }
                 }
 
                 return (await expect(prom).to.eventually.be.fulfilled)
