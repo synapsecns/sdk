@@ -10,10 +10,15 @@
   ],
   "packageRules": [
     {
+      "matchDepTypes": ["peerDependencies"],
+      "matchManagers": ["npm"],
+      "enabled": false
+    },
+    {
       "matchUpdateTypes": ["minor", "patch", "pin"],
       "matchDepTypes": ["devDependencies"],
       "groupName": "dev dependencies (minor/patch/pin)",
-      "excludePackagePrefixes": ["dotenv"],
+      "excludePackagePrefixes": ["dotenv", "react"],
       "matchManagers": ["npm"],
       "automerge": true
     },
