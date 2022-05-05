@@ -11,11 +11,14 @@ import {
     wrapExpect,
     expectLength,
     expectUndefined,
-    expectBoolean,
+    expectBoolean, makeFakeWallet,
 } from "@tests/helpers";
 import {expect} from "chai";
 import {instanceOfToken} from "@token";
 import {SwapType} from "@internal/swaptype";
+import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+import {step} from "mocha-steps";
+import {Zero} from "@ethersproject/constants";
 
 
 describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
@@ -304,6 +307,90 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                         // expect(isEqual).to.be.true;
                     });
                 });
+            });
+        });
+    });
+
+    describe("swapTokens tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            chainId:      number;
+            tokenFrom:    Token;
+            tokenTo:      Token;
+            amountIn:     BigNumber;
+            wantError:    boolean;
+        }
+
+        function setTimeout(ctx: Mocha.Context, chainId: number) {
+            ctx.slow(3.5 * 1000);
+            if (chainId === ChainId.CRONOS) {
+                ctx.timeout(12 * 1000);
+            } else {
+                ctx.timeout(8 * 1000);
+            }
+        }
+
+        function makeTestCase(
+            chainId: number,
+            tokenFrom: Token, tokenTo: Token,
+            amountIn: string,
+            wantError: boolean = false
+        ): TestCase {
+            const amtIn: BigNumber = tokenFrom.etherToWei(amountIn, chainId);
+
+            return {
+                chainId,
+                tokenFrom,
+                tokenTo,
+                amountIn: amtIn,
+                wantError,
+            }
+        }
+
+        const testCases: TestCase[] = [
+            makeTestCase(ChainId.CRONOS,     Tokens.USDC,    Tokens.NUSD,    "89"),
+            makeTestCase(ChainId.AVALANCHE,  Tokens.NETH,    Tokens.WETH_E,  "2"),
+            makeTestCase(ChainId.AVALANCHE,  Tokens.WETH_E,  Tokens.USDC,    "500", true),
+            makeTestCase(ChainId.BSC,        Tokens.DAI,     Tokens.NUSD,    "432", true),
+        ];
+
+        testCases.forEach(tc => {
+            let minAmountOut: BigNumber;
+
+            const amountOutTitle: string = `calculateSwapRate ${tc.wantError ? "should fail": "should succeed"}`;
+
+            step(amountOutTitle, async function(this: Mocha.Context) {
+                setTimeout(this, tc.chainId);
+
+                let prom = TokenSwap.calculateSwapRate(tc);
+
+                try {
+                    const res = await prom;
+                    minAmountOut = res.amountOut;
+                } catch (e) {
+                    if (tc.wantError) {
+                        return (await expect(prom).to.eventually.be.rejected)
+                    }
+
+                    return (await expect(prom).to.eventually.not.be.rejected)
+                }
+
+                expect(minAmountOut).to.be.gt(Zero);
+            });
+
+            step("Fire off swapTokens transaction", async function(this: Mocha.Context) {
+                setTimeout(this, tc.chainId);
+
+                const fakeWallet = makeFakeWallet(tc.chainId);
+
+                const params = {...tc, minAmountOut, signer: fakeWallet};
+
+                const prom = TokenSwap.swapTokens(params);
+
+                try {
+                    await prom;
+                } catch (e) {
+                    return (await expect(prom).to.eventually.be.rejected)
+                }
             });
         });
     });
