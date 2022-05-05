@@ -227,16 +227,3 @@ export class WrapperToken extends BaseToken {
         return true
     }
 }
-
-type TokenHashParams = {
-    name:       string;
-    symbol:     string;
-    addresses:  AddressMap;
-    swapType:   SwapType;
-    isGasToken: boolean;
-    decimals:   DecimalsMap;
-}
-
-function buildTokenHash(params: TokenHashParams): string {
-    return ;
-}
