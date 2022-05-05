@@ -113,7 +113,7 @@ export class BaseToken implements Token {
 
     protected readonly _decimals: DecimalsMap = {};
 
-    readonly hash: string;
+    protected _hash: string;
 
     /**
      * Creates a new Token object with the defined arguments.
@@ -149,7 +149,7 @@ export class BaseToken implements Token {
 
         this.id = Symbol(this.symbol);
 
-        this.hash = objectHash.MD5({
+        this._hash = objectHash.MD5({
             name:       this.name,
             symbol:     this.symbol,
             addresses:  this.addresses,
@@ -161,6 +161,10 @@ export class BaseToken implements Token {
 
     get isWrapperToken(): boolean {
         return false
+    }
+
+    get hash(): string {
+        return this._hash
     }
 
     /**
@@ -221,6 +225,16 @@ export class WrapperToken extends BaseToken {
         super(args);
 
         this.underlyingToken = args.underlyingToken;
+
+        this._hash = objectHash.MD5({
+            name:            this.name,
+            symbol:          this.symbol,
+            addresses:       this.addresses,
+            swapType:        this.swapType,
+            isGasToken:      this.isGasToken,
+            decimals:        this._decimals,
+            underlyingToken: this.underlyingToken,
+        });
     }
 
     get isWrapperToken(): boolean {
