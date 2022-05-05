@@ -3,6 +3,8 @@ import type {AddressMap, DecimalsMap} from "@common/types";
 import {SwapType}          from "@internal/swaptype";
 import type {ID, Distinct} from "@internal/types";
 
+import objectHash from "object-hash";
+
 import {
     BigNumber,
     type BigNumberish
@@ -69,6 +71,11 @@ export interface Token extends IBaseToken {
      * @param chainId
      */
     valueToWei:       (amt: BigNumberish, chainId: number) => BigNumber;
+
+    /**
+     * Unique hash identifier of the Token.
+     */
+    readonly hash: string;
 }
 
 export function instanceOfToken(object: any): object is Token {
@@ -106,6 +113,8 @@ export class BaseToken implements Token {
 
     protected readonly _decimals: DecimalsMap = {};
 
+    readonly hash: string;
+
     /**
      * Creates a new Token object with the defined arguments.
      * @param {Object} args Information about this token, including name, symbol, decimals, and
@@ -139,6 +148,15 @@ export class BaseToken implements Token {
         this.isGasToken = args.isGasToken ?? false;
 
         this.id = Symbol(this.symbol);
+
+        this.hash = objectHash.MD5({
+            name:       this.name,
+            symbol:     this.symbol,
+            addresses:  this.addresses,
+            swapType:   this.swapType,
+            isGasToken: this.isGasToken,
+            decimals:   this._decimals,
+        });
     }
 
     get isWrapperToken(): boolean {
@@ -208,4 +226,17 @@ export class WrapperToken extends BaseToken {
     get isWrapperToken(): boolean {
         return true
     }
+}
+
+type TokenHashParams = {
+    name:       string;
+    symbol:     string;
+    addresses:  AddressMap;
+    swapType:   SwapType;
+    isGasToken: boolean;
+    decimals:   DecimalsMap;
+}
+
+function buildTokenHash(params: TokenHashParams): string {
+    return ;
 }

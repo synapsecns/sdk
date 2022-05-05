@@ -62,7 +62,8 @@
     "@ethersproject/web": "^5.5.1",
     "ethers": "^5.5.1",
     "lodash": "^4.17.21",
-    "lodash-es": "^4.17.21"
+    "lodash-es": "^4.17.21",
+    "object-hash": "^3.0.0"
   },
   "devDependencies": {
     "@ethereum-waffle/chai": "3.4.4",
@@ -73,6 +74,7 @@
     "@types/lodash-es": "4.17.6",
     "@types/mocha": "9.1.1",
     "@types/node": "17.0.21",
+    "@types/object-hash": "^2.2.1",
     "@types/react": "18.0.8",
     "@zoltu/typescript-transformer-append-js-extension": "1.0.1",
     "c8": "7.11.2",
