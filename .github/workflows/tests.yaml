@@ -92,7 +92,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
 
-      - uses: ./.github/workflows/fetch_yarn_cache.yml
+      - uses: ./.github/workflows/yarn-cache.yaml
         with:
           platform: ${{ matrix.platform }}
           node-version: ${{ matrix.node-version }}
