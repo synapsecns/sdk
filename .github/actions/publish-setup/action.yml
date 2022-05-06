@@ -1,0 +1,59 @@
+name: "Publish Setup"
+description: "Setup publish workflow"
+
+outputs:
+  git-tag:
+    description: "Git tag name"
+    value: ${{ steps.git_tag.outputs.tag }}
+  npm-tag:
+    description: "NPM tag"
+    value: ${{ steps.npm_tag.outputs.tag }}
+  tarball-file:
+    description: "Tarball path"
+    value: ${{ steps.tarball_file.outputs.filename }}
+  nvm-version:
+    description: "NVM version"
+    value: ${{ steps.nvm_version.outputs.version }}
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+
+    - name: Set git tag name in env
+      id: git_tag
+      shell: "bash"
+      run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+
+    - name: Set NPM tag name in env
+      id: npm_tag
+      shell: "bash"
+      run: |
+        REF_NAME=${GITHUB_REF#refs/*/}
+        ALPHA='alpha'
+        BETA='beta'
+        DEV='dev'
+        
+        case $REF_NAME in
+          *"$ALPHA"*)
+            echo ::set-output name=tag::${ALPHA}
+            ;;
+          *"$BETA"*)
+            echo ::set-output name=tag::${BETA}
+            ;;
+          *"$DEV"*)
+            echo ::set-output name=tag::${DEV}
+            ;;
+        esac
+
+    - name: Set tarball filename in env
+      id: tarball_file
+      shell: "bash"
+      run: |
+        TARBALL=synapseprotocol-sdk-${{ steps.git_tag.outputs.tag }}.tar.gz
+        echo ::set-output name=filename::${TARBALL}
+
+    - name: Get node version from nvmrc
+      id: nvm_version
+      shell: "bash"
+      run: echo ::set-output name=version::$(cat .nvmrc)
