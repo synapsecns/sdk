@@ -56,4 +56,6 @@ runs:
     - name: Get node version from nvmrc
       id: nvm_version
       shell: "bash"
-      run: echo ::set-output name=version::$(cat .nvmrc)
+      run: |
+        VERSION_STR=$(cat .nvmrc)
+        echo ::set-output name=version::${VERSION_STR}

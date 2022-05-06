@@ -31,7 +31,3 @@ runs:
         key: ${{ runner.os }}-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-${{ matrix.node-version }}-yarn-
-
-    - run: yarn install
-      shell: "bash"
-      if: steps.yarn_cache.outputs.cache-hit != 'true'

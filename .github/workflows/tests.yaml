@@ -93,9 +93,13 @@ jobs:
           cache: "yarn"
 
       - uses: ./.github/actions/yarn-cache
+        id: cache_setup
         with:
           node-version: ${{ matrix.node-version }}
           platform: ${{ matrix.platform }}
+
+      - run: yarn install
+        if: steps.cache_setup.outputs.cache-hit != 'true'
 
       - name: Run Tests (Node ${{ matrix.node-version }})
         run: yarn -s run coverage:test

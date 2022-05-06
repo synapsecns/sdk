@@ -32,8 +32,12 @@ jobs:
           node-version-file: '.nvmrc'
 
       - uses: ./.github/actions/yarn-cache
+        id: cache_setup
         with:
           node-version: ${{ steps.publish_setup.outputs.nvm-version }}
+
+      - run: yarn install
+        if: steps.cache_setup.outputs.cache-hit != 'true'
 
       - run: yarn run build
 
