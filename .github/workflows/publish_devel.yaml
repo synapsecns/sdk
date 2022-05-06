@@ -37,11 +37,10 @@ jobs:
 
       - run: yarn run build
 
-      - name: Build dist tarball
-        run: yarn pack --filename ${{ steps.publish_setup.outputs.tarball-file }}
-
-      - name: GPG sign dist tarball
-        run: gpg --armor --detach-sign ${{ steps.publish_setup.outputs.tarball-file }}
+      - name: Pack and sign dist tarball
+        run: |
+          yarn pack --filename ${{ steps.publish_setup.outputs.tarball-file }}
+          gpg --armor --detach-sign ${{ steps.publish_setup.outputs.tarball-file }}
 
       - name: Create and publish GitHub release
         uses: marvinpinto/action-automatic-releases@v1.2.1
