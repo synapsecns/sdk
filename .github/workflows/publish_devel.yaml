@@ -37,21 +37,11 @@ jobs:
 
       - run: yarn run build
 
-      - name: Pack and sign dist tarball
-        run: |
-          yarn pack --filename ${{ steps.publish_setup.outputs.tarball-file }}
-          gpg --armor --detach-sign ${{ steps.publish_setup.outputs.tarball-file }}
-
-      - name: Create and publish GitHub release
-        uses: marvinpinto/action-automatic-releases@v1.2.1
+      - uses: ./.github/actions/publish-github-release
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          tarball-file: ${{ steps.publish_setup.outputs.tarball-file }}
           prerelease: true
-          files: |
-            ${{ steps.publish_setup.outputs.tarball-file }}
-            ${{ steps.publish_setup.outputs.tarball-file }}.asc
-            LICENSE
-            README.md
 
       - name: Publish to NPM
         run: yarn publish --non-interactive --tag ${{ steps.publish_setup.outputs.npm-tag }}
