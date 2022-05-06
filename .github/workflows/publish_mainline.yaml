@@ -27,6 +27,12 @@ jobs:
           TARBALL=synapseprotocol-sdk-${{ steps.git_tag.outputs.tag }}.tar.gz
           echo ::set-output name=filename::${TARBALL}
 
+      - name: Get node version from nvmrc
+        id: nvm_version
+        run: |
+          NVM_STR=$(cat .nvmrc)
+          echo ::set-output name=version::${NVM_STR}
+
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v4
@@ -41,7 +47,19 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           node-version-file: '.nvmrc'
 
+      - id: yarn_cache_dir
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v3
+        id: yarn_cache
+        with:
+          path: ${{ yarn_cache_dir.outputs.dir }}
+          key: ${{ runner.os }}-${{ steps.nvm_version.outputs.version }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.nvm_version.outputs.version }}-yarn-
+
       - run: yarn install --frozen-lockfile
+        if: steps.yarn_cache.outputs.cache-hit != 'true'
 
       - run: yarn run build
 
