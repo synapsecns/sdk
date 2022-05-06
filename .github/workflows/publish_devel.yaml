@@ -48,9 +48,7 @@ jobs:
 
       - name: Get node version from nvmrc
         id: nvm_version
-        run: |
-          NVM_STR=$(cat .nvmrc)
-          echo ::set-output name=version::${NVM_STR}
+        run: echo ::set-output name=version::$(cat .nvmrc)
 
       - name: Import GPG key
         id: import_gpg
@@ -66,13 +64,13 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           node-version-file: '.nvmrc'
 
-      - id: yarn_cache_dir
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - id: cache_dir
+        run: echo ::set-output name=dir::$(yarn cache dir)
 
       - uses: actions/cache@v3
         id: yarn_cache
         with:
-          path: ${{ yarn_cache_dir.outputs.dir }}
+          path: ${{ steps.cache_dir.outputs.dir }}
           key: ${{ runner.os }}-${{ steps.nvm_version.outputs.version }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ steps.nvm_version.outputs.version }}-yarn-
