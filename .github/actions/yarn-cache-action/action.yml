@@ -1,0 +1,37 @@
+name: "Yarn Cache"
+description: "Load cached node_modules"
+
+inputs:
+  node-version:
+    required: true
+    description: "NodeJS Version"
+  platform:
+    required: false
+    description: "Tun platform"
+    default: "ubuntu-latest"
+
+outputs:
+  cache-hit:
+    description: "Was cache hit?"
+    value: ${{ steps.yarn_cache.outputs.cache-hit }}
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+
+    - id: cache_dir
+      shell: "bash"
+      run: echo ::set-output name=dir::$(yarn cache dir)
+
+    - uses: actions/cache@v3
+      id: yarn_cache
+      with:
+        path: ${{ steps.cache_dir.outputs.dir }}
+        key: ${{ runner.os }}-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ matrix.node-version }}-yarn-
+
+    - run: yarn install
+      shell: "bash"
+      if: steps.yarn_cache.outputs.cache-hit != 'true'
