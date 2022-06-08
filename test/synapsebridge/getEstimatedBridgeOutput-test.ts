@@ -29,6 +29,7 @@ import {formatUnits} from "@ethersproject/units";
 import {BigNumber}   from "@ethersproject/bignumber";
 import {expect} from "chai";
 import {Zero} from "@ethersproject/constants";
+import {step} from "mocha-steps";
 
 
 describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.Suite) {
@@ -238,13 +239,16 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         makeTestCase(Tokens.DAI,         Tokens.USDC,      ChainId.BOBA,        ChainId.OPTIMISM),
         makeTestCase(Tokens.DFKTEARS,    Tokens.DFKTEARS,  ChainId.HARMONY,     ChainId.DFK,     undefined, zeroEstimate, returnsError),
         makeTestCase(Tokens.DFKTEARS,    Tokens.DFKTEARS,  ChainId.DFK,         ChainId.HARMONY, undefined, zeroEstimate, returnsError),
+        makeTestCase(Tokens.H20,         Tokens.H20,       ChainId.ETH,         ChainId.POLYGON),
+        makeTestCase(Tokens.H20,         Tokens.H20,       ChainId.POLYGON,     ChainId.ETH),
+        makeTestCase(Tokens.H20,         Tokens.H20,       ChainId.ETH,         ChainId.HARMONY, undefined, zeroEstimate, returnsError),
     ].forEach((tc: TestCase) => {
         const [describeTitle, bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc)
 
         describe(describeTitle, function(this: Mocha.Suite) {
             let amountTo: BigNumber;
 
-            it(bridgeOutputTestTitle, async function(this: Mocha.Context) {
+            step(bridgeOutputTestTitle, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT)
 
                 let {args: { chainIdFrom, ...testArgs }, expected: {notZero, wantError}} = tc;

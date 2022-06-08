@@ -536,7 +536,8 @@ export namespace SwapPools {
         DFK_USDC_Pool   = makeSingleTokenPool(Tokens.DFK_USDC),
         XJEWEL_Pool     = makeSingleTokenPool(Tokens.XJEWEL),
         DFKTEARS_Pool   = makeSingleTokenPool(Tokens.DFKTEARS),
-        VSTA_Pool       = makeSingleTokenPool(Tokens.VSTA);
+        VSTA_Pool       = makeSingleTokenPool(Tokens.VSTA),
+        H20_Pool        = makeSingleTokenPool(Tokens.H20);
 
     const
         AVAX_JEWEL_Pool:    LPToken = {poolTokens: [Tokens.JEWEL, Tokens.MULTIJEWEL], swapType: SwapType.JEWEL},
@@ -612,6 +613,7 @@ export namespace SwapPools {
             SDT_Pool,
             USDB_Pool,
             VSTA_Pool,
+            H20_Pool,
         ),
         [ChainId.OPTIMISM]: makeSwapTypeMap(
             {
@@ -642,6 +644,7 @@ export namespace SwapPools {
             NFD_Pool,
             DOG_Pool,
             USDB_Pool,
+            H20_Pool,
         ),
         [ChainId.FANTOM]: makeSwapTypeMap(
             {

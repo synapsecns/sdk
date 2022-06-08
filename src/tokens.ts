@@ -677,6 +677,17 @@ export namespace Tokens {
         swapType: SwapType.VSTA
     });
 
+    export const H20 = new BaseToken({
+       name: "H20",
+       symbol: "H20",
+       decimals: 18,
+       addresses: {
+           [ChainId.ETH]:     "0x0642026e7f0b6ccac5925b4e7fa61384250e1701",
+           [ChainId.POLYGON]: "0xC5248Aa0629C0b2d6A02834a5f172937Ac83CBD3"
+       },
+        swapType: SwapType.H20
+    });
+
     export const mintBurnTokens: Token[] = [
         NUSD,      SYN,        NETH,
         HIGH,      DOG,        JUMP,
@@ -686,7 +697,7 @@ export namespace Tokens {
         LUNA,      USDB,       SYN_AVAX,
         GAS_JEWEL, JEWEL,      SYN_JEWEL,
         XJEWEL,    MULTIJEWEL, DFK_USDC,
-        VSTA
+        VSTA,      H20,
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
