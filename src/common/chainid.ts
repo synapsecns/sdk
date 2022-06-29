@@ -47,10 +47,4 @@ export const EIP1559Chains: ChainIdTypeMap<boolean> = {
     [ChainId.HARMONY]:   false,
 } as const;
 
-export function chainSupportsEIP1559(chainId: number): boolean {
-    if (chainId in EIP1559Chains) {
-        return EIP1559Chains[chainId]
-    }
-
-    return false
-}
+export function chainSupportsEIP1559(chainId: number): boolean { return chainId in EIP1559Chains ? EIP1559Chains[chainId] : false }
