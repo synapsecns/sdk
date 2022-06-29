@@ -25,6 +25,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "./common";
 
 export interface SynapseBridgeInterface extends utils.Interface {
@@ -114,15 +115,21 @@ export interface SynapseBridgeInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
-  encodeFunctionData(functionFragment: "changeAdmin", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "changeAdmin",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "implementation",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "upgradeTo",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
-    values: [string, BytesLike]
+    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
@@ -142,7 +149,7 @@ export interface SynapseBridgeInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addKappas",
-    values: [BytesLike[]]
+    values: [PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "bridgeVersion",
@@ -154,44 +161,49 @@ export interface SynapseBridgeInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "deposit",
-    values: [string, BigNumberish, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "depositAndSwap",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "getFeeBalance",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
-    values: [BytesLike]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleMember",
-    values: [BytesLike, BigNumberish]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleMemberCount",
-    values: [BytesLike]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
-    values: [BytesLike, string]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
-    values: [BytesLike, string]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
@@ -199,77 +211,93 @@ export interface SynapseBridgeInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "kappaExists",
-    values: [BytesLike]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [string, string, BigNumberish, BigNumberish, BytesLike]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "mintAndSwap",
     values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BytesLike
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "redeem",
-    values: [string, BigNumberish, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "redeemAndRemove",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "redeemAndSwap",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "redeemV2",
-    values: [BytesLike, BigNumberish, string, BigNumberish]
+    values: [
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
-    values: [BytesLike, string]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
-    values: [BytesLike, string]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setChainGasAmount",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setWethAddress",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "startBlockNumber",
@@ -278,25 +306,31 @@ export interface SynapseBridgeInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "withdraw",
-    values: [string, string, BigNumberish, BigNumberish, BytesLike]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawAndRemove",
     values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BytesLike
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawFees",
-    values: [string, string]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
@@ -730,39 +764,39 @@ export interface SynapseBridge extends BaseContract {
      * Returns the current admin.  NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyAdmin}.  TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call. `0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103`
      */
     admin(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
      * Changes the admin of the proxy.  Emits an {AdminChanged} event.  NOTE: Only the admin can call this function. See {ProxyAdmin-changeProxyAdmin}.
      */
     changeAdmin(
-      newAdmin: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdmin: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
      * Returns the current implementation.  NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyImplementation}.  TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call. `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`
      */
     implementation(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
      * Upgrade the implementation of the proxy.  NOTE: Only the admin can call this function. See {ProxyAdmin-upgrade}.
      */
     upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
      * Upgrade the implementation of the proxy, and then call a function from the new implementation as specified by `data`, which should be an encoded function call. This is useful to initialize new storage variables in the proxied contract.  NOTE: Only the admin can call this function. See {ProxyAdmin-upgradeAndCall}.
      */
     upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
@@ -774,8 +808,8 @@ export interface SynapseBridge extends BaseContract {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
 
     addKappas(
-      kappas: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      kappas: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     bridgeVersion(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -783,186 +817,189 @@ export interface SynapseBridge extends BaseContract {
     chainGasAmount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     deposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     depositAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getFeeBalance(
-      tokenAddress: string,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     getRoleMember(
-      role: BytesLike,
-      index: BigNumberish,
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     getRoleMemberCount(
-      role: BytesLike,
+      role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     hasRole(
-      role: BytesLike,
-      account: string,
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     initialize(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     kappaExists(
-      kappa: BytesLike,
+      kappa: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     mint(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      kappa: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     mintAndSwap(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      pool: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      kappa: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      pool: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
     redeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     redeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      swapTokenIndex: BigNumberish,
-      swapMinAmount: BigNumberish,
-      swapDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      swapTokenIndex: PromiseOrValue<BigNumberish>,
+      swapMinAmount: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     redeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     redeemV2(
-      to: BytesLike,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<BytesLike>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setChainGasAmount(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setWethAddress(
-      _wethAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _wethAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     startBlockNumber(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     withdraw(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      kappa: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     withdrawAndRemove(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      pool: string,
-      swapTokenIndex: BigNumberish,
-      swapMinAmount: BigNumberish,
-      swapDeadline: BigNumberish,
-      kappa: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      pool: PromiseOrValue<string>,
+      swapTokenIndex: PromiseOrValue<BigNumberish>,
+      swapMinAmount: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     withdrawFees(
-      token: string,
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      token: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
@@ -970,39 +1007,39 @@ export interface SynapseBridge extends BaseContract {
    * Returns the current admin.  NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyAdmin}.  TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call. `0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103`
    */
   admin(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
    * Changes the admin of the proxy.  Emits an {AdminChanged} event.  NOTE: Only the admin can call this function. See {ProxyAdmin-changeProxyAdmin}.
    */
   changeAdmin(
-    newAdmin: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newAdmin: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
    * Returns the current implementation.  NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyImplementation}.  TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call. `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`
    */
   implementation(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
    * Upgrade the implementation of the proxy.  NOTE: Only the admin can call this function. See {ProxyAdmin-upgrade}.
    */
   upgradeTo(
-    newImplementation: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newImplementation: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
    * Upgrade the implementation of the proxy, and then call a function from the new implementation as specified by `data`, which should be an encoded function call. This is useful to initialize new storage variables in the proxied contract.  NOTE: Only the admin can call this function. See {ProxyAdmin-upgradeAndCall}.
    */
   upgradeToAndCall(
-    newImplementation: string,
-    data: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    newImplementation: PromiseOrValue<string>,
+    data: PromiseOrValue<BytesLike>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -1014,8 +1051,8 @@ export interface SynapseBridge extends BaseContract {
   WETH_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
   addKappas(
-    kappas: BytesLike[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    kappas: PromiseOrValue<BytesLike>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   bridgeVersion(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1023,183 +1060,189 @@ export interface SynapseBridge extends BaseContract {
   chainGasAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
   deposit(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   depositAndSwap(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    minDy: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getFeeBalance(
-    tokenAddress: string,
+    tokenAddress: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+  getRoleAdmin(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getRoleMember(
-    role: BytesLike,
-    index: BigNumberish,
+    role: PromiseOrValue<BytesLike>,
+    index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   getRoleMemberCount(
-    role: BytesLike,
+    role: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   grantRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   hasRole(
-    role: BytesLike,
-    account: string,
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   initialize(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  kappaExists(kappa: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+  kappaExists(
+    kappa: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   mint(
-    to: string,
-    token: string,
-    amount: BigNumberish,
-    fee: BigNumberish,
-    kappa: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    fee: PromiseOrValue<BigNumberish>,
+    kappa: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   mintAndSwap(
-    to: string,
-    token: string,
-    amount: BigNumberish,
-    fee: BigNumberish,
-    pool: string,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    minDy: BigNumberish,
-    deadline: BigNumberish,
-    kappa: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    fee: PromiseOrValue<BigNumberish>,
+    pool: PromiseOrValue<string>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    kappa: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   pause(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
   redeem(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   redeemAndRemove(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    swapTokenIndex: BigNumberish,
-    swapMinAmount: BigNumberish,
-    swapDeadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    swapTokenIndex: PromiseOrValue<BigNumberish>,
+    swapMinAmount: PromiseOrValue<BigNumberish>,
+    swapDeadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   redeemAndSwap(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    minDy: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   redeemV2(
-    to: BytesLike,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<BytesLike>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   renounceRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   revokeRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setChainGasAmount(
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setWethAddress(
-    _wethAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _wethAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   startBlockNumber(overrides?: CallOverrides): Promise<BigNumber>;
 
   unpause(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   withdraw(
-    to: string,
-    token: string,
-    amount: BigNumberish,
-    fee: BigNumberish,
-    kappa: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    fee: PromiseOrValue<BigNumberish>,
+    kappa: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   withdrawAndRemove(
-    to: string,
-    token: string,
-    amount: BigNumberish,
-    fee: BigNumberish,
-    pool: string,
-    swapTokenIndex: BigNumberish,
-    swapMinAmount: BigNumberish,
-    swapDeadline: BigNumberish,
-    kappa: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    fee: PromiseOrValue<BigNumberish>,
+    pool: PromiseOrValue<string>,
+    swapTokenIndex: PromiseOrValue<BigNumberish>,
+    swapMinAmount: PromiseOrValue<BigNumberish>,
+    swapDeadline: PromiseOrValue<BigNumberish>,
+    kappa: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   withdrawFees(
-    token: string,
-    to: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    token: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -1211,7 +1254,10 @@ export interface SynapseBridge extends BaseContract {
     /**
      * Changes the admin of the proxy.  Emits an {AdminChanged} event.  NOTE: Only the admin can call this function. See {ProxyAdmin-changeProxyAdmin}.
      */
-    changeAdmin(newAdmin: string, overrides?: CallOverrides): Promise<void>;
+    changeAdmin(
+      newAdmin: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     /**
      * Returns the current implementation.  NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyImplementation}.  TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call. `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`
@@ -1222,7 +1268,7 @@ export interface SynapseBridge extends BaseContract {
      * Upgrade the implementation of the proxy.  NOTE: Only the admin can call this function. See {ProxyAdmin-upgrade}.
      */
     upgradeTo(
-      newImplementation: string,
+      newImplementation: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1230,8 +1276,8 @@ export interface SynapseBridge extends BaseContract {
      * Upgrade the implementation of the proxy, and then call a function from the new implementation as specified by `data`, which should be an encoded function call. This is useful to initialize new storage variables in the proxied contract.  NOTE: Only the admin can call this function. See {ProxyAdmin-upgradeAndCall}.
      */
     upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1243,86 +1289,95 @@ export interface SynapseBridge extends BaseContract {
 
     WETH_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
-    addKappas(kappas: BytesLike[], overrides?: CallOverrides): Promise<void>;
+    addKappas(
+      kappas: PromiseOrValue<BytesLike>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     bridgeVersion(overrides?: CallOverrides): Promise<BigNumber>;
 
     chainGasAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
     deposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     depositAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     getFeeBalance(
-      tokenAddress: string,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getRoleMember(
-      role: BytesLike,
-      index: BigNumberish,
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     getRoleMemberCount(
-      role: BytesLike,
+      role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     grantRole(
-      role: BytesLike,
-      account: string,
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     hasRole(
-      role: BytesLike,
-      account: string,
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     initialize(overrides?: CallOverrides): Promise<void>;
 
-    kappaExists(kappa: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+    kappaExists(
+      kappa: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     mint(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      kappa: BytesLike,
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     mintAndSwap(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      pool: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      kappa: BytesLike,
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      pool: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1331,63 +1386,63 @@ export interface SynapseBridge extends BaseContract {
     paused(overrides?: CallOverrides): Promise<boolean>;
 
     redeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     redeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      swapTokenIndex: BigNumberish,
-      swapMinAmount: BigNumberish,
-      swapDeadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      swapTokenIndex: PromiseOrValue<BigNumberish>,
+      swapMinAmount: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     redeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     redeemV2(
-      to: BytesLike,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
+      to: PromiseOrValue<BytesLike>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     renounceRole(
-      role: BytesLike,
-      account: string,
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     revokeRole(
-      role: BytesLike,
-      account: string,
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setChainGasAmount(
-      amount: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setWethAddress(
-      _wethAddress: string,
+      _wethAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1396,30 +1451,30 @@ export interface SynapseBridge extends BaseContract {
     unpause(overrides?: CallOverrides): Promise<void>;
 
     withdraw(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      kappa: BytesLike,
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     withdrawAndRemove(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      pool: string,
-      swapTokenIndex: BigNumberish,
-      swapMinAmount: BigNumberish,
-      swapDeadline: BigNumberish,
-      kappa: BytesLike,
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      pool: PromiseOrValue<string>,
+      swapTokenIndex: PromiseOrValue<BigNumberish>,
+      swapMinAmount: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     withdrawFees(
-      token: string,
-      to: string,
+      token: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -1434,60 +1489,64 @@ export interface SynapseBridge extends BaseContract {
       newAdmin?: null
     ): AdminChangedEventFilter;
 
-    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
-    Upgraded(implementation?: string | null): UpgradedEventFilter;
+    "Upgraded(address)"(
+      implementation?: PromiseOrValue<string> | null
+    ): UpgradedEventFilter;
+    Upgraded(
+      implementation?: PromiseOrValue<string> | null
+    ): UpgradedEventFilter;
 
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
     ): RoleAdminChangedEventFilter;
     RoleAdminChanged(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
     ): RoleAdminChangedEventFilter;
 
     "RoleGranted(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
     ): RoleGrantedEventFilter;
     RoleGranted(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
     ): RoleGrantedEventFilter;
 
     "RoleRevoked(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
     RoleRevoked(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
 
     "TokenDeposit(address,uint256,address,uint256)"(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       chainId?: null,
       token?: null,
       amount?: null
     ): TokenDepositEventFilter;
     TokenDeposit(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       chainId?: null,
       token?: null,
       amount?: null
     ): TokenDepositEventFilter;
 
     "TokenDepositAndSwap(address,uint256,address,uint256,uint8,uint8,uint256,uint256)"(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       chainId?: null,
       token?: null,
       amount?: null,
@@ -1497,7 +1556,7 @@ export interface SynapseBridge extends BaseContract {
       deadline?: null
     ): TokenDepositAndSwapEventFilter;
     TokenDepositAndSwap(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       chainId?: null,
       token?: null,
       amount?: null,
@@ -1508,22 +1567,22 @@ export interface SynapseBridge extends BaseContract {
     ): TokenDepositAndSwapEventFilter;
 
     "TokenMint(address,address,uint256,uint256,bytes32)"(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       token?: null,
       amount?: null,
       fee?: null,
-      kappa?: BytesLike | null
+      kappa?: PromiseOrValue<BytesLike> | null
     ): TokenMintEventFilter;
     TokenMint(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       token?: null,
       amount?: null,
       fee?: null,
-      kappa?: BytesLike | null
+      kappa?: PromiseOrValue<BytesLike> | null
     ): TokenMintEventFilter;
 
     "TokenMintAndSwap(address,address,uint256,uint256,uint8,uint8,uint256,uint256,bool,bytes32)"(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       token?: null,
       amount?: null,
       fee?: null,
@@ -1532,10 +1591,10 @@ export interface SynapseBridge extends BaseContract {
       minDy?: null,
       deadline?: null,
       swapSuccess?: null,
-      kappa?: BytesLike | null
+      kappa?: PromiseOrValue<BytesLike> | null
     ): TokenMintAndSwapEventFilter;
     TokenMintAndSwap(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       token?: null,
       amount?: null,
       fee?: null,
@@ -1544,24 +1603,24 @@ export interface SynapseBridge extends BaseContract {
       minDy?: null,
       deadline?: null,
       swapSuccess?: null,
-      kappa?: BytesLike | null
+      kappa?: PromiseOrValue<BytesLike> | null
     ): TokenMintAndSwapEventFilter;
 
     "TokenRedeem(address,uint256,address,uint256)"(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       chainId?: null,
       token?: null,
       amount?: null
     ): TokenRedeemEventFilter;
     TokenRedeem(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       chainId?: null,
       token?: null,
       amount?: null
     ): TokenRedeemEventFilter;
 
     "TokenRedeemAndRemove(address,uint256,address,uint256,uint8,uint256,uint256)"(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       chainId?: null,
       token?: null,
       amount?: null,
@@ -1570,7 +1629,7 @@ export interface SynapseBridge extends BaseContract {
       swapDeadline?: null
     ): TokenRedeemAndRemoveEventFilter;
     TokenRedeemAndRemove(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       chainId?: null,
       token?: null,
       amount?: null,
@@ -1580,7 +1639,7 @@ export interface SynapseBridge extends BaseContract {
     ): TokenRedeemAndRemoveEventFilter;
 
     "TokenRedeemAndSwap(address,uint256,address,uint256,uint8,uint8,uint256,uint256)"(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       chainId?: null,
       token?: null,
       amount?: null,
@@ -1590,7 +1649,7 @@ export interface SynapseBridge extends BaseContract {
       deadline?: null
     ): TokenRedeemAndSwapEventFilter;
     TokenRedeemAndSwap(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       chainId?: null,
       token?: null,
       amount?: null,
@@ -1601,35 +1660,35 @@ export interface SynapseBridge extends BaseContract {
     ): TokenRedeemAndSwapEventFilter;
 
     "TokenRedeemV2(bytes32,uint256,address,uint256)"(
-      to?: BytesLike | null,
+      to?: PromiseOrValue<BytesLike> | null,
       chainId?: null,
       token?: null,
       amount?: null
     ): TokenRedeemV2EventFilter;
     TokenRedeemV2(
-      to?: BytesLike | null,
+      to?: PromiseOrValue<BytesLike> | null,
       chainId?: null,
       token?: null,
       amount?: null
     ): TokenRedeemV2EventFilter;
 
     "TokenWithdraw(address,address,uint256,uint256,bytes32)"(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       token?: null,
       amount?: null,
       fee?: null,
-      kappa?: BytesLike | null
+      kappa?: PromiseOrValue<BytesLike> | null
     ): TokenWithdrawEventFilter;
     TokenWithdraw(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       token?: null,
       amount?: null,
       fee?: null,
-      kappa?: BytesLike | null
+      kappa?: PromiseOrValue<BytesLike> | null
     ): TokenWithdrawEventFilter;
 
     "TokenWithdrawAndRemove(address,address,uint256,uint256,uint8,uint256,uint256,bool,bytes32)"(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       token?: null,
       amount?: null,
       fee?: null,
@@ -1637,10 +1696,10 @@ export interface SynapseBridge extends BaseContract {
       swapMinAmount?: null,
       swapDeadline?: null,
       swapSuccess?: null,
-      kappa?: BytesLike | null
+      kappa?: PromiseOrValue<BytesLike> | null
     ): TokenWithdrawAndRemoveEventFilter;
     TokenWithdrawAndRemove(
-      to?: string | null,
+      to?: PromiseOrValue<string> | null,
       token?: null,
       amount?: null,
       fee?: null,
@@ -1648,7 +1707,7 @@ export interface SynapseBridge extends BaseContract {
       swapMinAmount?: null,
       swapDeadline?: null,
       swapSuccess?: null,
-      kappa?: BytesLike | null
+      kappa?: PromiseOrValue<BytesLike> | null
     ): TokenWithdrawAndRemoveEventFilter;
 
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
@@ -1660,39 +1719,39 @@ export interface SynapseBridge extends BaseContract {
      * Returns the current admin.  NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyAdmin}.  TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call. `0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103`
      */
     admin(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
      * Changes the admin of the proxy.  Emits an {AdminChanged} event.  NOTE: Only the admin can call this function. See {ProxyAdmin-changeProxyAdmin}.
      */
     changeAdmin(
-      newAdmin: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdmin: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
      * Returns the current implementation.  NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyImplementation}.  TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call. `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`
      */
     implementation(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
      * Upgrade the implementation of the proxy.  NOTE: Only the admin can call this function. See {ProxyAdmin-upgrade}.
      */
     upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
      * Upgrade the implementation of the proxy, and then call a function from the new implementation as specified by `data`, which should be an encoded function call. This is useful to initialize new storage variables in the proxied contract.  NOTE: Only the admin can call this function. See {ProxyAdmin-upgradeAndCall}.
      */
     upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1704,8 +1763,8 @@ export interface SynapseBridge extends BaseContract {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
 
     addKappas(
-      kappas: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      kappas: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     bridgeVersion(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1713,189 +1772,189 @@ export interface SynapseBridge extends BaseContract {
     chainGasAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
     deposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     depositAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getFeeBalance(
-      tokenAddress: string,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getRoleAdmin(
-      role: BytesLike,
+      role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getRoleMember(
-      role: BytesLike,
-      index: BigNumberish,
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getRoleMemberCount(
-      role: BytesLike,
+      role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     hasRole(
-      role: BytesLike,
-      account: string,
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     initialize(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     kappaExists(
-      kappa: BytesLike,
+      kappa: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     mint(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      kappa: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     mintAndSwap(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      pool: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      kappa: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      pool: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
     redeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     redeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      swapTokenIndex: BigNumberish,
-      swapMinAmount: BigNumberish,
-      swapDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      swapTokenIndex: PromiseOrValue<BigNumberish>,
+      swapMinAmount: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     redeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     redeemV2(
-      to: BytesLike,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<BytesLike>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setChainGasAmount(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setWethAddress(
-      _wethAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _wethAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     startBlockNumber(overrides?: CallOverrides): Promise<BigNumber>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     withdraw(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      kappa: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     withdrawAndRemove(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      pool: string,
-      swapTokenIndex: BigNumberish,
-      swapMinAmount: BigNumberish,
-      swapDeadline: BigNumberish,
-      kappa: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      pool: PromiseOrValue<string>,
+      swapTokenIndex: PromiseOrValue<BigNumberish>,
+      swapMinAmount: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     withdrawFees(
-      token: string,
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      token: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -1904,39 +1963,39 @@ export interface SynapseBridge extends BaseContract {
      * Returns the current admin.  NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyAdmin}.  TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call. `0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103`
      */
     admin(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
      * Changes the admin of the proxy.  Emits an {AdminChanged} event.  NOTE: Only the admin can call this function. See {ProxyAdmin-changeProxyAdmin}.
      */
     changeAdmin(
-      newAdmin: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdmin: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
      * Returns the current implementation.  NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyImplementation}.  TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call. `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`
      */
     implementation(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
      * Upgrade the implementation of the proxy.  NOTE: Only the admin can call this function. See {ProxyAdmin-upgrade}.
      */
     upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
      * Upgrade the implementation of the proxy, and then call a function from the new implementation as specified by `data`, which should be an encoded function call. This is useful to initialize new storage variables in the proxied contract.  NOTE: Only the admin can call this function. See {ProxyAdmin-upgradeAndCall}.
      */
     upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     DEFAULT_ADMIN_ROLE(
@@ -1950,8 +2009,8 @@ export interface SynapseBridge extends BaseContract {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     addKappas(
-      kappas: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      kappas: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     bridgeVersion(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1959,189 +2018,189 @@ export interface SynapseBridge extends BaseContract {
     chainGasAmount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     deposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     depositAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getFeeBalance(
-      tokenAddress: string,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
-      role: BytesLike,
+      role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getRoleMember(
-      role: BytesLike,
-      index: BigNumberish,
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getRoleMemberCount(
-      role: BytesLike,
+      role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     hasRole(
-      role: BytesLike,
-      account: string,
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     kappaExists(
-      kappa: BytesLike,
+      kappa: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     mint(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      kappa: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     mintAndSwap(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      pool: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      kappa: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      pool: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     redeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     redeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      swapTokenIndex: BigNumberish,
-      swapMinAmount: BigNumberish,
-      swapDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      swapTokenIndex: PromiseOrValue<BigNumberish>,
+      swapMinAmount: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     redeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     redeemV2(
-      to: BytesLike,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<BytesLike>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setChainGasAmount(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setWethAddress(
-      _wethAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _wethAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     startBlockNumber(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     withdraw(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      kappa: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     withdrawAndRemove(
-      to: string,
-      token: string,
-      amount: BigNumberish,
-      fee: BigNumberish,
-      pool: string,
-      swapTokenIndex: BigNumberish,
-      swapMinAmount: BigNumberish,
-      swapDeadline: BigNumberish,
-      kappa: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      fee: PromiseOrValue<BigNumberish>,
+      pool: PromiseOrValue<string>,
+      swapTokenIndex: PromiseOrValue<BigNumberish>,
+      swapMinAmount: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      kappa: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     withdrawFees(
-      token: string,
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      token: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

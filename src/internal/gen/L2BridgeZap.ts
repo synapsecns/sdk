@@ -21,6 +21,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "./common";
 
 export interface L2BridgeZapInterface extends utils.Interface {
@@ -69,141 +70,168 @@ export interface L2BridgeZapInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "calculateSwap",
-    values: [string, BigNumberish, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "deposit",
-    values: [string, BigNumberish, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "depositETH",
-    values: [string, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "depositETHAndSwap",
     values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "redeem",
-    values: [string, BigNumberish, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "redeemAndRemove",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "redeemAndSwap",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "redeemv2",
-    values: [BytesLike, BigNumberish, string, BigNumberish]
+    values: [
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "swapAndRedeem",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "swapAndRedeemAndRemove",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "swapAndRedeemAndSwap",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "swapETHAndRedeem",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "swapETHAndRedeemAndSwap",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
-  encodeFunctionData(functionFragment: "swapMap", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "swapMap",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "swapTokensMap",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
@@ -288,465 +316,666 @@ export interface L2BridgeZap extends BaseContract {
   functions: {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
 
+    /**
+     * Calculate amount of tokens you receive on swap
+     * @param dx the amount of tokens the user wants to sell. If the token charges a fee on transfers, use the amount that gets transferred after the fee.
+     * @param tokenIndexFrom the token the user wants to sell
+     * @param tokenIndexTo the token the user wants to buy
+     */
     calculateSwap(
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    /**
+     * wraps SynapseBridge redeem()
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which underlying chain to bridge assets onto
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
     deposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    /**
+     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     */
     depositETH(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    /**
+     * Wraps SynapseBridge depositAndSwap() function to make it compatible w/ ETH -> WETH conversions
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
+     * @param chainId which chain to bridge assets onto
+     * @param deadline latest timestamp to accept this transaction*
+     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
+     * @param to address on other chain to bridge assets to
+     * @param tokenIndexFrom the token the user wants to swap from
+     * @param tokenIndexTo the token the user wants to swap to
+     */
     depositETHAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    /**
+     * wraps SynapseBridge redeem()
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which underlying chain to bridge assets onto
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
     redeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    /**
+     * Wraps redeemAndRemove on SynapseBridge Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
+     * @param amount Amount of (typically) LP token to pass to the nodes to attempt to removeLiquidity() with to redeem for the underlying assets of the LP token
+     * @param chainId which underlying chain to bridge assets onto
+     * @param liqDeadline Specificies the deadline that the nodes are allowed to try to redeem/swap the LP token*
+     * @param liqMinAmount Specifies the minimum amount of the underlying asset needed for the nodes to execute the redeem/swap
+     * @param liqTokenIndex Specifies which of the underlying LP assets the nodes should attempt to redeem for
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
     redeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      liqTokenIndex: BigNumberish,
-      liqMinAmount: BigNumberish,
-      liqDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      liqTokenIndex: PromiseOrValue<BigNumberish>,
+      liqMinAmount: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    /**
+     * Wraps redeemAndSwap on SynapseBridge.sol Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
+     * @param chainId which underlying chain to bridge assets onto
+     * @param deadline latest timestamp to accept this transaction*
+     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     * @param tokenIndexFrom the token the user wants to swap from
+     * @param tokenIndexTo the token the user wants to swap to
+     */
     redeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    /**
+     * Wraps SynapseBridge redeemv2() function
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     * @param token ERC20 compatible token to redeem into the bridge
+     */
     redeemv2(
-      to: BytesLike,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<BytesLike>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     swapAndRedeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     swapAndRedeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      liqTokenIndex: BigNumberish,
-      liqMinAmount: BigNumberish,
-      liqDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      liqTokenIndex: PromiseOrValue<BigNumberish>,
+      liqMinAmount: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     swapAndRedeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      swapTokenIndexFrom: BigNumberish,
-      swapTokenIndexTo: BigNumberish,
-      swapMinDy: BigNumberish,
-      swapDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      swapTokenIndexFrom: PromiseOrValue<BigNumberish>,
+      swapTokenIndexTo: PromiseOrValue<BigNumberish>,
+      swapMinDy: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     swapETHAndRedeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     swapETHAndRedeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      swapTokenIndexFrom: BigNumberish,
-      swapTokenIndexTo: BigNumberish,
-      swapMinDy: BigNumberish,
-      swapDeadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      swapTokenIndexFrom: PromiseOrValue<BigNumberish>,
+      swapTokenIndexTo: PromiseOrValue<BigNumberish>,
+      swapMinDy: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    swapMap(arg0: string, overrides?: CallOverrides): Promise<[string]>;
+    swapMap(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     swapTokensMap(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
   };
 
   WETH_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
+  /**
+   * Calculate amount of tokens you receive on swap
+   * @param dx the amount of tokens the user wants to sell. If the token charges a fee on transfers, use the amount that gets transferred after the fee.
+   * @param tokenIndexFrom the token the user wants to sell
+   * @param tokenIndexTo the token the user wants to buy
+   */
   calculateSwap(
-    token: string,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    dx: BigNumberish,
+    token: PromiseOrValue<string>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    dx: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  /**
+   * wraps SynapseBridge redeem()
+   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+   * @param chainId which underlying chain to bridge assets onto
+   * @param to address on other chain to redeem underlying assets to
+   * @param token ERC20 compatible token to deposit into the bridge
+   */
   deposit(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  /**
+   * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
+   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+   * @param chainId which chain to bridge assets onto
+   * @param to address on other chain to bridge assets to
+   */
   depositETH(
-    to: string,
-    chainId: BigNumberish,
-    amount: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  /**
+   * Wraps SynapseBridge depositAndSwap() function to make it compatible w/ ETH -> WETH conversions
+   * @param amount Amount in native token decimals to transfer cross-chain pre-fees
+   * @param chainId which chain to bridge assets onto
+   * @param deadline latest timestamp to accept this transaction*
+   * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
+   * @param to address on other chain to bridge assets to
+   * @param tokenIndexFrom the token the user wants to swap from
+   * @param tokenIndexTo the token the user wants to swap to
+   */
   depositETHAndSwap(
-    to: string,
-    chainId: BigNumberish,
-    amount: BigNumberish,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    minDy: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    amount: PromiseOrValue<BigNumberish>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  /**
+   * wraps SynapseBridge redeem()
+   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+   * @param chainId which underlying chain to bridge assets onto
+   * @param to address on other chain to redeem underlying assets to
+   * @param token ERC20 compatible token to deposit into the bridge
+   */
   redeem(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  /**
+   * Wraps redeemAndRemove on SynapseBridge Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
+   * @param amount Amount of (typically) LP token to pass to the nodes to attempt to removeLiquidity() with to redeem for the underlying assets of the LP token
+   * @param chainId which underlying chain to bridge assets onto
+   * @param liqDeadline Specificies the deadline that the nodes are allowed to try to redeem/swap the LP token*
+   * @param liqMinAmount Specifies the minimum amount of the underlying asset needed for the nodes to execute the redeem/swap
+   * @param liqTokenIndex Specifies which of the underlying LP assets the nodes should attempt to redeem for
+   * @param to address on other chain to redeem underlying assets to
+   * @param token ERC20 compatible token to deposit into the bridge
+   */
   redeemAndRemove(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    liqTokenIndex: BigNumberish,
-    liqMinAmount: BigNumberish,
-    liqDeadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    liqTokenIndex: PromiseOrValue<BigNumberish>,
+    liqMinAmount: PromiseOrValue<BigNumberish>,
+    liqDeadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  /**
+   * Wraps redeemAndSwap on SynapseBridge.sol Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
+   * @param amount Amount in native token decimals to transfer cross-chain pre-fees
+   * @param chainId which underlying chain to bridge assets onto
+   * @param deadline latest timestamp to accept this transaction*
+   * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
+   * @param to address on other chain to redeem underlying assets to
+   * @param token ERC20 compatible token to deposit into the bridge
+   * @param tokenIndexFrom the token the user wants to swap from
+   * @param tokenIndexTo the token the user wants to swap to
+   */
   redeemAndSwap(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    minDy: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  /**
+   * Wraps SynapseBridge redeemv2() function
+   * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+   * @param chainId which chain to bridge assets onto
+   * @param to address on other chain to bridge assets to
+   * @param token ERC20 compatible token to redeem into the bridge
+   */
   redeemv2(
-    to: BytesLike,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<BytesLike>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   swapAndRedeem(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    dx: BigNumberish,
-    minDy: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    dx: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   swapAndRedeemAndRemove(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    dx: BigNumberish,
-    minDy: BigNumberish,
-    deadline: BigNumberish,
-    liqTokenIndex: BigNumberish,
-    liqMinAmount: BigNumberish,
-    liqDeadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    dx: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    liqTokenIndex: PromiseOrValue<BigNumberish>,
+    liqMinAmount: PromiseOrValue<BigNumberish>,
+    liqDeadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   swapAndRedeemAndSwap(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    dx: BigNumberish,
-    minDy: BigNumberish,
-    deadline: BigNumberish,
-    swapTokenIndexFrom: BigNumberish,
-    swapTokenIndexTo: BigNumberish,
-    swapMinDy: BigNumberish,
-    swapDeadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    dx: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    swapTokenIndexFrom: PromiseOrValue<BigNumberish>,
+    swapTokenIndexTo: PromiseOrValue<BigNumberish>,
+    swapMinDy: PromiseOrValue<BigNumberish>,
+    swapDeadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   swapETHAndRedeem(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    dx: BigNumberish,
-    minDy: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    dx: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   swapETHAndRedeemAndSwap(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    dx: BigNumberish,
-    minDy: BigNumberish,
-    deadline: BigNumberish,
-    swapTokenIndexFrom: BigNumberish,
-    swapTokenIndexTo: BigNumberish,
-    swapMinDy: BigNumberish,
-    swapDeadline: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    dx: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    swapTokenIndexFrom: PromiseOrValue<BigNumberish>,
+    swapTokenIndexTo: PromiseOrValue<BigNumberish>,
+    swapMinDy: PromiseOrValue<BigNumberish>,
+    swapDeadline: PromiseOrValue<BigNumberish>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  swapMap(arg0: string, overrides?: CallOverrides): Promise<string>;
+  swapMap(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   swapTokensMap(
-    arg0: string,
-    arg1: BigNumberish,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   callStatic: {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
+    /**
+     * Calculate amount of tokens you receive on swap
+     * @param dx the amount of tokens the user wants to sell. If the token charges a fee on transfers, use the amount that gets transferred after the fee.
+     * @param tokenIndexFrom the token the user wants to sell
+     * @param tokenIndexTo the token the user wants to buy
+     */
     calculateSwap(
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    /**
+     * wraps SynapseBridge redeem()
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which underlying chain to bridge assets onto
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
     deposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
+    /**
+     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     */
     depositETH(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
+    /**
+     * Wraps SynapseBridge depositAndSwap() function to make it compatible w/ ETH -> WETH conversions
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
+     * @param chainId which chain to bridge assets onto
+     * @param deadline latest timestamp to accept this transaction*
+     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
+     * @param to address on other chain to bridge assets to
+     * @param tokenIndexFrom the token the user wants to swap from
+     * @param tokenIndexTo the token the user wants to swap to
+     */
     depositETHAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
+    /**
+     * wraps SynapseBridge redeem()
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which underlying chain to bridge assets onto
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
     redeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
+    /**
+     * Wraps redeemAndRemove on SynapseBridge Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
+     * @param amount Amount of (typically) LP token to pass to the nodes to attempt to removeLiquidity() with to redeem for the underlying assets of the LP token
+     * @param chainId which underlying chain to bridge assets onto
+     * @param liqDeadline Specificies the deadline that the nodes are allowed to try to redeem/swap the LP token*
+     * @param liqMinAmount Specifies the minimum amount of the underlying asset needed for the nodes to execute the redeem/swap
+     * @param liqTokenIndex Specifies which of the underlying LP assets the nodes should attempt to redeem for
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
     redeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      liqTokenIndex: BigNumberish,
-      liqMinAmount: BigNumberish,
-      liqDeadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      liqTokenIndex: PromiseOrValue<BigNumberish>,
+      liqMinAmount: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
+    /**
+     * Wraps redeemAndSwap on SynapseBridge.sol Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
+     * @param chainId which underlying chain to bridge assets onto
+     * @param deadline latest timestamp to accept this transaction*
+     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     * @param tokenIndexFrom the token the user wants to swap from
+     * @param tokenIndexTo the token the user wants to swap to
+     */
     redeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
+    /**
+     * Wraps SynapseBridge redeemv2() function
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     * @param token ERC20 compatible token to redeem into the bridge
+     */
     redeemv2(
-      to: BytesLike,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
+      to: PromiseOrValue<BytesLike>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     swapAndRedeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     swapAndRedeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      liqTokenIndex: BigNumberish,
-      liqMinAmount: BigNumberish,
-      liqDeadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      liqTokenIndex: PromiseOrValue<BigNumberish>,
+      liqMinAmount: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     swapAndRedeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      swapTokenIndexFrom: BigNumberish,
-      swapTokenIndexTo: BigNumberish,
-      swapMinDy: BigNumberish,
-      swapDeadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      swapTokenIndexFrom: PromiseOrValue<BigNumberish>,
+      swapTokenIndexTo: PromiseOrValue<BigNumberish>,
+      swapMinDy: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     swapETHAndRedeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     swapETHAndRedeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      swapTokenIndexFrom: BigNumberish,
-      swapTokenIndexTo: BigNumberish,
-      swapMinDy: BigNumberish,
-      swapDeadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      swapTokenIndexFrom: PromiseOrValue<BigNumberish>,
+      swapTokenIndexTo: PromiseOrValue<BigNumberish>,
+      swapMinDy: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    swapMap(arg0: string, overrides?: CallOverrides): Promise<string>;
+    swapMap(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     swapTokensMap(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
   };
@@ -756,155 +985,222 @@ export interface L2BridgeZap extends BaseContract {
   estimateGas: {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
 
+    /**
+     * Calculate amount of tokens you receive on swap
+     * @param dx the amount of tokens the user wants to sell. If the token charges a fee on transfers, use the amount that gets transferred after the fee.
+     * @param tokenIndexFrom the token the user wants to sell
+     * @param tokenIndexTo the token the user wants to buy
+     */
     calculateSwap(
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    /**
+     * wraps SynapseBridge redeem()
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which underlying chain to bridge assets onto
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
     deposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    /**
+     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     */
     depositETH(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    /**
+     * Wraps SynapseBridge depositAndSwap() function to make it compatible w/ ETH -> WETH conversions
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
+     * @param chainId which chain to bridge assets onto
+     * @param deadline latest timestamp to accept this transaction*
+     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
+     * @param to address on other chain to bridge assets to
+     * @param tokenIndexFrom the token the user wants to swap from
+     * @param tokenIndexTo the token the user wants to swap to
+     */
     depositETHAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    /**
+     * wraps SynapseBridge redeem()
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which underlying chain to bridge assets onto
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
     redeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    /**
+     * Wraps redeemAndRemove on SynapseBridge Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
+     * @param amount Amount of (typically) LP token to pass to the nodes to attempt to removeLiquidity() with to redeem for the underlying assets of the LP token
+     * @param chainId which underlying chain to bridge assets onto
+     * @param liqDeadline Specificies the deadline that the nodes are allowed to try to redeem/swap the LP token*
+     * @param liqMinAmount Specifies the minimum amount of the underlying asset needed for the nodes to execute the redeem/swap
+     * @param liqTokenIndex Specifies which of the underlying LP assets the nodes should attempt to redeem for
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
     redeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      liqTokenIndex: BigNumberish,
-      liqMinAmount: BigNumberish,
-      liqDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      liqTokenIndex: PromiseOrValue<BigNumberish>,
+      liqMinAmount: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    /**
+     * Wraps redeemAndSwap on SynapseBridge.sol Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
+     * @param chainId which underlying chain to bridge assets onto
+     * @param deadline latest timestamp to accept this transaction*
+     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     * @param tokenIndexFrom the token the user wants to swap from
+     * @param tokenIndexTo the token the user wants to swap to
+     */
     redeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    /**
+     * Wraps SynapseBridge redeemv2() function
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     * @param token ERC20 compatible token to redeem into the bridge
+     */
     redeemv2(
-      to: BytesLike,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<BytesLike>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     swapAndRedeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     swapAndRedeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      liqTokenIndex: BigNumberish,
-      liqMinAmount: BigNumberish,
-      liqDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      liqTokenIndex: PromiseOrValue<BigNumberish>,
+      liqMinAmount: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     swapAndRedeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      swapTokenIndexFrom: BigNumberish,
-      swapTokenIndexTo: BigNumberish,
-      swapMinDy: BigNumberish,
-      swapDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      swapTokenIndexFrom: PromiseOrValue<BigNumberish>,
+      swapTokenIndexTo: PromiseOrValue<BigNumberish>,
+      swapMinDy: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     swapETHAndRedeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     swapETHAndRedeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      swapTokenIndexFrom: BigNumberish,
-      swapTokenIndexTo: BigNumberish,
-      swapMinDy: BigNumberish,
-      swapDeadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      swapTokenIndexFrom: PromiseOrValue<BigNumberish>,
+      swapTokenIndexTo: PromiseOrValue<BigNumberish>,
+      swapMinDy: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    swapMap(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    swapMap(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     swapTokensMap(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -912,158 +1208,222 @@ export interface L2BridgeZap extends BaseContract {
   populateTransaction: {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    /**
+     * Calculate amount of tokens you receive on swap
+     * @param dx the amount of tokens the user wants to sell. If the token charges a fee on transfers, use the amount that gets transferred after the fee.
+     * @param tokenIndexFrom the token the user wants to sell
+     * @param tokenIndexTo the token the user wants to buy
+     */
     calculateSwap(
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    /**
+     * wraps SynapseBridge redeem()
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which underlying chain to bridge assets onto
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
     deposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    /**
+     * Wraps SynapseBridge deposit() function to make it compatible w/ ETH -> WETH conversions
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     */
     depositETH(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    /**
+     * Wraps SynapseBridge depositAndSwap() function to make it compatible w/ ETH -> WETH conversions
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
+     * @param chainId which chain to bridge assets onto
+     * @param deadline latest timestamp to accept this transaction*
+     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
+     * @param to address on other chain to bridge assets to
+     * @param tokenIndexFrom the token the user wants to swap from
+     * @param tokenIndexTo the token the user wants to swap to
+     */
     depositETHAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    /**
+     * wraps SynapseBridge redeem()
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which underlying chain to bridge assets onto
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
     redeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    /**
+     * Wraps redeemAndRemove on SynapseBridge Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
+     * @param amount Amount of (typically) LP token to pass to the nodes to attempt to removeLiquidity() with to redeem for the underlying assets of the LP token
+     * @param chainId which underlying chain to bridge assets onto
+     * @param liqDeadline Specificies the deadline that the nodes are allowed to try to redeem/swap the LP token*
+     * @param liqMinAmount Specifies the minimum amount of the underlying asset needed for the nodes to execute the redeem/swap
+     * @param liqTokenIndex Specifies which of the underlying LP assets the nodes should attempt to redeem for
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     */
     redeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      liqTokenIndex: BigNumberish,
-      liqMinAmount: BigNumberish,
-      liqDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      liqTokenIndex: PromiseOrValue<BigNumberish>,
+      liqMinAmount: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    /**
+     * Wraps redeemAndSwap on SynapseBridge.sol Relays to nodes that (typically) a wrapped synAsset ERC20 token has been burned and the underlying needs to be redeeemed on the native chain. This function indicates to the nodes that they should attempt to redeem the LP token for the underlying assets (E.g "swap" out of the LP token)
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees
+     * @param chainId which underlying chain to bridge assets onto
+     * @param deadline latest timestamp to accept this transaction*
+     * @param minDy the min amount the user would like to receive, or revert to only minting the SynERC20 token crosschain.
+     * @param to address on other chain to redeem underlying assets to
+     * @param token ERC20 compatible token to deposit into the bridge
+     * @param tokenIndexFrom the token the user wants to swap from
+     * @param tokenIndexTo the token the user wants to swap to
+     */
     redeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    /**
+     * Wraps SynapseBridge redeemv2() function
+     * @param amount Amount in native token decimals to transfer cross-chain pre-fees*
+     * @param chainId which chain to bridge assets onto
+     * @param to address on other chain to bridge assets to
+     * @param token ERC20 compatible token to redeem into the bridge
+     */
     redeemv2(
-      to: BytesLike,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<BytesLike>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     swapAndRedeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     swapAndRedeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      liqTokenIndex: BigNumberish,
-      liqMinAmount: BigNumberish,
-      liqDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      liqTokenIndex: PromiseOrValue<BigNumberish>,
+      liqMinAmount: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     swapAndRedeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      swapTokenIndexFrom: BigNumberish,
-      swapTokenIndexTo: BigNumberish,
-      swapMinDy: BigNumberish,
-      swapDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      swapTokenIndexFrom: PromiseOrValue<BigNumberish>,
+      swapTokenIndexTo: PromiseOrValue<BigNumberish>,
+      swapMinDy: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     swapETHAndRedeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     swapETHAndRedeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      swapTokenIndexFrom: BigNumberish,
-      swapTokenIndexTo: BigNumberish,
-      swapMinDy: BigNumberish,
-      swapDeadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      swapTokenIndexFrom: PromiseOrValue<BigNumberish>,
+      swapTokenIndexTo: PromiseOrValue<BigNumberish>,
+      swapMinDy: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     swapMap(
-      arg0: string,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     swapTokensMap(
-      arg0: string,
-      arg1: BigNumberish,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
