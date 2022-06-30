@@ -1,3 +1,5 @@
+export * from "./amm";
+
 export {
 	useApproveBridgeSwap,
 	useExecuteBridgeSwap,
