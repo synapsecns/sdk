@@ -44,6 +44,7 @@ export class MiniRpcProvider implements ExternalProvider {
     private _batchAggregator: NodeJS.Timeout = null;
     private _pendingBatch:    BatchItem[]    = null;
 
+    /* c8 ignore next */
     constructor(chainId: number, url: string, batchWaitTimeMs: number=50) {
         this.chainId = chainId;
 
