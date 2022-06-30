@@ -238,9 +238,13 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
         ];
 
         testCases.forEach(tc => {
-           const testTitle: string = `getRequiredConfirmationsForBridge(${tc.chainId}) should return ${tc.want ? `'${tc.want}'` : 'null'}`;
+           const
+               wantStr:    string = tc.want ? `${tc.want}` : `null`,
+               testTitle1: string = `getRequiredConfirmationsForBridge(${tc.chainId}) should return ${wantStr}`,
+               testTitle2: string = `SynapseBridge.requiredConfirmations should equal ${wantStr}`;
 
-           it(testTitle, function(this: Mocha.Context) {
+
+           it(testTitle1, function(this: Mocha.Context) {
                const got = getRequiredConfirmationsForBridge(tc.chainId);
 
                if (tc.want !== null) {
@@ -249,6 +253,16 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                    expect(got).to.be.null;
                }
            });
+
+            it(testTitle2, function(this: Mocha.Context) {
+                if (tc.want === null) {
+                    return
+                }
+
+                const got = (new SynapseBridge({ network: tc.chainId })).requiredConfirmations;
+
+                expect(got).to.equal(tc.want);
+            });
         });
     });
 
