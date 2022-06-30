@@ -151,9 +151,9 @@ export namespace Networks {
     });
 
     export const BOBA = new Network({
-       name:         "Boba Network",
-       chainId:       ChainId.BOBA,
-       chainCurrency: "ETH",
+        name:          "Boba Network",
+        chainId:       ChainId.BOBA,
+        chainCurrency: "ETH",
     });
 
     export const METIS = new Network({
@@ -164,7 +164,7 @@ export namespace Networks {
 
     export const MOONBEAM = new Network({
         name:          "Moonbeam",
-        chainId:        ChainId.MOONBEAM,
+        chainId:       ChainId.MOONBEAM,
         chainCurrency: "GLMR",
     });
 
