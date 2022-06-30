@@ -843,11 +843,8 @@ export namespace TokenSwap {
             }
 
             // TODO: FIX! Single SwapType *cannot * represent individual transfer support from one chain to another
-            // This is needed since we cannot transfer, for eg, USDT <-> USDC. Only the same tokens
-            // Also, we cannot transfer any assets from Klaytn to anything other than Ethereum
-            if (ChainId.KLAYTN in [chainIdTo, chainIdFrom] &&
-                (!tokenFrom.isEqual(tokenTo) || !(ChainId.ETH in [chainIdTo, chainIdFrom]))
-            ) {
+            // This is needed since we cannot transfer, for eg, USDT <-> USDC. Only USDC <-> USDC
+            if (ChainId.KLAYTN in [chainIdTo, chainIdFrom] && !tokenFrom.isEqual(tokenTo)) {
                 return {swapSupported: false, reasonNotSupported: UnsupportedSwapErrors.nonMatchingSwapTypes()}
             }
         }
