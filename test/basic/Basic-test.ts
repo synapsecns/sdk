@@ -192,6 +192,25 @@ describe("Basic tests", function(this: Mocha.Suite) {
         });
     });
 
+    describe("Test Network.zapIsL2BridgeZap", function(this: Mocha.Suite) {
+        interface TestCase {
+            network: Networks.Network;
+            want:    boolean;
+        }
+
+        const testCases: TestCase[] = [
+            { network: Networks.DFK,       want: false },
+            { network: Networks.ETH,       want: false },
+            { network: Networks.AVALANCHE, want: true  },
+        ];
+
+        testCases.forEach(tc => {
+            it(`${tc.network.name}.zapIsL2BridgeZap should return ${tc.want}`, function(this: Mocha.Context) {
+                expect(tc.network.zapIsL2BridgeZap).to.be.true;
+            });
+        });
+    });
+
     describe("fixWeiValue tests", function(this: Mocha.Suite) {
         const
             strBn = (n: BigNumberish): string => BigNumber.from(n).toString(),

@@ -37,7 +37,7 @@ export namespace Networks {
 
     interface NetworkArgs {
         name:          string;
-        chainId:       number;
+        chainId:       ChainId;
         chainCurrency: string;
     }
 
@@ -65,11 +65,18 @@ export namespace Networks {
         /**
          * Returns true if the Bridge Zap contract for this network
          * is a L2BridgeZap contract.
-         * Currently, Ethereum mainnet is the only network for which the
-         * Bridge Zap contract is a NerveBridgeZap contract.
+         * Currently, Ethereum and DFK are the only networks for which the
+         * Bridge Zap contract is a L1BridgeZap contract.
          */
         get zapIsL2BridgeZap(): boolean {
-            return !([ChainId.ETH, ChainId.DFK] as ChainId[]).includes(this.chainId)
+            switch (this.chainId) {
+                case ChainId.ETH:
+                    return false
+                case ChainId.DFK:
+                    return false
+                default:
+                    return true
+            }
         }
 
         /**
