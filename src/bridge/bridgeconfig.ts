@@ -7,47 +7,47 @@ import type {BridgeConfigV3Contract} from "@contracts";
 import {BridgeConfigV3ContractInstance} from "@entities";
 
 import {
-	BigNumber,
-	type BigNumberish
+    BigNumber,
+    type BigNumberish
 } from "@ethersproject/bignumber";
 
 
 export interface BridgeConfigSwapFeeParams {
-	chainIdFrom: number;
-	tokenFrom:   Token;
-	chainIdTo:   number;
-	amountFrom:  BigNumberish;
+    chainIdFrom: number;
+    tokenFrom:   Token;
+    chainIdTo:   number;
+    amountFrom:  BigNumberish;
 }
 
 export type CalculateSwapFeeResult = {
-	amountFrom: BigNumber;
-	bridgeFee:  Promise<BigNumber>;
+    amountFrom: BigNumber;
+    bridgeFee:  Promise<BigNumber>;
 }
 
 export class BridgeConfig {
-	private readonly instance: BridgeConfigV3Contract;
+    private readonly instance: BridgeConfigV3Contract;
 
-	constructor() {
-		this.instance = BridgeConfigV3ContractInstance();
-	}
+    constructor() {
+        this.instance = BridgeConfigV3ContractInstance();
+    }
 
-	calculateSwapFee(args: BridgeConfigSwapFeeParams): CalculateSwapFeeResult {
-		const {chainIdFrom, chainIdTo, tokenFrom, amountFrom: baseAmountFrom} = args;
+    calculateSwapFee(args: BridgeConfigSwapFeeParams): CalculateSwapFeeResult {
+        const {chainIdFrom, chainIdTo, tokenFrom, amountFrom: baseAmountFrom} = args;
 
-		const {bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom, chainIdFrom);
+        const {bridgeConfigIntermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom, chainIdFrom);
 
-		const intermediateTokenAddress = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase();
+        const intermediateTokenAddress = bridgeConfigIntermediateToken.address(chainIdTo).toLowerCase();
 
-		const
-			multiplier: BigNumber = pow10(18 - tokenFrom.decimals(chainIdFrom)),
-			amountFrom: BigNumber = BigNumber.from(baseAmountFrom).mul(multiplier);
+        const
+            multiplier: BigNumber = pow10(18 - tokenFrom.decimals(chainIdFrom)),
+            amountFrom: BigNumber = BigNumber.from(baseAmountFrom).mul(multiplier);
 
-		const bridgeFee = this.instance["calculateSwapFee(string,uint256,uint256)"](
-			intermediateTokenAddress,
-			chainIdTo,
-			amountFrom
-		);
+        const bridgeFee = this.instance["calculateSwapFee(string,uint256,uint256)"](
+            intermediateTokenAddress,
+            chainIdTo,
+            amountFrom
+        );
 
-		return {bridgeFee, amountFrom}
-	}
+        return {bridgeFee, amountFrom}
+    }
 }

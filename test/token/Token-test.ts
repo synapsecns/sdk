@@ -326,14 +326,14 @@ describe("Token Tests", function(this: Mocha.Suite) {
         const tokensHashMap: TestCase[] = Tokens.AllTokens.map(t => ({token: t, hash: t.hash}));
 
         tokensHashMap.forEach(tc => {
-           it("should have a hash", function(this: Mocha.Context) {
-               expect(tc.hash).to.not.be.empty;
-           });
+            it("should have a hash", function(this: Mocha.Context) {
+                expect(tc.hash).to.not.be.empty;
+            });
 
-           it("should be unique", function(this: Mocha.Context) {
-               const check = tokensHashMap.find(th => !th.token.isEqual(tc.token) && th.hash === tc.hash);
-               expect(check).to.be.undefined;
-           });
+            it("should be unique", function(this: Mocha.Context) {
+                const check = tokensHashMap.find(th => !th.token.isEqual(tc.token) && th.hash === tc.hash);
+                expect(check).to.be.undefined;
+            });
         });
     });
 });
