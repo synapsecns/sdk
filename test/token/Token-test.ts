@@ -3,10 +3,11 @@ import {expect} from "chai";
 import {
     ChainId,
     Tokens,
-    type Token, supportedChainIds, Networks
+    type Token, supportedChainIds, Networks,
 } from "@sdk";
 
 import {tokenSwitch} from "@sdk/internal/utils";
+import type {ID} from "@sdk/internal/types";
 
 import {
     expectBnEqual,
@@ -218,6 +219,63 @@ describe("Token Tests", function(this: Mocha.Suite) {
         });
     });
 
+    describe("instanceOfToken tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            val:  any;
+            want: boolean;
+        }
+
+        const testCases: TestCase[] = [
+            {val: Networks.DFK,    want: false},
+            {val: Tokens.WAVAX,    want: true},
+            {val: Tokens.SYN,      want: true},
+            {val: ChainId.DFK,     want: false},
+            {val: "hello, world!", want: false}
+        ];
+
+        testCases.forEach(tc => {
+            it(`value of type ${tc.val.constructor.name} should${tc.want ? "" : " not"} be instanceof Token`, function(this: Mocha.Context) {
+                expect(instanceOfToken(tc.val)).to.equal(tc.want);
+            });
+        });
+    });
+
+    describe("tokenFromSymbol tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            val:  string | ID | symbol | null;
+            want: Token | null;
+        }
+
+        const testCases: TestCase[] = [
+            { val: Tokens.USDC.id as ID, want: Tokens.USDC   },
+            { val: "DAI",                want: Tokens.DAI    },
+            { val: "WETH.e",             want: Tokens.WETH_E },
+            { val: Symbol("BUSD"),       want: null          },
+            { val: Tokens.BUSD.id,       want: Tokens.BUSD   },
+            { val: null,                 want: null          },
+        ];
+
+        testCases.forEach(tc => {
+            const
+                valStr:    string = typeof tc.val === "symbol" ? tc.val.toString() : tc.val as string,
+                wantStr:   string = tc.want === null ? 'null' : tc.want.name,
+                testTitle: string = `tokenFromSymbol(${tc.val === null ? null : valStr}) should return ${wantStr}`;
+
+            const got = Tokens.tokenFromSymbol(tc.val);
+
+            it(testTitle, function(this: Mocha.Context) {
+                if (tc.want === null) {
+                    expect(got).to.be.null;
+                    return
+                }
+
+                expect(got).to.not.be.null;
+                expect(instanceOfToken(got)).to.be.true;
+                expect(got.isEqual(tc.want)).to.be.true;
+            });
+        });
+    });
+
     describe("Test all tokens", function(this: Mocha.Suite) {
         const makeTitle = (t: Token, cid: number, want: boolean): string =>
             `${t.symbol} address for chain id ${cid} should${want ? " not" : ""} be null`;
@@ -255,27 +313,6 @@ describe("Token Tests", function(this: Mocha.Suite) {
                         expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
                     });
                 }
-            });
-        });
-    });
-
-    describe("instanceOfToken tests", function(this: Mocha.Suite) {
-        interface TestCase {
-            val:  any;
-            want: boolean;
-        }
-
-        const testCases: TestCase[] = [
-            {val: Networks.DFK,    want: false},
-            {val: Tokens.WAVAX,    want: true},
-            {val: Tokens.SYN,      want: true},
-            {val: ChainId.DFK,     want: false},
-            {val: "hello, world!", want: false}
-        ];
-
-        testCases.forEach(tc => {
-            it(`value of type ${tc.val.constructor.name} should${tc.want ? "" : " not"} be instanceof Token`, function(this: Mocha.Context) {
-                expect(instanceOfToken(tc.val)).to.equal(tc.want);
             });
         });
     });
