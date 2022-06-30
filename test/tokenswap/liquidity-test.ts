@@ -103,7 +103,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 
             if (!tc.wantError && !tc.wantZero) {
                 step("buildAddLiquidityTransaction should succeed", async function(this: Mocha.Context) {
-                    this.timeout(5 * 1000);
+                    setTimeout(this, tc.chainId);
 
                     let prom = TokenSwap.buildAddLiquidityTransaction({
                         chainId:   tc.chainId,
@@ -209,9 +209,9 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
             });
 
             if (!tc.wantError && !tc.wantZero) {
-                this.timeout(5 * 1000);
-
                 step("buildRemoveLiquidityTransaction should succeed", async function(this: Mocha.Context) {
+                    setTimeout(this, tc.chainId);
+
                     let prom = TokenSwap.buildRemoveLiquidityTransaction({
                         chainId:    tc.chainId,
                         lpToken:    tc.lpToken,
