@@ -37,6 +37,7 @@
   - GPG-signing of release tarballs for GitHub releases ([be124af](https://github.com/synapsecns/sdk/commits/be124af66cbb4b59f47402171a92f08765310896))
   - Implement GitHub actions workflow for developement/alpha/beta release publishing ([c3e864c](https://github.com/synapsecns/sdk/commits/c3e864cfce2a04f1975f123b5be2475c8cabecc1))
   - Change `"target"` field of `tsconfig.json` to `"ES5"`, enabling greater backwards-compatibility with older NodeJS versions and various build systems ([2ac1627](https://github.com/synapsecns/sdk/commits/2ac162786504680bdd0d284397b01945bd0553be))
+  - Coverage now ignores typegen code in `internal/gen` ([5af24cc](https://github.com/synapsecns/sdk/commits/5af24cca8b4d8c2ee745e0c30b92d038055d2126))
 - bridge
   - Implement `checkBridgeTransactionComplete` in `SynapseBridge` namespace, enabling basic checking of bridge transaction status ([b444b15](https://github.com/synapsecns/sdk/commits/b444b1589f49f09ea4f7379f2f59d48839538b55))
   - Implement AvaxJewelMigration contract and "bridging" ([11b3834](https://github.com/synapsecns/sdk/commits/11b38347237a2098ec7360ec034b61ce58b1f644))
@@ -53,9 +54,14 @@
   - Add `gasTokenForChain` function to `Tokens` namespace, which returns the native currency token object for the passed Chain ID -- if it exists. ([7d9b47d](https://github.com/synapsecns/sdk/commits/7d9b47d6f5f1c02ed4b2dd59529c77115228ff44))
 - token
   - Add `hash` property to `Token` interface. `hash` is unique to an individual Token instance and can be used for uniqueness checks. Closes #111 ([28846fc](https://github.com/synapsecns/sdk/commits/28846fc6db39bb0cba1a0009d7f9cbac880261f5))
+  - Add `coingeckoId` property to `Token` interface. `coingeckoId` is an optional property which contains the CoinGecko ID of a token, if it is known. Closes #120 ([2e1c976](https://github.com/synapsecns/sdk/commits/2e1c976965dace74f1dd9c74090acdc2581c0bee))
 
 - chainid
   - Implement function for checking if a (known) Chain ID supports EIP-1559 ([5aa1535](https://github.com/synapsecns/sdk/commits/5aa1535e0221e28662306a7e6440a49a82ec152d))
+
+- networks
+  - Add `supportsEIP1559` property to `Networks` class. This property is a boolean reflecting whether a network supports EIP-1559 ([067b75d](https://github.com/synapsecns/sdk/commits/067b75de765265f435507512a58a0b57792df8e4))
+  - Add `chainCurrencyCoingeckoId` property to `Network` class. For chains whose chain currencies have CoinGecko ids, this property provides that id.
 
 - common/gasoptions
   - Implement setup enabling SDK consumers to provide their own gas limits/fees/prices to various transaction builders/executors ([83377e8](https://github.com/synapsecns/sdk/commits/83377e8d74d78a07ce473edc54296d90006c1915))
@@ -73,3 +79,5 @@ Thank you @BlazeWasHere for adding several new test cases to the test suites:
   - Extra testing for Cronos ([4ae4cba](https://github.com/synapsecns/sdk/commits/4ae4cba6ee02176f338cf8b3657e8129019b7fa4))
   - `Tokens.TokenFromSymbol` test cases ([82d395d](https://github.com/synapsecns/sdk/commits/82d395df7f19286bbcc5c05e054a1338997ef1b8))
   - Liquidity amounts map tests ([7da69b7](https://github.com/synapsecns/sdk/commits/7da69b71fd6a1ca88a2f816e3d281d16b1fbdc02))
+
+Additionally, more test cases for various smaller parts have been implemented.
