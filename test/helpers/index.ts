@@ -1,7 +1,5 @@
 import {expect} from "chai";
 
-import _ from "lodash";
-
 import {Zero}   from "@ethersproject/constants";
 import {Wallet} from "@ethersproject/wallet";
 
@@ -21,9 +19,8 @@ export const
     fakeWalletPrivKey:  string = "0x8ab0e165c2ea461b01cdd49aec882d179dccdbdb5c85c3f9c94c448aa65c5ace";
 
 export const
-    makeTimeout      = (seconds: number): number => seconds * 1000,
-    valueIfUndefined = <T>(data: T, fallback: T): T => typeof data === "undefined" ? fallback : data,
-    getActualWei     = (n: BigNumber, decimals: number): BigNumber => n.mul(TEN_BN.pow(18 - decimals)),
+    makeTimeout     = (seconds: number): number => seconds * 1000,
+    getActualWei    = (n: BigNumber, decimals: number): BigNumber => n.mul(TEN_BN.pow(18 - decimals)),
     randomBigNumber = (max: number = 313337) => BigNumber.from(Math.floor(Math.random() * max));
 
 export const getTestAmount = (
@@ -44,7 +41,6 @@ export function makeFakeWallet(chainId: number): Wallet {
 
 export const
     DEFAULT_TEST_TIMEOUT   = makeTimeout(10),
-    SHORT_TEST_TIMEOUT     = makeTimeout(4.5),
     EXECUTORS_TEST_TIMEOUT = makeTimeout(180);
 
 const
@@ -100,7 +96,6 @@ export const
     expectGt      = (data: BigNumber, want: BigNumberish): Chai.Assertion => expectToBe(data).gt(want),
     expectGte     = (data: BigNumber, want: BigNumberish): Chai.Assertion => expectToBe(data).gte(want),
     expectBnEqual = (data: BigNumber, want: BigNumberish): Chai.Assertion => expectTo(data).equal(want),
-    expectZero    = (data: BigNumber): Chai.Assertion => expectBnEqual(data, Zero),
     expectGteZero = (data: BigNumber): Chai.Assertion => expectGte(data, Zero),
     expectNotZero = (data: BigNumber): Chai.Assertion => expectGt(data, Zero);
 
