@@ -29,6 +29,7 @@ import {BigNumber}   from "@ethersproject/bignumber";
 import {expect} from "chai";
 import {Zero} from "@ethersproject/constants";
 import {step} from "mocha-steps";
+import {PopulatedTransaction} from "@ethersproject/contracts";
 
 
 describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.Suite) {
@@ -191,8 +192,8 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         makeTestCase(Tokens.SDT,         Tokens.SDT,       ChainId.ETH,         ChainId.BSC,        randomAmtETH, zeroEstimate, returnsError),
         makeTestCase(Tokens.LUNA,        Tokens.LUNA,      ChainId.OPTIMISM,    ChainId.ARBITRUM),
         makeTestCase(Tokens.LUNA,        Tokens.LUNA,      ChainId.OPTIMISM,    ChainId.HARMONY,    randomAmtETH, zeroEstimate, returnsError),
-        makeTestCase(Tokens.METIS_ETH,   Tokens.ETH,       ChainId.METIS,       ChainId.ETH),
-        makeTestCase(Tokens.ETH,         Tokens.METIS_ETH, ChainId.ETH,         ChainId.METIS),
+        makeTestCase(Tokens.METIS_ETH,   Tokens.ETH,       ChainId.METIS,       ChainId.ETH,        niceETH),
+        makeTestCase(Tokens.ETH,         Tokens.METIS_ETH, ChainId.ETH,         ChainId.METIS,      niceETH),
         makeTestCase(Tokens.METIS_ETH,   Tokens.ETH,       ChainId.METIS,       ChainId.BOBA,       niceETH),
         makeTestCase(Tokens.NETH,        Tokens.ETH,       ChainId.METIS,       ChainId.ETH,        niceETH),
         makeTestCase(Tokens.METIS_ETH,   Tokens.ETH,       ChainId.METIS,       ChainId.ARBITRUM,   niceETH),
@@ -326,17 +327,21 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
                         ? _.shuffle(undefEmptyArr)[0]
                         : makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey1).address;
 
-                let prom = bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo});
+                let
+                    res: PopulatedTransaction,
+                    prom: Promise<PopulatedTransaction> = bridgeInstance.buildBridgeTokenTransaction({...args, amountTo, addressTo});
 
                 try {
-                    await prom;
-                } catch (e) {
+                    res = await prom;
+                } catch (err) {
                     if (wantError || noAddrTo) {
-                        return (await expect(prom).to.eventually.be.rejected)
+                        return (await expect(prom).to.be.rejected)
                     }
+
+                    return (await expect(prom, (err as Error).message).to.not.be.rejected)
                 }
 
-                return (await expect(prom).to.eventually.be.fulfilled)
+                return expect(res).to.exist
             });
         });
     });

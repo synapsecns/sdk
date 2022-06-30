@@ -304,12 +304,12 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
                 try {
                     got = await gotProm;
                     minAmount = got;
-                } catch (e) {
+                } catch (err) {
                     if (tc.wantError) {
                         return (await expect(gotProm).to.eventually.be.rejected)
                     }
 
-                    return (await expect(gotProm).to.eventually.not.be.rejected)
+                    return (await expect(gotProm, (err as Error).message).to.eventually.not.be.rejected)
                 }
 
                 if (tc.wantZero) {
@@ -321,7 +321,7 @@ describe("Liquidity tests", function(this: Mocha.Suite) {
 
             if (!tc.wantError && !tc.wantZero) {
                 step("buildRemoveLiquidityOneTokenTransaction should succeed", async function(this: Mocha.Context) {
-                    this.timeout(5 * 1000);
+                    setTimeout(this, tc.chainId);
 
                     let prom = TokenSwap.buildRemoveLiquidityOneTokenTransaction({
                         chainId:  tc.chainId,
