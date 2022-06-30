@@ -1,4 +1,4 @@
-import {ChainId, type ChainIdTypeMap} from "@chainid";
+import {ChainId, type ChainIdTypeMap, chainSupportsEIP1559} from "@chainid";
 import type {Token} from "@token";
 import {Tokens}     from "@tokens";
 import {SwapPools}  from "@swappools";
@@ -48,11 +48,13 @@ export namespace Networks {
         readonly chainId:         ChainId;
         readonly tokens:          Token[];
         readonly tokenAddresses:  string[];
+        readonly supportsEIP1559: boolean;
 
         constructor(args: NetworkArgs) {
-            this.name          = args.name
-            this.chainId       = args.chainId;
-            this.chainCurrency = args.chainCurrency;
+            this.name            = args.name
+            this.chainId         = args.chainId;
+            this.chainCurrency   = args.chainCurrency;
+            this.supportsEIP1559 = chainSupportsEIP1559(args.chainId);
 
             this.tokens         = SwapPools.getAllSwappableTokensForNetwork(this.chainId);
             this.tokenAddresses = this.tokens.map((t) => t.address(this.chainId));
@@ -67,7 +69,7 @@ export namespace Networks {
          * Bridge Zap contract is a NerveBridgeZap contract.
          */
         get zapIsL2BridgeZap(): boolean {
-            return this.chainId !== ChainId.ETH && this.chainId !== ChainId.DFK
+            return !([ChainId.ETH, ChainId.DFK] as ChainId[]).includes(this.chainId)
         }
 
         /**
@@ -157,7 +159,7 @@ export namespace Networks {
     export const METIS = new Network({
         name:          "Metis",
         chainId:       ChainId.METIS,
-        chainCurrency: "Metis",
+        chainCurrency: "METIS",
     });
 
     export const MOONBEAM = new Network({
@@ -193,7 +195,7 @@ export namespace Networks {
     export const AURORA = new Network({
         name:          "Aurora",
         chainId:       ChainId.AURORA,
-        chainCurrency: "aETH",
+        chainCurrency: "ETH",
     });
 
     export const HARMONY = new Network({
