@@ -467,6 +467,26 @@ export namespace SwapPools {
         poolTokens:   USDPoolTokens(),
     });
 
+    export const KLAYTN_POOL_SWAP_TOKEN = makeSwapToken({
+        chainId:      ChainId.KLAYTN,
+        address:     "", // TODO: Add
+        netName:     "Klaytn",
+        poolId:       1, // TODO: double check
+        swapAddress: "", // TODO: double check
+        poolTokens:   USDPoolTokens(),
+    });
+
+    export const KLAYTN_ETH_SWAP_TOKEN = makeETHSwapToken({
+        chainId:        ChainId.KLAYTN,
+        address:        "",
+        netName:        "Klaytn",
+        poolId:          2,
+        swapAddress:    "", // TODO: Check - Do we have an ETH pool on Klaytn ?
+        swapETHAddress: "",
+        poolTokens:      WETHTokenPool,
+        nativeTokens:    ETHTokenPool,
+    });
+
     const ONEETH_POOL_TOKENS = ETHTokensPool(Tokens.ONE_ETH);
 
     export const HARMONY_ONEETH_TOKEN = makeETHSwapToken({
@@ -537,7 +557,9 @@ export namespace SwapPools {
         XJEWEL_Pool     = makeSingleTokenPool(Tokens.XJEWEL),
         DFKTEARS_Pool   = makeSingleTokenPool(Tokens.DFKTEARS),
         VSTA_Pool       = makeSingleTokenPool(Tokens.VSTA),
-        H20_Pool        = makeSingleTokenPool(Tokens.H20);
+        H20_Pool        = makeSingleTokenPool(Tokens.H20),
+        SFI_Pool        = makeSingleTokenPool(Tokens.SFI),
+        WBTC_Pool       = makeSingleTokenPool(Tokens.WBTC);
 
     const
         AVAX_JEWEL_Pool:    LPToken = {poolTokens: [Tokens.JEWEL, Tokens.MULTIJEWEL], swapType: SwapType.JEWEL},
@@ -614,6 +636,8 @@ export namespace SwapPools {
             USDB_Pool,
             VSTA_Pool,
             H20_Pool,
+            SFI_Pool,
+            WBTC_Pool,
         ),
         [ChainId.OPTIMISM]: makeSwapTypeMap(
             {
@@ -702,7 +726,8 @@ export namespace SwapPools {
             NEWO_Pool,
             SDT_Pool,
             USDB_Pool,
-            AVAX_JEWEL_Pool
+            AVAX_JEWEL_Pool,
+            SFI_Pool
         ),
         [ChainId.DFK]: {
             swappableTokens: {
@@ -737,6 +762,13 @@ export namespace SwapPools {
             XJEWEL_Pool,
             DFKTEARS_Pool,
             HARMONY_JEWEL_Pool
+        ),
+        [ChainId.KLAYTN]: makeSwapTypeMap(
+            {
+                usdPool: [KLAYTN_POOL_SWAP_TOKEN, KLAYTN_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps],
+                ethPool: [KLAYTN_ETH_SWAP_TOKEN,  KLAYTN_ETH_SWAP_TOKEN.poolTokensForBridgeSwaps]
+            },
+            WBTC_Pool,
         )
     };
 
@@ -789,6 +821,8 @@ export namespace SwapPools {
                 return AURORA_POOL_SWAP_TOKEN
             case ChainId.HARMONY:
                 return HARMONY_POOL_SWAP_TOKEN
+            case ChainId.KLAYTN:
+                return KLAYTN_POOL_SWAP_TOKEN
         }
 
         return undefined
@@ -810,6 +844,8 @@ export namespace SwapPools {
                 return AVALANCHE_ETH_SWAP_TOKEN
             case ChainId.HARMONY:
                 return HARMONY_ONEETH_TOKEN
+            case ChainId.KLAYTN:
+                return KLAYTN_ETH_SWAP_TOKEN
         }
 
         return undefined
@@ -837,6 +873,7 @@ export namespace SwapPools {
         HARMONY_ONEETH_TOKEN,
         HARMONY_AVAX_SWAP_TOKEN,
         HARMONY_JEWEL_SWAP_TOKEN,
+        KLAYTN_POOL_SWAP_TOKEN
     ];
 
     function checkChainId(t: SwapPoolToken, chainId?: number): boolean {
