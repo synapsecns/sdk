@@ -41,6 +41,7 @@ export namespace Networks {
         name:          string;
         chainId:       ChainId;
         chainCurrency: string;
+        chainCurrencyCoingeckoId?: string;
     }
 
     export class Network implements Distinct {
@@ -52,11 +53,15 @@ export namespace Networks {
         readonly tokenAddresses:  string[];
         readonly supportsEIP1559: boolean;
 
+        readonly chainCurrencyCoingeckoId?: string;
+
         constructor(args: NetworkArgs) {
             this.name            = args.name
             this.chainId         = args.chainId;
             this.chainCurrency   = args.chainCurrency;
             this.supportsEIP1559 = chainSupportsEIP1559(args.chainId);
+
+            this.chainCurrencyCoingeckoId = args.chainCurrencyCoingeckoId;
 
             this.tokens         = SwapPools.getAllSwappableTokensForNetwork(this.chainId);
             this.tokenAddresses = this.tokens.map((t) => t.address(this.chainId));
@@ -119,55 +124,64 @@ export namespace Networks {
     export const ETH = new Network({
         name:          "Ethereum Mainnet",
         chainId:       ChainId.ETH,
-        chainCurrency: "ETH"
+        chainCurrency: "ETH",
+        chainCurrencyCoingeckoId: "ethereum",
     });
 
     export const OPTIMISM = new Network({
         name:          "Optimism",
         chainId:       ChainId.OPTIMISM,
-        chainCurrency: "ETH"
+        chainCurrency: "ETH",
+        chainCurrencyCoingeckoId: "ethereum",
     });
 
     export const CRONOS = new Network({
         name:          "Cronos",
         chainId:       ChainId.CRONOS,
-        chainCurrency: "CRO"
+        chainCurrency: "CRO",
+        chainCurrencyCoingeckoId: "crypto-com-chain",
     });
 
     export const BSC = new Network({
         name:          "Binance Smart Chain",
         chainId:       ChainId.BSC,
         chainCurrency: "BNB",
+        chainCurrencyCoingeckoId: "binancecoin",
     });
 
     export const POLYGON = new Network({
         name:          "Polygon",
         chainId:       ChainId.POLYGON,
         chainCurrency: "MATIC",
+        chainCurrencyCoingeckoId: "matic-network",
     });
 
     export const FANTOM = new Network({
         name:          "Fantom",
         chainId:       ChainId.FANTOM,
         chainCurrency: "FTM",
+        chainCurrencyCoingeckoId: "fantom",
     });
 
     export const BOBA = new Network({
         name:          "Boba Network",
         chainId:       ChainId.BOBA,
         chainCurrency: "ETH",
+        chainCurrencyCoingeckoId: "ethereum",
     });
 
     export const METIS = new Network({
         name:          "Metis",
         chainId:       ChainId.METIS,
         chainCurrency: "METIS",
+        chainCurrencyCoingeckoId: "metis-token",
     });
 
     export const MOONBEAM = new Network({
         name:          "Moonbeam",
         chainId:       ChainId.MOONBEAM,
         chainCurrency: "GLMR",
+        chainCurrencyCoingeckoId: "moonbeam",
     });
 
     export const MOONRIVER = new Network({
@@ -180,18 +194,21 @@ export namespace Networks {
         name:          "Arbitrum",
         chainId:       ChainId.ARBITRUM,
         chainCurrency: "ETH",
+        chainCurrencyCoingeckoId: "ethereum",
     });
 
     export const AVALANCHE = new Network({
         name:          "Avalanche C-Chain",
         chainId:       ChainId.AVALANCHE,
         chainCurrency: "AVAX",
+        chainCurrencyCoingeckoId: "avalanche-2",
     });
 
     export const DFK = new Network({
         name:          "DeFi Kingdoms",
         chainId:       ChainId.DFK,
-        chainCurrency: "JEWEL"
+        chainCurrency: "JEWEL",
+        chainCurrencyCoingeckoId: "defi-kingdoms",
     });
 
     export const AURORA = new Network({
@@ -204,6 +221,7 @@ export namespace Networks {
         name:          "Harmony",
         chainId:       ChainId.HARMONY,
         chainCurrency: "ONE",
+        chainCurrencyCoingeckoId: "harmony",
     });
 
     const CHAINID_NETWORK_MAP: ChainIdTypeMap<Network> = {
