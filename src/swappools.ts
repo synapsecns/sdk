@@ -841,7 +841,7 @@ export namespace SwapPools {
         HARMONY_POOL_SWAP_TOKEN,
         HARMONY_ONEETH_TOKEN,
         HARMONY_AVAX_SWAP_TOKEN,
-        HARMONY_JEWEL_SWAP_TOKEN
+        HARMONY_JEWEL_SWAP_TOKEN,
     ];
 
     function checkChainId(t: SwapPoolToken, chainId?: number): boolean {
