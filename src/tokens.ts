@@ -689,7 +689,7 @@ export namespace Tokens {
        decimals: 18,
        addresses: {
            [ChainId.ETH]:     "0x0642026e7f0b6ccac5925b4e7fa61384250e1701",
-           [ChainId.POLYGON]: "0xC5248Aa0629C0b2d6A02834a5f172937Ac83CBD3"
+           [ChainId.POLYGON]: "0x32ba7cF7d681357529013de6a2CDF93933C0dF3f"
        },
         swapType: SwapType.H20
     });
