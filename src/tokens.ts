@@ -45,7 +45,8 @@ export namespace Tokens {
             [ChainId.AURORA]:    "0xe3520349F477A5F6EB06107066048508498A291b",
             [ChainId.HARMONY]:   "0xef977d2f931c1978db5f6747666fa1eacb0d0339",
         },
-        swapType: SwapType.USD
+        swapType:    SwapType.USD,
+        coingeckoId: "dai",
     });
 
     export const BUSD = new BaseToken({
@@ -55,7 +56,8 @@ export namespace Tokens {
         addresses: {
             [ChainId.BSC]: "0xe9e7cea3dedca5984780bafc599bd69add087d56",
         },
-        swapType: SwapType.USD
+        swapType:    SwapType.USD,
+        coingeckoId: "binance-usd",
     });
 
     export const USDC = new BaseToken({
@@ -89,7 +91,8 @@ export namespace Tokens {
             [ChainId.AURORA]:    "0xB12BFcA5A55806AaF64E99521918A4bf0fC40802",
             [ChainId.HARMONY]:   "0x985458e523db3d53125813ed68c274899e9dfab4",
         },
-        swapType: SwapType.USD
+        swapType:    SwapType.USD,
+        coingeckoId: "usd-coin",
     });
 
     export const USDT = new BaseToken({
@@ -119,7 +122,8 @@ export namespace Tokens {
             [ChainId.AURORA]:    "0x4988a896b1227218e4A686fdE5EabdcAbd91571f",
             [ChainId.HARMONY]:   "0x3c2b8be99c50593081eaa2a724f0b8285f5aba8f",
         },
-        swapType: SwapType.USD
+        swapType:    SwapType.USD,
+        coingeckoId: "tether",
     });
 
     export const UST = new BaseToken({
@@ -143,7 +147,8 @@ export namespace Tokens {
             [ChainId.AURORA]:    "0xb1Da21B0531257a7E5aEfa0cd3CbF23AfC674cE1",
             [ChainId.HARMONY]:   "0xa0554607e477cdC9d0EE2A6b087F4b2DC2815C22",
         },
-        swapType: SwapType.UST
+        swapType:    SwapType.UST,
+        coingeckoId: "terrausd",
     });
 
     // ETH, ETH wrappers, and nETH :D
@@ -164,9 +169,10 @@ export namespace Tokens {
             [ChainId.BOBA]:     "",
             [ChainId.ARBITRUM]: ""
         },
-        swapType:   SwapType.ETH,
-        isETH:      true,
-        isGasToken: true,
+        swapType:    SwapType.ETH,
+        isETH:       true,
+        isGasToken:  true,
+        coingeckoId: "ethereum",
     });
 
     /**
@@ -285,7 +291,8 @@ export namespace Tokens {
             [ChainId.AURORA]:    "0xd80d8688b02B3FD3afb81cDb124F188BB5aD0445",
             [ChainId.HARMONY]:   "0xE55e19Fb4F2D85af758950957714292DAC1e25B2",
         },
-        swapType: SwapType.SYN
+        swapType:    SwapType.SYN,
+        coingeckoId: "synapse-2",
     });
 
     /**
@@ -336,8 +343,9 @@ export namespace Tokens {
         addresses: {
             [ChainId.AVALANCHE]: "",
         },
-        swapType:   SwapType.AVAX,
-        isGasToken: true,
+        swapType:    SwapType.AVAX,
+        isGasToken:  true,
+        coingeckoId: "avalanche-2",
     });
 
     export const WAVAX = new WrapperToken({
@@ -352,6 +360,7 @@ export namespace Tokens {
         },
         swapType:        SwapType.AVAX,
         underlyingToken: AVAX,
+        coingeckoId:     "avalanche-2",
     });
 
     /**
@@ -418,8 +427,9 @@ export namespace Tokens {
         addresses: {
             [ChainId.DFK]: "",
         },
-        swapType:   SwapType.JEWEL,
-        isGasToken: true,
+        swapType:    SwapType.JEWEL,
+        isGasToken:  true,
+        coingeckoId: "defi-kingdoms",
     });
 
     /**
@@ -439,6 +449,7 @@ export namespace Tokens {
         },
         swapType:        SwapType.JEWEL,
         underlyingToken: GAS_JEWEL,
+        coingeckoId:     "defi-kingdoms",
     });
 
     /**
@@ -478,7 +489,8 @@ export namespace Tokens {
             [ChainId.DFK]:     "0x77f2656d04E158f915bC22f07B779D94c1DC47Ff",
             [ChainId.HARMONY]: "0xA9cE83507D872C5e1273E745aBcfDa849DAA654F"
         },
-        swapType: SwapType.XJEWEL
+        swapType:    SwapType.XJEWEL,
+        coingeckoId: "xjewel"
     });
 
     // non-Synapse, non-stablecoin tokens
@@ -513,7 +525,8 @@ export namespace Tokens {
             [ChainId.AVALANCHE]: "0x321E7092a180BB43555132ec53AaA65a5bF84251",
             [ChainId.HARMONY]:   "0x67C10C397dD0Ba417329543c1a40eb48AAa7cd00",
         },
-        swapType: SwapType.OHM,
+        swapType:    SwapType.OHM,
+        coingeckoId: "governance-ohm",
     });
 
     export const HIGH = new BaseToken({
@@ -524,7 +537,8 @@ export namespace Tokens {
             [ChainId.ETH]: "0x71Ab77b7dbB4fa7e017BC15090b2163221420282",
             [ChainId.BSC]: "0x5f4bde007dc06b867f86ebfe4802e34a1ffeed63",
         },
-        swapType: SwapType.HIGH
+        swapType:    SwapType.HIGH,
+        coingeckoId: "highstreet",
     });
 
     export const JUMP = new BaseToken({
@@ -535,7 +549,8 @@ export namespace Tokens {
             [ChainId.BSC]:    "0x130025ee738a66e691e6a7a62381cb33c6d9ae83",
             [ChainId.FANTOM]: "0x78DE9326792ce1d6eCA0c978753c6953Cdeedd73",
         },
-        swapType: SwapType.JUMP
+        swapType:    SwapType.JUMP,
+        coingeckoId: "hyperjump",
     });
 
     export const DOG = new BaseToken({
@@ -547,7 +562,8 @@ export namespace Tokens {
             [ChainId.BSC]:     "0xaa88c603d142c371ea0eac8756123c5805edee03",
             [ChainId.POLYGON]: "0xeee3371b89fc43ea970e908536fcddd975135d8a",
         },
-        swapType: SwapType.DOG
+        swapType:    SwapType.DOG,
+        coingeckoId: "the-doge-nft",
     });
 
     export const NFD = new BaseToken({
@@ -559,7 +575,8 @@ export namespace Tokens {
             [ChainId.POLYGON]:   "0x0a5926027d407222f8fe20f24cb16e103f617046",   // deposit
             [ChainId.AVALANCHE]: "0xf1293574ee43950e7a8c9f1005ff097a9a713959",   // redeem
         },
-        swapType: SwapType.NFD,
+        swapType:    SwapType.NFD,
+        coingeckoId: "feisty-doge-nft",
     });
 
     // FRAX/synFrax
@@ -574,7 +591,8 @@ export namespace Tokens {
             [ChainId.MOONRIVER]: "0x1a93b23281cc1cde4c4741353f3064709a16197d",
             [ChainId.HARMONY]:   "0xFa7191D292d5633f702B0bd7E3E3BcCC0e633200",
         },
-        swapType: SwapType.FRAX,
+        swapType:    SwapType.FRAX,
+        coingeckoId: "frax",
     });
 
     export const SYN_FRAX = new BaseToken({
@@ -598,7 +616,8 @@ export namespace Tokens {
             [ChainId.MOONBEAM]:  "0x0DB6729C03C85B0708166cA92801BcB5CAc781fC",
             [ChainId.MOONRIVER]: "0x76906411D07815491A5E577022757aD941fb5066",
         },
-        swapType: SwapType.SOLAR,
+        swapType:    SwapType.SOLAR,
+        coingeckoId: "solarbeam",
     });
 
     export const GMX = new BaseToken({
@@ -612,7 +631,8 @@ export namespace Tokens {
         wrapperAddresses: {
             [ChainId.AVALANCHE]: "0x20A9DC684B4d0407EF8C9A302BEAaA18ee15F656",
         },
-        swapType: SwapType.GMX,
+        swapType:    SwapType.GMX,
+        coingeckoId: "gmx",
     });
 
     export const NEWO = new BaseToken({
@@ -624,7 +644,8 @@ export namespace Tokens {
             [ChainId.ARBITRUM]:  "0x0877154a755B24D499B8e2bD7ecD54d3c92BA433",
             [ChainId.AVALANCHE]: "0x4Bfc90322dD638F81F034517359BD447f8E0235a",
         },
-        swapType: SwapType.NEWO,
+        swapType:    SwapType.NEWO,
+        coingeckoId: "new-order",
     });
 
     export const SDT = new BaseToken({
@@ -637,7 +658,8 @@ export namespace Tokens {
             [ChainId.AVALANCHE]: "0xCCBf7c451F81752F7d2237F2c18C371E6e089E69",
             [ChainId.HARMONY]:   "0xE3c82A836Ec85311a433fBd9486EfAF4b1AFbF48",
         },
-        swapType: SwapType.SDT,
+        swapType:    SwapType.SDT,
+        coingeckoId: "stake-dao",
     });
 
     export const LUNA = new BaseToken({
@@ -648,7 +670,8 @@ export namespace Tokens {
             [ChainId.OPTIMISM]: "0x931B8f17764362A3325D30681009f0eDd6211231",
             [ChainId.ARBITRUM]: "0x1A4dA80967373fd929961e976b4b53ceeC063a15",
         },
-        swapType: SwapType.LUNA,
+        swapType:    SwapType.LUNA,
+        coingeckoId: "terra-luna",
     });
 
     export const USDB = new BaseToken({
@@ -674,7 +697,8 @@ export namespace Tokens {
             [ChainId.ETH]:      "0xA8d7F5e7C78ed0Fa097Cc5Ec66C1DC3104c9bbeb",
             [ChainId.ARBITRUM]: "0xa684cd057951541187f288294a1e1c2646aa2d24"
         },
-        swapType: SwapType.VSTA
+        swapType:    SwapType.VSTA,
+        coingeckoId: "vesta-finance",
     });
 
     export const H20 = new BaseToken({
