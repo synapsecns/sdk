@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { shuffle } from "lodash-es";
 
 import {
     ChainId,
@@ -41,18 +41,14 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
 
     type TestCase = BridgeSwapTestCase<Expected>
 
-    const makeTestCase = (
+    function makeTestCase(
         t1: Token,  t2: Token,
         c1: number, c2: number,
         amt?:      string,
         notZero:   boolean = true,
         wantError: boolean = false,
         noAddrTo:  boolean = false,
-    ): TestCase => {
-        const expected: Expected = {notZero, wantError, noAddrTo};
-
-        return makeBridgeSwapTestCase(c1, t1, c2, t2, expected, getTestAmount(t1, c1, amt))
-    }
+    ): TestCase { return makeBridgeSwapTestCase(c1, t1, c2, t2, {notZero, wantError, noAddrTo}, getTestAmount(t1, c1, amt)) }
 
     function makeTestName(tc: TestCase): [string, string, string, string] {
         let {
@@ -244,13 +240,13 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         makeTestCase(Tokens.H20,         Tokens.H20,       ChainId.POLYGON,     ChainId.ETH),
         makeTestCase(Tokens.H20,         Tokens.H20,       ChainId.ETH,         ChainId.HARMONY,  randomAmtETH, zeroEstimate, returnsError),
     ].forEach((tc: TestCase) => {
-        const [describeTitle, bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc)
+        const [describeTitle, bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc);
 
         describe(describeTitle, function(this: Mocha.Suite) {
             let amountTo: BigNumber;
 
             step(bridgeOutputTestTitle, async function(this: Mocha.Context) {
-                this.timeout(DEFAULT_TEST_TIMEOUT)
+                this.timeout(DEFAULT_TEST_TIMEOUT);
 
                 let {args: { chainIdFrom, ...testArgs }, expected: {notZero, wantError}} = tc;
 
@@ -324,7 +320,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
                 const
                     bridgeInstance    = new SynapseBridge({ network: chainIdFrom }),
                     addressTo: string = noAddrTo
-                        ? _.shuffle(undefEmptyArr)[0]
+                        ? shuffle(undefEmptyArr)[0]
                         : makeWalletSignerWithProvider(chainIdFrom, bridgeTestPrivkey1).address;
 
                 let
