@@ -101,7 +101,7 @@ export namespace SynapseContracts {
 
     export const Klaytn = new SynapseContract({
         bridge:    "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
-        bridgeZap: "", // TODO: Fix
+        bridgeZap: "0x911766fA1a425Cb7cCCB0377BC152f37F276f8d6",
     });
 
     const chainIdContractsMap: ChainIdTypeMap<SynapseContract> = {
