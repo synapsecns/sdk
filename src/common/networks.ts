@@ -224,12 +224,6 @@ export namespace Networks {
         chainCurrencyCoingeckoId: "harmony",
     });
 
-    export const KLAYTN = new Network({
-        name:          "Klaytn",
-        chainId:       ChainId.KLAYTN,
-        chainCurrency: "KLAY",
-    });
-
     const CHAINID_NETWORK_MAP: ChainIdTypeMap<Network> = {
         [ChainId.ETH]:        ETH,
         [ChainId.OPTIMISM]:   OPTIMISM,
@@ -246,7 +240,6 @@ export namespace Networks {
         [ChainId.DFK]:        DFK,
         [ChainId.AURORA]:     AURORA,
         [ChainId.HARMONY]:    HARMONY,
-        [ChainId.KLAYTN]:     KLAYTN,
     }
 
     export function networkName(chainId: number): string {
