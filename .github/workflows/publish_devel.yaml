@@ -54,8 +54,8 @@ jobs:
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v4
         with:
-          gpg_private_key: ${{ secrets.BLEAKER_GPG_PRIVKEY }}
-          passphrase:      ${{ secrets.BLEAKER_GPG_PASSPHRASE }}
+          gpg_private_key: ${{ secrets.RELEASEBOT_GPG_PRIVATEKEY }}
+          passphrase:      ${{ secrets.RELEASEBOT_GPG_PASSPHRASE }}
 
       - uses: actions/setup-node@v3
         with:
