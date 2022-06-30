@@ -15,13 +15,13 @@ export class RequestError extends Error {
 }
 
 interface RPCRequest {
-    method:  string,
-    params?: Array<any>,
+    method:  string;
+    params?: Array<any>;
 }
 
 interface JsonRPCRequest extends RPCRequest {
-    jsonrpc: "2.0",
-    id:      number,
+    jsonrpc: "2.0";
+    id:      number;
 }
 
 interface BatchItem {
@@ -44,6 +44,7 @@ export class MiniRpcProvider implements ExternalProvider {
     private _batchAggregator: NodeJS.Timeout = null;
     private _pendingBatch:    BatchItem[]    = null;
 
+    /* c8 ignore next */
     constructor(chainId: number, url: string, batchWaitTimeMs: number=50) {
         this.chainId = chainId;
 
@@ -56,6 +57,7 @@ export class MiniRpcProvider implements ExternalProvider {
         this._batchInterval = batchWaitTimeMs;
     }
 
+    /* c8 ignore start */
     /**
      * Amount of time, in milliseconds, between batch RPC calls
      */
@@ -93,6 +95,7 @@ export class MiniRpcProvider implements ExternalProvider {
     get path(): string {
         return this._path
     }
+    /* c8 ignore stop */
 
     async request(request: RPCRequest): Promise<any> {
         if (request.method === 'eth_chainId') {
@@ -147,11 +150,13 @@ export class MiniRpcProvider implements ExternalProvider {
             .then(result =>
                 currentBatch.forEach((req, idx) => {
                     const payload = result[idx];
-                    if (payload.error) {
-                        const {message, code, data} = payload.error;
-                        req.reject(new RequestError(message, code, data));
-                    } else {
-                        req.resolve(payload.result);
+                    if (payload) {
+                        if (payload.error) {
+                            const {message, code, data} = payload.error;
+                            req.reject(new RequestError(message, code, data));
+                        } else {
+                            req.resolve(payload.result);
+                        }
                     }
                 })
             )

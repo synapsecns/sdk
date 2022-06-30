@@ -1,18 +1,21 @@
 import {ChainId}          from "@chainid";
-import {SynapseContracts} from "./synapse_contracts";
-import {StaticCallResult} from "./types";
+import {SynapseContracts} from "@synapsecontracts";
+import {
+    StaticCallResult,
+    type Resolveable
+} from "./types";
 
-import type {Signer}      from "@ethersproject/abstract-signer";
+import {BigNumber} from "@ethersproject/bignumber";
 
+import type {Signer} from "@ethersproject/abstract-signer";
 import type {
     PopulatedTransaction,
     ContractTransaction,
 } from "@ethersproject/contracts";
-import {BigNumber} from "@ethersproject/bignumber";
 
-export const rejectPromise = (e: any): Promise<never> => Promise.reject(e instanceof Error ? e : new Error(e))
+export function makeError(e: any): Error { return e instanceof Error ? e : new Error(e) }
 
-type Resolveable<T> = T | Promise<T>
+export function rejectPromise(e: any): Promise<never> { return Promise.reject(makeError(e)) }
 
 export function executePopulatedTransaction(
     populatedTxn: Resolveable<PopulatedTransaction>,
@@ -35,6 +38,8 @@ export function staticCallPopulatedTransaction(
         })
 }
 
+export function pow10(exp: number): BigNumber { return BigNumber.from(10).pow(exp) }
+
 /**
  * "Fixes" a value into units of Wei; should be used when tokens
  * have a decimals value which isn't 18
@@ -45,12 +50,24 @@ export function staticCallPopulatedTransaction(
  * @param decimals
  */
 export function fixWeiValue(amt: BigNumber, decimals: number): BigNumber {
-    const multiplier = BigNumber.from(10).pow(18 - decimals);
+    const multiplier = pow10(18).div(pow10(decimals));
     return amt.mul(multiplier)
 }
 
-export function contractAddressFor(chainId: number, key: string): string {
-    const { address } = contractsForChainId(chainId)[key] || "";
+export function contractAddressFor(chainId: number, key: "bridgeAddress" | "bridgeZapAddress"): string {
+    let address: string;
+
+    const contractsForChain = contractsForChainId(chainId);
+
+    switch (key) {
+        case "bridgeAddress":
+            address = contractsForChain.bridgeAddress;
+            break;
+        case "bridgeZapAddress":
+            address = contractsForChain.bridgeZapAddress;
+            break;
+    }
+
     return address
 }
 
@@ -68,6 +85,7 @@ const CHAINID_CONTRACTS_MAP: {[c: number]: SynapseContracts.SynapseContract} = {
     [ChainId.MOONRIVER]: SynapseContracts.Moonriver,
     [ChainId.ARBITRUM]:  SynapseContracts.Arbitrum,
     [ChainId.AVALANCHE]: SynapseContracts.Avalanche,
+    [ChainId.DFK]:       SynapseContracts.DFK,
     [ChainId.AURORA]:    SynapseContracts.Aurora,
     [ChainId.HARMONY]:   SynapseContracts.Harmony,
 }

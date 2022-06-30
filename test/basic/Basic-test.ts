@@ -9,7 +9,10 @@ import {
     networkSwapTokensMap,
     supportedChainIds,
     Tokens,
-    type Token
+    type Token,
+    chainSupportsEIP1559,
+    fetchChainGasPrices,
+    type ChainGasPrices
 } from "@sdk";
 
 import {
@@ -25,12 +28,15 @@ import {
 } from "@tests/helpers";
 
 import {Web3Provider} from "@ethersproject/providers";
+import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+import {fixWeiValue} from "@common/utils";
+import {Zero} from "@ethersproject/constants";
 
 const makeWantString = (tc: {want: boolean}, suffix: string="include"): string => `should${tc.want ? "" : " not"} ${suffix}`;
 
 
 describe("Basic tests", function(this: Mocha.Suite) {
-    const numChains: number = 14;
+    const numChains: number = 15;
 
     describe("Check networks", function(this: Mocha.Suite) {
         const
@@ -41,13 +47,13 @@ describe("Basic tests", function(this: Mocha.Suite) {
         it(
             `supportedChainIds ${testSuffix}`,
             wrapExpect(expectLength(supportedChains, numChains))
-        )
+        );
 
         it(
             `supportedNetworks ${testSuffix}`,
             wrapExpect(expectLength(supportedNetworks, numChains))
-        )
-    })
+        );
+    });
 
     describe("Test configureRPCEndpoints", function(this: Mocha.Suite) {
         const rpcConfig: RPCEndpointsConfig = {
@@ -64,7 +70,7 @@ describe("Basic tests", function(this: Mocha.Suite) {
             previousBscEndpoint  = (rpcProviderForChain(ChainId.BSC)  as Web3Provider).connection.url;
             previousBobaEndpoint = (rpcProviderForChain(ChainId.BOBA) as Web3Provider).connection.url;
             previousEthEndpoint  = (rpcProviderForChain(ChainId.ETH)  as Web3Provider).connection.url;
-        })
+        });
 
 
         it("configureRPCEndponts should only reconfigure BSC and Boba", function(this: Mocha.Context) {
@@ -78,17 +84,17 @@ describe("Basic tests", function(this: Mocha.Suite) {
             expect(checkBscEndpoint).to.not.equal(previousBscEndpoint);
             expect(checkBobaEndpoint).to.not.equal(previousBobaEndpoint);
             expect(checkEthEndpoint).to.equal(previousEthEndpoint);
-        })
-    })
+        });
+    });
 
     describe("Check swappableTokens", function(this: Mocha.Suite) {
         interface TestCase {
-            token:   Token,
-            want:    boolean,
+            token:   Token;
+            want:    boolean;
         }
 
         interface ChainTestCase extends TestCase {
-            chainId: number,
+            chainId: number;
         }
 
         const
@@ -113,7 +119,7 @@ describe("Basic tests", function(this: Mocha.Suite) {
         it(
             `resC should have ${numChains} map entries`,
             wrapExpect(expectLength(Object.keys(resC), numChains))
-        )
+        );
 
         describe("Check result of two inputs", function(this: Mocha.Suite) {
             const symbols = symbolsForChain(resA, chainB);
@@ -127,9 +133,9 @@ describe("Basic tests", function(this: Mocha.Suite) {
                 it(
                     testTitle,
                     wrapExpect(expectIncludes(symbols, tc.token.symbol, tc.want))
-                )
-            })
-        })
+                );
+            });
+        });
 
         describe("Check result of one input", function(this: Mocha.Suite) {
             [
@@ -141,9 +147,9 @@ describe("Basic tests", function(this: Mocha.Suite) {
                 it(
                     testTitle,
                     wrapExpect(expectIncludes(symbolsForChain(resB, tc.chainId), tc.token.symbol, tc.want))
-                )
-            })
-        })
+                );
+            });
+        });
 
         describe("Test supported tokens", function(this: Mocha.Suite) {
             [
@@ -169,20 +175,182 @@ describe("Basic tests", function(this: Mocha.Suite) {
                 it(
                     testTitle,
                     function(this: Mocha.Context) {expect(supported).to.equal(tc.want)}
-                )
-            })
-        })
-    })
+                );
+            });
+        });
+    });
 
     describe("Test Networks.networkSupportsToken()", function(this: Mocha.Suite) {
         it("BSC should support gOHM", function(this: Mocha.Context) {
             expect(Networks.networkSupportsToken(ChainId.BSC, Tokens.GOHM)).to.be.true;
             expect(Networks.networkSupportsToken(Networks.BSC, Tokens.GOHM)).to.be.true;
-        })
+        });
 
         it("ETH should not support BUSD", function(this: Mocha.Context) {
             expect(Networks.networkSupportsToken(ChainId.ETH, Tokens.BUSD)).to.be.false;
             expect(Networks.networkSupportsToken(Networks.ETH, Tokens.BUSD)).to.be.false;
-        })
-    })
-})
+        });
+    });
+
+    describe("Test Network.zapIsL2BridgeZap", function(this: Mocha.Suite) {
+        interface TestCase {
+            network: Networks.Network;
+            want:    boolean;
+        }
+
+        const testCases: TestCase[] = [
+            { network: Networks.DFK,       want: false },
+            { network: Networks.ETH,       want: false },
+            { network: Networks.AVALANCHE, want: true  },
+        ];
+
+        testCases.forEach(tc => {
+            it(`${tc.network.name}.zapIsL2BridgeZap should return ${tc.want}`, function(this: Mocha.Context) {
+                const got = tc.network.zapIsL2BridgeZap;
+
+                switch (tc.want) {
+                    case true:
+                        expect(got).to.be.true;
+                        break;
+                    case false:
+                        expect(got).to.be.false;
+                        break
+                }
+            });
+        });
+    });
+
+    describe("fixWeiValue tests", function(this: Mocha.Suite) {
+        const
+            strBn = (n: BigNumberish): string => BigNumber.from(n).toString(),
+            bnStr = (s: string): BigNumber => BigNumber.from(s);
+
+        interface TestCase {
+            amount:   BigNumberish;
+            decimals: number;
+            want:     BigNumber;
+        }
+
+        const testCases: TestCase[] = [
+            {amount: "77000",                decimals: 3,    want: bnStr("77000000000000000000")},
+            {amount: "100000000",            decimals: 6,    want: bnStr("100000000000000000000")},
+            {amount: "42000000000000",       decimals: 11,   want: bnStr("420000000000000000000")},
+            {amount: "104000000000000",      decimals: 12,   want: bnStr("104000000000000000000")},
+            {amount: "77000000000000000000", decimals: 18,   want: bnStr("77000000000000000000")}
+        ];
+
+        testCases.forEach(tc => {
+            const testTitle: string = `fixWeiValue(${strBn(tc.amount)}, ${tc.decimals}) should return ${strBn(tc.want)}`;
+
+            it(testTitle, function(this: Mocha.Context) {
+                const got = fixWeiValue(BigNumber.from(tc.amount), tc.decimals);
+
+                expect(got).to.equal(tc.want);
+            });
+        });
+    });
+
+    describe("gasTokenForChain tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            chainId:     number;
+            wantGas:     boolean;
+            wantToken:   Token | null;
+            wantWrapper: Token | null;
+        }
+
+        const testCases: TestCase[] = [
+            {chainId: ChainId.AVALANCHE, wantGas: true,  wantToken: Tokens.AVAX, wantWrapper: Tokens.WAVAX},
+            {chainId: ChainId.MOONBEAM,  wantGas: false, wantToken: null,        wantWrapper: null},
+            {chainId: ChainId.BOBA,      wantGas: true,  wantToken: Tokens.ETH,  wantWrapper: Tokens.WETH},
+        ];
+
+        const makeWantStr = (want: boolean, kind: string): string => `should${want ? "" : " not"} have a ${kind} token`;
+
+        testCases.forEach(tc => {
+            const
+                shouldGasStr:     string = makeWantStr(tc.wantGas, "gas"),
+                shouldWrapperStr: string = makeWantStr(tc.wantGas, "wrapper");
+
+            it(`${Networks.networkName(tc.chainId)} ${shouldGasStr}`, function(this: Mocha.Context) {
+                const got: Token | null = Tokens.gasTokenForChain(tc.chainId);
+
+                if (tc.wantGas) {
+                    expect(got).to.not.be.null;
+                    expect(got.isEqual(tc.wantToken)).to.be.true;
+                } else {
+                    expect(got).to.be.null;
+                }
+            });
+
+            it(`${Networks.networkName(tc.chainId)} ${shouldWrapperStr}`, function(this: Mocha.Context) {
+                const gasToken: Token | null = Tokens.gasTokenForChain(tc.chainId);
+                const got:      Token | null = Tokens.gasTokenWrapper(gasToken);
+
+                if (tc.wantGas) {
+                    expect(got).to.not.be.null;
+                    expect(got.isEqual(tc.wantWrapper)).to.be.true;
+                } else {
+                    expect(got).to.be.null;
+                }
+            });
+        });
+    });
+
+    describe("ChainId/Networks tests", function(this: Mocha.Suite) {
+       it("Passing an unknown Chain ID to Networks.fromChainId should return null", function(this: Mocha.Context) {
+           expect(Networks.fromChainId(775)).to.be.null;
+       });
+
+       it("Passing an unknown Chain ID to chainSupportsEIP1559 should return false", function(this: Mocha.Context) {
+           expect(chainSupportsEIP1559(775)).to.be.false;
+       });
+
+       it("Passing ChainId.ETH to chainSupportsEIP1559 should return true", function(this: Mocha.Context) {
+           expect(chainSupportsEIP1559(ChainId.ETH)).to.be.true;
+       });
+    });
+
+    describe("fetchChainGasPrices tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            chainId: number;
+        }
+
+        const testCases: TestCase[] = [
+            {chainId: ChainId.AVALANCHE},
+            {chainId: ChainId.BSC},
+        ];
+
+        testCases.forEach(tc => {
+           describe(`fetchChainGasPrices() for ${Networks.networkName(tc.chainId)}) should return data`, function(this: Mocha.Suite) {
+               this.timeout(10 * 1000);
+               let gotData: ChainGasPrices;
+
+               step("- fetch data", async function(this: Mocha.Context) {
+                   const prom = fetchChainGasPrices(tc.chainId);
+                   try {
+                       gotData = await prom;
+                       return
+                   } catch (e) {
+                       return (await expect(prom).to.eventually.not.be.rejected)
+                   }
+               });
+
+               it("min should not be Zero", function(this: Mocha.Context) {
+                   expect(gotData.min).to.not.equal(Zero);
+               });
+
+               it("avg should not be Zero", function(this: Mocha.Context) {
+                   expect(gotData.avg).to.not.equal(Zero);
+               });
+
+               it("max should not be Zero", function(this: Mocha.Context) {
+                   expect(gotData.max).to.not.equal(Zero);
+               });
+
+               it("last should not be Zero", function(this: Mocha.Context) {
+                   expect(gotData.last).to.not.equal(Zero);
+               });
+           });
+        });
+    });
+});

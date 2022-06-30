@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from "ethers";
-import { Provider } from "@ethersproject/providers";
+import type { Provider } from "@ethersproject/providers";
 import type { L1BridgeZap, L1BridgeZapInterface } from "../L1BridgeZap";
 
 const _abi = [
@@ -274,6 +274,97 @@ const _abi = [
       },
     ],
     name: "redeem",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "chainId",
+        type: "uint256",
+      },
+      {
+        internalType: "contract IERC20",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint8",
+        name: "liqTokenIndex",
+        type: "uint8",
+      },
+      {
+        internalType: "uint256",
+        name: "liqMinAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "liqDeadline",
+        type: "uint256",
+      },
+    ],
+    name: "redeemAndRemove",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "chainId",
+        type: "uint256",
+      },
+      {
+        internalType: "contract IERC20",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint8",
+        name: "tokenIndexFrom",
+        type: "uint8",
+      },
+      {
+        internalType: "uint8",
+        name: "tokenIndexTo",
+        type: "uint8",
+      },
+      {
+        internalType: "uint256",
+        name: "minDy",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "deadline",
+        type: "uint256",
+      },
+    ],
+    name: "redeemAndSwap",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

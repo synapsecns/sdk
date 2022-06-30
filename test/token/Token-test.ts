@@ -1,31 +1,32 @@
 import {expect} from "chai";
 
-import _ from "lodash";
-
 import {
     ChainId,
     Tokens,
-    type Token, supportedChainIds
+    type Token, supportedChainIds, Networks,
 } from "@sdk";
 
-import {tokenSwitch} from "@sdk/internal";
+import {tokenSwitch} from "@sdk/internal/utils";
+import type {ID} from "@sdk/internal/types";
 
 import {
     expectBnEqual,
     expectBoolean,
+    expectEqual,
     expectNull,
     wrapExpect,
 } from "@tests/helpers";
 
 import {BigNumber} from "@ethersproject/bignumber";
+import {instanceOfToken} from "@token";
 
 describe("Token Tests", function(this: Mocha.Suite) {
     describe("valueToWei tests", function(this: Mocha.Suite) {
         interface TestCase {
-            token:     Token,
-            chainId:   number,
-            amount:     BigNumber | string,
-            wantAmount: BigNumber,
+            token:      Token;
+            chainId:    number;
+            amount:     BigNumber | string;
+            wantAmount: BigNumber;
         }
 
         const makeTestTitle = (tc: TestCase): string =>
@@ -56,20 +57,37 @@ describe("Token Tests", function(this: Mocha.Suite) {
                 amount:     BigNumber.from("225"),
                 wantAmount: BigNumber.from("225000000")
             },
+            {
+                token:      Tokens.DFK_USDC,
+                chainId:    ChainId.DFK,
+                amount:     BigNumber.from("225"),
+                wantAmount: BigNumber.from("225000000000000000000")
+            },
+            {
+                token:      Tokens.NUSD,
+                chainId:    ChainId.DFK,
+                amount:     BigNumber.from("225"),
+                wantAmount: BigNumber.from("225000000000000000000")
+            },
         ].forEach((tc: TestCase) => {
             it(makeTestTitle(tc), function(this: Mocha.Context) {
-                const got: BigNumber = tc.token.valueToWei(tc.amount, tc.chainId);
+                const
+                    bnAmt: BigNumber = BigNumber.from(tc.amount),
+                    got: BigNumber = tc.token.etherToWei(tc.amount, tc.chainId),
+                    gotAnother: BigNumber = tc.token.weiToEther(got, tc.chainId);
 
+                expectEqual(bnAmt.toNumber(), parseInt(tc.token.weiToEtherString(got, tc.chainId)));
+                expectBnEqual(bnAmt.mul(BigNumber.from(10).pow(18)), gotAnother);
                 expectBnEqual(got, tc.wantAmount);
-            })
-        })
-    })
+            });
+        });
+    });
 
     describe("canSwap tests", function(this: Mocha.Suite) {
         interface TestCase {
-            tokenA:    Token,
-            tokenB:    Token,
-            expected:  boolean
+            tokenA:    Token;
+            tokenB:    Token;
+            expected:  boolean;
         }
 
         const makeTestTitle = (tc: TestCase): string =>
@@ -117,15 +135,15 @@ describe("Token Tests", function(this: Mocha.Suite) {
                 wrapExpect(
                     expectBoolean(tc.tokenA.canSwap(tc.tokenB), tc.expected)
                 )
-            )
-        })
-    })
+            );
+        });
+    });
 
     describe("wrapperAddress tests", function(this: Mocha.Suite) {
         interface TestCase {
-            token:   Token,
-            chainId: number,
-            want:    string | null,
+            token:   Token;
+            chainId: number;
+            want:    string | null;
         }
 
         [
@@ -138,24 +156,18 @@ describe("Token Tests", function(this: Mocha.Suite) {
 
             it(testTitle, function(this: Mocha.Context) {
                 expectNull(tc.token.wrapperAddress(tc.chainId), tc.want === null);
-            })
-        })
+            });
+        });
     });
 
     describe("decimals tests", function(this: Mocha.Suite) {
         interface TestCase {
-            token:   Token,
-            chainId: number,
-            want:    number,
+            token:   Token;
+            chainId: number;
+            want:    number;
         }
 
-        function makeTestCase(t: Token, c: number, d: number): TestCase {
-            return {
-                token:   t,
-                chainId: c,
-                want:    d
-            }
-        }
+        const  makeTestCase = (token: Token, chainId: number, want: number): TestCase  => ({token, chainId, want})
 
         const testCases: TestCase[] = [
             makeTestCase(Tokens.USDC, ChainId.BSC,        18),
@@ -174,43 +186,154 @@ describe("Token Tests", function(this: Mocha.Suite) {
                 expect(got).to.equal(tc.want);
             });
         });
-    })
+    });
+
+    describe("gas token wrapper tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            token: Token;
+            want:  Token | undefined;
+        }
+
+        const makeTestCase = (token: Token, want?: Token): TestCase => ({token, want});
+
+        const testCases: TestCase[] = [
+            makeTestCase(Tokens.AVAX, Tokens.WAVAX),
+            makeTestCase(Tokens.MOVR, Tokens.WMOVR),
+            makeTestCase(Tokens.ETH,  Tokens.WETH),
+            makeTestCase(Tokens.NUSD)
+        ];
+
+        testCases.forEach(tc => {
+            const testTitle: string = `${tc.token.symbol} should${tc.want ? '' : " not"} return a wrapper token`;
+
+            it(testTitle, function(this: Mocha.Context) {
+                const got = Tokens.gasTokenWrapper(tc.token);
+
+                if (tc.token.isGasToken) {
+                    expect(got).to.exist;
+                    expect(got.isEqual(tc.want)).to.be.true;
+                } else {
+                    expect(got).to.not.exist;
+                }
+            });
+        });
+    });
+
+    describe("instanceOfToken tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            val:  any;
+            want: boolean;
+        }
+
+        const testCases: TestCase[] = [
+            {val: Networks.DFK,    want: false},
+            {val: Tokens.WAVAX,    want: true},
+            {val: Tokens.SYN,      want: true},
+            {val: ChainId.DFK,     want: false},
+            {val: "hello, world!", want: false}
+        ];
+
+        testCases.forEach(tc => {
+            it(`value of type ${tc.val.constructor.name} should${tc.want ? "" : " not"} be instanceof Token`, function(this: Mocha.Context) {
+                expect(instanceOfToken(tc.val)).to.equal(tc.want);
+            });
+        });
+    });
+
+    describe("tokenFromSymbol tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            val:  string | ID | symbol | null;
+            want: Token | null;
+        }
+
+        const testCases: TestCase[] = [
+            { val: Tokens.USDC.id as ID, want: Tokens.USDC   },
+            { val: "DAI",                want: Tokens.DAI    },
+            { val: "WETH.e",             want: Tokens.WETH_E },
+            { val: Symbol("BUSD"),       want: null          },
+            { val: Tokens.BUSD.id,       want: Tokens.BUSD   },
+            { val: null,                 want: null          },
+        ];
+
+        testCases.forEach(tc => {
+            const
+                valStr:    string = typeof tc.val === "symbol" ? tc.val.toString() : tc.val as string,
+                wantStr:   string = tc.want === null ? 'null' : tc.want.name,
+                testTitle: string = `tokenFromSymbol(${tc.val === null ? null : valStr}) should return ${wantStr}`;
+
+            const got = Tokens.tokenFromSymbol(tc.val);
+
+            it(testTitle, function(this: Mocha.Context) {
+                if (tc.want === null) {
+                    expect(got).to.be.null;
+                    return
+                }
+
+                expect(got).to.not.be.null;
+                expect(instanceOfToken(got)).to.be.true;
+                expect(got.isEqual(tc.want)).to.be.true;
+            });
+        });
+    });
 
     describe("Test all tokens", function(this: Mocha.Suite) {
+        const makeTitle = (t: Token, cid: number, want: boolean): string =>
+            `${t.symbol} address for chain id ${cid} should${want ? " not" : ""} be null`;
+
         Tokens.AllTokens.forEach(t => {
             let supportedNets = Object.keys(t.addresses).map(c => Number(c));
-            _.map(supportedChainIds(), (cid) => {
+
+            supportedChainIds().forEach(cid => {
                 let tokenAddr = t.address(cid);
+
+                it(`token ${t.symbol} should exist`, function(this: Mocha.Context) {
+                    expect(Tokens.tokenFromSymbol(t.id), `${t.symbol}: ${cid}`).equals(t);
+                });
+
                 switch (tokenSwitch(t)) {
                     case Tokens.ETH:
-                        it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
-                            expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
-                        })
-                        return
                     case Tokens.AVAX:
-                        it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
-                            expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
-                        })
-                        return
                     case Tokens.MOVR:
-                        it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
+                    case Tokens.GAS_JEWEL:
+                        it(makeTitle(t, cid, false), function(this: Mocha.Context) {
                             expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
-                        })
+                        });
                         return
                 }
+
                 if (supportedNets.includes(cid)) {
                     if (t.isEqual(Tokens.FRAX) && cid === ChainId.MOONBEAM) {
                         return
                     }
-                    it(`${t.symbol} address for chain id ${cid} should not be null`, function(this: Mocha.Context) {
+                    it(makeTitle(t, cid, true), function(this: Mocha.Context) {
                         expect(tokenAddr, `${t.symbol}: ${cid}`).to.not.be.null;
-                    })
+                    });
                 } else {
-                    it(`${t.symbol} address for chain id ${cid} should be null`, function(this: Mocha.Context) {
+                    it(makeTitle(t, cid, false), function(this: Mocha.Context) {
                         expect(tokenAddr, `${t.symbol}: ${cid}`).to.be.null;
-                    })
+                    });
                 }
-            })
+            });
         });
     });
-})
+
+    describe("Token hash tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            token: Token;
+            hash:  string;
+        }
+
+        const tokensHashMap: TestCase[] = Tokens.AllTokens.map(t => ({token: t, hash: t.hash}));
+
+        tokensHashMap.forEach(tc => {
+            it("should have a hash", function(this: Mocha.Context) {
+                expect(tc.hash).to.not.be.empty;
+            });
+
+            it("should be unique", function(this: Mocha.Context) {
+                const check = tokensHashMap.find(th => !th.token.isEqual(tc.token) && th.hash === tc.hash);
+                expect(check).to.be.undefined;
+            });
+        });
+    });
+});

@@ -33,51 +33,90 @@ on:
       - 'tsconfig.build.json'
 
 jobs:
+  prebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - if:  github.event_name == 'push'
+        id:  push_commit_msg
+        run: echo ::set-output name=push_msg::$(git log --format=%B -n 1 HEAD)
+
+      - if:  github.event_name == 'pull_request'
+        id:  pull_commit_msg
+        run: echo ::set-output name=pull_msg::$(git log --format=%B -n 1 HEAD^2)
+
+    outputs:
+      commit_message: $( [ -z "${{ steps.pull_commit_msg.outputs.pull_msg }}" ] && echo "${{ steps.push_commit_msg.outputs.push_msg }}" || echo "${{ steps.pull_commit_msg.outputs.pull_msg }}" )
+
   test:
     strategy:
       matrix:
         node-version:
-          - lts/gallium       # most recent release of Node v16, since it's LTS
-          - 17.0.1   # Node version used in .nvmrc
+          - lts/gallium   # most recent release of Node v16, since it's LTS
+          - 17.0.1        # Node version used in .nvmrc
         platform:
           - ubuntu-latest
 
-    if: ${{ !contains(github.event.head_commit.message, '[ci notest]') }}
+    needs:
+      - prebuild
+
+    if: ${{ !contains(needs.prebuild.outputs.commit_message, '[ci notest]') }}
 
     env:
       COVERAGE_DIR: ${{ github.workspace }}/coverage
 
     runs-on: ${{ matrix.platform }}
     steps:
+      - uses: actions/checkout@v3
+
       - name: Set coveralls run flag
         id: coveralls_flag
         run: |
           FLAGVAL=node-${{ matrix.node-version }}
+
           if [[ ${{ github.event_name }} == 'pull_request' ]]; then
-            FLAGVAL=${FLAGVAL}-pr_${{ github.event.pull_request.number }}
+            FLAGVAL="${FLAGVAL}.pr.${{ github.event.pull_request.number }}"
+          else
+            FLAGVAL="${FLAGVAL}.${{ github.ref_name }}"
           fi
+
+          FLAGVAL="${FLAGVAL}.${{ github.run_id }}/${{ github.run_attempt }}"
+
           echo ::set-output name=coveralls_flag::${FLAGVAL}
 
-      - uses: actions/checkout@v2
-
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
 
+      - id: cache_dir
+        run: echo ::set-output name=dir::$(yarn cache dir)
+
+      - uses: actions/cache@v3
+        id: yarn_cache
+        with:
+          path: ${{ steps.cache_dir.outputs.dir }}
+          key: ${{ runner.os }}-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.node-version }}-yarn-
+
       - run: yarn install
+        if: steps.yarn_cache.outputs.cache-hit != 'true'
 
       - name: Run Tests (Node ${{ matrix.node-version }})
-        run: yarn -s run test:coverage
+        run: yarn -s run coverage:test
         env:
-          RPC_BATCH_INTERVAL: 75
           REPORTS_DIR:        ${{ env.COVERAGE_DIR }}
-          ETH_RPC_URI:        ${{ secrets.ETHEREUM_RPC_URI }}
-          OPTIMISM_RPC_URI:   ${{ secrets.OPTIMISM_RPC_URI }}
+          ETH_RPC_URI:        ${{ secrets.ETH_RPC_URI }}
           POLYGON_RPC_URI:    ${{ secrets.POLYGON_RPC_URI }}
           FANTOM_RPC_URI:     ${{ secrets.FANTOM_RPC_URI }}
+          METIS_RPC_URI:      ${{ secrets.METIS_RPC_URI }}
           ARBITRUM_RPC_URI:   ${{ secrets.ARBITRUM_RPC_URI }}
-          HARMONY_RPC_URI:    "https://api.fuzz.fi"
+          CRONOS_RPC_URI:     "https://mmf-rpc.xstaking.sg/"
+          HARMONY_RPC_URI:    "https://harmony-0-rpc.gateway.pokt.network"
           INFINITE_APPROVALS_PRIVKEY:          ${{ secrets.INFINITE_APPROVALS_PRIVKEY }}
           INFINITE_APPROVALS_PRIVKEY_ADDRESS:  ${{ secrets.INFINITE_APPROVALS_PRIVKEY_ADDRESS }}
           BRIDGE_INTERACTIONS_PRIVKEY:         ${{ secrets.BRIDGE_INTERACTIONS_PRIVKEY }}

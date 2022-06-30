@@ -1,36 +1,39 @@
+import {expect} from "chai";
+
 import {step} from "mocha-steps";
 
 import {
+    type Token,
     ChainId,
     Networks,
     Tokens,
     TokenSwap,
-    type Token
+    UnsupportedSwapErrors
 } from "@sdk";
+
+import {rejectPromise} from "@sdk/common/utils";
 
 import {
     DEFAULT_TEST_TIMEOUT,
-    expectFulfilled,
-    expectProperty,
-    expectRejected,
-    getTestAmount,
+    getTestAmount
 } from "@tests/helpers";
 
-import {Zero}      from "@ethersproject/constants";
-import {BigNumber} from "@ethersproject/bignumber";
-import {BaseContract, Contract} from "@ethersproject/contracts";
-import {expect} from "chai";
-import {SwapContract} from "@contracts";
+import {Zero}         from "@ethersproject/constants";
+import {BigNumber}    from "@ethersproject/bignumber";
+import {BaseContract} from "@ethersproject/contracts";
+
+
+import UnsupportedSwapError = UnsupportedSwapErrors.UnsupportedSwapError;
 
 
 describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
     describe("calculateSwapRate() tests", function(this: Mocha.Suite) {
         interface TestCase {
-            chainId:   number,
-            tokenFrom: Token,
-            tokenTo:   Token,
-            amountIn:  BigNumber,
-            wantError: boolean,
+            chainId:   number;
+            tokenFrom: Token;
+            tokenTo:   Token;
+            amountIn:  BigNumber;
+            wantError: boolean;
         }
 
         const makeTestCase = (c: number, t1: Token, t2: Token, amt?: string, wantError?: boolean): TestCase =>
@@ -42,7 +45,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                 wantError: wantError ?? false,
             });
 
-        [
+        const testCases: TestCase[] = [
             makeTestCase(ChainId.ETH,        Tokens.DAI,        Tokens.USDC),
             makeTestCase(ChainId.ETH,        Tokens.ETH,        Tokens.NETH, null, true),
             makeTestCase(ChainId.OPTIMISM,   Tokens.WETH,       Tokens.NETH),
@@ -50,7 +53,11 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
             makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.BUSD),
             makeTestCase(ChainId.BSC,        Tokens.NUSD,       Tokens.DAI,  null, true),
             makeTestCase(ChainId.ARBITRUM,   Tokens.NEWO,       Tokens.UST,  null, true),
-        ].forEach((tc: TestCase) => {
+            makeTestCase(ChainId.AVALANCHE,  Tokens.DAI,        Tokens.USDT),
+            makeTestCase(ChainId.CRONOS,     Tokens.NUSD,       Tokens.USDC),
+        ];
+
+        testCases.forEach((tc: TestCase) => {
             const
                 titleSuffix: string = tc.wantError ? "should fail" : "should pass",
                 tokFrom: string     = tc.tokenFrom.symbol,
@@ -70,15 +77,34 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                     tokenFrom: tc.tokenFrom,
                     tokenTo:   tc.tokenTo,
                     amountIn:  tc.amountIn,
-                })).then((res) => {
-                    amountOut = res.amountOut;
-                    return res
-                });
+                }))
+                    .then((res) => {
+                        amountOut = res.amountOut;
+                        return res
+                    })
+                    .catch(rejectPromise)
 
-                return tc.wantError
-                    ? await expectRejected(prom)
-                    : expectProperty(await prom, "amountOut").that.is.gt(Zero.toNumber())
-            })
+                if (tc.wantError) {
+                    let err: Error;
+                    try {
+                        await prom;
+                    } catch (e) {
+                        err = e;
+                    }
+
+                    if (err instanceof UnsupportedSwapError) {
+                        expect(err).to.be.an.instanceof(UnsupportedSwapError).and.to.haveOwnProperty("errorKind");
+                    }
+
+                    return (await expect(prom).to.eventually.be.rejected)
+                }
+
+                return (await expect(prom).to.eventually
+                        .haveOwnProperty("amountOut")
+                        .that.is.an.instanceOf(BigNumber)
+                        .and.is.gt(Zero.toNumber())
+                    )
+            });
 
             step(testTitle2, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
@@ -90,12 +116,16 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
 
                 let prom = TokenSwap.buildSwapTokensTransaction(args);
 
-                return (await (
-                    tc.wantError
-                        ? expectRejected(prom)
-                        : expectFulfilled(prom)
-                ))
-            })
+                try {
+                    await prom;
+                } catch (e) {
+                    if (tc.wantError) {
+                        return (await expect(prom).to.eventually.be.rejected);
+                    }
+                }
+
+                return (await expect(prom).to.eventually.be.fulfilled)
+            });
 
             step(testTitle3, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
@@ -104,7 +134,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                     tc.tokenFrom,
                     tc.tokenTo,
                     tc.chainId,
-                )
+                );
 
                 try {
                     let res = await prom;
@@ -118,7 +148,7 @@ describe("TokenSwap -- Asynchronous Tests", function(this: Mocha.Suite) {
                         expect.fail(e);
                     }
                 }
-            })
-        })
-    })
-})
+            });
+        });
+    });
+});

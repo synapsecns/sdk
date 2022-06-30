@@ -1,19 +1,27 @@
 import {Slippages} from "./slippages";
 
-import {Tokens} from "@tokens";
+import {Tokens}    from "@tokens";
 import {ChainId}   from "@chainid";
 import {SwapPools} from "@swappools";
 
+import {
+    L1BridgeZapContractInstance,
+    L2BridgeZapContractInstance,
+    GenericZapBridgeContractInstance
+} from "@entities";
+
 import type {Token} from "@token";
-import type {GenericZapBridgeContract, L2BridgeZapContract} from "@contracts";
+
+import {tokenSwitch}         from "@internal/utils";
+import {rpcProviderForChain} from "@internal/rpcproviders";
 
 import {Zero}      from "@ethersproject/constants";
 import {BigNumber} from "@ethersproject/bignumber";
-import {tokenSwitch} from "@internal/index";
+
 
 
 export namespace BridgeUtils {
-    export const L2_ETH_CHAINS = [
+    export const L2_ETH_CHAINS: number[] = [
         ChainId.OPTIMISM,
         ChainId.FANTOM,
         ChainId.BOBA,
@@ -24,37 +32,96 @@ export namespace BridgeUtils {
         ChainId.HARMONY,
     ];
 
-    export const GAS_TOKEN_CHAINS = [
+    export const GAS_TOKEN_CHAINS: number[] = [
         ChainId.ETH,
         ChainId.OPTIMISM,
         ChainId.BOBA,
         ChainId.ARBITRUM,
+        ChainId.AVALANCHE,
+        ChainId.DFK
     ];
 
     export const isL2ETHChain          = (chainId: number): boolean => L2_ETH_CHAINS.includes(chainId);
     export const chainSupportsGasToken = (chainId: number): boolean => GAS_TOKEN_CHAINS.includes(chainId);
 
+    interface SpecialTokenInfo {
+        chainId: number;
+        token:   Token;
+    }
+
+    const SPECIAL_TOKEN_INFO: SpecialTokenInfo[] = [
+        {chainId: ChainId.DFK, token: Tokens.DFKTEARS},
+    ];
+
+    export const isSpecialToken = (chainId: number, token: Token): boolean => {
+        const found = SPECIAL_TOKEN_INFO.find(tokInfo => tokInfo.chainId === chainId && tokInfo.token.isEqual(token));
+        return typeof found !== 'undefined'
+    }
+
     interface DepositIfChainArgs {
-        chainId:     number,
-        tokens:      Token[],
-        depositEth:  boolean,
-        altChainId?: number,
+        chainId:        number;
+        tokens:         Token[];
+        depositEth:     boolean;
+        redeemChainIds: number[];
     }
 
     export const DepositIfChainTokens: DepositIfChainArgs[] = [
-        {chainId: ChainId.FANTOM,    tokens: [Tokens.JUMP],  depositEth: false},
-        {chainId: ChainId.POLYGON,   tokens: [Tokens.NFD],   depositEth: false},
-        {chainId: ChainId.MOONRIVER, tokens: [Tokens.SOLAR], depositEth: false},
-        {chainId: ChainId.AVALANCHE, tokens: [Tokens.AVAX, Tokens.WAVAX], altChainId: ChainId.MOONBEAM, depositEth: true},
-        {chainId: ChainId.MOONRIVER, tokens: [Tokens.MOVR, Tokens.WMOVR], altChainId: ChainId.MOONBEAM, depositEth: true},
+        {
+            chainId:         ChainId.FANTOM,
+            tokens:         [Tokens.JUMP],
+            redeemChainIds: [ChainId.BSC],
+            depositEth:      false,
+        },
+        {
+            chainId:         ChainId.POLYGON,
+            tokens:         [Tokens.NFD],
+            redeemChainIds: [],
+            depositEth:      false,
+        },
+        {
+            chainId:         ChainId.MOONRIVER,
+            tokens:         [Tokens.SOLAR],
+            redeemChainIds: [],
+            depositEth:      false,
+        },
+        {
+            chainId:        ChainId.AVALANCHE,
+            tokens:         [Tokens.AVAX, Tokens.WAVAX, Tokens.SYN_AVAX],
+            redeemChainIds: [ChainId.MOONBEAM, ChainId.DFK],
+            depositEth:     true
+        },
+        {
+            chainId:         ChainId.MOONRIVER,
+            tokens:         [Tokens.MOVR, Tokens.WMOVR],
+            redeemChainIds: [ChainId.MOONBEAM],
+            depositEth:      true,
+        },
+        {
+            chainId:         ChainId.HARMONY,
+            tokens:         [Tokens.XJEWEL],
+            redeemChainIds: [ChainId.DFK],
+            depositEth:      false,
+        },
+        {
+            chainId:         ChainId.ARBITRUM,
+            tokens:         [Tokens.VSTA],
+            redeemChainIds: [],
+            depositEth:      false,
+        },
+        {
+            chainId:         ChainId.HARMONY,
+            tokens:         [Tokens.DFKTEARS],
+            redeemChainIds: [ChainId.DFK],
+            depositEth:      false,
+        },
     ]
 
     interface BridgeTxArgs {
-        slippageCustom:            string,
-        slippageSelected:          string,
-        infiniteApproval:          boolean,
-        transactionDeadline:       number,
-        bridgeTransactionDeadline: number,
+        slippageCustom:            string;
+        slippageSelected:          string;
+        infiniteApproval:          boolean;
+        transactionDeadline:       number;
+        bridgeTransactionDeadline: number;
     }
 
     export function getBridgeTxArgs(): BridgeTxArgs {
@@ -68,18 +135,18 @@ export namespace BridgeUtils {
     }
 
     interface BridgeSlippages {
-        slippageSelected: string,
-        transactionDeadline: number,
-        bridgeTransactionDeadline: number,
-        minToSwapOrigin: BigNumber,
-        minToSwapDest: BigNumber,
-        minToSwapDestFromOrigin: BigNumber,
-        minToSwapOriginMediumSlippage: BigNumber,
-        minToSwapDestMediumSlippage: BigNumber,
-        minToSwapDestFromOriginMediumSlippage: BigNumber,
-        minToSwapOriginHighSlippage: BigNumber,
-        minToSwapDestHighSlippage: BigNumber,
-        minToSwapDestFromOriginHighSlippage: BigNumber,
+        slippageSelected:                      string;
+        transactionDeadline:                   number;
+        bridgeTransactionDeadline:             number;
+        minToSwapOrigin:                       BigNumber;
+        minToSwapDest:                         BigNumber;
+        minToSwapDestFromOrigin:               BigNumber;
+        minToSwapOriginMediumSlippage:         BigNumber;
+        minToSwapDestMediumSlippage:           BigNumber;
+        minToSwapDestFromOriginMediumSlippage: BigNumber;
+        minToSwapOriginHighSlippage:           BigNumber;
+        minToSwapDestHighSlippage:             BigNumber;
+        minToSwapDestFromOriginHighSlippage:   BigNumber;
     }
 
     export function getSlippages(amountFrom: BigNumber, amountTo: BigNumber): BridgeSlippages {
@@ -125,6 +192,13 @@ export namespace BridgeUtils {
         }
     }
 
+    export const entityParams = (chainId: number) => ({chainId, signerOrProvider: rpcProviderForChain(chainId)});
+
+    export const
+        newL1BridgeZap = (chainId: number) => L1BridgeZapContractInstance(entityParams(chainId)),
+        newL2BridgeZap = (chainId: number) => L2BridgeZapContractInstance(entityParams(chainId)),
+        newBridgeZap   = (chainId: number) => GenericZapBridgeContractInstance(entityParams(chainId));
+
     export const subBigNumSafe = (a: BigNumber, b: BigNumber): BigNumber => a.gt(b) ? a.sub(b) : Zero
 
     export const getTimeMinutesFromNow = (minutesFromNow: number): number =>
@@ -155,21 +229,6 @@ export namespace BridgeUtils {
     export const depositETHParams = (args: BridgeTxParams): [string, number, BigNumber] =>
         [args.addressTo, args.chainIdTo, args.amountFrom];
 
-    export async function calculateSwapL2Zap(
-        zapBridge:         GenericZapBridgeContract,
-        intermediateToken: string,
-        tokenIndexFrom:    number,
-        tokenIndexTo:      number,
-        amount:           BigNumber
-    ): Promise<BigNumber> {
-        return (zapBridge as L2BridgeZapContract).calculateSwap(
-            intermediateToken,
-            tokenIndexFrom,
-            tokenIndexTo,
-            amount
-        )
-    }
-
     export const isETHLikeToken = (t: Token): boolean =>
         [Tokens.WETH_E.id, Tokens.ONE_ETH.id, Tokens.FTM_ETH.id, Tokens.METIS_ETH.id].includes(t.id)
 
@@ -191,7 +250,7 @@ export namespace BridgeUtils {
             checkReplaceToken(t2, check, replace)
         ];
 
-    function findSymbol(t1: Token, t2: Token): boolean {
+    function findSymbol(t1: Token, t2: Token, chainId: number): boolean {
         let compare: Token = t2;
         switch (tokenSwitch(t2)) {
             case Tokens.WETH_E:
@@ -200,18 +259,32 @@ export namespace BridgeUtils {
             case Tokens.WETH:
                 compare = Tokens.WETH;
                 break;
+            case Tokens.JEWEL:
+                if (chainId === ChainId.HARMONY) {
+                    compare = Tokens.SYN_JEWEL;
+                } else {
+                    compare = t2.underlyingToken;
+                }
+                break;
+            case Tokens.WAVAX:
+                if (chainId !== ChainId.DFK) {
+                    compare = t2.underlyingToken;
+                }
+                break;
             default:
-                compare = t2.isWrappedToken ? t2.underlyingToken : compare;
+                if (t2.isWrapperToken && t2.underlyingToken) {
+                    compare = t2.underlyingToken;
+                }
                 break;
         }
 
-        return t1.isEqual(compare);
+        return t1.isEqual(compare)
     }
 
     export function makeTokenArgs(chainId: number, t: Token): [Token[], number] {
         let
             toks: Token[] = SwapPools.bridgeSwappableMap[chainId].swappableSwapGroups[t.swapType].poolTokens,
-            idx  = toks.findIndex((tok: Token) => findSymbol(tok, t));
+            idx  = toks.findIndex((tok: Token) => findSymbol(tok, t, chainId));
 
         return [toks, idx]
     }

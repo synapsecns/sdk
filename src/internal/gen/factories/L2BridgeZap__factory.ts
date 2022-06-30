@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from "ethers";
-import { Provider } from "@ethersproject/providers";
+import type { Provider } from "@ethersproject/providers";
 import type { L2BridgeZap, L2BridgeZapInterface } from "../L2BridgeZap";
 
 const _abi = [
@@ -137,6 +137,49 @@ const _abi = [
       },
     ],
     name: "depositETH",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "chainId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint8",
+        name: "tokenIndexFrom",
+        type: "uint8",
+      },
+      {
+        internalType: "uint8",
+        name: "tokenIndexTo",
+        type: "uint8",
+      },
+      {
+        internalType: "uint256",
+        name: "minDy",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "deadline",
+        type: "uint256",
+      },
+    ],
+    name: "depositETHAndSwap",
     outputs: [],
     stateMutability: "payable",
     type: "function",

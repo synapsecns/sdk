@@ -2,24 +2,23 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@abis":        ["./src/abis/index"],
-      "@abis/*":      ["./src/abis/*"],
-      "@bridge":      ["./src/bridge"],
-      "@bridge/*":    ["./src/bridge/*"],
-      "@common/*":    ["./src/common/*"],
-      "@entities":    ["./src/entities"],
-      "@contracts":   ["./src/contracts"],
-      "@contracts/*": ["./src/contracts/*"],
-      "@chainid":     ["./src/common/chainid"],
-      "@networks":    ["./src/common/networks"],
-      "@internal":    ["./src/internal/index"],
-      "@internal/*":  ["./src/internal/*"],
-      "@swappools":   ["./src/swappools"],
-      "@token":       ["./src/token"],
-      "@tokens":      ["./src/tokens"],
-      "@tokenswap":   ["./src/tokenswap"]
+      "@hooks/*":          ["./src/hooks/*"],
+      "@bridge":           ["./src/bridge"],
+      "@bridge/*":         ["./src/bridge/*"],
+      "@common/*":         ["./src/common/*"],
+      "@chainid":          ["./src/common/chainid"],
+      "@networks":         ["./src/common/networks"],
+      "@utils":            ["./src/common/utils"],
+      "@synapsecontracts": ["./src/common/synapse_contracts"],
+      "@entities":         ["./src/entities"],
+      "@contracts":        ["./src/contracts"],
+      "@internal/*":       ["./src/internal/*"],
+      "@swappools":        ["./src/swappools"],
+      "@token":            ["./src/token"],
+      "@tokens":           ["./src/tokens"],
+      "@tokenswap":        ["./src/tokenswap"]
     },
-    "target": "ESNext",
+    "target": "ES5",
     "module": "ESNext",
     "outDir": "dist",
     "strict": false,
@@ -29,10 +28,17 @@
     "declaration": true,
     "removeComments": false,
     "types": [
-      "node",
+      "node"
+    ],
+    "lib": [
+      "es2017",
+      "esnext",
+      "dom",
+      "dom.iterable"
     ],
     "isolatedModules": true,
     "skipLibCheck": true,
+    "jsx": "react-jsx"
   },
   "include": [
     "src/**/*"

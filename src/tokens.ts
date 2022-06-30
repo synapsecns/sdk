@@ -1,8 +1,28 @@
-import {BaseToken, type Token, WrappedToken,} from "@token";
+import {
+    type Token,
+    BaseToken,
+    WrapperToken
+} from "@token";
 
-import {ChainId} from "@chainid";
+import {ChainId, type ChainIdTypeMap} from "@chainid";
 
-import {SwapType} from "@internal/index";
+import {
+    approve,
+    allowanceOf
+} from "@bridge/erc20";
+
+import type {
+    ApproveArgs,
+    TokenParams
+} from "@bridge/erc20";
+
+import {ID}          from "@internal/types";
+import {SwapType}    from "@internal/swaptype"
+import {tokenSwitch} from "@internal/utils";
+
+import {BigNumber} from "@ethersproject/bignumber";
+import type {Signer} from "@ethersproject/abstract-signer";
+import type {ContractTransaction} from "@ethersproject/contracts";
 
 export namespace Tokens {
     // Stablecoins
@@ -16,6 +36,7 @@ export namespace Tokens {
         decimals:     18,
         addresses: {
             [ChainId.ETH]:       "0x6b175474e89094c44da98b954eedeac495271d0f",
+            [ChainId.CRONOS]:    "0xf2001b145b43032aaf5ee2884e456ccd805f677d",
             [ChainId.BSC]:       "0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3",
             [ChainId.POLYGON]:   "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
             [ChainId.BOBA]:      "0xf74195Bb8a5cf652411867c5C2C5b8C2a402be35",
@@ -24,7 +45,8 @@ export namespace Tokens {
             [ChainId.AURORA]:    "0xe3520349F477A5F6EB06107066048508498A291b",
             [ChainId.HARMONY]:   "0xef977d2f931c1978db5f6747666fa1eacb0d0339",
         },
-        swapType: SwapType.USD
+        swapType:    SwapType.USD,
+        coingeckoId: "dai",
     });
 
     export const BUSD = new BaseToken({
@@ -34,7 +56,8 @@ export namespace Tokens {
         addresses: {
             [ChainId.BSC]: "0xe9e7cea3dedca5984780bafc599bd69add087d56",
         },
-        swapType: SwapType.USD
+        swapType:    SwapType.USD,
+        coingeckoId: "binance-usd",
     });
 
     export const USDC = new BaseToken({
@@ -42,6 +65,8 @@ export namespace Tokens {
         symbol: "USDC",
         decimals: {
             [ChainId.ETH]:       6,
+            [ChainId.OPTIMISM]:  6,
+            [ChainId.CRONOS]:    6,
             [ChainId.BSC]:       18,
             [ChainId.POLYGON]:   6,
             [ChainId.FANTOM]:    6,
@@ -54,6 +79,8 @@ export namespace Tokens {
         },
         addresses: {
             [ChainId.ETH]:       "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            [ChainId.OPTIMISM]:  "0x7f5c764cbc14f9669b88837ca1490cca17c31607",
+            [ChainId.CRONOS]:    "0xc21223249ca28397b4b6541dffaecc539bff0c59",
             [ChainId.BSC]:       "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
             [ChainId.POLYGON]:   "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
             [ChainId.FANTOM]:    "0x04068da6c83afcfa0e13ba15a6696662335d5b75",
@@ -64,7 +91,8 @@ export namespace Tokens {
             [ChainId.AURORA]:    "0xB12BFcA5A55806AaF64E99521918A4bf0fC40802",
             [ChainId.HARMONY]:   "0x985458e523db3d53125813ed68c274899e9dfab4",
         },
-        swapType: SwapType.USD
+        swapType:    SwapType.USD,
+        coingeckoId: "usd-coin",
     });
 
     export const USDT = new BaseToken({
@@ -72,6 +100,7 @@ export namespace Tokens {
         symbol:   "USDT",
         decimals: {
             [ChainId.ETH]:       6,
+            [ChainId.CRONOS]:    6,
             [ChainId.BSC]:       18,
             [ChainId.POLYGON]:   6,
             [ChainId.FANTOM]:    6,
@@ -83,6 +112,7 @@ export namespace Tokens {
         },
         addresses: {
             [ChainId.ETH]:       "0xdac17f958d2ee523a2206206994597c13d831ec7",
+            [ChainId.CRONOS]:    "0x66e428c3f67a68878562e79a0234c1f83c208770",
             [ChainId.BSC]:       "0x55d398326f99059ff775485246999027b3197955",
             [ChainId.POLYGON]:   "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
             [ChainId.FANTOM]:    "0x049d68029688eabf473097a2fc38ef61633a3c7a",
@@ -92,7 +122,8 @@ export namespace Tokens {
             [ChainId.AURORA]:    "0x4988a896b1227218e4A686fdE5EabdcAbd91571f",
             [ChainId.HARMONY]:   "0x3c2b8be99c50593081eaa2a724f0b8285f5aba8f",
         },
-        swapType: SwapType.USD
+        swapType:    SwapType.USD,
+        coingeckoId: "tether",
     });
 
     export const UST = new BaseToken({
@@ -112,14 +143,22 @@ export namespace Tokens {
             [ChainId.MOONRIVER]: "0xa9D0C0E124F53f4bE1439EBc35A9C73c0e8275fB",
             [ChainId.ARBITRUM]:  "0x13780E6d5696DD91454F6d3BbC2616687fEa43d0",
             [ChainId.AVALANCHE]: "0xE97097dE8d6A17Be3c39d53AE63347706dCf8f43",
+            [ChainId.DFK]:       "0x360d6DD540E3448371876662FBE7F1aCaf08c5Ab",
             [ChainId.AURORA]:    "0xb1Da21B0531257a7E5aEfa0cd3CbF23AfC674cE1",
             [ChainId.HARMONY]:   "0xa0554607e477cdC9d0EE2A6b087F4b2DC2815C22",
         },
-        swapType: SwapType.UST
+        swapType:    SwapType.UST,
+        coingeckoId: "terrausd",
     });
 
     // ETH, ETH wrappers, and nETH :D
 
+    /**
+     * ETH is the native currency ("gas token") for Ethereum, Optimism,
+     * Boba, Arbitrum, and countless other chains
+     * (though the four listed are the four currently supported by Synapse Protocol).
+     * See {@link WETH} for a "wrapped" ERC20 variant of ETH.
+     */
     export const ETH = new BaseToken({
         name:        "Ethereum",
         symbol:      "ETH",
@@ -130,8 +169,10 @@ export namespace Tokens {
             [ChainId.BOBA]:     "",
             [ChainId.ARBITRUM]: ""
         },
-        swapType: SwapType.ETH,
-        isETH:    true,
+        swapType:    SwapType.ETH,
+        isETH:       true,
+        isGasToken:  true,
+        coingeckoId: "ethereum",
     });
 
     /**
@@ -143,6 +184,7 @@ export namespace Tokens {
         decimals:    18,
         addresses: {
             [ChainId.OPTIMISM]:  "0x809DC529f07651bD43A172e8dB6f4a7a0d771036",
+            [ChainId.CRONOS]:    "0x41E95B1F1c7849c50Bb9Caf92AB33302c0de945F",
             [ChainId.FANTOM]:    "0x67C10C397dD0Ba417329543c1a40eb48AAa7cd00",
             [ChainId.BOBA]:      "0x96419929d7949D6A801A6909c145C8EEf6A40431",
             [ChainId.MOONBEAM]:  "0x3192Ae73315c3634Ffa217f71CF6CBc30FeE349A",
@@ -249,7 +291,8 @@ export namespace Tokens {
             [ChainId.AURORA]:    "0xd80d8688b02B3FD3afb81cDb124F188BB5aD0445",
             [ChainId.HARMONY]:   "0xE55e19Fb4F2D85af758950957714292DAC1e25B2",
         },
-        swapType: SwapType.SYN
+        swapType:    SwapType.SYN,
+        coingeckoId: "synapse-2",
     });
 
     /**
@@ -261,6 +304,7 @@ export namespace Tokens {
         decimals:    18,
         addresses: {
             [ChainId.ETH]:       "0x1B84765dE8B7566e4cEAF4D0fD3c5aF52D3DdE4F",
+            [ChainId.OPTIMISM]:  "0x67C10C397dD0Ba417329543c1a40eb48AAa7cd00",
             [ChainId.CRONOS]:    "0x396c9c192dd323995346632581BEF92a31AC623b",
             [ChainId.BSC]:       "0x23b891e5c62e0955ae2bd185990103928ab817b3",
             [ChainId.POLYGON]:   "0xb6c473756050de474286bed418b77aeac39b02af",
@@ -269,14 +313,29 @@ export namespace Tokens {
             [ChainId.METIS]:     "0x961318Fc85475E125B99Cc9215f62679aE5200aB",
             [ChainId.ARBITRUM]:  "0x2913E812Cf0dcCA30FB28E6Cac3d2DCFF4497688",
             [ChainId.AVALANCHE]: "0xCFc37A6AB183dd4aED08C204D1c2773c0b1BDf46",
+            [ChainId.DFK]:       "0x3AD9DFE640E1A9Cc1D9B0948620820D975c3803a",
             [ChainId.AURORA]:    "0x07379565cD8B0CaE7c60Dc78e7f601b34AF2A21c",
             [ChainId.HARMONY]:   "0xED2a7edd7413021d440b09D654f3b87712abAB66",
         },
         swapType: SwapType.USD,
     });
 
+    export const DFK_USDC = new BaseToken({
+        name:     "USD Circle",
+        symbol:   "USDC",
+        decimals: 18,
+        addresses: {
+            [ChainId.DFK]: "0x3AD9DFE640E1A9Cc1D9B0948620820D975c3803a"
+        },
+        swapType: SwapType.USD,
+    });
+
     // chain native coins and wrapper tokens
 
+    /**
+     * AVAX is the native currency of Avalanche C-Chain.
+     * See {@link WAVAX} for the "wrapped" ERC20 variant of this token.
+     */
     export const AVAX = new BaseToken({
         name:     "Avalanche",
         symbol:   "AVAX",
@@ -284,21 +343,56 @@ export namespace Tokens {
         addresses: {
             [ChainId.AVALANCHE]: "",
         },
-        swapType: SwapType.AVAX,
+        swapType:    SwapType.AVAX,
+        isGasToken:  true,
+        coingeckoId: "avalanche-2",
     });
 
-    export const WAVAX = new WrappedToken({
+    export const WAVAX = new WrapperToken({
         name:     "Wrapped AVAX",
         symbol:   "wAVAX",
         decimals: 18,
         addresses: {
-            [ChainId.AVALANCHE]: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
             [ChainId.MOONBEAM]:  "0xA1f8890E39b4d8E33efe296D698fe42Fb5e59cC3",
+            [ChainId.AVALANCHE]: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
+            [ChainId.DFK]:       "0xB57B60DeBDB0b8172bb6316a9164bd3C695F133a",
+            [ChainId.HARMONY]:   "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6" // synAVAX, but here for compat.
         },
         swapType:        SwapType.AVAX,
         underlyingToken: AVAX,
+        coingeckoId:     "avalanche-2",
     });
 
+    /**
+     * SYN_AVAX (synAVAX) is a "wrapped" ERC20 form of AVAX,
+     * and is the supported output Token when bridging AVAX from
+     * Avalanche C-Chain or Defi Kingdoms mainnet to Harmony.
+     */
+    export const SYN_AVAX = new BaseToken({
+        name:     "Wrapped AVAX",
+        symbol:   "synAVAX",
+        decimals: 18,
+        addresses: {
+            [ChainId.HARMONY]:   "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6",
+            [ChainId.AVALANCHE]: "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6" // Not actually real.
+        },
+        swapType: SwapType.AVAX
+    });
+
+    export const MULTI_AVAX = new BaseToken({
+        name:     "AnySwap/Multi Wrapped AVAX",
+        symbol:   "multiAVAX",
+        decimals: 18,
+        addresses: {
+            [ChainId.HARMONY]: "0xb12c13e66ade1f72f71834f2fc5082db8c091358"
+        },
+        swapType: SwapType.AVAX
+    });
+
+    /**
+     * MOVR is the native currency of the Moonriver chain.
+     * See {@link WMOVR} for the "wrapped" ERC20 variant of this token.
+     */
     export const MOVR = new BaseToken({
         name:     "Moonriver",
         symbol:   "MOVR",
@@ -306,10 +400,11 @@ export namespace Tokens {
         addresses: {
             [ChainId.MOONRIVER]: "",
         },
-        swapType: SwapType.MOVR,
+        swapType:   SwapType.MOVR,
+        isGasToken: true,
     });
 
-    export const WMOVR  = new WrappedToken({
+    export const WMOVR  = new WrapperToken({
         name:     "Wrapped MOVR",
         symbol:   "wMOVR",
         decimals: 18,
@@ -321,7 +416,95 @@ export namespace Tokens {
         underlyingToken: MOVR,
     });
 
+    /**
+     * GAS_JEWEL is the native currency of the DeFi Kingdoms chain.
+     * See {@link JEWEL} for the "wrapped" ERC20 variant of this token.
+     */
+    export const GAS_JEWEL = new BaseToken({
+        name:     "JEWEL",
+        symbol:   "JEWEL",
+        decimals: 18,
+        addresses: {
+            [ChainId.DFK]: "",
+        },
+        swapType:    SwapType.JEWEL,
+        isGasToken:  true,
+        coingeckoId: "defi-kingdoms",
+    });
+
+    /**
+     * JEWEL is a "wrapped" ERC20 variant of {@link GAS_JEWEL}.
+     * In the context of Synapse Protocol, JEWEL is primarily used for
+     * bridging the native currency of the DeFi Kingdoms mainnet, {@link GAS_JEWEL},
+     * to and from the Harmony and Avalanche networks.
+     */
+    export const JEWEL = new WrapperToken({
+        name:    "JEWEL",
+        symbol:  "JEWEL",
+        decimals: 18,
+        addresses: {
+            [ChainId.AVALANCHE]: "0x997Ddaa07d716995DE90577C123Db411584E5E46",
+            [ChainId.DFK]:       "0xCCb93dABD71c8Dad03Fc4CE5559dC3D89F67a260",
+            [ChainId.HARMONY]:   "0x72Cb10C6bfA5624dD07Ef608027E366bd690048F"
+        },
+        swapType:        SwapType.JEWEL,
+        underlyingToken: GAS_JEWEL,
+        coingeckoId:     "defi-kingdoms",
+    });
+
+    /**
+     * SYN_JEWEL ("synJewel") is an ERC20 Token used by Synapse Protocol to
+     * bridge and "wrap" the native currency of the DeFi Kingdoms mainnet, {@link GAS_JEWEL},
+     * to and from Avalanche C-Chain.
+     *
+     * synJEWEL is supported on Harmony as an "intermediate" token; for example, it is
+     * possible to bridge {@link JEWEL} from Harmony to synJEWEL on Avalanche, and then
+     * bridge synJEWEL to native {@link GAS_JEWEL} on the DeFi Kingdoms mainnet.
+     */
+    export const SYN_JEWEL = new BaseToken({
+        name:    "synJEWEL",
+        symbol:  "synJEWEL",
+        decimals: 18,
+        addresses: {
+            [ChainId.HARMONY]:   "0x28b42698Caf46B4B012CF38b6C75867E0762186D"
+        },
+        swapType: SwapType.JEWEL
+    });
+
+    export const MULTIJEWEL = new BaseToken({
+        name:     "Multichain JEWEL",
+        symbol:   "multiJEWEL",
+        decimals: 18,
+        addresses: {
+            [ChainId.AVALANCHE]: "0x4f60a160D8C2DDdaAfe16FCC57566dB84D674BD6",
+        },
+        swapType: SwapType.JEWEL
+    });
+
+    export const XJEWEL = new BaseToken({
+        name:    "xJEWEL",
+        symbol:  "xJEWEL",
+        decimals: 18,
+        addresses: {
+            [ChainId.DFK]:     "0x77f2656d04E158f915bC22f07B779D94c1DC47Ff",
+            [ChainId.HARMONY]: "0xA9cE83507D872C5e1273E745aBcfDa849DAA654F"
+        },
+        swapType:    SwapType.XJEWEL,
+        coingeckoId: "xjewel"
+    });
+
     // non-Synapse, non-stablecoin tokens
+
+    export const DFKTEARS = new BaseToken({
+        name:      "Gaia's Tears",
+        symbol:    "DFKTEARS",
+        decimals:  18,
+        addresses: {
+           [ChainId.DFK]:     "0x8fdD108FF5CfeCe51F0dd2a4F64D7F278d5EeB6B",
+           [ChainId.HARMONY]: "0x24eA0D436d3c2602fbfEfBe6a16bBc304C963D04",
+        },
+        swapType: SwapType.DFKTEARS,
+    });
 
     export const GOHM = new BaseToken({
         name:     "Olympus DAO",
@@ -342,7 +525,8 @@ export namespace Tokens {
             [ChainId.AVALANCHE]: "0x321E7092a180BB43555132ec53AaA65a5bF84251",
             [ChainId.HARMONY]:   "0x67C10C397dD0Ba417329543c1a40eb48AAa7cd00",
         },
-        swapType: SwapType.OHM,
+        swapType:    SwapType.OHM,
+        coingeckoId: "governance-ohm",
     });
 
     export const HIGH = new BaseToken({
@@ -353,7 +537,8 @@ export namespace Tokens {
             [ChainId.ETH]: "0x71Ab77b7dbB4fa7e017BC15090b2163221420282",
             [ChainId.BSC]: "0x5f4bde007dc06b867f86ebfe4802e34a1ffeed63",
         },
-        swapType: SwapType.HIGH
+        swapType:    SwapType.HIGH,
+        coingeckoId: "highstreet",
     });
 
     export const JUMP = new BaseToken({
@@ -364,7 +549,8 @@ export namespace Tokens {
             [ChainId.BSC]:    "0x130025ee738a66e691e6a7a62381cb33c6d9ae83",
             [ChainId.FANTOM]: "0x78DE9326792ce1d6eCA0c978753c6953Cdeedd73",
         },
-        swapType: SwapType.JUMP
+        swapType:    SwapType.JUMP,
+        coingeckoId: "hyperjump",
     });
 
     export const DOG = new BaseToken({
@@ -376,7 +562,8 @@ export namespace Tokens {
             [ChainId.BSC]:     "0xaa88c603d142c371ea0eac8756123c5805edee03",
             [ChainId.POLYGON]: "0xeee3371b89fc43ea970e908536fcddd975135d8a",
         },
-        swapType: SwapType.DOG
+        swapType:    SwapType.DOG,
+        coingeckoId: "the-doge-nft",
     });
 
     export const NFD = new BaseToken({
@@ -388,7 +575,8 @@ export namespace Tokens {
             [ChainId.POLYGON]:   "0x0a5926027d407222f8fe20f24cb16e103f617046",   // deposit
             [ChainId.AVALANCHE]: "0xf1293574ee43950e7a8c9f1005ff097a9a713959",   // redeem
         },
-        swapType: SwapType.NFD,
+        swapType:    SwapType.NFD,
+        coingeckoId: "feisty-doge-nft",
     });
 
     // FRAX/synFrax
@@ -403,7 +591,8 @@ export namespace Tokens {
             [ChainId.MOONRIVER]: "0x1a93b23281cc1cde4c4741353f3064709a16197d",
             [ChainId.HARMONY]:   "0xFa7191D292d5633f702B0bd7E3E3BcCC0e633200",
         },
-        swapType: SwapType.FRAX,
+        swapType:    SwapType.FRAX,
+        coingeckoId: "frax",
     });
 
     export const SYN_FRAX = new BaseToken({
@@ -427,7 +616,8 @@ export namespace Tokens {
             [ChainId.MOONBEAM]:  "0x0DB6729C03C85B0708166cA92801BcB5CAc781fC",
             [ChainId.MOONRIVER]: "0x76906411D07815491A5E577022757aD941fb5066",
         },
-        swapType: SwapType.SOLAR,
+        swapType:    SwapType.SOLAR,
+        coingeckoId: "solarbeam",
     });
 
     export const GMX = new BaseToken({
@@ -441,7 +631,8 @@ export namespace Tokens {
         wrapperAddresses: {
             [ChainId.AVALANCHE]: "0x20A9DC684B4d0407EF8C9A302BEAaA18ee15F656",
         },
-        swapType: SwapType.GMX,
+        swapType:    SwapType.GMX,
+        coingeckoId: "gmx",
     });
 
     export const NEWO = new BaseToken({
@@ -453,7 +644,8 @@ export namespace Tokens {
             [ChainId.ARBITRUM]:  "0x0877154a755B24D499B8e2bD7ecD54d3c92BA433",
             [ChainId.AVALANCHE]: "0x4Bfc90322dD638F81F034517359BD447f8E0235a",
         },
-        swapType: SwapType.NEWO,
+        swapType:    SwapType.NEWO,
+        coingeckoId: "new-order",
     });
 
     export const SDT = new BaseToken({
@@ -466,7 +658,8 @@ export namespace Tokens {
             [ChainId.AVALANCHE]: "0xCCBf7c451F81752F7d2237F2c18C371E6e089E69",
             [ChainId.HARMONY]:   "0xE3c82A836Ec85311a433fBd9486EfAF4b1AFbF48",
         },
-        swapType: SwapType.SDT,
+        swapType:    SwapType.SDT,
+        coingeckoId: "stake-dao",
     });
 
     export const LUNA = new BaseToken({
@@ -477,19 +670,183 @@ export namespace Tokens {
             [ChainId.OPTIMISM]: "0x931B8f17764362A3325D30681009f0eDd6211231",
             [ChainId.ARBITRUM]: "0x1A4dA80967373fd929961e976b4b53ceeC063a15",
         },
-        swapType: SwapType.LUNA,
+        swapType:    SwapType.LUNA,
+        coingeckoId: "terra-luna",
+    });
+
+    export const USDB = new BaseToken({
+        name:     "USD Balance",
+        symbol:   "USDB",
+        decimals: 18,
+        addresses: {
+            [ChainId.ETH]:       "0x02b5453d92b730f29a86a0d5ef6e930c4cf8860b",
+            [ChainId.BSC]:       "0xc8699abbba90c7479dedccef19ef78969a2fc608",
+            [ChainId.POLYGON]:   "0xfa1fbb8ef55a4855e5688c0ee13ac3f202486286",
+            [ChainId.FANTOM]:    "0x6fc9383486c163fa48becdec79d6058f984f62ca",
+            [ChainId.MOONRIVER]: "0x3e193c39626bafb41ebe8bdd11ec7cca9b3ec0b2",
+            [ChainId.AVALANCHE]: "0x5ab7084cb9d270c2cb052dd30dbecbca42f8620c"
+        },
+        swapType: SwapType.USDB
+    });
+
+    export const VSTA = new BaseToken({
+        name:     "Vesta",
+        symbol:   "VSTA",
+        decimals: 18,
+        addresses: {
+            [ChainId.ETH]:      "0xA8d7F5e7C78ed0Fa097Cc5Ec66C1DC3104c9bbeb",
+            [ChainId.ARBITRUM]: "0xa684cd057951541187f288294a1e1c2646aa2d24"
+        },
+        swapType:    SwapType.VSTA,
+        coingeckoId: "vesta-finance",
+    });
+
+    export const H20 = new BaseToken({
+       name: "H20",
+       symbol: "H20",
+       decimals: 18,
+       addresses: {
+           [ChainId.ETH]:     "0x0642026e7f0b6ccac5925b4e7fa61384250e1701",
+           [ChainId.POLYGON]: "0xC5248Aa0629C0b2d6A02834a5f172937Ac83CBD3"
+       },
+        swapType: SwapType.H20
     });
 
     export const mintBurnTokens: Token[] = [
-        NUSD,  SYN,      NETH,
-        HIGH,  DOG,      JUMP,
-        FRAX,  SYN_FRAX, NFD,
-        GOHM,  SOLAR,    GMX,
-        UST,   NEWO,     SDT,
-        LUNA,
+        NUSD,      SYN,        NETH,
+        HIGH,      DOG,        JUMP,
+        FRAX,      SYN_FRAX,   NFD,
+        GOHM,      SOLAR,      GMX,
+        UST,       NEWO,       SDT,
+        LUNA,      USDB,       SYN_AVAX,
+        GAS_JEWEL, JEWEL,      SYN_JEWEL,
+        XJEWEL,    MULTIJEWEL, DFK_USDC,
+        VSTA,      H20,
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
+
+    export const ChainGasTokensMap: ChainIdTypeMap<Token> = {
+        [ChainId.ETH]:        ETH,
+        [ChainId.OPTIMISM]:   ETH,
+        [ChainId.BOBA]:       ETH,
+        [ChainId.MOONRIVER]:  MOVR,
+        [ChainId.ARBITRUM]:   ETH,
+        [ChainId.AVALANCHE]:  AVAX,
+        [ChainId.DFK]:        GAS_JEWEL,
+    };
+
+    /**
+     * Returns the native currency Token ("gas token") for a given chain, if
+     * it's supported by Synapse Protocol.
+     * @param chainId
+     */
+    export const gasTokenForChain = (chainId: number): Token | null => {
+        if (chainId in ChainGasTokensMap) {
+            return ChainGasTokensMap[chainId]
+        }
+
+        return null
+    }
+
+    /**
+     * Returns the "wrapper" Token for a given native currency Token ("gas token")
+     * if such Token exists and is supported by Synapse Protocol.
+     * @param gasToken
+     */
+    export const gasTokenWrapper = (gasToken: Token): Token | null => {
+        if (!gasToken) {
+            return null
+        }
+
+        switch (tokenSwitch(gasToken)) {
+            case AVAX:
+                return WAVAX
+            case MOVR:
+                return WMOVR
+            case ETH:
+                return WETH
+            case GAS_JEWEL:
+                return JEWEL
+        }
+
+        return null
+    }
+
+    /**
+     * @param {number} chainId Chain ID of the network on which to fetch the spend allowance of `spender` for `owner`'s `token`
+     * @param {Token} token Token to fetch allowance information of
+     * @param {string} owner Address for owner of `token`
+     * @param {string} spender Address for spender of `owner`'s `token`
+     */
+    export interface CheckTokenAllowanceParams {
+        chainId:  number;
+        token:    Token;
+        owner:    string;
+        spender:  string;
+    }
+
+    /**
+     * checkTokenAllowance returns the amount of `args.token` belonging to `args.owner`
+     * which `args.spender` is allowed to spend on behalf of `args.owner`.
+     * @param {CheckTokenAllowanceParams} args {@link CheckTokenAllowanceParams} object containing arguments
+     * @param {number} args.chainId Chain ID of the network on which to fetch the spend allowance of `spender` for `owner`'s `token`.
+     * @param {Token} args.token Token to fetch allowance information of.
+     * @param {string} args.owner Address for owner of `token`
+     * @param {string} args.spender Address for spender of `owner`'s `token`
+     */
+    export async function checkTokenAllowance(args: CheckTokenAllowanceParams): Promise<BigNumber> {
+        const tokenParams: TokenParams = {
+            chainId:      args.chainId,
+            tokenAddress: args.token.address(args.chainId)
+        };
+
+        return allowanceOf(
+            args.owner,
+            args.spender,
+            tokenParams
+        )
+    }
+
+    /**
+     * @param {number} chainId Chain ID of the network on which to approve the spend allowance of `spender` for `signer`'s `token`
+     * @param {Token} token Token to approve
+     * @param {string} spender Address of spender to approve use of `signer`'s `token`
+     * @param {BigNumber} amount [Optional] amount of `owner`'s `token` to approve for spend by `spender`. Defaults to uint256 max (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) if not provided.
+     */
+    export interface ApproveTokenParams extends Omit<CheckTokenAllowanceParams, "owner"> {
+        amount?: BigNumber;
+        signer:  Signer;
+    }
+
+    /**
+     * approveTokenSpend approves `args.spender` to spend `args.amount` (or the ERC20 max approval amount)
+     * of `args.token` belonging to `args.signer`
+     * @param {ApproveTokenParams} args {@link ApproveTokenParams} object containing arguments
+     * @param {number} args.chainId Chain ID of the network on which to approve the spend allowance of `spender` for `signer`'s `token`
+     * @param {Token} args.token Token to approve
+     * @param {string} args.spender Address of spender to approve use of `signer`'s `token`
+     * @param {BigNumber} args.amount [Optional] amount of `owner`'s `token` to approve for spend by `spender`. Defaults to uint256 max (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) if not provided.
+     *
+     * @return {Promise<ContractTransaction>} Executed transaction object.
+     */
+    export async function approveTokenSpend(args: ApproveTokenParams): Promise<ContractTransaction> {
+        const tokenParams: TokenParams = {
+            tokenAddress: args.token.address(args.chainId),
+            chainId:      args.chainId
+        };
+
+        const approveArgs: ApproveArgs = {
+            spender: args.spender,
+            amount:  args.amount
+        };
+
+        return approve(
+            approveArgs,
+            tokenParams,
+            args.signer
+        )
+    }
 
     export const AllTokens: Token[] = [
         DAI, BUSD, USDC, USDT, UST,
@@ -498,6 +855,40 @@ export namespace Tokens {
         SYN, NUSD, AVAX, WAVAX, MOVR, WMOVR,
         GOHM, HIGH, JUMP, DOG, NFD, FRAX,
         SYN_FRAX, SOLAR, GMX, NEWO, SDT,
-        LUNA,
+        LUNA, USDB, SYN_AVAX, GAS_JEWEL, JEWEL,
+        SYN_JEWEL, XJEWEL, MULTIJEWEL, DFK_USDC,
+        DFKTEARS, MULTI_AVAX, VSTA,
     ];
+
+    /**
+     * Returns a {@link Token} object based on the passed `tokenSymbol`, if such token exists.
+     *
+     * @param tokenSymbol Actual token symbol ("DAI", "SYN") or the `id` field of a {@link Token} object.
+     *                      Note that passing a newly initialized Symbol() will return null.
+     *
+     * @return A {@link Token} if one matches the passed `tokenSymbol`, null otherwise.
+     */
+    export function tokenFromSymbol(tokenSymbol: string | ID | symbol): Token | null {
+        let res: Token = null;
+
+        findTokenLoop:
+        for (const t of AllTokens) {
+            switch (typeof tokenSymbol) {
+                case "string":
+                    if (t.symbol === tokenSymbol) {
+                        res = t;
+                        break findTokenLoop;
+                    }
+                    break;
+                case "symbol":
+                    if (t.id === (tokenSymbol as ID)) {
+                        res = t;
+                        break findTokenLoop;
+                    }
+                    break;
+            }
+        }
+
+        return res
+    }
 }

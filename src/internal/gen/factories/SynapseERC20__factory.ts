@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 import { Contract, Signer, utils } from "ethers";
-import { Provider } from "@ethersproject/providers";
+import type { Provider } from "@ethersproject/providers";
 import type { SynapseERC20, SynapseERC20Interface } from "../SynapseERC20";
 
 const _abi = [
@@ -438,22 +438,22 @@ const _abi = [
     inputs: [
       {
         internalType: "string",
-        name: "name",
+        name: "_name",
         type: "string",
       },
       {
         internalType: "string",
-        name: "symbol",
+        name: "_symbol",
         type: "string",
       },
       {
         internalType: "uint8",
-        name: "decimals",
+        name: "_decimals",
         type: "uint8",
       },
       {
         internalType: "address",
-        name: "owner",
+        name: "_owner",
         type: "address",
       },
     ],

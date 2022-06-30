@@ -1,4 +1,5 @@
-import type {ChainIdTypeMap, StringMap} from "@common/types";
+import type {ChainIdTypeMap} from "@chainid";
+import type {StringMap} from "@common/types";
 
 import type {Provider} from "@ethersproject/providers";
 import {Web3Provider} from "@ethersproject/providers";
@@ -6,8 +7,8 @@ import {Web3Provider} from "@ethersproject/providers";
 import {MiniRpcProvider} from "./minirpc";
 
 interface RpcConnectorArgs {
-    urls:           StringMap,
-    batchInterval?: number,
+    urls:           StringMap;
+    batchInterval?: number;
 }
 
 export class RpcConnector {
@@ -18,6 +19,7 @@ export class RpcConnector {
 
 
     constructor(args: RpcConnectorArgs) {
+        /* c8 ignore next */
         const {urls, batchInterval=50} = args;
 
         this._chainEndpoints = urls;

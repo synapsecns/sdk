@@ -1,13 +1,16 @@
 import type {AddressMap, DecimalsMap} from "@common/types";
 
-import type {ID, Distinct, SwapType} from "@internal/index";
+import {SwapType}          from "@internal/swaptype";
+import type {ID, Distinct} from "@internal/types";
+
+import objectHash from "object-hash";
 
 import {
     BigNumber,
-    BigNumberish,
+    type BigNumberish
 } from "@ethersproject/bignumber";
 
-import {parseUnits} from "@ethersproject/units";
+import {formatEther, parseUnits} from "@ethersproject/units";
 
 
 export interface IBaseToken extends Distinct {
@@ -15,6 +18,7 @@ export interface IBaseToken extends Distinct {
     readonly symbol:    string;
     readonly addresses: AddressMap;
     readonly swapType:  SwapType;
+
     /**
      * Returns the on-chain address of a Token respective to the passed chain ID; will return null
      * if the Token is not supported on the passed chain ID.
@@ -30,21 +34,29 @@ export interface IBaseToken extends Distinct {
 }
 
 export interface Token extends IBaseToken {
-    isWrappedToken:   boolean;
+    isGasToken:       boolean,
+
+    isWrapperToken:   boolean;
     underlyingToken?: Token;
+
     /**
      * Returns true if `other` has the same ID field as this Token.
      * @param other
      */
     isEqual:          (other: Token) => boolean;
+
     canSwap:          (other: Token) => boolean;
     wrapperAddress:   (chainId: number) => string | null;
+
     /**
      * Formats the passed Wei(ish) amount to units of Ether and returns that value as a BigNumber.
      * @param amt
      * @param chainId
      */
     weiToEther:       (amt: BigNumberish, chainId: number) => BigNumber;
+
+    weiToEtherString: (amt: BigNumberish, chainId: number) => string;
+
     /**
      * Returns the passed Ether amount as a value in units of Wei as determined
      * by the Token's decimals value for the passed chain ID.
@@ -52,49 +64,63 @@ export interface Token extends IBaseToken {
      * @param chainId
      */
     etherToWei:       (amt: BigNumberish, chainId: number) => BigNumber;
+
     /**
      * @deprecated use {@link etherToWei}
      * @param amt
      * @param chainId
      */
     valueToWei:       (amt: BigNumberish, chainId: number) => BigNumber;
+
+    /**
+     * Unique hash identifier of the Token.
+     */
+    readonly hash: string;
+
+    /**
+     * CoinGecko ID
+     */
+    readonly coingeckoId?: string;
 }
 
 export function instanceOfToken(object: any): object is Token {
-    return 'name' in object
-        && 'isWrappedToken' in object
-        && 'valueToWei' in object
-        && 'swapType' in object
+    return object instanceof BaseToken || object instanceof WrapperToken
 }
 
 export interface BaseTokenArgs {
-    name:              string,
-    symbol:            string,
-    decimals:          number | DecimalsMap,
-    addresses:         AddressMap,
-    swapType:          SwapType,
-    isETH?:            boolean,
-    wrapperAddresses?: AddressMap,
+    name:              string;
+    symbol:            string;
+    decimals:          number | DecimalsMap;
+    addresses:         AddressMap;
+    swapType:          SwapType;
+    isETH?:            boolean;
+    isGasToken?:       boolean;
+    wrapperAddresses?: AddressMap;
+    coingeckoId?:      string;
 }
 
-export interface WrappedTokenArgs extends BaseTokenArgs {
-    underlyingToken: BaseToken,
+export interface WrapperTokenArgs extends BaseTokenArgs {
+    underlyingToken: BaseToken;
 }
 
 /**
  * Token represents an ERC20 token on Ethereum-based blockchains.
  */
 export class BaseToken implements Token {
-    readonly id:        ID;
-    readonly name:      string;
-    readonly symbol:    string;
-    readonly addresses: AddressMap = {};
-    readonly swapType:  SwapType;
-    readonly isETH:     boolean;
+    readonly id:           ID;
+    readonly name:         string;
+    readonly symbol:       string;
+    readonly addresses:    AddressMap = {};
+    readonly swapType:     SwapType;
+    readonly isETH:        boolean;
+    readonly isGasToken:   boolean;
+    readonly coingeckoId?: string;
 
     private readonly wrapperAddresses: AddressMap = {};
 
     protected readonly _decimals: DecimalsMap = {};
+
+    protected _hash: string;
 
     /**
      * Creates a new Token object with the defined arguments.
@@ -110,10 +136,11 @@ export class BaseToken implements Token {
      * @param {SwapType} args.swapType Swap type of this token
      */
     constructor(args: BaseTokenArgs) {
-        this.name      = args.name;
-        this.symbol    = args.symbol;
-        this.addresses = args.addresses;
-        this.swapType  = args.swapType;
+        this.name        = args.name;
+        this.symbol      = args.symbol;
+        this.addresses   = args.addresses;
+        this.swapType    = args.swapType;
+        this.coingeckoId = args.coingeckoId;
 
         this.wrapperAddresses = args.wrapperAddresses ?? {};
 
@@ -126,12 +153,26 @@ export class BaseToken implements Token {
         }
 
         this.isETH = args.isETH ?? false;
+        this.isGasToken = args.isGasToken ?? false;
 
         this.id = Symbol(this.symbol);
+
+        this._hash = objectHash.MD5({
+            name:       this.name,
+            symbol:     this.symbol,
+            addresses:  this.addresses,
+            swapType:   this.swapType,
+            isGasToken: this.isGasToken,
+            decimals:   this._decimals,
+        });
     }
 
-    get isWrappedToken(): boolean {
+    get isWrapperToken(): boolean {
         return false
+    }
+
+    get hash(): string {
+        return this._hash
     }
 
     /**
@@ -157,11 +198,16 @@ export class BaseToken implements Token {
     }
 
     weiToEther(amt: BigNumberish, chainId: number): BigNumber {
+        /* c8 ignore next 3 */
         const
             decimals   = this.decimals(chainId) || 18,
             multiplier = BigNumber.from(10).pow(18 - decimals);
 
         return BigNumber.from(amt).mul(multiplier)
+    }
+
+    weiToEtherString(amt: BigNumberish, chainId: number): string {
+        return formatEther(this.weiToEther(amt, chainId))
     }
 
     etherToWei(amt: BigNumberish, chainId: number): BigNumber {
@@ -172,25 +218,37 @@ export class BaseToken implements Token {
         return parseUnits(etherStr, this.decimals(chainId) ?? 18)
     }
 
+    /* c8 ignore start */
     valueToWei(ether: BigNumberish, chainId: number): BigNumber {
         return this.etherToWei(ether, chainId)
     }
+    /* c8 ignore stop */
 
     canSwap(other: Token): boolean {
         return this.swapType === other.swapType
     }
 }
 
-export class WrappedToken extends BaseToken {
+export class WrapperToken extends BaseToken {
     readonly underlyingToken: BaseToken;
 
-    constructor(args: WrappedTokenArgs) {
+    constructor(args: WrapperTokenArgs) {
         super(args);
 
         this.underlyingToken = args.underlyingToken;
+
+        this._hash = objectHash.MD5({
+            name:            this.name,
+            symbol:          this.symbol,
+            addresses:       this.addresses,
+            swapType:        this.swapType,
+            isGasToken:      this.isGasToken,
+            decimals:        this._decimals,
+            underlyingToken: this.underlyingToken,
+        });
     }
 
-    get isWrappedToken(): boolean {
+    get isWrapperToken(): boolean {
         return true
     }
 }

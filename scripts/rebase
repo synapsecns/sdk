@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+source ./scripts/utils
+
+BRANCH=$([[ -n "$1" ]] && echo "$1" || echo "dev")
+
+rebase_branch "${BRANCH}"

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+source ./scripts/utils
+
+git commit -m "fixup commit"
+
+HEAD_COMMIT="$(git rev-parse --short HEAD)"
+
+_SEQ="sed -i -re 's/^pick ${HEAD_COMMIT} /fixup ${HEAD_COMMIT} /g'"
+
+GIT_SEQUENCE_EDITOR="$_SEQ" rebase_interactive 2

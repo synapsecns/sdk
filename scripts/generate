@@ -1,0 +1,181 @@
+#!/usr/bin/env bash
+
+source .env
+source ./scripts/utils
+
+CURRENT_DIR="${PWD}"
+
+COMBINED_OUTPUTS_DIR=$(pwd_path "abigen")
+TEMP_INPUT=$(pwd_path "temp_input.json")
+TEMP_OUTPUT=$(pwd_path "temp_output.json")
+
+PYTHON_PATH=$(which python3)
+PYTHON_HELPER_PATH=$(pwd_path ./scripts/py_helpers.py)
+
+SYNAPSE_BRIDGE="SynapseBridge"
+L1BRIDGEZAP="L1BridgeZap"
+L2BRIDGEZAP="L2BridgeZap"
+BRIDGECONFIG="BridgeConfigV3"
+SWAP_FLASH_LOAN="SwapFlashLoan"
+SYNAPSE_ERC20="SynapseERC20"
+AVAX_JEWEL_MIGRATION="AvaxJewelMigration"
+
+JQ_WANT='{abi: .abi, userdoc: .userdoc, devdoc: .devdoc}'
+
+RAW_GITHUB_URI="https://raw.githubusercontent.com/synapsecns/synapse-contracts"
+
+usage () {
+  return_code=$1
+
+cat <<"HEREDOC"
+generate
+
+Description:
+  Download or locally compile ABIs for synapsecns EVM Smart Contracts, or
+  generate Typescript typings for the same.
+
+Usage:
+  abigen:
+    Pre-setup:
+      generate [-h] abigen prepare
+
+    Download from GitHub:
+      generate [-h] abigen download [git_branch]
+
+    Compile locally:
+      generate [-h] abigen compile <path_to_contracts_directory> <path_to_solc_binary>
+
+  Generate typings:
+    generate [-h] typegen
+
+Parameters:
+  download:
+    [git_branch] : [Optional] branch to download ABI definitions from. Defaults to master
+
+  compile:
+    <path_to_contracts_directory> : Path to directory containing the synapse-contracts repository
+    <path_to_solc_binary>         : Path to solc binary, can be passed using something like $(which solc) or $(whence solc)
+
+Options:
+  -h|--help   : show this usage text
+HEREDOC
+
+  exit $return_code
+}
+
+check_or_fallback () {
+  [[ -z "$1" ]] && echo "$2" || echo "$1"
+}
+
+output_json () {
+  DATA="$1"
+  CONTRACT="$2"
+  echo "${DATA}" | jq "${JQ_WANT}" > "${COMBINED_OUTPUTS_DIR}/${CONTRACT}.json"
+}
+
+PY_HELPER () {
+  echo $($PYTHON_PATH "${PYTHON_HELPER_PATH}" "$@")
+}
+
+compile_abi () {
+  BASE_CONTRACTS_PATH=$(realpath "$1")
+  SOLC_PATH=$(realpath "$2")
+  CONTRACT_PATH="$3"
+  CONTRACT_NAME="$4"
+
+  solc_input_json=$(PY_HELPER make_solc_input "${BASE_CONTRACTS_PATH}" "${CONTRACT_PATH}" "${CONTRACT_NAME}")
+  cd "${BASE_CONTRACTS_PATH}"
+  $SOLC_PATH --allow-paths="*," --no-color --standard-json $solc_input_json > "${TEMP_OUTPUT}"
+
+  cd "${CURRENT_DIR}"
+  output_json "$(PY_HELPER sol_output "${TEMP_OUTPUT}" "${CONTRACT_PATH}" "${CONTRACT_NAME}")" "${CONTRACT_NAME}"
+
+  rm -rf "${TEMP_INPUT}" "${TEMP_OUTPUT}"
+}
+
+get_abi_from_gh () {
+  BRANCH="$1"
+  CHAIN="$2"
+  CONTRACT="$3"
+
+  REQUEST_ENDPOINT="${RAW_GITHUB_URI}/${BRANCH}/deployments/${CHAIN}/${CONTRACT}.json"
+
+  output_json "$(curl_github "${REQUEST_ENDPOINT}")" "${CONTRACT}"
+}
+
+main_help () {
+  usage $1
+}
+
+abigen_prepare () {
+  mkdir -p ./abigen && cp ./scripts/ERC20.json ./abigen/ERC20.json
+}
+
+abigen_compile () {
+  BRIDGE_PATH="contracts/bridge"
+  WRAPPERS_PATH="${BRIDGE_PATH}/wrappers"
+
+  compile_abi "$@" "${BRIDGE_PATH}/${SYNAPSE_BRIDGE}.sol"         "${SYNAPSE_BRIDGE}"
+  compile_abi "$@" "${WRAPPERS_PATH}/${L1BRIDGEZAP}.sol"          "${L1BRIDGEZAP}"
+  compile_abi "$@" "${WRAPPERS_PATH}/${L2BRIDGEZAP}.sol"          "${L2BRIDGEZAP}"
+  compile_abi "$@" "${BRIDGE_PATH}/${BRIDGECONFIG}.sol"           "${BRIDGECONFIG}"
+  compile_abi "$@" "contracts/amm/${SWAP_FLASH_LOAN}.sol"         "${SWAP_FLASH_LOAN}"
+  compile_abi "$@" "${BRIDGE_PATH}/${SYNAPSE_ERC20}.sol"          "${SYNAPSE_ERC20}"
+  compile_abi "$@" "${WRAPPERS_PATH}/${AVAX_JEWEL_MIGRATION}.sol" "${AVAX_JEWEL_MIGRATION}"
+}
+
+DFK="dfk"
+METIS="metis"
+CRONOS="cronos"
+MAINNET="mainnet"
+AVALANCHE="avalanche"
+
+abigen_download () {
+  GIT_BRANCH=$(check_or_fallback "$1" "master")
+
+  get_abi_from_gh "${GIT_BRANCH}" "${DFK}"       "${SYNAPSE_BRIDGE}"
+  get_abi_from_gh "${GIT_BRANCH}" "${DFK}"       "${L1BRIDGEZAP}"
+  get_abi_from_gh "${GIT_BRANCH}" "${CRONOS}"    "${L2BRIDGEZAP}"
+  get_abi_from_gh "${GIT_BRANCH}" "${MAINNET}"   "${BRIDGECONFIG}"
+  get_abi_from_gh "${GIT_BRANCH}" "${METIS}"     "${SWAP_FLASH_LOAN}"
+  get_abi_from_gh "${GIT_BRANCH}" "${MAINNET}"   "${SYNAPSE_ERC20}"
+  get_abi_from_gh "${GIT_BRANCH}" "${AVALANCHE}" "${AVAX_JEWEL_MIGRATION}"
+}
+
+main_typegen () {
+  typechain --target ethers-v5 --out-dir src/internal/gen ./abigen/*.json
+}
+
+main_abigen () {
+  command=$1
+  case $command in
+      "" | "-h" | "--help")
+          main_help
+          ;;
+      *)
+          shift
+          abigen_${command} $@
+          if [ $? = 127 ]; then
+              echo "Error: '$command' is not a known command." >&2
+              echo "       Run 'generate --help' for usage." >&2
+              exit 1
+          fi
+          ;;
+  esac
+}
+
+command=$1
+case $command in
+    "" | "-h" | "--help")
+        main_help
+        ;;
+    *)
+        shift
+        main_${command} $@
+        if [ $? = 127 ]; then
+            echo "Error: '$command' is not a known command." >&2
+            echo "       Run 'generate --help' for usage." >&2
+            exit 1
+        fi
+        ;;
+esac

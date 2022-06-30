@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+SRC_DIR="src"
+SRC_INCLUDES="${SRC_DIR}/*.ts"
+BRIDGE_INCLUDES="${SRC_DIR}/bridge/*.ts"
+COMMON_INCLUDES="${SRC_DIR}/common/*.ts"
+INTERNAL_INCLUDES="${SRC_DIR}/internal/*.ts"
+
+coverage_test () {
+  c8 \
+    --reports-dir $REPORTS_DIR \
+    --include "${SRC_INCLUDES}" \
+    --include "${BRIDGE_INCLUDES}" \
+    --include "${COMMON_INCLUDES}" \
+    --include "${INTERNAL_INCLUDES}" \
+    ts-mocha -p test/tsconfig.json
+}
+
+coverage_report () {
+    c8 report \
+      --reports-dir $REPORTS_DIR \
+      --include "${SRC_INCLUDES}" \
+      --include "${BRIDGE_INCLUDES}" \
+      --include "${COMMON_INCLUDES}" \
+      --include "${INTERNAL_INCLUDES}" \
+      --reporter=text-lcov > $REPORTS_DIR/lcov.info
+}
+
+main_test () {
+  ts-mocha -p test/tsconfig.json
+}
+
+main_coverage () {
+  command=$1
+  case $command in
+      *)
+          shift
+          coverage_${command} $@
+          if [ $? = 127 ]; then
+              echo "Error: coverage '$command' is not a known command." >&2
+              echo "       Allowed commands: test, report" >&2
+              exit 1
+          fi
+          ;;
+  esac
+}
+
+command=$1
+case $command in
+    *)
+        shift
+        main_${command} $@
+        if [ $? = 127 ]; then
+            echo "Error: '$command' is not a known command." >&2
+            echo "       Allowed commands: test, coverage" >&2
+            exit 1
+        fi
+        ;;
+esac

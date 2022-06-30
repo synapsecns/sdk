@@ -16,7 +16,7 @@ import {
     BridgeConfigV3ContractInstance
 } from "@sdk/entities";
 
-import {rpcProviderForChain}   from "@sdk/internal";
+import {rpcProviderForChain}   from "@sdk/internal/rpcproviders";
 import type {SignerOrProvider} from "@sdk/common/types";
 
 import type {BaseContract} from "@ethersproject/contracts";
@@ -32,14 +32,14 @@ describe("Entities tests", function(this: Mocha.Suite) {
     }
 
     interface fnArgs {
-        chainId:          number,
-        signerOrProvider: SignerOrProvider,
+        chainId:          number;
+        signerOrProvider: SignerOrProvider;
     }
 
     interface TestCase {
-        chainId: number,
-        fn:      (args: fnArgs) => BaseContract,
-        kind:    EntityKind,
+        chainId: number;
+        fn:      (args: fnArgs) => BaseContract;
+        kind:    EntityKind;
     }
 
     function makeTestCase(chainId: number, kind: EntityKind): TestCase {
@@ -85,7 +85,7 @@ describe("Entities tests", function(this: Mocha.Suite) {
             it(
                 `Test ${EntityKind[tc.kind]} instance`,
                 wrapExpect(expectNull(instance, false))
-            )
-        })
-    })
-})
+            );
+        });
+    });
+});

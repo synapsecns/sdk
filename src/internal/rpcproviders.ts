@@ -1,4 +1,4 @@
-import _ from "lodash";
+import {findKey, fromPairs} from "lodash-es";
 
 import type {Provider} from "@ethersproject/providers";
 
@@ -7,21 +7,30 @@ import type {StringMap} from "@common/types";
 
 import {RpcConnector} from "./rpcconnector";
 
+const RPC_URI_SUFFIX: string = "RPC_URI";
+
+const makeRpcUriEnvKey = (chainId: number): string => {
+    const key: string = findKey(ChainId, (o) => o === chainId);
+
+    return `${key}_${RPC_URI_SUFFIX}`
+}
+
 const ENV_KEY_MAP: StringMap = {
-    [ChainId.ETH]:       "ETH_RPC_URI",
-    [ChainId.OPTIMISM]:  "OPTIMISM_RPC_URI",
-    [ChainId.CRONOS]:    "CRONOS_RPC_URI",
-    [ChainId.BSC]:       "BSC_RPC_URI",
-    [ChainId.POLYGON]:   "POLYGON_RPC_URI",
-    [ChainId.FANTOM]:    "FANTOM_RPC_URI",
-    [ChainId.BOBA]:      "BOBA_RPC_URI",
-    [ChainId.METIS]:     "METIS_RPC_URI",
-    [ChainId.MOONBEAM]:  "MOONBEAM_RPC_URI",
-    [ChainId.MOONRIVER]: "MOONRIVER_RPC_URI",
-    [ChainId.ARBITRUM]:  "ARBITRUM_RPC_URI",
-    [ChainId.AVALANCHE]: "AVALANCHE_RPC_URI",
-    [ChainId.AURORA]:    "AURORA_RPC_URI",
-    [ChainId.HARMONY]:   "HARMONY_RPC_URI",
+    [ChainId.ETH]:       makeRpcUriEnvKey(ChainId.ETH),
+    [ChainId.OPTIMISM]:  makeRpcUriEnvKey(ChainId.OPTIMISM),
+    [ChainId.CRONOS]:    makeRpcUriEnvKey(ChainId.CRONOS),
+    [ChainId.BSC]:       makeRpcUriEnvKey(ChainId.BSC),
+    [ChainId.POLYGON]:   makeRpcUriEnvKey(ChainId.POLYGON),
+    [ChainId.FANTOM]:    makeRpcUriEnvKey(ChainId.FANTOM),
+    [ChainId.BOBA]:      makeRpcUriEnvKey(ChainId.BOBA),
+    [ChainId.METIS]:     makeRpcUriEnvKey(ChainId.METIS),
+    [ChainId.MOONBEAM]:  makeRpcUriEnvKey(ChainId.MOONBEAM),
+    [ChainId.MOONRIVER]: makeRpcUriEnvKey(ChainId.MOONRIVER),
+    [ChainId.ARBITRUM]:  makeRpcUriEnvKey(ChainId.ARBITRUM),
+    [ChainId.AVALANCHE]: makeRpcUriEnvKey(ChainId.AVALANCHE),
+    [ChainId.DFK]:       makeRpcUriEnvKey(ChainId.DFK),
+    [ChainId.AURORA]:    makeRpcUriEnvKey(ChainId.AURORA),
+    [ChainId.HARMONY]:   makeRpcUriEnvKey(ChainId.HARMONY),
 }
 
 const CHAIN_RPC_URIS: StringMap = {
@@ -37,11 +46,12 @@ const CHAIN_RPC_URIS: StringMap = {
     [ChainId.MOONRIVER]: "https://rpc.api.moonriver.moonbeam.network",
     [ChainId.ARBITRUM]:  "https://arb1.arbitrum.io/rpc",
     [ChainId.AVALANCHE]: "https://api.avax.network/ext/bc/C/rpc",
+    [ChainId.DFK]:       "https://subnets.avax.network/defi-kingdoms/dfk-chain/rpc",
     [ChainId.AURORA]:    "https://mainnet.aurora.dev",
     [ChainId.HARMONY]:   "https://api.harmony.one/",
 }
 
-const CHAINID_URI_MAP: StringMap = _.fromPairs(supportedChainIds().map(cid => [cid, _getChainRpcUri(cid)]));
+const CHAINID_URI_MAP: StringMap = fromPairs(supportedChainIds().map(cid => [cid, getChainRpcUri(cid)]));
 
 const RPC_BATCH_INTERVAL = Number(process.env["RPC_BATCH_INTERVAL"]) || 60;
 
@@ -50,7 +60,7 @@ const RPC_CONNECTOR = new RpcConnector({
     batchInterval: RPC_BATCH_INTERVAL
 });
 
-function _getChainRpcUri(chainId: number): string {
+export function getChainRpcUri(chainId: number): string {
     const
         rpcEnvKey: string           = ENV_KEY_MAP[chainId],
         rpcEnvVal: string|undefined = rpcEnvKey in process.env ? process.env[rpcEnvKey] : undefined;
@@ -67,8 +77,8 @@ export function rpcProviderForChain(chainId: number): Provider {
 
 export interface RPCEndpointsConfig {
     [chainId: number]: {
-        endpoint:       string,
-        batchInterval?: number,
+        endpoint:       string;
+        batchInterval?: number;
     }
 }
 
@@ -80,9 +90,3 @@ export function configureRPCEndpoints(config: RPCEndpointsConfig) {
         }
     }
 }
-/**
- * Used solely for tests, initRpcConnectors() basically just makes sure on-import initialization
- * of Rpc connections occurs before tests run.
- * @internal
- */
-export function initRpcConnectors() {}

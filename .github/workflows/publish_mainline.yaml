@@ -1,50 +1,80 @@
-name: Publish (mainline)
+name: Publish (Mainline Release)
 
 on:
   push:
     tags:
-      - "v*"
+      - "v[01].[0-9]+.[0-9]+"
       - "!v*-dev*"
+      - "!v*-beta*"
+      - "!v*-alpha*"
 
 jobs:
   tagged_release:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Install Node
-        uses: actions/setup-node@v2
-        with:
-          node-version-file: '.nvmrc'
-          cache: "yarn"
-          registry-url: "https://registry.npmjs.org"
-          scope: "@synapseprotocol"
-
-      - name: Yarn Install
-        run: yarn install --frozen-lockfile
-
-      - name: Yarn Build
-        run: yarn run build
-
-      - name: Set tagname in env
-        id: vars
+      - name: Set git tag name in env
+        id: git_tag
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
 
-      - name: Make tarball
-        run: yarn pack --filename synapseprotocol-sdk-${{ steps.vars.outputs.tag }}.tgz
+      - name: Set tarball filename in env
+        id: tarball_file
+        run: |
+          TARBALL=synapseprotocol-sdk-${{ steps.git_tag.outputs.tag }}.tar.gz
+          echo ::set-output name=filename::${TARBALL}
 
-      - name: Create release with tarball
-        uses: "marvinpinto/action-automatic-releases@v1.2.1"
+      - name: Get node version from nvmrc
+        id: nvm_version
+        run: echo ::set-output name=version::$(cat .nvmrc)
+
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.RELEASEBOT_GPG_PRIVATEKEY }}
+          passphrase:      ${{ secrets.RELEASEBOT_GPG_PASSPHRASE }}
+
+      - uses: actions/setup-node@v3
+        with:
+          cache: "yarn"
+          scope: "@synapseprotocol"
+          registry-url: "https://registry.npmjs.org"
+          node-version-file: '.nvmrc'
+
+      - id: cache_dir
+        run: echo ::set-output name=dir::$(yarn cache dir)
+
+      - uses: actions/cache@v3
+        id: yarn_cache
+        with:
+          path: ${{ steps.cache_dir.outputs.dir }}
+          key: ${{ runner.os }}-${{ steps.nvm_version.outputs.version }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.nvm_version.outputs.version }}-yarn-
+
+      - run: yarn install --frozen-lockfile
+        if: steps.yarn_cache.outputs.cache-hit != 'true'
+
+      - run: yarn run build
+
+      - name: Build dist tarball
+        run: yarn pack --filename ${{ steps.tarball_file.outputs.filename }}
+
+      - name: GPG sign dist tarball
+        run: gpg --armor --detach-sign ${{ steps.tarball_file.outputs.filename }}
+
+      - name: Create and publish GitHub release
+        uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
-          automatic_release_tag: ${{ steps.vars.outputs.tag }}
           files: |
-            synapseprotocol-sdk-${{ steps.vars.outputs.tag }}.tgz
+            ${{ steps.tarball_file.outputs.filename }}
+            ${{ steps.tarball_file.outputs.filename }}.asc
             LICENSE
             README.md
 

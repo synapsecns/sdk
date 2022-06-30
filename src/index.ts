@@ -4,13 +4,35 @@ export {
     L2BridgeZapContractInstance
 } from "@entities";
 
-export {Bridge}    from "@bridge/bridge";
+export {
+    Bridge,
+    SynapseBridge,
+    getRequiredConfirmationsForBridge,
+    bridgeSwapSupported,
+    checkBridgeTransactionComplete
+} from "@bridge/bridge";
+
+export type {
+    CanBridgeResult,
+    BridgeOutputEstimate,
+    BridgeParams,
+    BridgeTransactionParams
+} from "@bridge/bridge";
+
 export {Slippages} from "@bridge/slippages";
 
 export {
     ChainId,
-    supportedChainIds
+    supportedChainIds,
+    EIP1559Chains,
+    chainSupportsEIP1559
 } from "@common/chainid";
+
+export type {ChainGasPrices} from "./gasprice";
+export {fetchChainGasPrices} from "./gasprice";
+
+export type {GasOptions} from "@common/gasoptions";
+export {populateGasOptions, makeTransactionGasOverrides} from "@common/gasoptions";
 
 export {
     Networks,
@@ -20,7 +42,7 @@ export {
 export {
     type Token,
     BaseToken,
-    WrappedToken
+    WrapperToken
 } from "@token";
 
 export {Tokens} from "@tokens";
@@ -51,3 +73,65 @@ export type {
     SynapseERC20Contract,
     BridgeConfigV3Contract
 } from "@contracts";
+
+import {
+    useApproveBridgeSwap,
+    useExecuteBridgeSwap,
+    useCalculateBridgeSwapOutput,
+    useBridgeAllowance,
+    useNeedsBridgeSwapApproval,
+    useBridgeSwapApproval,
+    useChainStableswapLPToken,
+    useChainETHSwapLPToken,
+    useHarmonyJewelLPToken,
+    useHarmonyAVAXLPToken,
+    useCalculateAddLiquidity,
+    useCalculateRemoveLiquidity,
+    useCalculateRemoveLiquidityOneToken,
+    useAddLiquidity,
+    useRemoveLiquidity,
+    useRemoveLiquidityOneToken,
+    useCalculateSwapRate,
+    useSwapTokens,
+    useApproveLPToken,
+    useApprovePoolToken,
+    useLPTokenAllowance,
+    useLPTokenNeedsApproval,
+    useLPTokenApproval,
+    usePoolTokenAllowance,
+    usePoolTokenNeedsApproval,
+    usePoolTokenApproval,
+    AllowanceError,
+    TransactionError
+} from "./hooks/index";
+
+export {
+    useApproveBridgeSwap,
+    useExecuteBridgeSwap,
+    useCalculateBridgeSwapOutput,
+    useBridgeAllowance,
+    useNeedsBridgeSwapApproval,
+    useBridgeSwapApproval,
+    useChainStableswapLPToken,
+    useChainETHSwapLPToken,
+    useHarmonyJewelLPToken,
+    useHarmonyAVAXLPToken,
+    useCalculateAddLiquidity,
+    useCalculateRemoveLiquidity,
+    useCalculateRemoveLiquidityOneToken,
+    useAddLiquidity,
+    useRemoveLiquidity,
+    useRemoveLiquidityOneToken,
+    useCalculateSwapRate,
+    useSwapTokens,
+    useApproveLPToken,
+    useApprovePoolToken,
+    useLPTokenAllowance,
+    useLPTokenNeedsApproval,
+    useLPTokenApproval,
+    usePoolTokenAllowance,
+    usePoolTokenNeedsApproval,
+    usePoolTokenApproval,
+    AllowanceError,
+    TransactionError
+};

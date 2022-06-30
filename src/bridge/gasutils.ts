@@ -1,6 +1,6 @@
-import _ from "lodash";
-import {ChainId} from "@chainid";
-import type {ChainIdTypeMap} from "@common/types";
+import {ChainId, type ChainIdTypeMap} from "@chainid";
+
+import {GasOptions, populateGasOptions} from "@common/gasoptions";
 
 import {parseUnits} from "@ethersproject/units";
 import {BigNumber}  from "@ethersproject/bignumber";
@@ -9,22 +9,20 @@ import type {PopulatedTransaction} from "@ethersproject/contracts";
 
 export namespace GasUtils {
     type GasParams = {
-        maxFeePerGas?:    BigNumber,
-        maxPriorityFee?:  BigNumber,
-        gasPrice?:        BigNumber,
-        bridgeGasLimit?:  BigNumber,
-        approveGasLimit?: BigNumber,
+        maxFeePerGas?:    BigNumber;
+        maxPriorityFee?:  BigNumber;
+        gasPrice?:        BigNumber;
+        bridgeGasLimit?:  BigNumber;
+        approveGasLimit?: BigNumber;
     }
 
     const makeGwei = (n: string): BigNumber => parseUnits(n, "gwei")
 
-
-
     const CHAIN_GAS_PARAMS: ChainIdTypeMap<GasParams> = {
         [ChainId.ETH]: {
-            maxFeePerGas:    makeGwei("100"),
+            maxFeePerGas:    makeGwei("80"),
             maxPriorityFee:  makeGwei("1.5"),
-            bridgeGasLimit:  BigNumber.from(100000),
+            bridgeGasLimit:  BigNumber.from(301000),
             approveGasLimit: BigNumber.from(75000),
         },
         [ChainId.OPTIMISM]: {
@@ -51,7 +49,7 @@ export namespace GasUtils {
             bridgeGasLimit: BigNumber.from(1500000),
         },
         [ChainId.AVALANCHE]: {
-            maxFeePerGas:    makeGwei("150"),
+            maxFeePerGas:    makeGwei("210"),
             maxPriorityFee:  makeGwei("3"),
             bridgeGasLimit:  BigNumber.from(700000),
             approveGasLimit: BigNumber.from(75000),
@@ -59,6 +57,31 @@ export namespace GasUtils {
         [ChainId.AURORA]: {
             gasPrice: makeGwei('1'),
         },
+        [ChainId.HARMONY]: {
+            gasPrice:        makeGwei("45"),
+            bridgeGasLimit:  BigNumber.from(250000),
+            approveGasLimit: BigNumber.from(75000)
+        }
+    }
+
+    /* c8 ignore next 8 */
+    export function approveLimit(chainId: number): BigNumber | null {
+        if (chainId in CHAIN_GAS_PARAMS) {
+            const gasParams = CHAIN_GAS_PARAMS[chainId];
+            return gasParams.approveGasLimit ?? null
+        }
+
+        return null
+    }
+
+    /* c8 ignore next 8 */
+    export function bridgeGasLimit(chainId: number): BigNumber | null {
+        if (chainId in CHAIN_GAS_PARAMS) {
+            const gasParams = CHAIN_GAS_PARAMS[chainId]
+            return gasParams.bridgeGasLimit ?? null
+        }
+
+        return null
     }
 
     export const makeGasParams = (chainId: number): GasParams => CHAIN_GAS_PARAMS[chainId] ?? {};
@@ -66,7 +89,7 @@ export namespace GasUtils {
     export const populateGasParams = (
         chainId:      number,
         txn:          PopulatedTransaction|Promise<PopulatedTransaction>,
-        gasLimitKind: string
+        gasLimitKind: "bridge" | "approve"
     ): Promise<PopulatedTransaction> =>
         Promise.resolve(txn)
             .then((tx: PopulatedTransaction): PopulatedTransaction => {
@@ -80,24 +103,26 @@ export namespace GasUtils {
 
                 tx.chainId = chainId;
 
+                let gasOpts: GasOptions = {};
+
                 if (gasPrice) {
-                    tx.gasPrice = gasPrice;
+                    gasOpts.gasPrice = gasPrice;
                 } else if (maxFeePerGas) {
-                    tx.maxFeePerGas = maxFeePerGas;
+                    gasOpts.maxFeePerGas = maxFeePerGas;
                     if (maxPriorityFee) {
-                        tx.maxPriorityFeePerGas = maxPriorityFee;
+                        gasOpts.maxPriorityFeePerGas = maxPriorityFee;
                     }
                 }
 
                 switch (gasLimitKind) {
                     case "bridge":
-                        if (bridgeGasLimit) tx.gasLimit = bridgeGasLimit;
+                        if (bridgeGasLimit) gasOpts.gasLimit = bridgeGasLimit;
                         break;
                     case "approve":
-                        if (approveGasLimit) tx.gasLimit = approveGasLimit;
+                        if (approveGasLimit) gasOpts.gasLimit = approveGasLimit;
                         break;
                 }
 
-                return tx
+                return populateGasOptions(tx, gasOpts, chainId)
             })
 }

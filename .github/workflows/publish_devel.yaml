@@ -1,0 +1,103 @@
+name: Publish (Dev/Beta)
+
+on:
+  push:
+    tags:
+      - "v[01].[0-9]+.[0-9]+-dev.[0-9]+"
+      - "v[01].[0-9]+.[0-9]+-beta.[0-9]+"
+      - "v[01].[0-9]+.[0-9]+-alpha.[0-9]+"
+
+jobs:
+  tagged_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set git tag name in env
+        id: git_tag
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+
+      - name: Set NPM tag name in env
+        id: npm_tag
+        run: |
+          REF_NAME=${GITHUB_REF#refs/*/}
+          ALPHA='alpha'
+          BETA='beta'
+          DEV='dev'
+          
+          case $REF_NAME in
+            *"$ALPHA"*)
+              echo ::set-output name=tag::${ALPHA}
+              ;;
+            *"$BETA"*)
+              echo ::set-output name=tag::${BETA}
+              ;;
+            *"$DEV"*)
+              echo ::set-output name=tag::${DEV}
+              ;;
+          esac
+
+      - name: Set tarball filename in env
+        id: tarball_file
+        run: |
+          TARBALL=synapseprotocol-sdk-${{ steps.git_tag.outputs.tag }}.tar.gz
+          echo ::set-output name=filename::${TARBALL}
+
+      - name: Get node version from nvmrc
+        id: nvm_version
+        run: echo ::set-output name=version::$(cat .nvmrc)
+
+      - name: Import GPG key
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.RELEASEBOT_GPG_PRIVATEKEY }}
+          passphrase:      ${{ secrets.RELEASEBOT_GPG_PASSPHRASE }}
+
+      - uses: actions/setup-node@v3
+        with:
+          cache: "yarn"
+          scope: "@synapseprotocol"
+          registry-url: "https://registry.npmjs.org"
+          node-version-file: '.nvmrc'
+
+      - id: cache_dir
+        run: echo ::set-output name=dir::$(yarn cache dir)
+
+      - uses: actions/cache@v3
+        id: yarn_cache
+        with:
+          path: ${{ steps.cache_dir.outputs.dir }}
+          key: ${{ runner.os }}-${{ steps.nvm_version.outputs.version }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.nvm_version.outputs.version }}-yarn-
+
+      - run: yarn install --frozen-lockfile
+        if: steps.yarn_cache.outputs.cache-hit != 'true'
+
+      - run: yarn run build
+
+      - name: Build dist tarball
+        run: yarn pack --filename ${{ steps.tarball_file.outputs.filename }}
+
+      - name: GPG sign dist tarball
+        run: gpg --armor --detach-sign ${{ steps.tarball_file.outputs.filename }}
+
+      - name: Create and publish GitHub release
+        uses: marvinpinto/action-automatic-releases@v1.2.1
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
+          files: |
+            ${{ steps.tarball_file.outputs.filename }}
+            ${{ steps.tarball_file.outputs.filename }}.asc
+            LICENSE
+            README.md
+
+      - name: Publish to NPM
+        run: yarn publish --non-interactive --tag ${{ steps.npm_tag.outputs.tag }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_SERVICE_ACCOUNT_TOKEN }}

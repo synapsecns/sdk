@@ -4,17 +4,19 @@ import {expect} from "chai";
 import {step}   from "mocha-steps";
 
 import {
+    type Token,
     Tokens,
-    Bridge,
+    SynapseBridge,
     ChainId,
     Networks,
     supportedChainIds,
-    type Token
+    getRequiredConfirmationsForBridge,
+    checkBridgeTransactionComplete
 } from "@sdk";
 
-import {ERC20}               from "@sdk/bridge/erc20";
-import {contractAddressFor}  from "@sdk/common/utils";
-import {rpcProviderForChain} from "@sdk/internal";
+import {allowanceOf, approve} from "@sdk/bridge/erc20";
+import {contractAddressFor}   from "@sdk/common/utils";
+import {rpcProviderForChain}  from "@sdk/internal/rpcproviders";
 
 import {
     DEFAULT_TEST_TIMEOUT,
@@ -50,22 +52,22 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
         ALL_CHAIN_IDS.forEach(network => {
             const
                 provider          = rpcProviderForChain(network),
-                bridgeInstance    = new Bridge.SynapseBridge({ network, provider}),
+                bridgeInstance    = new SynapseBridge({ network, provider}),
                 testTitle: string = `Should return ${expected.toString()} on Chain ID ${network}`;
 
             it(testTitle, async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
                 let prom = bridgeInstance.bridgeVersion();
                 return wrapExpectAsync(expectBnEqual(await prom, expected), prom)
-            })
-        })
-    })
+            });
+        });
+    });
 
     describe(".WETH_ADDRESS", function(this: Mocha.Suite) {
         ALL_CHAIN_IDS.forEach(network => {
             const
                 provider = rpcProviderForChain(network),
-                bridgeInstance = new Bridge.SynapseBridge({ network, provider }),
+                bridgeInstance = new SynapseBridge({ network, provider }),
                 expected: string = ((): string => {
                     switch (network) {
                         case ChainId.ETH:
@@ -76,6 +78,10 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                             return "0xd203De32170130082896b4111eDF825a4774c18E"
                         case ChainId.ARBITRUM:
                             return "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
+                        case ChainId.AVALANCHE:
+                            return "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7"
+                        case ChainId.DFK:
+                            return "0xCCb93dABD71c8Dad03Fc4CE5559dC3D89F67a260"
                         default:
                             return "0x0000000000000000000000000000000000000000"
                     }})(),
@@ -85,18 +91,18 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 this.timeout(DEFAULT_TEST_TIMEOUT);
                 let prom = bridgeInstance.WETH_ADDRESS();
                 return wrapExpectAsync(expectEqual(await prom, expected), prom)
-            })
-        })
-    })
+            });
+        });
+    });
 
     describe(".getAllowanceForAddress", function(this: Mocha.Suite) {
         interface TestCase {
-            provider:   Provider,
-            chainId:    number,
-            address:    string,
-            token:      Token,
-            want:       BigNumber,
-            isInfinite: boolean,
+            provider:   Provider;
+            chainId:    number;
+            address:    string;
+            token:      Token;
+            want:       BigNumber;
+            isInfinite: boolean;
         }
 
         const
@@ -131,7 +137,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
             it(title, async function (this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                let bridgeInstance = new Bridge.SynapseBridge({network, provider});
+                let bridgeInstance = new SynapseBridge({network, provider});
 
                 const
                     {address, token} = tc,
@@ -150,7 +156,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 } catch (err) {
                     return (await expectFulfilled(prom))
                 }
-            })
+            });
         }
 
         describe("- infinite approval", function(this: Mocha.Suite) {
@@ -159,11 +165,11 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
                 dotenv.config();
 
-                const bscZapAddr: string = contractAddressFor(ChainId.BSC, "bridgeZap");
+                const bscZapAddr: string = contractAddressFor(ChainId.BSC, "bridgeZapAddress");
                 const tokenParams = {tokenAddress: Tokens.BUSD.address(ChainId.BSC), chainId: ChainId.BSC};
 
                 try {
-                    const allowance = await ERC20.allowanceOf(
+                    const allowance = await allowanceOf(
                         infiniteApprovalsPrivkey.address,
                         bscZapAddr,
                         tokenParams
@@ -177,7 +183,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
                         const approveArgs = {spender: bscZapAddr};
 
-                        let txn: ContractTransaction = (await ERC20.approve(
+                        let txn: ContractTransaction = (await approve(
                             approveArgs,
                             tokenParams,
                             wallet
@@ -185,7 +191,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
                         await txn.wait(1);
 
-                        const newAllowance = await ERC20.allowanceOf(
+                        const newAllowance = await allowanceOf(
                             infiniteApprovalsPrivkey.address,
                             bscZapAddr,
                             tokenParams
@@ -199,7 +205,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                     const e: Error = err instanceof Error ? err : new Error(err);
                     expect(e.message).to.eq("");
                 }
-            })
+            });
 
             runTestCase(makeTestCase(
                 ChainId.BSC,
@@ -207,7 +213,7 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 infiniteApprovalsPrivkey.address,
                 MaxUint256
             ));
-        })
+        });
 
         describe("- zero approval", function(this: Mocha.Suite) {
             [
@@ -216,6 +222,70 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
                 makeTestCase(ChainId.MOONRIVER, Tokens.SYN,  addr1, Zero),
                 makeTestCase(ChainId.HARMONY,   Tokens.NUSD, addr5, Zero),
             ].forEach(runTestCase);
-        })
-    })
-})
+        });
+    });
+
+    describe("REQUIRED_CONFS tests", function(this: Mocha.Suite) {
+        interface TC {
+            chain:   number | Networks.Network | ChainId;
+            want:    number | null;
+        }
+
+        const testCases: TC[] = [
+            { chain: ChainId.METIS,  want: 6    },
+            { chain: ChainId.AURORA, want: 5    },
+            { chain: 43114,          want: 5    },
+            { chain: 43113,          want: null },
+            { chain: Networks.ETH,   want: 7    },
+        ];
+
+        testCases.forEach(tc => {
+            const
+                wantStr:    string = tc.want ? `${tc.want}` : `null`,
+                chainStr:   string = `${tc.chain instanceof Networks.Network ? tc.chain.chainId : tc.chain as number}`,
+                testTitle1: string = `getRequiredConfirmationsForBridge(${chainStr}) should return ${wantStr}`,
+                testTitle2: string = `SynapseBridge.requiredConfirmations should equal ${wantStr}`;
+
+            it(testTitle1, function(this: Mocha.Context) {
+                const got = getRequiredConfirmationsForBridge(tc.chain);
+                tc.want === null ? expect(got).to.be.null : expect(got).to.equal(tc.want);
+
+                return
+            });
+
+            it(testTitle2, function(this: Mocha.Context) {
+                if (tc.want === null) {
+                    return
+                }
+                const got = (new SynapseBridge({ network: tc.chain })).requiredConfirmations;
+                expect(got).to.equal(tc.want);
+            });
+        });
+    });
+
+    describe("checkBridgeTransactionComplete tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            chainIdTo:                number;
+            transactionHashChainFrom: string;
+            want:                     boolean;
+        }
+
+        const testCases: TestCase[] = [
+            {chainIdTo: ChainId.AURORA, transactionHashChainFrom: "0x77a776395f347c313efcb660e50e3ea45846b80d90fa19f33f8b53a42cc46fb4", want: true},
+            {chainIdTo: ChainId.BSC,    transactionHashChainFrom: "0x53da6395da3a7f7efba5581387466de06983be8806978416441ba8202600684e", want: false},
+            {chainIdTo: ChainId.DFK,    transactionHashChainFrom: "0xeb449f8f890b20d42448fbf5b8542d7afc4e0c6a51a25e6b278475c6ad087d96", want: true}
+        ];
+
+        testCases.forEach(tc => {
+            const testTitle: string = `Bridge transaction ${tc.transactionHashChainFrom} ${tc.want ? 'should' : 'should NOT'} be marked completed on Chain ID ${tc.chainIdTo}`;
+
+            it(testTitle, async function(this: Mocha.Context) {
+                this.timeout(5.5 * 1000);
+                this.slow(2 * 1000);
+
+                const got = await checkBridgeTransactionComplete(tc);
+                return tc.want ? expect(got).to.be.true : expect(got).to.be.false
+            });
+        });
+    });
+});
