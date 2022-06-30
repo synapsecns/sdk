@@ -97,6 +97,11 @@ export namespace SynapseContracts {
         bridgeZap: "0xB003e75f7E0B5365e814302192E99b4EE08c0DEd",
     });
 
+    export const Klaytn = new SynapseContract({
+        bridge:    "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
+        bridgeZap: "", // TODO: Fix
+    });
+
     const chainIdContractsMap: ChainIdTypeMap<SynapseContract> = {
         [ChainId.ETH]:       Ethereum,
         [ChainId.OPTIMISM]:  Optimism,
@@ -113,6 +118,7 @@ export namespace SynapseContracts {
         [ChainId.DFK]:       DFK,
         [ChainId.AURORA]:    Aurora,
         [ChainId.HARMONY]:   Harmony,
+        [ChainId.KLAYTN]:    Klaytn,
     }
 
     export function contractsForChainId(chainId: number): SynapseContract { return chainIdContractsMap[chainId] }
