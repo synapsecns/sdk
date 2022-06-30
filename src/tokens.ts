@@ -840,23 +840,28 @@ export namespace Tokens {
      * Returns a {@link Token} object based on the passed `tokenSymbol`, if such token exists.
      *
      * @param tokenSymbol Actual token symbol ("DAI", "SYN") or the `id` field of a {@link Token} object.
+     *                      Note that passing a newly initialized Symbol() will return null.
      *
      * @return A {@link Token} if one matches the passed `tokenSymbol`, null otherwise.
      */
     export function tokenFromSymbol(tokenSymbol: string | ID | symbol): Token | null {
         let res: Token = null;
 
+        findTokenLoop:
         for (const t of AllTokens) {
-            if (typeof tokenSymbol === 'symbol') {
-                if (t.id === (tokenSymbol as ID)) {
-                    res = t;
+            switch (typeof tokenSymbol) {
+                case "string":
+                    if (t.symbol === tokenSymbol) {
+                        res = t;
+                        break findTokenLoop;
+                    }
                     break;
-                }
-            } else if (typeof tokenSymbol === 'string') {
-                if (t.symbol === (tokenSymbol as string)) {
-                    res = t;
+                case "symbol":
+                    if (t.id === (tokenSymbol as ID)) {
+                        res = t;
+                        break findTokenLoop;
+                    }
                     break;
-                }
             }
         }
 
