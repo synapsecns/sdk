@@ -115,7 +115,7 @@ jobs:
           FANTOM_RPC_URI:     ${{ secrets.FANTOM_RPC_URI }}
           METIS_RPC_URI:      ${{ secrets.METIS_RPC_URI }}
           ARBITRUM_RPC_URI:   ${{ secrets.ARBITRUM_RPC_URI }}
-          CRONOS_RPC_URI:     "https://mmf-rpc.xstaking.sg/",
+          CRONOS_RPC_URI:     "https://mmf-rpc.xstaking.sg/"
           HARMONY_RPC_URI:    "https://harmony-0-rpc.gateway.pokt.network"
           INFINITE_APPROVALS_PRIVKEY:          ${{ secrets.INFINITE_APPROVALS_PRIVKEY }}
           INFINITE_APPROVALS_PRIVKEY_ADDRESS:  ${{ secrets.INFINITE_APPROVALS_PRIVKEY_ADDRESS }}
