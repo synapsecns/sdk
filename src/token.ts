@@ -190,6 +190,7 @@ export class BaseToken implements Token {
     }
 
     weiToEther(amt: BigNumberish, chainId: number): BigNumber {
+        /* c8 ignore next 3 */
         const
             decimals   = this.decimals(chainId) || 18,
             multiplier = BigNumber.from(10).pow(18 - decimals);
@@ -209,9 +210,11 @@ export class BaseToken implements Token {
         return parseUnits(etherStr, this.decimals(chainId) ?? 18)
     }
 
+    /* c8 ignore start */
     valueToWei(ether: BigNumberish, chainId: number): BigNumber {
         return this.etherToWei(ether, chainId)
     }
+    /* c8 ignore stop */
 
     canSwap(other: Token): boolean {
         return this.swapType === other.swapType

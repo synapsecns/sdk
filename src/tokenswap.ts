@@ -63,6 +63,7 @@ export namespace UnsupportedSwapErrors {
         readonly errorKind: UnsupportedSwapErrorKind;
 
         constructor({reason, errorKind}: UnsupportedSwapErrorArgs) {
+            /* c8 ignore next */
             super(reason);
 
             this.name = this.constructor.name;
@@ -254,10 +255,10 @@ export namespace TokenSwap {
         );
 
         const tokenAddress = args.token.address(args.chainId);
-        if (!tokenAddress) {
+        if (!tokenAddress) { /* c8 ignore start */
             const err = new Error(`no address for token ${args.token.name} found for chain id ${args.chainId}`);
             return rejectPromise(err)
-        }
+        } /* c8 ignore stop */
 
         let tokenIndex: number;
         try {
@@ -434,10 +435,10 @@ export namespace TokenSwap {
         );
 
         const tokenAddress = args.token.address(args.chainId);
-        if (!tokenAddress) {
+        if (!tokenAddress) { /* c8 ignore start */
             const err = new Error(`no address for token ${args.token.name} found for chain id ${args.chainId}`);
             return rejectPromise(err)
-        }
+        } /* c8 ignore stop */
 
         let tokenIndex: number;
         try {
@@ -480,10 +481,10 @@ export namespace TokenSwap {
         const swapInstance = await swapContractFromLPSwapAddress(args.lpToken.swapAddress, args.chainId);
 
         const tokenAddress = args.token.address(args.chainId);
-        if (!tokenAddress) {
+        if (!tokenAddress) { /* c8 ignore start */
             const err = new Error(`no address for token ${args.token.name} found for chain id ${args.chainId}`);
             return rejectPromise(err)
-        }
+        } /* c8 ignore stop */
 
         let tokenIndex: number;
         try {
@@ -536,7 +537,9 @@ export namespace TokenSwap {
 
         return resolveSwapData(args)
             .then(swapSetup => {
-                const {deadline} = args;
+                let {deadline} = args;
+                /* c8 ignore next */
+                deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10);
 
                 return swapContract(args.tokenFrom, args.chainId, args.signer)
                     .then(swapInstance => {
@@ -545,7 +548,7 @@ export namespace TokenSwap {
                             swapSetup.tokenIndexTo,
                             args.amountIn,
                             args.minAmountOut,
-                            deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10),
+                            deadline,
                             buildSwapTokensOverrides(args, gasOptions)
                         )
                     })
@@ -577,19 +580,21 @@ export namespace TokenSwap {
         swapSetup:   SwapSetup,
         gasOptions?: GasOptions
     ): Promise<PopulatedTransaction> {
-        const {deadline} = args;
+        let {deadline} = args;
         const {swapInstance} = swapSetup;
+        /* c8 ignore next */
+        deadline = deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10);
 
         let txnProm = swapInstance.populateTransaction.swap(
             swapSetup.tokenIndexFrom,
             swapSetup.tokenIndexTo,
             args.amountIn,
             args.minAmountOut,
-            deadline ?? Math.round((new Date().getTime() / 1000) + 60 * 10)
+            deadline
         );
 
         const gasLimit = CHAIN_SWAPS_GAS_LIMITS[args.chainId]?.gasLimit;
-
+        /* c8 ignore next */
         let gasOpts: GasOptions = gasOptions ? gasOptions : {};
         if (gasLimit) {
             gasOpts.gasLimit = gasLimit;
