@@ -46,6 +46,7 @@ export interface TransactionGasOverrides {
     maxPriorityFeePerGas?: BigNumberish | Promise<BigNumberish>;
 }
 
+/* c8 ignore next */
 export function makeGwei(n: string): BigNumber { return parseUnits(n, "gwei") }
 
 /**
