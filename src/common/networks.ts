@@ -1,4 +1,6 @@
-import {ChainId, type ChainIdTypeMap, chainSupportsEIP1559} from "@chainid";
+import type { ChainIdTypeMap } from "@chainid";
+import { ChainId, chainSupportsEIP1559 } from "@chainid";
+
 import type {Token} from "@token";
 import {Tokens}     from "@tokens";
 import {SwapPools}  from "@swappools";
@@ -69,14 +71,7 @@ export namespace Networks {
          * Bridge Zap contract is a L1BridgeZap contract.
          */
         get zapIsL2BridgeZap(): boolean {
-            switch (this.chainId) {
-                case ChainId.ETH:
-                    return false
-                case ChainId.DFK:
-                    return false
-                default:
-                    return true
-            }
+            return !([ChainId.ETH as ChainId, ChainId.DFK as ChainId].includes(this.chainId))
         }
 
         /**

@@ -206,7 +206,16 @@ describe("Basic tests", function(this: Mocha.Suite) {
 
         testCases.forEach(tc => {
             it(`${tc.network.name}.zapIsL2BridgeZap should return ${tc.want}`, function(this: Mocha.Context) {
-                expect(tc.network.zapIsL2BridgeZap).to.be.true;
+                const got = tc.network.zapIsL2BridgeZap;
+
+                switch (tc.want) {
+                    case true:
+                        expect(got).to.be.true;
+                        break;
+                    case false:
+                        expect(got).to.be.false;
+                        break
+                }
             });
         });
     });
