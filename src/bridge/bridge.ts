@@ -668,9 +668,20 @@ export namespace Bridge {
                 easyDeposits:   ID[] = [
                     Tokens.HIGH.id, Tokens.DOG.id,  Tokens.FRAX.id,
                     Tokens.GOHM.id, Tokens.NEWO.id, Tokens.SDT.id,
-                    Tokens.H20.id,
+                    Tokens.H20.id,  Tokens.SFI.id
                 ],
                 easyDepositETH: ID[] = [Tokens.NETH.id];
+
+
+            // These are all xAssets on Klaytn, e.i we use `L1BridgeZap.depositETH()` and `L1BridgeZap.deposit()`
+            if (chainIdTo === ChainId.KLAYTN) {
+                easyDeposits.push(...[
+                    Tokens.USDC.id,
+                    Tokens.USDT.id,
+                    Tokens.DAI.id,
+                    Tokens.WBTC.id
+                ])
+            }
 
             let {castArgs, isEasy, txn} = this.checkEasyArgs(args, this.l1BridgeZapEth, easyDeposits, easyRedeems, easyDepositETH);
             if (isEasy && txn) {
@@ -786,13 +797,12 @@ export namespace Bridge {
                     Tokens.SYN.id,      Tokens.HIGH.id,    Tokens.DOG.id,
                     Tokens.FRAX.id,     Tokens.UST.id,     Tokens.GOHM.id,
                     Tokens.NEWO.id,     Tokens.SDT.id,     Tokens.LUNA.id,
-                    Tokens.USDB.id,     Tokens.H20.id,
+                    Tokens.USDB.id,     Tokens.H20.id,     Tokens.SFI.id
                 ];
 
-            // These are all xAssets on Klaytn, e.i we use `L1BridgeZap.depositETH()` and `L1BridgeZap.deposit()`
+            // These are all xAssets on Klaytn, e.i we use `L1BridgeZap.redeem()`
             if (this.chainId === ChainId.KLAYTN) {
-                easyDepositETH.push(Tokens.WETH.id)
-                easyDeposits.push(...[
+                easyRedeems.push(...[
                     Tokens.USDC.id,
                     Tokens.USDT.id,
                     Tokens.DAI.id,

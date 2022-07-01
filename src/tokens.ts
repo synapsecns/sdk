@@ -698,7 +698,7 @@ export namespace Tokens {
     export const WBTC = new BaseToken({
         name: "WBTC",
         symbol: "WBTC",
-        decimals: 18,
+        decimals: 8,
         addresses: {
             [ChainId.ETH]:       "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
             [ChainId.KLAYTN]:    "0xDCbacF3f7a069922E677912998c8d57423C37dfA"

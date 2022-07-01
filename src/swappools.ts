@@ -747,10 +747,12 @@ export namespace SwapPools {
             swappableTokens: {
                 [SwapType.USD]: USDPoolTokens(),
                 [SwapType.ETH]: [Tokens.ETH, Tokens.WETH],
+                [SwapType.WBTC]: [Tokens.WBTC],
             },
             swappableSwapGroups: {
                 [SwapType.USD]: {poolTokens: USDPoolTokens(), swapType: SwapType.USD},
                 [SwapType.ETH]: {poolTokens: [Tokens.ETH, Tokens.WETH], swapType: SwapType.ETH},
+                [SwapType.WBTC]: {poolTokens: [Tokens.WBTC], swapType: SwapType.WBTC},
             }
         },
     };
