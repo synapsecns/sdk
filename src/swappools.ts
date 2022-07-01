@@ -742,7 +742,17 @@ export namespace SwapPools {
             XJEWEL_Pool,
             DFKTEARS_Pool,
             HARMONY_JEWEL_Pool
-        )
+        ),
+        [ChainId.KLAYTN]: {
+            swappableTokens: {
+                [SwapType.USD]: USDPoolTokens(),
+                [SwapType.ETH]: [Tokens.ETH, Tokens.WETH],
+            },
+            swappableSwapGroups: {
+                [SwapType.USD]: {poolTokens: USDPoolTokens(), swapType: SwapType.USD},
+                [SwapType.ETH]: {poolTokens: [Tokens.ETH, Tokens.WETH], swapType: SwapType.ETH},
+            }
+        },
     };
 
     export function swapGroupsForChain(chainId: number): string[] {
