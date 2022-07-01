@@ -804,7 +804,7 @@ export namespace Bridge {
                     Tokens.USDB.id,     Tokens.H20.id,     Tokens.SFI.id
                 ];
 
-            // use `L1BridgeZap.redeem()`
+            // use `L2BridgeZap.redeem()`
             if (this.chainId === ChainId.KLAYTN) {
                 easyRedeems.push(...[
                     Tokens.USDC.id,
