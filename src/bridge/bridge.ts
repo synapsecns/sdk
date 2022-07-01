@@ -665,6 +665,8 @@ export namespace Bridge {
                     Tokens.SYN.id,  Tokens.UST.id,  Tokens.USDB.id,
                     Tokens.VSTA.id,
                 ],
+
+                // Deposits are for tokens that can just be deposited on source chains, mostly likely Ethereum
                 easyDeposits:   ID[] = [
                     Tokens.HIGH.id, Tokens.DOG.id,  Tokens.FRAX.id,
                     Tokens.GOHM.id, Tokens.NEWO.id, Tokens.SDT.id,
@@ -672,8 +674,7 @@ export namespace Bridge {
                 ],
                 easyDepositETH: ID[] = [Tokens.NETH.id];
 
-
-            // These are all xAssets on Klaytn, e.i we use `L1BridgeZap.depositETH()` and `L1BridgeZap.deposit()`
+            // use `L1BridgeZap.deposit()`
             if (chainIdTo === ChainId.KLAYTN) {
                 easyDeposits.push(...[
                     Tokens.USDC.id,
@@ -768,7 +769,8 @@ export namespace Bridge {
         ): Promise<PopulatedTransaction> {
             let
                 {chainIdTo, amountFrom, amountTo} = args,
-                // NOTE: This is a problem - we don't support other L1s
+
+                // NOTE: This is a problem - we don't support other L1s. Klaytn still uses L2BridgeZap However
                 zapBridge = SynapseEntities.L2BridgeZapContractInstance({
                     chainId:          this.chainId,
                     signerOrProvider: this.provider
@@ -793,6 +795,8 @@ export namespace Bridge {
             let
                 easyDeposits:   ID[] = [],
                 easyDepositETH: ID[] = [],
+
+                // Redeems are for tokens that can just be burnt on non-source chains
                 easyRedeems:    ID[] = [
                     Tokens.SYN.id,      Tokens.HIGH.id,    Tokens.DOG.id,
                     Tokens.FRAX.id,     Tokens.UST.id,     Tokens.GOHM.id,
@@ -800,7 +804,7 @@ export namespace Bridge {
                     Tokens.USDB.id,     Tokens.H20.id,     Tokens.SFI.id
                 ];
 
-            // These are all xAssets on Klaytn, e.i we use `L1BridgeZap.redeem()`
+            // use `L1BridgeZap.redeem()`
             if (this.chainId === ChainId.KLAYTN) {
                 easyRedeems.push(...[
                     Tokens.USDC.id,
@@ -834,13 +838,9 @@ export namespace Bridge {
                 }
             });
 
-            let checkEasyZap = this.zapBridge
-            let dfkBridgeZap = BridgeUtils.newL1BridgeZap(ChainId.DFK)
-            if (this.chainId === ChainId.DFK) {
-                checkEasyZap = dfkBridgeZap;
-            } else if (this.chainId === ChainId.KLAYTN) {
-                checkEasyZap = BridgeUtils.newL1BridgeZap(ChainId.KLAYTN);
-            }
+            const
+                dfkBridgeZap = BridgeUtils.newL1BridgeZap(ChainId.DFK),
+                checkEasyZap = this.chainId === ChainId.DFK ? dfkBridgeZap : this.zapBridge;
 
             let {castArgs, isEasy, txn} = this.checkEasyArgs(args, checkEasyZap, easyDeposits, easyRedeems, easyDepositETH);
             if (isEasy && txn) {
@@ -927,6 +927,7 @@ export namespace Bridge {
                     let params = BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.GMX);
                     let [addrTo, chainTo,,amount] = params;
 
+                    // GMX origin chain is Arbitrum, hence deposit there
                     return this.chainId === ChainId.ARBITRUM
                         ? zapBridge.populateTransaction.deposit(...params)
                         : this.bridgeInstance
@@ -1124,6 +1125,32 @@ export namespace Bridge {
                         }
                     }
 
+                    if (ChainId.KLAYTN in [this.chainId, chainIdTo]) {
+
+                        if (chainIdTo === ChainId.KLAYTN) {
+                            // To bridge ETH from chains where it IS the gas token, use swapETHAndRedeem
+                            // This is because ETH is wrapped into WETH, swapped for nETH and then burnt
+                            if (this.isL2ETHChain && args.tokenFrom.swapType === SwapType.ETH) {
+                                return easySwapAndRedeem(args.tokenFrom, true)
+                            }
+                        }
+
+                        if (this.chainId === ChainId.KLAYTN && args.tokenFrom.swapType === SwapType.ETH) {
+
+                            // Special case where we use `redeem` for ETH on Ethereum
+                            // WETH (nETH underneath) is just burnt
+                            if (chainIdTo === ChainId.ETH) {
+                                return zapBridge
+                                    .populateTransaction
+                                    .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.WETH))
+                            }
+
+                            // To bridge ETH from other chains where it is not the gas token, use redeemAndSwap
+                            // ETH is already a token on that chain, so it's swapped to nETH and then burnt
+                            return easyRedeemAndSwap(args.tokenFrom)
+                        }
+
+                    }
 
                     if (args.tokenFrom.isEqual(Tokens.NUSD) || args.tokenFrom.isEqual(Tokens.DFK_USDC) || args.tokenFrom.isEqual(Tokens.NETH)) {
                         return easyRedeemAndSwap(args.tokenFrom)
