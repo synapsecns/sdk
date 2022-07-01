@@ -315,7 +315,6 @@ export namespace Tokens {
             [ChainId.DFK]:       "0x3AD9DFE640E1A9Cc1D9B0948620820D975c3803a",
             [ChainId.AURORA]:    "0x07379565cD8B0CaE7c60Dc78e7f601b34AF2A21c",
             [ChainId.HARMONY]:   "0xED2a7edd7413021d440b09D654f3b87712abAB66",
-            [ChainId.KLAYTN]:    "0xfdbad1699a550f933efebf652a735f2f89d3833c",
         },
         swapType: SwapType.USD,
     });
