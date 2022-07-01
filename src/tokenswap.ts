@@ -841,12 +841,6 @@ export namespace TokenSwap {
             if (tokenFrom.isEqual(Tokens.MULTIJEWEL) && chainIdTo !== ChainId.DFK) {
                 return {swapSupported: false, reasonNotSupported: UnsupportedSwapErrors.unsupportedMultiJEWELMigration()}
             }
-
-            // TODO: FIX! Single SwapType *cannot * represent individual transfer support from one chain to another
-            // This is needed since we cannot transfer, for eg, USDT <-> USDC. Only USDC <-> USDC
-            if (ChainId.KLAYTN in [chainIdTo, chainIdFrom] && !tokenFrom.isEqual(tokenTo)) {
-                return {swapSupported: false, reasonNotSupported: UnsupportedSwapErrors.nonMatchingSwapTypes()}
-            }
         }
 
         let
