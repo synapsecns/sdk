@@ -5,21 +5,28 @@ export namespace SynapseContracts {
     interface SynapseContractArgs {
         bridge:     string;
         bridgeZap?: string;
+        swap?:      string;
     }
 
     export class SynapseContract {
         readonly bridgeAddress:      string;
         readonly bridgeZapAddress?:  string;
+        readonly swapAddress?:              string;
 
         constructor({
             bridge,
             bridgeZap=null,
+            swap=null,
         }: SynapseContractArgs) {
 
             this.bridgeAddress = bridge;
 
             if (bridgeZap) {
                 this.bridgeZapAddress = bridgeZap;
+            }
+
+            if (swap) {
+                this.swapAddress = swap;
             }
         }
     }

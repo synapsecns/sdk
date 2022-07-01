@@ -4,9 +4,10 @@ import { BigNumberish, ethers, Signer } from "ethers";
 import { useSignerFromEthereum } from "./signer";
 import SWAP_ABI from "@abis/swap.json";
 import {
+    contractsForChainId,
   getTimeMinutesFromNow,
   uiToNative,
-} from "./utils";
+} from "@common/utils";
 
 /**
  * @notice Call the `swap` function of the `Swap` contract
@@ -31,7 +32,8 @@ export async function swap(
   deadline?: number
 ) {
   // Get the swap contract
-  const { swapAddress, swapEthAddress } = usePoolTokenInfo(poolName, chainId);
+//   const { swapAddress, swapEthAddress } = usePoolTokenInfo(poolName, chainId);
+  const swapAddress = contractsForChainId(chainId).swapAddress;
   const swapContract = new ethers.Contract(swapAddress, SWAP_ABI, signer);
 
   // Get the `swap` parameters
@@ -73,7 +75,7 @@ export async function calculateSwap(
   amountFrom: number // in units of ui
 ) {
   // Get the swap contract
-  const { swapAddress, swapEthAddress } = usePoolTokenInfo(poolName, chainId);
+  const swapAddress = contractsForChainId(chainId).swapAddress;
   const swapContract = new ethers.Contract(swapAddress, SWAP_ABI, signer);
 
   // Get the `swap` parameters
