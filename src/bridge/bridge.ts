@@ -255,7 +255,7 @@ export namespace Bridge {
 
             args = {...args, tokenFrom, tokenTo};
 
-            let newTxn: Promise<PopulatedTransaction> = this.chainId === ChainId.ETH
+            let newTxn: Promise<PopulatedTransaction> = (this.chainId === ChainId.ETH)
                 ? this.buildETHMainnetBridgeTxn(args, tokenArgs)
                 : this.buildL2BridgeTxn(args, tokenArgs);
 
@@ -755,8 +755,9 @@ export namespace Bridge {
             args: BridgeTransactionParams,
             tokenArgs: BridgeTokenArgs
         ): Promise<PopulatedTransaction> {
-            const
+            let
                 {chainIdTo, amountFrom, amountTo} = args,
+                // NOTE: This is a problem - we don't support other L1s
                 zapBridge = SynapseEntities.L2BridgeZapContractInstance({
                     chainId:          this.chainId,
                     signerOrProvider: this.provider
@@ -788,6 +789,17 @@ export namespace Bridge {
                     Tokens.USDB.id,     Tokens.H20.id,
                 ];
 
+            // These are all xAssets on Klaytn, e.i we use `L1BridgeZap.depositETH()` and `L1BridgeZap.deposit()`
+            if (this.chainId === ChainId.KLAYTN) {
+                easyDepositETH.push(Tokens.WETH.id)
+                easyDeposits.push(...[
+                    Tokens.USDC.id,
+                    Tokens.USDT.id,
+                    Tokens.DAI.id,
+                    Tokens.WBTC.id
+                ])
+            }
+
             BridgeUtils.DepositIfChainTokens.forEach((depositIfChainArgs) => {
                 if (this.chainId === ChainId.DFK && args.tokenTo.isEqual(Tokens.SYN_AVAX)) {
                     return
@@ -812,9 +824,13 @@ export namespace Bridge {
                 }
             });
 
-            const
-                dfkBridgeZap = BridgeUtils.newL1BridgeZap(ChainId.DFK),
-                checkEasyZap = this.chainId === ChainId.DFK ? dfkBridgeZap : this.zapBridge;
+            let checkEasyZap = this.zapBridge
+            let dfkBridgeZap = BridgeUtils.newL1BridgeZap(ChainId.DFK)
+            if (this.chainId === ChainId.DFK) {
+                checkEasyZap = dfkBridgeZap;
+            } else if (this.chainId === ChainId.KLAYTN) {
+                checkEasyZap = BridgeUtils.newL1BridgeZap(ChainId.KLAYTN);
+            }
 
             let {castArgs, isEasy, txn} = this.checkEasyArgs(args, checkEasyZap, easyDeposits, easyRedeems, easyDepositETH);
             if (isEasy && txn) {

@@ -193,7 +193,7 @@ export function L2BridgeZapContractInstance(params: NewInstanceParams): L2Bridge
 }
 
 export function GenericZapBridgeContractInstance(params: NewInstanceParams): GenericZapBridgeContract {
-    return params.chainId === ChainId.ETH || params.chainId === ChainId.DFK
+    return params.chainId === ChainId.ETH || params.chainId === ChainId.DFK || params.chainId === ChainId.KLAYTN
         ? L1BridgeZapContractInstance(params)
         : L2BridgeZapContractInstance(params)
 }
