@@ -1,3 +1,4 @@
+import { isNil } from "@internal/utils";
 import {ChainId, type ChainIdTypeMap} from "@chainid";
 
 export namespace SynapseContracts {
@@ -21,7 +22,7 @@ export namespace SynapseContracts {
 
             this.bridgeAddress = bridge;
 
-            if (bridgeZap) {
+            if (!isNil(bridgeZap)) {
                 this.bridgeZapAddress = bridgeZap;
             }
 
@@ -124,7 +125,5 @@ export namespace SynapseContracts {
         [ChainId.HARMONY]:   Harmony,
     }
 
-    export function contractsForChainId(chainId: number): SynapseContract {
-        return chainIdContractsMap[chainId]
-    }
+    export function contractsForChainId(chainId: number): SynapseContract { return chainIdContractsMap[chainId] }
 }

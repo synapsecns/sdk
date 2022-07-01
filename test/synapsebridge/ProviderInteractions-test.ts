@@ -27,7 +27,10 @@ import {
 import {rejectPromise, staticCallPopulatedTransaction} from "@sdk/common/utils";
 
 import {
-    bridgeTestPrivkey1, DEFAULT_TEST_TIMEOUT, expectFulfilled, expectNothingFromPromise, expectNotZero,
+    bridgeTestPrivkey1,
+    expectFulfilled,
+    expectNothingFromPromise,
+    expectNotZero,
     makeWalletSignerWithProvider,
 } from "@tests/helpers";
 import {expect} from "chai";
@@ -120,9 +123,26 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
 
     const HARMONY_GAS_OPTIONS: GasOptions = {
         gasPrice: makeGwei("65")
-    }
+    };
 
     type MakeOpts = TestOpts & {callStatic: boolean}
+
+    function setTimeout(ctx: Mocha.Context, chainId: number) {
+        let timeout: number;
+        ctx.slow(3.5*1000);
+
+        switch (chainId) {
+            case ChainId.AURORA:
+            case ChainId.CRONOS:
+                timeout = 12000;
+                break;
+            default:
+                timeout = 8000;
+                break;
+        }
+
+        ctx.timeout(timeout);
+    }
 
     const
         failAllOpts            = (callStatic: boolean): MakeOpts => ({executeSuccess: false,  canBridge: false, callStatic}),
@@ -185,7 +205,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 return
             }
 
-            ctx.timeout(45 * 1000);
+            setTimeout(ctx, tc.args.chainIdFrom);
 
             let execProm: Promise<void>;
             if (staticCall) {
@@ -230,7 +250,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 doBridgeArgs:   BridgeTransactionParams;
 
             step("[*] acquire output estimate", async function(this: Mocha.Context) {
-                this.timeout(DEFAULT_TEST_TIMEOUT);
+                setTimeout(this, tc.args.chainIdFrom);
 
                 let prom = getBridgeEstimate(tc, walletArgs);
 
@@ -257,7 +277,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                         this.timeout(5.5 * 1000);
                     }
 
-                    this.slow(2 * 1000);
+                    setTimeout(this, tc.args.chainIdFrom);
 
                     let prom = bridgeInstance.checkCanBridge({
                         token: tc.args.tokenFrom,
@@ -290,7 +310,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 step(approveTitle, async function(this: Mocha.Context) {
                     if (tc.args.tokenFrom.isGasToken) return
 
-                    this.timeout(DEFAULT_TEST_TIMEOUT);
+                    setTimeout(this, tc.args.chainIdFrom);
 
                     const prom = bridgeInstance.buildApproveTransaction({token: tc.args.tokenFrom});
                     Promise.resolve(prom).then((txn) => approvalTxn = txn);
@@ -299,7 +319,7 @@ describe("SynapseBridge - Provider Interactions tests", function(this: Mocha.Sui
                 });
 
                 step(bridgeTitle, async function(this: Mocha.Context) {
-                    this.timeout(DEFAULT_TEST_TIMEOUT);
+                    setTimeout(this, tc.args.chainIdFrom);
 
                     const prom = bridgeInstance.buildBridgeTokenTransaction(doBridgeArgs)
                     Promise.resolve(prom).then((txn) => bridgeTxn = txn).catch(err => {

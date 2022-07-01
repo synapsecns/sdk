@@ -21,7 +21,6 @@ import {SynapseContracts} from "@sdk/common/synapse_contracts";
 import {
     DEFAULT_TEST_TIMEOUT,
     getTestAmount,
-    expectFulfilled,
     expectGteZero,
     expectNotZero,
     expectNull,
@@ -34,7 +33,6 @@ import {BigNumber} from "@ethersproject/bignumber";
 
 describe("ERC20 tests", function(this: Mocha.Suite) {
     const testAddr: string = "0xe972647539816442e0987817DF777a9fd9878650";
-    const fakePrivateKey: string = ""
 
     const tokenParams = (c: number): TokenParams => ({
         chainId:      c,
@@ -73,13 +71,17 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
             it("should build a transaction successfully", async function(this: Mocha.Context) {
                 this.timeout(DEFAULT_TEST_TIMEOUT);
 
-                let prom: Promise<PopulatedTransaction> = buildApproveTransaction(args, tokenParams(chainId));
+                let
+                    res:  PopulatedTransaction,
+                    prom: Promise<PopulatedTransaction> = buildApproveTransaction(args, tokenParams(chainId));
 
                 try {
-                    return expectNull(await prom, false)
-                } catch (e) {
-                    return (await expectFulfilled(prom))
+                    res = await prom;
+                } catch (err) {
+                    return (await expect(prom, (err as Error).message).to.not.be.rejected)
                 }
+
+                return expectNull(res, false)
             });
 
             it("Should fail to fire approve() successfully", async function(this: Mocha.Context) {
@@ -108,7 +110,7 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
                     approveSpendArgs.amount = BigNumber.from(amount);
                 }
 
-                let prom: Promise<ContractTransaction> =  Tokens.approveTokenSpend(approveSpendArgs);
+                let prom: Promise<ContractTransaction> = Tokens.approveTokenSpend(approveSpendArgs);
 
                 return (await expect(prom).to.eventually.be.rejected)
             });
@@ -119,7 +121,17 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
         it("should have an nUSD balance greater than zero", async function(this: Mocha.Context) {
             this.timeout(DEFAULT_TEST_TIMEOUT);
 
-            return expectNotZero(await balanceOf(testAddr, tokenParams(ChainId.BSC)))
+            let
+                res: BigNumber,
+                prom: Promise<BigNumber> = balanceOf(testAddr, tokenParams(ChainId.BSC));
+
+            try {
+                res = await prom;
+            } catch (err) {
+                return (await expect(prom, (err as Error).message).to.not.be.rejected)
+            }
+
+            return expectNotZero(res)
         });
     });
 
@@ -127,11 +139,21 @@ describe("ERC20 tests", function(this: Mocha.Suite) {
         it("synapsebridgezap should have an nUSD allowance gte zero", async function(this: Mocha.Context) {
             this.timeout(DEFAULT_TEST_TIMEOUT);
 
-            return expectGteZero(await allowanceOf(
-                testAddr,
-                SynapseContracts.contractsForChainId(ChainId.BSC).bridgeZapAddress,
-                tokenParams(ChainId.BSC)
-            ))
+            let
+                res: BigNumber,
+                prom: Promise<BigNumber> = allowanceOf(
+                    testAddr,
+                    SynapseContracts.contractsForChainId(ChainId.BSC).bridgeZapAddress,
+                    tokenParams(ChainId.BSC)
+                );
+
+            try {
+                res = await prom;
+            } catch (err) {
+                return (await expect(prom, (err as Error).message).to.not.be.rejected)
+            }
+
+            return expectGteZero(res)
         });
     });
 });

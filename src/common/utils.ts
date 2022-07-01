@@ -13,13 +13,9 @@ import type {
     ContractTransaction,
 } from "@ethersproject/contracts";
 
-export function makeError(e: any): Error {
-    return e instanceof Error ? e : new Error(e)
-}
+export function makeError(e: any): Error { return e instanceof Error ? e : new Error(e) }
 
-export function rejectPromise(e: any): Promise<never> {
-    return Promise.reject(makeError(e))
-}
+export function rejectPromise(e: any): Promise<never> { return Promise.reject(makeError(e)) }
 
 export function executePopulatedTransaction(
     populatedTxn: Resolveable<PopulatedTransaction>,

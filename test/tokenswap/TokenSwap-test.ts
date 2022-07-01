@@ -14,9 +14,7 @@ import {
     expectBoolean, makeFakeWallet,
 } from "@tests/helpers";
 import {expect} from "chai";
-import {instanceOfToken} from "@token";
-import {SwapType} from "@internal/swaptype";
-import {BigNumber, BigNumberish} from "@ethersproject/bignumber";
+import {BigNumber} from "@ethersproject/bignumber";
 import {step} from "mocha-steps";
 import {Zero} from "@ethersproject/constants";
 
@@ -141,7 +139,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
             allChains   = supportedChainIds(),
             detailedMap = TokenSwap.detailedTokenSwapMap();
 
-        it(`should have ${allChains.length} entries`, function() {
+        it(`should have ${allChains.length} entries`, function(this: Mocha.Context) {
             expectLength(Object.keys(detailedMap), allChains.length);
         });
 
@@ -195,6 +193,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
 
             return found
         }
+
         const testCases: TestCase[] = [
             {
                 chainId:       ChainId.BSC,
@@ -297,14 +296,7 @@ describe("TokenSwap -- Synchronous Tests", function(this: Mocha.Suite) {
                         tokMap            = findTokenMap(chainToken, toksMap);
 
                     it(testTitle, function(this: Mocha.Context) {
-                        // if (tc.chainId === ChainId.OPTIMISM) {
-                        //     for (const tm of toksMap) {
-                        //         console.log(Object.keys(tm));
-                        //     }
-                        // }
                         expect(tokMap).to.exist;
-                        // const isEqual = tok.token.isEqual(tokMap.token);
-                        // expect(isEqual).to.be.true;
                     });
                 });
             });

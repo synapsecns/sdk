@@ -126,6 +126,7 @@ abigen_compile () {
 
 DFK="dfk"
 METIS="metis"
+CRONOS="cronos"
 MAINNET="mainnet"
 AVALANCHE="avalanche"
 
@@ -134,7 +135,7 @@ abigen_download () {
 
   get_abi_from_gh "${GIT_BRANCH}" "${DFK}"       "${SYNAPSE_BRIDGE}"
   get_abi_from_gh "${GIT_BRANCH}" "${DFK}"       "${L1BRIDGEZAP}"
-  get_abi_from_gh "${GIT_BRANCH}" "${METIS}"     "${L2BRIDGEZAP}"
+  get_abi_from_gh "${GIT_BRANCH}" "${CRONOS}"    "${L2BRIDGEZAP}"
   get_abi_from_gh "${GIT_BRANCH}" "${MAINNET}"   "${BRIDGECONFIG}"
   get_abi_from_gh "${GIT_BRANCH}" "${METIS}"     "${SWAP_FLASH_LOAN}"
   get_abi_from_gh "${GIT_BRANCH}" "${MAINNET}"   "${SYNAPSE_ERC20}"

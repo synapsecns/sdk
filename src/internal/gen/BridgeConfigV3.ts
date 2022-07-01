@@ -24,14 +24,15 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "./common";
 
 export declare namespace BridgeConfigV3 {
   export type PoolStruct = {
-    tokenAddress: string;
-    chainId: BigNumberish;
-    poolAddress: string;
-    metaswap: boolean;
+    tokenAddress: PromiseOrValue<string>;
+    chainId: PromiseOrValue<BigNumberish>;
+    poolAddress: PromiseOrValue<string>;
+    metaswap: PromiseOrValue<boolean>;
   };
 
   export type PoolStructOutput = [string, BigNumber, string, boolean] & {
@@ -42,16 +43,16 @@ export declare namespace BridgeConfigV3 {
   };
 
   export type TokenStruct = {
-    chainId: BigNumberish;
-    tokenAddress: string;
-    tokenDecimals: BigNumberish;
-    maxSwap: BigNumberish;
-    minSwap: BigNumberish;
-    swapFee: BigNumberish;
-    maxSwapFee: BigNumberish;
-    minSwapFee: BigNumberish;
-    hasUnderlying: boolean;
-    isUnderlying: boolean;
+    chainId: PromiseOrValue<BigNumberish>;
+    tokenAddress: PromiseOrValue<string>;
+    tokenDecimals: PromiseOrValue<BigNumberish>;
+    maxSwap: PromiseOrValue<BigNumberish>;
+    minSwap: PromiseOrValue<BigNumberish>;
+    swapFee: PromiseOrValue<BigNumberish>;
+    maxSwapFee: PromiseOrValue<BigNumberish>;
+    minSwapFee: PromiseOrValue<BigNumberish>;
+    hasUnderlying: PromiseOrValue<boolean>;
+    isUnderlying: PromiseOrValue<boolean>;
   };
 
   export type TokenStructOutput = [
@@ -157,11 +158,19 @@ export interface BridgeConfigV3Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "calculateSwapFee(string,uint256,uint256)",
-    values: [string, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateSwapFee(address,uint256,uint256)",
-    values: [string, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "getAllTokenIDs",
@@ -169,114 +178,119 @@ export interface BridgeConfigV3Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getMaxGasPrice",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getPoolConfig",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
-    values: [BytesLike]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleMember",
-    values: [BytesLike, BigNumberish]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleMemberCount",
-    values: [BytesLike]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "getToken",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenByAddress",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenByEVMAddress",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenByID",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenID(address,uint256)",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenID(string,uint256)",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getUnderlyingToken",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
-    values: [BytesLike, string]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
-    values: [BytesLike, string]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "hasUnderlyingToken",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "isTokenIDExist",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
-    values: [BytesLike, string]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
-    values: [BytesLike, string]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setMaxGasPrice",
-    values: [BigNumberish, BigNumberish]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setPoolConfig",
-    values: [string, BigNumberish, string, boolean]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "setTokenConfig(string,uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      boolean,
-      boolean
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>,
+      PromiseOrValue<boolean>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "setTokenConfig(string,uint256,string,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      boolean,
-      boolean
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>,
+      PromiseOrValue<boolean>
     ]
   ): string;
 
@@ -470,9 +484,9 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress address of the destination token to query token config for
      */
     "calculateSwapFee(string,uint256,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
-      amount: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -484,9 +498,9 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress address of the destination token to query token config for
      */
     "calculateSwapFee(address,uint256,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
-      amount: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -501,27 +515,30 @@ export interface BridgeConfigV3 extends BaseContract {
      * gets the max gas price for a chain
      */
     getMaxGasPrice(
-      chainID: BigNumberish,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     getPoolConfig(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BridgeConfigV3.PoolStructOutput]>;
 
     /**
      * Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.
      */
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     /**
      * Returns one of the accounts that have `role`. `index` must be a value between 0 and {getRoleMemberCount}, non-inclusive. Role bearers are not sorted in any particular way, and their ordering may change at any point. WARNING: When using {getRoleMember} and {getRoleMemberCount}, make sure you perform all queries on the same block. See the following https://forum.openzeppelin.com/t/iterating-over-elements-on-enumerableset-in-openzeppelin-contracts/2296[forum post] for more information.
      */
     getRoleMember(
-      role: BytesLike,
-      index: BigNumberish,
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -529,7 +546,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * Returns the number of accounts that have `role`. Can be used together with {getRoleMember} to enumerate all bearers of a role.
      */
     getRoleMemberCount(
-      role: BytesLike,
+      role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -539,8 +556,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID String input of the token ID for the token
      */
     getToken(
-      tokenID: string,
-      chainID: BigNumberish,
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [BridgeConfigV3.TokenStructOutput] & {
@@ -554,8 +571,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress Matches the token ID by using a combo of address + chain ID
      */
     getTokenByAddress(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [BridgeConfigV3.TokenStructOutput] & {
@@ -564,8 +581,8 @@ export interface BridgeConfigV3 extends BaseContract {
     >;
 
     getTokenByEVMAddress(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [BridgeConfigV3.TokenStructOutput] & {
@@ -579,8 +596,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID String input of the token ID for the token
      */
     getTokenByID(
-      tokenID: string,
-      chainID: BigNumberish,
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [BridgeConfigV3.TokenStructOutput] & {
@@ -594,14 +611,14 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress address of token to get ID for
      */
     "getTokenID(address,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     "getTokenID(string,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -610,7 +627,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID string token ID
      */
     getUnderlyingToken(
-      tokenID: string,
+      tokenID: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
       [BridgeConfigV3.TokenStructOutput] & {
@@ -622,17 +639,17 @@ export interface BridgeConfigV3 extends BaseContract {
      * Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role.
      */
     grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
      * Returns `true` if `account` has been granted `role`.
      */
     hasRole(
-      role: BytesLike,
-      account: string,
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -641,7 +658,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID String to check if it is a withdraw/underlying token
      */
     hasUnderlyingToken(
-      tokenID: string,
+      tokenID: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -649,7 +666,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * Public function returning if token ID exists given a string
      */
     isTokenIDExist(
-      tokenID: string,
+      tokenID: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -657,35 +674,35 @@ export interface BridgeConfigV3 extends BaseContract {
      * Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.
      */
     renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
      * Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role.
      */
     revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
      * sets the max gas price for a chain
      */
     setMaxGasPrice(
-      chainID: BigNumberish,
-      maxPrice: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      chainID: PromiseOrValue<BigNumberish>,
+      maxPrice: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setPoolConfig(
-      tokenAddress: string,
-      chainID: BigNumberish,
-      poolAddress: string,
-      metaswap: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      poolAddress: PromiseOrValue<string>,
+      metaswap: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -703,18 +720,18 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID string ID to set the token config object form
      */
     "setTokenConfig(string,uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
-      tokenID: string,
-      chainID: BigNumberish,
-      tokenAddress: string,
-      tokenDecimals: BigNumberish,
-      maxSwap: BigNumberish,
-      minSwap: BigNumberish,
-      swapFee: BigNumberish,
-      maxSwapFee: BigNumberish,
-      minSwapFee: BigNumberish,
-      hasUnderlying: boolean,
-      isUnderlying: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      tokenAddress: PromiseOrValue<string>,
+      tokenDecimals: PromiseOrValue<BigNumberish>,
+      maxSwap: PromiseOrValue<BigNumberish>,
+      minSwap: PromiseOrValue<BigNumberish>,
+      swapFee: PromiseOrValue<BigNumberish>,
+      maxSwapFee: PromiseOrValue<BigNumberish>,
+      minSwapFee: PromiseOrValue<BigNumberish>,
+      hasUnderlying: PromiseOrValue<boolean>,
+      isUnderlying: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -732,18 +749,18 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID string ID to set the token config object form
      */
     "setTokenConfig(string,uint256,string,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
-      tokenID: string,
-      chainID: BigNumberish,
-      tokenAddress: string,
-      tokenDecimals: BigNumberish,
-      maxSwap: BigNumberish,
-      minSwap: BigNumberish,
-      swapFee: BigNumberish,
-      maxSwapFee: BigNumberish,
-      minSwapFee: BigNumberish,
-      hasUnderlying: boolean,
-      isUnderlying: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      tokenAddress: PromiseOrValue<string>,
+      tokenDecimals: PromiseOrValue<BigNumberish>,
+      maxSwap: PromiseOrValue<BigNumberish>,
+      minSwap: PromiseOrValue<BigNumberish>,
+      swapFee: PromiseOrValue<BigNumberish>,
+      maxSwapFee: PromiseOrValue<BigNumberish>,
+      minSwapFee: PromiseOrValue<BigNumberish>,
+      hasUnderlying: PromiseOrValue<boolean>,
+      isUnderlying: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
@@ -761,9 +778,9 @@ export interface BridgeConfigV3 extends BaseContract {
    * @param tokenAddress address of the destination token to query token config for
    */
   "calculateSwapFee(string,uint256,uint256)"(
-    tokenAddress: string,
-    chainID: BigNumberish,
-    amount: BigNumberish,
+    tokenAddress: PromiseOrValue<string>,
+    chainID: PromiseOrValue<BigNumberish>,
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -775,9 +792,9 @@ export interface BridgeConfigV3 extends BaseContract {
    * @param tokenAddress address of the destination token to query token config for
    */
   "calculateSwapFee(address,uint256,uint256)"(
-    tokenAddress: string,
-    chainID: BigNumberish,
-    amount: BigNumberish,
+    tokenAddress: PromiseOrValue<string>,
+    chainID: PromiseOrValue<BigNumberish>,
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -790,27 +807,30 @@ export interface BridgeConfigV3 extends BaseContract {
    * gets the max gas price for a chain
    */
   getMaxGasPrice(
-    chainID: BigNumberish,
+    chainID: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   getPoolConfig(
-    tokenAddress: string,
-    chainID: BigNumberish,
+    tokenAddress: PromiseOrValue<string>,
+    chainID: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BridgeConfigV3.PoolStructOutput>;
 
   /**
    * Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.
    */
-  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+  getRoleAdmin(
+    role: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   /**
    * Returns one of the accounts that have `role`. `index` must be a value between 0 and {getRoleMemberCount}, non-inclusive. Role bearers are not sorted in any particular way, and their ordering may change at any point. WARNING: When using {getRoleMember} and {getRoleMemberCount}, make sure you perform all queries on the same block. See the following https://forum.openzeppelin.com/t/iterating-over-elements-on-enumerableset-in-openzeppelin-contracts/2296[forum post] for more information.
    */
   getRoleMember(
-    role: BytesLike,
-    index: BigNumberish,
+    role: PromiseOrValue<BytesLike>,
+    index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -818,7 +838,7 @@ export interface BridgeConfigV3 extends BaseContract {
    * Returns the number of accounts that have `role`. Can be used together with {getRoleMember} to enumerate all bearers of a role.
    */
   getRoleMemberCount(
-    role: BytesLike,
+    role: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -828,8 +848,8 @@ export interface BridgeConfigV3 extends BaseContract {
    * @param tokenID String input of the token ID for the token
    */
   getToken(
-    tokenID: string,
-    chainID: BigNumberish,
+    tokenID: PromiseOrValue<string>,
+    chainID: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BridgeConfigV3.TokenStructOutput>;
 
@@ -839,14 +859,14 @@ export interface BridgeConfigV3 extends BaseContract {
    * @param tokenAddress Matches the token ID by using a combo of address + chain ID
    */
   getTokenByAddress(
-    tokenAddress: string,
-    chainID: BigNumberish,
+    tokenAddress: PromiseOrValue<string>,
+    chainID: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BridgeConfigV3.TokenStructOutput>;
 
   getTokenByEVMAddress(
-    tokenAddress: string,
-    chainID: BigNumberish,
+    tokenAddress: PromiseOrValue<string>,
+    chainID: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BridgeConfigV3.TokenStructOutput>;
 
@@ -856,8 +876,8 @@ export interface BridgeConfigV3 extends BaseContract {
    * @param tokenID String input of the token ID for the token
    */
   getTokenByID(
-    tokenID: string,
-    chainID: BigNumberish,
+    tokenID: PromiseOrValue<string>,
+    chainID: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BridgeConfigV3.TokenStructOutput>;
 
@@ -867,14 +887,14 @@ export interface BridgeConfigV3 extends BaseContract {
    * @param tokenAddress address of token to get ID for
    */
   "getTokenID(address,uint256)"(
-    tokenAddress: string,
-    chainID: BigNumberish,
+    tokenAddress: PromiseOrValue<string>,
+    chainID: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   "getTokenID(string,uint256)"(
-    tokenAddress: string,
-    chainID: BigNumberish,
+    tokenAddress: PromiseOrValue<string>,
+    chainID: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -883,7 +903,7 @@ export interface BridgeConfigV3 extends BaseContract {
    * @param tokenID string token ID
    */
   getUnderlyingToken(
-    tokenID: string,
+    tokenID: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BridgeConfigV3.TokenStructOutput>;
 
@@ -891,17 +911,17 @@ export interface BridgeConfigV3 extends BaseContract {
    * Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role.
    */
   grantRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
    * Returns `true` if `account` has been granted `role`.
    */
   hasRole(
-    role: BytesLike,
-    account: string,
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -910,48 +930,51 @@ export interface BridgeConfigV3 extends BaseContract {
    * @param tokenID String to check if it is a withdraw/underlying token
    */
   hasUnderlyingToken(
-    tokenID: string,
+    tokenID: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   /**
    * Public function returning if token ID exists given a string
    */
-  isTokenIDExist(tokenID: string, overrides?: CallOverrides): Promise<boolean>;
+  isTokenIDExist(
+    tokenID: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   /**
    * Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.
    */
   renounceRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
    * Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role.
    */
   revokeRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BytesLike>,
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
    * sets the max gas price for a chain
    */
   setMaxGasPrice(
-    chainID: BigNumberish,
-    maxPrice: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    chainID: PromiseOrValue<BigNumberish>,
+    maxPrice: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setPoolConfig(
-    tokenAddress: string,
-    chainID: BigNumberish,
-    poolAddress: string,
-    metaswap: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    tokenAddress: PromiseOrValue<string>,
+    chainID: PromiseOrValue<BigNumberish>,
+    poolAddress: PromiseOrValue<string>,
+    metaswap: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -969,18 +992,18 @@ export interface BridgeConfigV3 extends BaseContract {
    * @param tokenID string ID to set the token config object form
    */
   "setTokenConfig(string,uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
-    tokenID: string,
-    chainID: BigNumberish,
-    tokenAddress: string,
-    tokenDecimals: BigNumberish,
-    maxSwap: BigNumberish,
-    minSwap: BigNumberish,
-    swapFee: BigNumberish,
-    maxSwapFee: BigNumberish,
-    minSwapFee: BigNumberish,
-    hasUnderlying: boolean,
-    isUnderlying: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    tokenID: PromiseOrValue<string>,
+    chainID: PromiseOrValue<BigNumberish>,
+    tokenAddress: PromiseOrValue<string>,
+    tokenDecimals: PromiseOrValue<BigNumberish>,
+    maxSwap: PromiseOrValue<BigNumberish>,
+    minSwap: PromiseOrValue<BigNumberish>,
+    swapFee: PromiseOrValue<BigNumberish>,
+    maxSwapFee: PromiseOrValue<BigNumberish>,
+    minSwapFee: PromiseOrValue<BigNumberish>,
+    hasUnderlying: PromiseOrValue<boolean>,
+    isUnderlying: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -998,18 +1021,18 @@ export interface BridgeConfigV3 extends BaseContract {
    * @param tokenID string ID to set the token config object form
    */
   "setTokenConfig(string,uint256,string,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
-    tokenID: string,
-    chainID: BigNumberish,
-    tokenAddress: string,
-    tokenDecimals: BigNumberish,
-    maxSwap: BigNumberish,
-    minSwap: BigNumberish,
-    swapFee: BigNumberish,
-    maxSwapFee: BigNumberish,
-    minSwapFee: BigNumberish,
-    hasUnderlying: boolean,
-    isUnderlying: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    tokenID: PromiseOrValue<string>,
+    chainID: PromiseOrValue<BigNumberish>,
+    tokenAddress: PromiseOrValue<string>,
+    tokenDecimals: PromiseOrValue<BigNumberish>,
+    maxSwap: PromiseOrValue<BigNumberish>,
+    minSwap: PromiseOrValue<BigNumberish>,
+    swapFee: PromiseOrValue<BigNumberish>,
+    maxSwapFee: PromiseOrValue<BigNumberish>,
+    minSwapFee: PromiseOrValue<BigNumberish>,
+    hasUnderlying: PromiseOrValue<boolean>,
+    isUnderlying: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -1027,9 +1050,9 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress address of the destination token to query token config for
      */
     "calculateSwapFee(string,uint256,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
-      amount: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1041,9 +1064,9 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress address of the destination token to query token config for
      */
     "calculateSwapFee(address,uint256,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
-      amount: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1056,27 +1079,30 @@ export interface BridgeConfigV3 extends BaseContract {
      * gets the max gas price for a chain
      */
     getMaxGasPrice(
-      chainID: BigNumberish,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPoolConfig(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BridgeConfigV3.PoolStructOutput>;
 
     /**
      * Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.
      */
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+    getRoleAdmin(
+      role: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     /**
      * Returns one of the accounts that have `role`. `index` must be a value between 0 and {getRoleMemberCount}, non-inclusive. Role bearers are not sorted in any particular way, and their ordering may change at any point. WARNING: When using {getRoleMember} and {getRoleMemberCount}, make sure you perform all queries on the same block. See the following https://forum.openzeppelin.com/t/iterating-over-elements-on-enumerableset-in-openzeppelin-contracts/2296[forum post] for more information.
      */
     getRoleMember(
-      role: BytesLike,
-      index: BigNumberish,
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -1084,7 +1110,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * Returns the number of accounts that have `role`. Can be used together with {getRoleMember} to enumerate all bearers of a role.
      */
     getRoleMemberCount(
-      role: BytesLike,
+      role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1094,8 +1120,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID String input of the token ID for the token
      */
     getToken(
-      tokenID: string,
-      chainID: BigNumberish,
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BridgeConfigV3.TokenStructOutput>;
 
@@ -1105,14 +1131,14 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress Matches the token ID by using a combo of address + chain ID
      */
     getTokenByAddress(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BridgeConfigV3.TokenStructOutput>;
 
     getTokenByEVMAddress(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BridgeConfigV3.TokenStructOutput>;
 
@@ -1122,8 +1148,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID String input of the token ID for the token
      */
     getTokenByID(
-      tokenID: string,
-      chainID: BigNumberish,
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BridgeConfigV3.TokenStructOutput>;
 
@@ -1133,14 +1159,14 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress address of token to get ID for
      */
     "getTokenID(address,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     "getTokenID(string,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -1149,7 +1175,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID string token ID
      */
     getUnderlyingToken(
-      tokenID: string,
+      tokenID: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BridgeConfigV3.TokenStructOutput>;
 
@@ -1157,8 +1183,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role.
      */
     grantRole(
-      role: BytesLike,
-      account: string,
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1166,8 +1192,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * Returns `true` if `account` has been granted `role`.
      */
     hasRole(
-      role: BytesLike,
-      account: string,
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1176,7 +1202,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID String to check if it is a withdraw/underlying token
      */
     hasUnderlyingToken(
-      tokenID: string,
+      tokenID: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1184,7 +1210,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * Public function returning if token ID exists given a string
      */
     isTokenIDExist(
-      tokenID: string,
+      tokenID: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1192,8 +1218,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.
      */
     renounceRole(
-      role: BytesLike,
-      account: string,
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1201,8 +1227,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role.
      */
     revokeRole(
-      role: BytesLike,
-      account: string,
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1210,16 +1236,16 @@ export interface BridgeConfigV3 extends BaseContract {
      * sets the max gas price for a chain
      */
     setMaxGasPrice(
-      chainID: BigNumberish,
-      maxPrice: BigNumberish,
+      chainID: PromiseOrValue<BigNumberish>,
+      maxPrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setPoolConfig(
-      tokenAddress: string,
-      chainID: BigNumberish,
-      poolAddress: string,
-      metaswap: boolean,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      poolAddress: PromiseOrValue<string>,
+      metaswap: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BridgeConfigV3.PoolStructOutput>;
 
@@ -1238,17 +1264,17 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID string ID to set the token config object form
      */
     "setTokenConfig(string,uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
-      tokenID: string,
-      chainID: BigNumberish,
-      tokenAddress: string,
-      tokenDecimals: BigNumberish,
-      maxSwap: BigNumberish,
-      minSwap: BigNumberish,
-      swapFee: BigNumberish,
-      maxSwapFee: BigNumberish,
-      minSwapFee: BigNumberish,
-      hasUnderlying: boolean,
-      isUnderlying: boolean,
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      tokenAddress: PromiseOrValue<string>,
+      tokenDecimals: PromiseOrValue<BigNumberish>,
+      maxSwap: PromiseOrValue<BigNumberish>,
+      minSwap: PromiseOrValue<BigNumberish>,
+      swapFee: PromiseOrValue<BigNumberish>,
+      maxSwapFee: PromiseOrValue<BigNumberish>,
+      minSwapFee: PromiseOrValue<BigNumberish>,
+      hasUnderlying: PromiseOrValue<boolean>,
+      isUnderlying: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1267,53 +1293,53 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID string ID to set the token config object form
      */
     "setTokenConfig(string,uint256,string,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
-      tokenID: string,
-      chainID: BigNumberish,
-      tokenAddress: string,
-      tokenDecimals: BigNumberish,
-      maxSwap: BigNumberish,
-      minSwap: BigNumberish,
-      swapFee: BigNumberish,
-      maxSwapFee: BigNumberish,
-      minSwapFee: BigNumberish,
-      hasUnderlying: boolean,
-      isUnderlying: boolean,
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      tokenAddress: PromiseOrValue<string>,
+      tokenDecimals: PromiseOrValue<BigNumberish>,
+      maxSwap: PromiseOrValue<BigNumberish>,
+      minSwap: PromiseOrValue<BigNumberish>,
+      swapFee: PromiseOrValue<BigNumberish>,
+      maxSwapFee: PromiseOrValue<BigNumberish>,
+      minSwapFee: PromiseOrValue<BigNumberish>,
+      hasUnderlying: PromiseOrValue<boolean>,
+      isUnderlying: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
 
   filters: {
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
     ): RoleAdminChangedEventFilter;
     RoleAdminChanged(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
+      role?: PromiseOrValue<BytesLike> | null,
+      previousAdminRole?: PromiseOrValue<BytesLike> | null,
+      newAdminRole?: PromiseOrValue<BytesLike> | null
     ): RoleAdminChangedEventFilter;
 
     "RoleGranted(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
     ): RoleGrantedEventFilter;
     RoleGranted(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
     ): RoleGrantedEventFilter;
 
     "RoleRevoked(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
     RoleRevoked(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
+      role?: PromiseOrValue<BytesLike> | null,
+      account?: PromiseOrValue<string> | null,
+      sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
   };
 
@@ -1332,9 +1358,9 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress address of the destination token to query token config for
      */
     "calculateSwapFee(string,uint256,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
-      amount: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1346,9 +1372,9 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress address of the destination token to query token config for
      */
     "calculateSwapFee(address,uint256,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
-      amount: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1361,13 +1387,13 @@ export interface BridgeConfigV3 extends BaseContract {
      * gets the max gas price for a chain
      */
     getMaxGasPrice(
-      chainID: BigNumberish,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPoolConfig(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1375,7 +1401,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.
      */
     getRoleAdmin(
-      role: BytesLike,
+      role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1383,8 +1409,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * Returns one of the accounts that have `role`. `index` must be a value between 0 and {getRoleMemberCount}, non-inclusive. Role bearers are not sorted in any particular way, and their ordering may change at any point. WARNING: When using {getRoleMember} and {getRoleMemberCount}, make sure you perform all queries on the same block. See the following https://forum.openzeppelin.com/t/iterating-over-elements-on-enumerableset-in-openzeppelin-contracts/2296[forum post] for more information.
      */
     getRoleMember(
-      role: BytesLike,
-      index: BigNumberish,
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1392,7 +1418,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * Returns the number of accounts that have `role`. Can be used together with {getRoleMember} to enumerate all bearers of a role.
      */
     getRoleMemberCount(
-      role: BytesLike,
+      role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1402,8 +1428,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID String input of the token ID for the token
      */
     getToken(
-      tokenID: string,
-      chainID: BigNumberish,
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1413,14 +1439,14 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress Matches the token ID by using a combo of address + chain ID
      */
     getTokenByAddress(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getTokenByEVMAddress(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1430,8 +1456,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID String input of the token ID for the token
      */
     getTokenByID(
-      tokenID: string,
-      chainID: BigNumberish,
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1441,14 +1467,14 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress address of token to get ID for
      */
     "getTokenID(address,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "getTokenID(string,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1457,7 +1483,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID string token ID
      */
     getUnderlyingToken(
-      tokenID: string,
+      tokenID: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1465,17 +1491,17 @@ export interface BridgeConfigV3 extends BaseContract {
      * Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role.
      */
     grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
      * Returns `true` if `account` has been granted `role`.
      */
     hasRole(
-      role: BytesLike,
-      account: string,
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1484,7 +1510,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID String to check if it is a withdraw/underlying token
      */
     hasUnderlyingToken(
-      tokenID: string,
+      tokenID: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1492,7 +1518,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * Public function returning if token ID exists given a string
      */
     isTokenIDExist(
-      tokenID: string,
+      tokenID: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1500,35 +1526,35 @@ export interface BridgeConfigV3 extends BaseContract {
      * Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.
      */
     renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
      * Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role.
      */
     revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
      * sets the max gas price for a chain
      */
     setMaxGasPrice(
-      chainID: BigNumberish,
-      maxPrice: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      chainID: PromiseOrValue<BigNumberish>,
+      maxPrice: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setPoolConfig(
-      tokenAddress: string,
-      chainID: BigNumberish,
-      poolAddress: string,
-      metaswap: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      poolAddress: PromiseOrValue<string>,
+      metaswap: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1546,18 +1572,18 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID string ID to set the token config object form
      */
     "setTokenConfig(string,uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
-      tokenID: string,
-      chainID: BigNumberish,
-      tokenAddress: string,
-      tokenDecimals: BigNumberish,
-      maxSwap: BigNumberish,
-      minSwap: BigNumberish,
-      swapFee: BigNumberish,
-      maxSwapFee: BigNumberish,
-      minSwapFee: BigNumberish,
-      hasUnderlying: boolean,
-      isUnderlying: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      tokenAddress: PromiseOrValue<string>,
+      tokenDecimals: PromiseOrValue<BigNumberish>,
+      maxSwap: PromiseOrValue<BigNumberish>,
+      minSwap: PromiseOrValue<BigNumberish>,
+      swapFee: PromiseOrValue<BigNumberish>,
+      maxSwapFee: PromiseOrValue<BigNumberish>,
+      minSwapFee: PromiseOrValue<BigNumberish>,
+      hasUnderlying: PromiseOrValue<boolean>,
+      isUnderlying: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1575,18 +1601,18 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID string ID to set the token config object form
      */
     "setTokenConfig(string,uint256,string,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
-      tokenID: string,
-      chainID: BigNumberish,
-      tokenAddress: string,
-      tokenDecimals: BigNumberish,
-      maxSwap: BigNumberish,
-      minSwap: BigNumberish,
-      swapFee: BigNumberish,
-      maxSwapFee: BigNumberish,
-      minSwapFee: BigNumberish,
-      hasUnderlying: boolean,
-      isUnderlying: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      tokenAddress: PromiseOrValue<string>,
+      tokenDecimals: PromiseOrValue<BigNumberish>,
+      maxSwap: PromiseOrValue<BigNumberish>,
+      minSwap: PromiseOrValue<BigNumberish>,
+      swapFee: PromiseOrValue<BigNumberish>,
+      maxSwapFee: PromiseOrValue<BigNumberish>,
+      minSwapFee: PromiseOrValue<BigNumberish>,
+      hasUnderlying: PromiseOrValue<boolean>,
+      isUnderlying: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -1611,9 +1637,9 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress address of the destination token to query token config for
      */
     "calculateSwapFee(string,uint256,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
-      amount: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1625,9 +1651,9 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress address of the destination token to query token config for
      */
     "calculateSwapFee(address,uint256,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
-      amount: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1640,13 +1666,13 @@ export interface BridgeConfigV3 extends BaseContract {
      * gets the max gas price for a chain
      */
     getMaxGasPrice(
-      chainID: BigNumberish,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getPoolConfig(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1654,7 +1680,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.
      */
     getRoleAdmin(
-      role: BytesLike,
+      role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1662,8 +1688,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * Returns one of the accounts that have `role`. `index` must be a value between 0 and {getRoleMemberCount}, non-inclusive. Role bearers are not sorted in any particular way, and their ordering may change at any point. WARNING: When using {getRoleMember} and {getRoleMemberCount}, make sure you perform all queries on the same block. See the following https://forum.openzeppelin.com/t/iterating-over-elements-on-enumerableset-in-openzeppelin-contracts/2296[forum post] for more information.
      */
     getRoleMember(
-      role: BytesLike,
-      index: BigNumberish,
+      role: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1671,7 +1697,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * Returns the number of accounts that have `role`. Can be used together with {getRoleMember} to enumerate all bearers of a role.
      */
     getRoleMemberCount(
-      role: BytesLike,
+      role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1681,8 +1707,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID String input of the token ID for the token
      */
     getToken(
-      tokenID: string,
-      chainID: BigNumberish,
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1692,14 +1718,14 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress Matches the token ID by using a combo of address + chain ID
      */
     getTokenByAddress(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getTokenByEVMAddress(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1709,8 +1735,8 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID String input of the token ID for the token
      */
     getTokenByID(
-      tokenID: string,
-      chainID: BigNumberish,
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1720,14 +1746,14 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenAddress address of token to get ID for
      */
     "getTokenID(address,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "getTokenID(string,uint256)"(
-      tokenAddress: string,
-      chainID: BigNumberish,
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1736,7 +1762,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID string token ID
      */
     getUnderlyingToken(
-      tokenID: string,
+      tokenID: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1744,17 +1770,17 @@ export interface BridgeConfigV3 extends BaseContract {
      * Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role.
      */
     grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
      * Returns `true` if `account` has been granted `role`.
      */
     hasRole(
-      role: BytesLike,
-      account: string,
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1763,7 +1789,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID String to check if it is a withdraw/underlying token
      */
     hasUnderlyingToken(
-      tokenID: string,
+      tokenID: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1771,7 +1797,7 @@ export interface BridgeConfigV3 extends BaseContract {
      * Public function returning if token ID exists given a string
      */
     isTokenIDExist(
-      tokenID: string,
+      tokenID: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1779,35 +1805,35 @@ export interface BridgeConfigV3 extends BaseContract {
      * Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.
      */
     renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
      * Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role.
      */
     revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BytesLike>,
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
      * sets the max gas price for a chain
      */
     setMaxGasPrice(
-      chainID: BigNumberish,
-      maxPrice: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      chainID: PromiseOrValue<BigNumberish>,
+      maxPrice: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setPoolConfig(
-      tokenAddress: string,
-      chainID: BigNumberish,
-      poolAddress: string,
-      metaswap: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenAddress: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      poolAddress: PromiseOrValue<string>,
+      metaswap: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -1825,18 +1851,18 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID string ID to set the token config object form
      */
     "setTokenConfig(string,uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
-      tokenID: string,
-      chainID: BigNumberish,
-      tokenAddress: string,
-      tokenDecimals: BigNumberish,
-      maxSwap: BigNumberish,
-      minSwap: BigNumberish,
-      swapFee: BigNumberish,
-      maxSwapFee: BigNumberish,
-      minSwapFee: BigNumberish,
-      hasUnderlying: boolean,
-      isUnderlying: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      tokenAddress: PromiseOrValue<string>,
+      tokenDecimals: PromiseOrValue<BigNumberish>,
+      maxSwap: PromiseOrValue<BigNumberish>,
+      minSwap: PromiseOrValue<BigNumberish>,
+      swapFee: PromiseOrValue<BigNumberish>,
+      maxSwapFee: PromiseOrValue<BigNumberish>,
+      minSwapFee: PromiseOrValue<BigNumberish>,
+      hasUnderlying: PromiseOrValue<boolean>,
+      isUnderlying: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -1854,18 +1880,18 @@ export interface BridgeConfigV3 extends BaseContract {
      * @param tokenID string ID to set the token config object form
      */
     "setTokenConfig(string,uint256,string,uint8,uint256,uint256,uint256,uint256,uint256,bool,bool)"(
-      tokenID: string,
-      chainID: BigNumberish,
-      tokenAddress: string,
-      tokenDecimals: BigNumberish,
-      maxSwap: BigNumberish,
-      minSwap: BigNumberish,
-      swapFee: BigNumberish,
-      maxSwapFee: BigNumberish,
-      minSwapFee: BigNumberish,
-      hasUnderlying: boolean,
-      isUnderlying: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenID: PromiseOrValue<string>,
+      chainID: PromiseOrValue<BigNumberish>,
+      tokenAddress: PromiseOrValue<string>,
+      tokenDecimals: PromiseOrValue<BigNumberish>,
+      maxSwap: PromiseOrValue<BigNumberish>,
+      minSwap: PromiseOrValue<BigNumberish>,
+      swapFee: PromiseOrValue<BigNumberish>,
+      maxSwapFee: PromiseOrValue<BigNumberish>,
+      minSwapFee: PromiseOrValue<BigNumberish>,
+      hasUnderlying: PromiseOrValue<boolean>,
+      isUnderlying: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

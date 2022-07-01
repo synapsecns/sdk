@@ -20,10 +20,10 @@ import {parseUnits} from "@ethersproject/units";
  * transaction included in an upcoming block. Defaults to 1.5 GWei.
  */
 export interface GasOptions {
-	gasPrice?:             BigNumber;
-	gasLimit?:             BigNumber;
-	maxFeePerGas?:         BigNumber;
-	maxPriorityFeePerGas?: BigNumber;
+    gasPrice?:             BigNumber;
+    gasLimit?:             BigNumber;
+    maxFeePerGas?:         BigNumber;
+    maxPriorityFeePerGas?: BigNumber;
 }
 
 /**
@@ -40,12 +40,13 @@ export interface GasOptions {
  * transaction included in an upcoming block. Defaults to 1.5 GWei.
  */
 export interface TransactionGasOverrides {
-	gasLimit?:             BigNumberish | Promise<BigNumberish>;
-	gasPrice?:             BigNumberish | Promise<BigNumberish>;
-	maxFeePerGas?:         BigNumberish | Promise<BigNumberish>;
-	maxPriorityFeePerGas?: BigNumberish | Promise<BigNumberish>;
+    gasLimit?:             BigNumberish | Promise<BigNumberish>;
+    gasPrice?:             BigNumberish | Promise<BigNumberish>;
+    maxFeePerGas?:         BigNumberish | Promise<BigNumberish>;
+    maxPriorityFeePerGas?: BigNumberish | Promise<BigNumberish>;
 }
 
+/* c8 ignore next */
 export function makeGwei(n: string): BigNumber { return parseUnits(n, "gwei") }
 
 /**
@@ -61,62 +62,62 @@ export function makeGwei(n: string): BigNumber { return parseUnits(n, "gwei") }
  * `maxFeePerGas`, and `maxPriorityFeePerGas` respectively set to values provided in `gasOptions`.
  */
 export function populateGasOptions(
-	txn: 		 PopulatedTransaction,
-	gasOptions:  GasOptions,
-	chainId:     number,
-	ignoreLimit: boolean = false
+    txn: 		 PopulatedTransaction,
+    gasOptions:  GasOptions,
+    chainId:     number,
+    ignoreLimit: boolean = false
 ): PopulatedTransaction {
-	if (!chainSupportsEIP1559(chainId)) {
-		if (gasOptions?.gasPrice) {
-			txn.gasPrice = gasOptions.gasPrice;
-		}
-	} else {
-		if (gasOptions?.maxFeePerGas) {
-			txn.maxFeePerGas = gasOptions.maxFeePerGas;
-		}
+    if (!chainSupportsEIP1559(chainId)) {
+        if (gasOptions?.gasPrice) {
+            txn.gasPrice = gasOptions.gasPrice;
+        }
+    } else {
+        if (gasOptions?.maxFeePerGas) {
+            txn.maxFeePerGas = gasOptions.maxFeePerGas;
+        }
 
-		if (gasOptions?.maxPriorityFeePerGas) {
-			txn.maxPriorityFeePerGas = gasOptions.maxPriorityFeePerGas;
-		}
-	}
+        if (gasOptions?.maxPriorityFeePerGas) {
+            txn.maxPriorityFeePerGas = gasOptions.maxPriorityFeePerGas;
+        }
+    }
 
-	if (!ignoreLimit) {
-		if (gasOptions?.gasLimit) {
-			txn.gasLimit = gasOptions.gasLimit;
-		}
-	}
+    if (!ignoreLimit) {
+        if (gasOptions?.gasLimit) {
+            txn.gasLimit = gasOptions.gasLimit;
+        }
+    }
 
-	return txn
+    return txn
 }
 
 /* c8 ignore start */
 export function makeTransactionGasOverrides(
-	gasOptions:  GasOptions,
-	chainId:     number,
-	ignoreLimit: boolean = false
+    gasOptions:  GasOptions,
+    chainId:     number,
+    ignoreLimit: boolean = false
 ): TransactionGasOverrides {
-	let overrides: TransactionGasOverrides = {};
+    let overrides: TransactionGasOverrides = {};
 
-	if (!chainSupportsEIP1559(chainId)) {
-		if (gasOptions?.gasPrice) {
-			overrides.gasPrice = gasOptions.gasPrice;
-		}
-	} else {
-		if (gasOptions?.maxFeePerGas) {
-			overrides.maxFeePerGas = gasOptions.maxFeePerGas;
-		}
+    if (!chainSupportsEIP1559(chainId)) {
+        if (gasOptions?.gasPrice) {
+            overrides.gasPrice = gasOptions.gasPrice;
+        }
+    } else {
+        if (gasOptions?.maxFeePerGas) {
+            overrides.maxFeePerGas = gasOptions.maxFeePerGas;
+        }
 
-		if (gasOptions?.maxPriorityFeePerGas) {
-			overrides.maxPriorityFeePerGas = gasOptions.maxPriorityFeePerGas;
-		}
-	}
+        if (gasOptions?.maxPriorityFeePerGas) {
+            overrides.maxPriorityFeePerGas = gasOptions.maxPriorityFeePerGas;
+        }
+    }
 
-	if (!ignoreLimit) {
-		if (gasOptions?.gasLimit) {
-			overrides.gasLimit = gasOptions.gasLimit;
-		}
-	}
+    if (!ignoreLimit) {
+        if (gasOptions?.gasLimit) {
+            overrides.gasLimit = gasOptions.gasLimit;
+        }
+    }
 
-	return overrides
+    return overrides
 }
 /* c8 ignore stop */

@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "./common";
 
 export interface SwapFlashLoanInterface extends utils.Interface {
@@ -105,27 +106,40 @@ export interface SwapFlashLoanInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "MAX_BPS", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "addLiquidity",
-    values: [BigNumberish[], BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateRemoveLiquidity",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateRemoveLiquidityOneToken",
-    values: [BigNumberish, BigNumberish]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateSwap",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateTokenAmount",
-    values: [BigNumberish[], boolean]
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
     functionFragment: "flashLoan",
-    values: [string, string, BigNumberish, BytesLike]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "flashLoanFeeBPS",
@@ -138,19 +152,19 @@ export interface SwapFlashLoanInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getAdminBalance",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getToken",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenBalance",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenIndex",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getVirtualPrice",
@@ -159,14 +173,14 @@ export interface SwapFlashLoanInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "initialize",
     values: [
-      string[],
-      BigNumberish[],
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string
+      PromiseOrValue<string>[],
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
     ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -178,19 +192,32 @@ export interface SwapFlashLoanInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "rampA",
-    values: [BigNumberish, BigNumberish]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "removeLiquidity",
-    values: [BigNumberish, BigNumberish[], BigNumberish]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "removeLiquidityImbalance",
-    values: [BigNumberish[], BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "removeLiquidityOneToken",
-    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -198,25 +225,25 @@ export interface SwapFlashLoanInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setAdminFee",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setFlashLoanFees",
-    values: [BigNumberish, BigNumberish]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setSwapFee",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "stopRampA", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "swap",
     values: [
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
@@ -225,7 +252,7 @@ export interface SwapFlashLoanInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
@@ -546,10 +573,10 @@ export interface SwapFlashLoan extends BaseContract {
      * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
      */
     addLiquidity(
-      amounts: BigNumberish[],
-      minToMint: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amounts: PromiseOrValue<BigNumberish>[],
+      minToMint: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -557,7 +584,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param amount the amount of LP tokens that would be burned on withdrawal
      */
     calculateRemoveLiquidity(
-      amount: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
@@ -567,8 +594,8 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndex index of which token will be withdrawn
      */
     calculateRemoveLiquidityOneToken(
-      tokenAmount: BigNumberish,
-      tokenIndex: BigNumberish,
+      tokenAmount: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { availableTokenAmount: BigNumber }>;
 
@@ -579,9 +606,9 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndexTo the token the user wants to buy
      */
     calculateSwap(
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -592,8 +619,8 @@ export interface SwapFlashLoan extends BaseContract {
      * @param deposit whether this is a deposit or a withdrawal
      */
     calculateTokenAmount(
-      amounts: BigNumberish[],
-      deposit: boolean,
+      amounts: PromiseOrValue<BigNumberish>[],
+      deposit: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -605,11 +632,11 @@ export interface SwapFlashLoan extends BaseContract {
      * @param token the protocol fee in bps to be applied on the total flash loan fee
      */
     flashLoan(
-      receiver: string,
-      token: string,
-      amount: BigNumberish,
-      params: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      receiver: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      params: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     flashLoanFeeBPS(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -631,7 +658,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param index Index of the pooled token
      */
     getAdminBalance(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -639,14 +666,17 @@ export interface SwapFlashLoan extends BaseContract {
      * Return address of the pooled token at given index. Reverts if tokenIndex is out of range.
      * @param index the index of the token
      */
-    getToken(index: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+    getToken(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     /**
      * Return current balance of the pooled token at given index
      * @param index the index of the token
      */
     getTokenBalance(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -655,7 +685,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenAddress address of the token
      */
     getTokenIndex(
-      tokenAddress: string,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[number]>;
 
@@ -676,15 +706,15 @@ export interface SwapFlashLoan extends BaseContract {
      * @param lpTokenTargetAddress the address of an existing LPToken contract to use as a target
      */
     initialize(
-      _pooledTokens: string[],
-      decimals: BigNumberish[],
-      lpTokenName: string,
-      lpTokenSymbol: string,
-      _a: BigNumberish,
-      _fee: BigNumberish,
-      _adminFee: BigNumberish,
-      lpTokenTargetAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _pooledTokens: PromiseOrValue<string>[],
+      decimals: PromiseOrValue<BigNumberish>[],
+      lpTokenName: PromiseOrValue<string>,
+      lpTokenSymbol: PromiseOrValue<string>,
+      _a: PromiseOrValue<BigNumberish>,
+      _fee: PromiseOrValue<BigNumberish>,
+      _adminFee: PromiseOrValue<BigNumberish>,
+      lpTokenTargetAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -696,7 +726,7 @@ export interface SwapFlashLoan extends BaseContract {
      * Pause the contract. Revert if already paused.
      */
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -712,9 +742,9 @@ export interface SwapFlashLoan extends BaseContract {
      * @param futureTime timestamp when the new A should be reached
      */
     rampA(
-      futureA: BigNumberish,
-      futureTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      futureA: PromiseOrValue<BigNumberish>,
+      futureTime: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -725,10 +755,10 @@ export interface SwapFlashLoan extends BaseContract {
      * @param minAmounts the minimum amounts of each token in the pool        acceptable for this burn. Useful as a front-running mitigation
      */
     removeLiquidity(
-      amount: BigNumberish,
-      minAmounts: BigNumberish[],
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      minAmounts: PromiseOrValue<BigNumberish>[],
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -738,10 +768,10 @@ export interface SwapFlashLoan extends BaseContract {
      * @param maxBurnAmount the max LP token provider is willing to pay to remove liquidity. Useful as a front-running mitigation.
      */
     removeLiquidityImbalance(
-      amounts: BigNumberish[],
-      maxBurnAmount: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amounts: PromiseOrValue<BigNumberish>[],
+      maxBurnAmount: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -752,18 +782,18 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndex the index of the token you want to receive
      */
     removeLiquidityOneToken(
-      tokenAmount: BigNumberish,
-      tokenIndex: BigNumberish,
-      minAmount: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenAmount: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
+      minAmount: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
      * Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.
      */
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -771,8 +801,8 @@ export interface SwapFlashLoan extends BaseContract {
      * @param newAdminFee new admin fee to be applied on future transactions
      */
     setAdminFee(
-      newAdminFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -781,9 +811,9 @@ export interface SwapFlashLoan extends BaseContract {
      * @param newProtocolFeeShareBPS the protocol fee in bps to be applied on the total flash loan fee
      */
     setFlashLoanFees(
-      newFlashLoanFeeBPS: BigNumberish,
-      newProtocolFeeShareBPS: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFlashLoanFeeBPS: PromiseOrValue<BigNumberish>,
+      newProtocolFeeShareBPS: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -791,15 +821,15 @@ export interface SwapFlashLoan extends BaseContract {
      * @param newSwapFee new swap fee to be applied on future transactions
      */
     setSwapFee(
-      newSwapFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newSwapFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
      * Stop ramping A immediately. Reverts if ramp A is already stopped.
      */
     stopRampA(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -811,12 +841,12 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     swap(
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     swapStorage(
@@ -845,22 +875,22 @@ export interface SwapFlashLoan extends BaseContract {
      * Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.
      */
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
      * Unpause the contract. Revert if already unpaused.
      */
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
      * Withdraw all admin fees to the contract owner
      */
     withdrawAdminFees(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
@@ -873,10 +903,10 @@ export interface SwapFlashLoan extends BaseContract {
    * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
    */
   addLiquidity(
-    amounts: BigNumberish[],
-    minToMint: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    amounts: PromiseOrValue<BigNumberish>[],
+    minToMint: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -884,7 +914,7 @@ export interface SwapFlashLoan extends BaseContract {
    * @param amount the amount of LP tokens that would be burned on withdrawal
    */
   calculateRemoveLiquidity(
-    amount: BigNumberish,
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
@@ -894,8 +924,8 @@ export interface SwapFlashLoan extends BaseContract {
    * @param tokenIndex index of which token will be withdrawn
    */
   calculateRemoveLiquidityOneToken(
-    tokenAmount: BigNumberish,
-    tokenIndex: BigNumberish,
+    tokenAmount: PromiseOrValue<BigNumberish>,
+    tokenIndex: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -906,9 +936,9 @@ export interface SwapFlashLoan extends BaseContract {
    * @param tokenIndexTo the token the user wants to buy
    */
   calculateSwap(
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    dx: BigNumberish,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    dx: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -919,8 +949,8 @@ export interface SwapFlashLoan extends BaseContract {
    * @param deposit whether this is a deposit or a withdrawal
    */
   calculateTokenAmount(
-    amounts: BigNumberish[],
-    deposit: boolean,
+    amounts: PromiseOrValue<BigNumberish>[],
+    deposit: PromiseOrValue<boolean>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -932,11 +962,11 @@ export interface SwapFlashLoan extends BaseContract {
    * @param token the protocol fee in bps to be applied on the total flash loan fee
    */
   flashLoan(
-    receiver: string,
-    token: string,
-    amount: BigNumberish,
-    params: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    receiver: PromiseOrValue<string>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    params: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   flashLoanFeeBPS(overrides?: CallOverrides): Promise<BigNumber>;
@@ -958,7 +988,7 @@ export interface SwapFlashLoan extends BaseContract {
    * @param index Index of the pooled token
    */
   getAdminBalance(
-    index: BigNumberish,
+    index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -966,14 +996,17 @@ export interface SwapFlashLoan extends BaseContract {
    * Return address of the pooled token at given index. Reverts if tokenIndex is out of range.
    * @param index the index of the token
    */
-  getToken(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  getToken(
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   /**
    * Return current balance of the pooled token at given index
    * @param index the index of the token
    */
   getTokenBalance(
-    index: BigNumberish,
+    index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -982,7 +1015,7 @@ export interface SwapFlashLoan extends BaseContract {
    * @param tokenAddress address of the token
    */
   getTokenIndex(
-    tokenAddress: string,
+    tokenAddress: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<number>;
 
@@ -1003,15 +1036,15 @@ export interface SwapFlashLoan extends BaseContract {
    * @param lpTokenTargetAddress the address of an existing LPToken contract to use as a target
    */
   initialize(
-    _pooledTokens: string[],
-    decimals: BigNumberish[],
-    lpTokenName: string,
-    lpTokenSymbol: string,
-    _a: BigNumberish,
-    _fee: BigNumberish,
-    _adminFee: BigNumberish,
-    lpTokenTargetAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _pooledTokens: PromiseOrValue<string>[],
+    decimals: PromiseOrValue<BigNumberish>[],
+    lpTokenName: PromiseOrValue<string>,
+    lpTokenSymbol: PromiseOrValue<string>,
+    _a: PromiseOrValue<BigNumberish>,
+    _fee: PromiseOrValue<BigNumberish>,
+    _adminFee: PromiseOrValue<BigNumberish>,
+    lpTokenTargetAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -1023,7 +1056,7 @@ export interface SwapFlashLoan extends BaseContract {
    * Pause the contract. Revert if already paused.
    */
   pause(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -1039,9 +1072,9 @@ export interface SwapFlashLoan extends BaseContract {
    * @param futureTime timestamp when the new A should be reached
    */
   rampA(
-    futureA: BigNumberish,
-    futureTime: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    futureA: PromiseOrValue<BigNumberish>,
+    futureTime: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -1052,10 +1085,10 @@ export interface SwapFlashLoan extends BaseContract {
    * @param minAmounts the minimum amounts of each token in the pool        acceptable for this burn. Useful as a front-running mitigation
    */
   removeLiquidity(
-    amount: BigNumberish,
-    minAmounts: BigNumberish[],
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    amount: PromiseOrValue<BigNumberish>,
+    minAmounts: PromiseOrValue<BigNumberish>[],
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -1065,10 +1098,10 @@ export interface SwapFlashLoan extends BaseContract {
    * @param maxBurnAmount the max LP token provider is willing to pay to remove liquidity. Useful as a front-running mitigation.
    */
   removeLiquidityImbalance(
-    amounts: BigNumberish[],
-    maxBurnAmount: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    amounts: PromiseOrValue<BigNumberish>[],
+    maxBurnAmount: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -1079,18 +1112,18 @@ export interface SwapFlashLoan extends BaseContract {
    * @param tokenIndex the index of the token you want to receive
    */
   removeLiquidityOneToken(
-    tokenAmount: BigNumberish,
-    tokenIndex: BigNumberish,
-    minAmount: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    tokenAmount: PromiseOrValue<BigNumberish>,
+    tokenIndex: PromiseOrValue<BigNumberish>,
+    minAmount: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
    * Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.
    */
   renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -1098,8 +1131,8 @@ export interface SwapFlashLoan extends BaseContract {
    * @param newAdminFee new admin fee to be applied on future transactions
    */
   setAdminFee(
-    newAdminFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newAdminFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -1108,9 +1141,9 @@ export interface SwapFlashLoan extends BaseContract {
    * @param newProtocolFeeShareBPS the protocol fee in bps to be applied on the total flash loan fee
    */
   setFlashLoanFees(
-    newFlashLoanFeeBPS: BigNumberish,
-    newProtocolFeeShareBPS: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newFlashLoanFeeBPS: PromiseOrValue<BigNumberish>,
+    newProtocolFeeShareBPS: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -1118,15 +1151,15 @@ export interface SwapFlashLoan extends BaseContract {
    * @param newSwapFee new swap fee to be applied on future transactions
    */
   setSwapFee(
-    newSwapFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newSwapFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
    * Stop ramping A immediately. Reverts if ramp A is already stopped.
    */
   stopRampA(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -1138,12 +1171,12 @@ export interface SwapFlashLoan extends BaseContract {
    * @param tokenIndexTo the token the user wants to swap to
    */
   swap(
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    dx: BigNumberish,
-    minDy: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    dx: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   swapStorage(
@@ -1172,22 +1205,22 @@ export interface SwapFlashLoan extends BaseContract {
    * Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.
    */
   transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
    * Unpause the contract. Revert if already unpaused.
    */
   unpause(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
    * Withdraw all admin fees to the contract owner
    */
   withdrawAdminFees(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -1200,9 +1233,9 @@ export interface SwapFlashLoan extends BaseContract {
      * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
      */
     addLiquidity(
-      amounts: BigNumberish[],
-      minToMint: BigNumberish,
-      deadline: BigNumberish,
+      amounts: PromiseOrValue<BigNumberish>[],
+      minToMint: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1211,7 +1244,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param amount the amount of LP tokens that would be burned on withdrawal
      */
     calculateRemoveLiquidity(
-      amount: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -1221,8 +1254,8 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndex index of which token will be withdrawn
      */
     calculateRemoveLiquidityOneToken(
-      tokenAmount: BigNumberish,
-      tokenIndex: BigNumberish,
+      tokenAmount: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1233,9 +1266,9 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndexTo the token the user wants to buy
      */
     calculateSwap(
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1246,8 +1279,8 @@ export interface SwapFlashLoan extends BaseContract {
      * @param deposit whether this is a deposit or a withdrawal
      */
     calculateTokenAmount(
-      amounts: BigNumberish[],
-      deposit: boolean,
+      amounts: PromiseOrValue<BigNumberish>[],
+      deposit: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1259,10 +1292,10 @@ export interface SwapFlashLoan extends BaseContract {
      * @param token the protocol fee in bps to be applied on the total flash loan fee
      */
     flashLoan(
-      receiver: string,
-      token: string,
-      amount: BigNumberish,
-      params: BytesLike,
+      receiver: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      params: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1285,7 +1318,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param index Index of the pooled token
      */
     getAdminBalance(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1293,14 +1326,17 @@ export interface SwapFlashLoan extends BaseContract {
      * Return address of the pooled token at given index. Reverts if tokenIndex is out of range.
      * @param index the index of the token
      */
-    getToken(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
+    getToken(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     /**
      * Return current balance of the pooled token at given index
      * @param index the index of the token
      */
     getTokenBalance(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1309,7 +1345,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenAddress address of the token
      */
     getTokenIndex(
-      tokenAddress: string,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<number>;
 
@@ -1330,14 +1366,14 @@ export interface SwapFlashLoan extends BaseContract {
      * @param lpTokenTargetAddress the address of an existing LPToken contract to use as a target
      */
     initialize(
-      _pooledTokens: string[],
-      decimals: BigNumberish[],
-      lpTokenName: string,
-      lpTokenSymbol: string,
-      _a: BigNumberish,
-      _fee: BigNumberish,
-      _adminFee: BigNumberish,
-      lpTokenTargetAddress: string,
+      _pooledTokens: PromiseOrValue<string>[],
+      decimals: PromiseOrValue<BigNumberish>[],
+      lpTokenName: PromiseOrValue<string>,
+      lpTokenSymbol: PromiseOrValue<string>,
+      _a: PromiseOrValue<BigNumberish>,
+      _fee: PromiseOrValue<BigNumberish>,
+      _adminFee: PromiseOrValue<BigNumberish>,
+      lpTokenTargetAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1364,8 +1400,8 @@ export interface SwapFlashLoan extends BaseContract {
      * @param futureTime timestamp when the new A should be reached
      */
     rampA(
-      futureA: BigNumberish,
-      futureTime: BigNumberish,
+      futureA: PromiseOrValue<BigNumberish>,
+      futureTime: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1377,9 +1413,9 @@ export interface SwapFlashLoan extends BaseContract {
      * @param minAmounts the minimum amounts of each token in the pool        acceptable for this burn. Useful as a front-running mitigation
      */
     removeLiquidity(
-      amount: BigNumberish,
-      minAmounts: BigNumberish[],
-      deadline: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
+      minAmounts: PromiseOrValue<BigNumberish>[],
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -1390,9 +1426,9 @@ export interface SwapFlashLoan extends BaseContract {
      * @param maxBurnAmount the max LP token provider is willing to pay to remove liquidity. Useful as a front-running mitigation.
      */
     removeLiquidityImbalance(
-      amounts: BigNumberish[],
-      maxBurnAmount: BigNumberish,
-      deadline: BigNumberish,
+      amounts: PromiseOrValue<BigNumberish>[],
+      maxBurnAmount: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1404,10 +1440,10 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndex the index of the token you want to receive
      */
     removeLiquidityOneToken(
-      tokenAmount: BigNumberish,
-      tokenIndex: BigNumberish,
-      minAmount: BigNumberish,
-      deadline: BigNumberish,
+      tokenAmount: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
+      minAmount: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1421,7 +1457,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param newAdminFee new admin fee to be applied on future transactions
      */
     setAdminFee(
-      newAdminFee: BigNumberish,
+      newAdminFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1431,8 +1467,8 @@ export interface SwapFlashLoan extends BaseContract {
      * @param newProtocolFeeShareBPS the protocol fee in bps to be applied on the total flash loan fee
      */
     setFlashLoanFees(
-      newFlashLoanFeeBPS: BigNumberish,
-      newProtocolFeeShareBPS: BigNumberish,
+      newFlashLoanFeeBPS: PromiseOrValue<BigNumberish>,
+      newProtocolFeeShareBPS: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1441,7 +1477,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param newSwapFee new swap fee to be applied on future transactions
      */
     setSwapFee(
-      newSwapFee: BigNumberish,
+      newSwapFee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1459,11 +1495,11 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     swap(
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1493,7 +1529,7 @@ export interface SwapFlashLoan extends BaseContract {
      * Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.
      */
     transferOwnership(
-      newOwner: string,
+      newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1510,14 +1546,14 @@ export interface SwapFlashLoan extends BaseContract {
 
   filters: {
     "AddLiquidity(address,uint256[],uint256[],uint256,uint256)"(
-      provider?: string | null,
+      provider?: PromiseOrValue<string> | null,
       tokenAmounts?: null,
       fees?: null,
       invariant?: null,
       lpTokenSupply?: null
     ): AddLiquidityEventFilter;
     AddLiquidity(
-      provider?: string | null,
+      provider?: PromiseOrValue<string> | null,
       tokenAmounts?: null,
       fees?: null,
       invariant?: null,
@@ -1525,14 +1561,14 @@ export interface SwapFlashLoan extends BaseContract {
     ): AddLiquidityEventFilter;
 
     "FlashLoan(address,uint8,uint256,uint256,uint256)"(
-      receiver?: string | null,
+      receiver?: PromiseOrValue<string> | null,
       tokenIndex?: null,
       amount?: null,
       amountFee?: null,
       protocolFee?: null
     ): FlashLoanEventFilter;
     FlashLoan(
-      receiver?: string | null,
+      receiver?: PromiseOrValue<string> | null,
       tokenIndex?: null,
       amount?: null,
       amountFee?: null,
@@ -1546,12 +1582,12 @@ export interface SwapFlashLoan extends BaseContract {
     NewSwapFee(newSwapFee?: null): NewSwapFeeEventFilter;
 
     "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
     OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
     "Paused(address)"(account?: null): PausedEventFilter;
@@ -1571,25 +1607,25 @@ export interface SwapFlashLoan extends BaseContract {
     ): RampAEventFilter;
 
     "RemoveLiquidity(address,uint256[],uint256)"(
-      provider?: string | null,
+      provider?: PromiseOrValue<string> | null,
       tokenAmounts?: null,
       lpTokenSupply?: null
     ): RemoveLiquidityEventFilter;
     RemoveLiquidity(
-      provider?: string | null,
+      provider?: PromiseOrValue<string> | null,
       tokenAmounts?: null,
       lpTokenSupply?: null
     ): RemoveLiquidityEventFilter;
 
     "RemoveLiquidityImbalance(address,uint256[],uint256[],uint256,uint256)"(
-      provider?: string | null,
+      provider?: PromiseOrValue<string> | null,
       tokenAmounts?: null,
       fees?: null,
       invariant?: null,
       lpTokenSupply?: null
     ): RemoveLiquidityImbalanceEventFilter;
     RemoveLiquidityImbalance(
-      provider?: string | null,
+      provider?: PromiseOrValue<string> | null,
       tokenAmounts?: null,
       fees?: null,
       invariant?: null,
@@ -1597,14 +1633,14 @@ export interface SwapFlashLoan extends BaseContract {
     ): RemoveLiquidityImbalanceEventFilter;
 
     "RemoveLiquidityOne(address,uint256,uint256,uint256,uint256)"(
-      provider?: string | null,
+      provider?: PromiseOrValue<string> | null,
       lpTokenAmount?: null,
       lpTokenSupply?: null,
       boughtId?: null,
       tokensBought?: null
     ): RemoveLiquidityOneEventFilter;
     RemoveLiquidityOne(
-      provider?: string | null,
+      provider?: PromiseOrValue<string> | null,
       lpTokenAmount?: null,
       lpTokenSupply?: null,
       boughtId?: null,
@@ -1618,14 +1654,14 @@ export interface SwapFlashLoan extends BaseContract {
     StopRampA(currentA?: null, time?: null): StopRampAEventFilter;
 
     "TokenSwap(address,uint256,uint256,uint128,uint128)"(
-      buyer?: string | null,
+      buyer?: PromiseOrValue<string> | null,
       tokensSold?: null,
       tokensBought?: null,
       soldId?: null,
       boughtId?: null
     ): TokenSwapEventFilter;
     TokenSwap(
-      buyer?: string | null,
+      buyer?: PromiseOrValue<string> | null,
       tokensSold?: null,
       tokensBought?: null,
       soldId?: null,
@@ -1646,10 +1682,10 @@ export interface SwapFlashLoan extends BaseContract {
      * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
      */
     addLiquidity(
-      amounts: BigNumberish[],
-      minToMint: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amounts: PromiseOrValue<BigNumberish>[],
+      minToMint: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1657,7 +1693,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param amount the amount of LP tokens that would be burned on withdrawal
      */
     calculateRemoveLiquidity(
-      amount: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1667,8 +1703,8 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndex index of which token will be withdrawn
      */
     calculateRemoveLiquidityOneToken(
-      tokenAmount: BigNumberish,
-      tokenIndex: BigNumberish,
+      tokenAmount: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1679,9 +1715,9 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndexTo the token the user wants to buy
      */
     calculateSwap(
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1692,8 +1728,8 @@ export interface SwapFlashLoan extends BaseContract {
      * @param deposit whether this is a deposit or a withdrawal
      */
     calculateTokenAmount(
-      amounts: BigNumberish[],
-      deposit: boolean,
+      amounts: PromiseOrValue<BigNumberish>[],
+      deposit: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1705,11 +1741,11 @@ export interface SwapFlashLoan extends BaseContract {
      * @param token the protocol fee in bps to be applied on the total flash loan fee
      */
     flashLoan(
-      receiver: string,
-      token: string,
-      amount: BigNumberish,
-      params: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      receiver: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      params: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     flashLoanFeeBPS(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1731,7 +1767,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param index Index of the pooled token
      */
     getAdminBalance(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1740,7 +1776,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param index the index of the token
      */
     getToken(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1749,7 +1785,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param index the index of the token
      */
     getTokenBalance(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1758,7 +1794,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenAddress address of the token
      */
     getTokenIndex(
-      tokenAddress: string,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1779,15 +1815,15 @@ export interface SwapFlashLoan extends BaseContract {
      * @param lpTokenTargetAddress the address of an existing LPToken contract to use as a target
      */
     initialize(
-      _pooledTokens: string[],
-      decimals: BigNumberish[],
-      lpTokenName: string,
-      lpTokenSymbol: string,
-      _a: BigNumberish,
-      _fee: BigNumberish,
-      _adminFee: BigNumberish,
-      lpTokenTargetAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _pooledTokens: PromiseOrValue<string>[],
+      decimals: PromiseOrValue<BigNumberish>[],
+      lpTokenName: PromiseOrValue<string>,
+      lpTokenSymbol: PromiseOrValue<string>,
+      _a: PromiseOrValue<BigNumberish>,
+      _fee: PromiseOrValue<BigNumberish>,
+      _adminFee: PromiseOrValue<BigNumberish>,
+      lpTokenTargetAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1799,7 +1835,7 @@ export interface SwapFlashLoan extends BaseContract {
      * Pause the contract. Revert if already paused.
      */
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1815,9 +1851,9 @@ export interface SwapFlashLoan extends BaseContract {
      * @param futureTime timestamp when the new A should be reached
      */
     rampA(
-      futureA: BigNumberish,
-      futureTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      futureA: PromiseOrValue<BigNumberish>,
+      futureTime: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1828,10 +1864,10 @@ export interface SwapFlashLoan extends BaseContract {
      * @param minAmounts the minimum amounts of each token in the pool        acceptable for this burn. Useful as a front-running mitigation
      */
     removeLiquidity(
-      amount: BigNumberish,
-      minAmounts: BigNumberish[],
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      minAmounts: PromiseOrValue<BigNumberish>[],
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1841,10 +1877,10 @@ export interface SwapFlashLoan extends BaseContract {
      * @param maxBurnAmount the max LP token provider is willing to pay to remove liquidity. Useful as a front-running mitigation.
      */
     removeLiquidityImbalance(
-      amounts: BigNumberish[],
-      maxBurnAmount: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amounts: PromiseOrValue<BigNumberish>[],
+      maxBurnAmount: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1855,18 +1891,18 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndex the index of the token you want to receive
      */
     removeLiquidityOneToken(
-      tokenAmount: BigNumberish,
-      tokenIndex: BigNumberish,
-      minAmount: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenAmount: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
+      minAmount: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
      * Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.
      */
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1874,8 +1910,8 @@ export interface SwapFlashLoan extends BaseContract {
      * @param newAdminFee new admin fee to be applied on future transactions
      */
     setAdminFee(
-      newAdminFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1884,9 +1920,9 @@ export interface SwapFlashLoan extends BaseContract {
      * @param newProtocolFeeShareBPS the protocol fee in bps to be applied on the total flash loan fee
      */
     setFlashLoanFees(
-      newFlashLoanFeeBPS: BigNumberish,
-      newProtocolFeeShareBPS: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFlashLoanFeeBPS: PromiseOrValue<BigNumberish>,
+      newProtocolFeeShareBPS: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1894,15 +1930,15 @@ export interface SwapFlashLoan extends BaseContract {
      * @param newSwapFee new swap fee to be applied on future transactions
      */
     setSwapFee(
-      newSwapFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newSwapFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
      * Stop ramping A immediately. Reverts if ramp A is already stopped.
      */
     stopRampA(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1914,12 +1950,12 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     swap(
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     swapStorage(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1928,22 +1964,22 @@ export interface SwapFlashLoan extends BaseContract {
      * Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.
      */
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
      * Unpause the contract. Revert if already unpaused.
      */
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
      * Withdraw all admin fees to the contract owner
      */
     withdrawAdminFees(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -1957,10 +1993,10 @@ export interface SwapFlashLoan extends BaseContract {
      * @param minToMint the minimum LP tokens adding this amount of liquidity should mint, otherwise revert. Handy for front-running mitigation
      */
     addLiquidity(
-      amounts: BigNumberish[],
-      minToMint: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amounts: PromiseOrValue<BigNumberish>[],
+      minToMint: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -1968,7 +2004,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param amount the amount of LP tokens that would be burned on withdrawal
      */
     calculateRemoveLiquidity(
-      amount: BigNumberish,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1978,8 +2014,8 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndex index of which token will be withdrawn
      */
     calculateRemoveLiquidityOneToken(
-      tokenAmount: BigNumberish,
-      tokenIndex: BigNumberish,
+      tokenAmount: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1990,9 +2026,9 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndexTo the token the user wants to buy
      */
     calculateSwap(
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2003,8 +2039,8 @@ export interface SwapFlashLoan extends BaseContract {
      * @param deposit whether this is a deposit or a withdrawal
      */
     calculateTokenAmount(
-      amounts: BigNumberish[],
-      deposit: boolean,
+      amounts: PromiseOrValue<BigNumberish>[],
+      deposit: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2016,11 +2052,11 @@ export interface SwapFlashLoan extends BaseContract {
      * @param token the protocol fee in bps to be applied on the total flash loan fee
      */
     flashLoan(
-      receiver: string,
-      token: string,
-      amount: BigNumberish,
-      params: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      receiver: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      params: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     flashLoanFeeBPS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2042,7 +2078,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param index Index of the pooled token
      */
     getAdminBalance(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2051,7 +2087,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param index the index of the token
      */
     getToken(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2060,7 +2096,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param index the index of the token
      */
     getTokenBalance(
-      index: BigNumberish,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2069,7 +2105,7 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenAddress address of the token
      */
     getTokenIndex(
-      tokenAddress: string,
+      tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2090,15 +2126,15 @@ export interface SwapFlashLoan extends BaseContract {
      * @param lpTokenTargetAddress the address of an existing LPToken contract to use as a target
      */
     initialize(
-      _pooledTokens: string[],
-      decimals: BigNumberish[],
-      lpTokenName: string,
-      lpTokenSymbol: string,
-      _a: BigNumberish,
-      _fee: BigNumberish,
-      _adminFee: BigNumberish,
-      lpTokenTargetAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _pooledTokens: PromiseOrValue<string>[],
+      decimals: PromiseOrValue<BigNumberish>[],
+      lpTokenName: PromiseOrValue<string>,
+      lpTokenSymbol: PromiseOrValue<string>,
+      _a: PromiseOrValue<BigNumberish>,
+      _fee: PromiseOrValue<BigNumberish>,
+      _adminFee: PromiseOrValue<BigNumberish>,
+      lpTokenTargetAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -2110,7 +2146,7 @@ export interface SwapFlashLoan extends BaseContract {
      * Pause the contract. Revert if already paused.
      */
     pause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -2128,9 +2164,9 @@ export interface SwapFlashLoan extends BaseContract {
      * @param futureTime timestamp when the new A should be reached
      */
     rampA(
-      futureA: BigNumberish,
-      futureTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      futureA: PromiseOrValue<BigNumberish>,
+      futureTime: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -2141,10 +2177,10 @@ export interface SwapFlashLoan extends BaseContract {
      * @param minAmounts the minimum amounts of each token in the pool        acceptable for this burn. Useful as a front-running mitigation
      */
     removeLiquidity(
-      amount: BigNumberish,
-      minAmounts: BigNumberish[],
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amount: PromiseOrValue<BigNumberish>,
+      minAmounts: PromiseOrValue<BigNumberish>[],
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -2154,10 +2190,10 @@ export interface SwapFlashLoan extends BaseContract {
      * @param maxBurnAmount the max LP token provider is willing to pay to remove liquidity. Useful as a front-running mitigation.
      */
     removeLiquidityImbalance(
-      amounts: BigNumberish[],
-      maxBurnAmount: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      amounts: PromiseOrValue<BigNumberish>[],
+      maxBurnAmount: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -2168,18 +2204,18 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndex the index of the token you want to receive
      */
     removeLiquidityOneToken(
-      tokenAmount: BigNumberish,
-      tokenIndex: BigNumberish,
-      minAmount: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenAmount: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
+      minAmount: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
      * Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.
      */
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -2187,8 +2223,8 @@ export interface SwapFlashLoan extends BaseContract {
      * @param newAdminFee new admin fee to be applied on future transactions
      */
     setAdminFee(
-      newAdminFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newAdminFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -2197,9 +2233,9 @@ export interface SwapFlashLoan extends BaseContract {
      * @param newProtocolFeeShareBPS the protocol fee in bps to be applied on the total flash loan fee
      */
     setFlashLoanFees(
-      newFlashLoanFeeBPS: BigNumberish,
-      newProtocolFeeShareBPS: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newFlashLoanFeeBPS: PromiseOrValue<BigNumberish>,
+      newProtocolFeeShareBPS: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -2207,15 +2243,15 @@ export interface SwapFlashLoan extends BaseContract {
      * @param newSwapFee new swap fee to be applied on future transactions
      */
     setSwapFee(
-      newSwapFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newSwapFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
      * Stop ramping A immediately. Reverts if ramp A is already stopped.
      */
     stopRampA(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -2227,12 +2263,12 @@ export interface SwapFlashLoan extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     swap(
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      dx: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      dx: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     swapStorage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2241,22 +2277,22 @@ export interface SwapFlashLoan extends BaseContract {
      * Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.
      */
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
      * Unpause the contract. Revert if already unpaused.
      */
     unpause(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
      * Withdraw all admin fees to the contract owner
      */
     withdrawAdminFees(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

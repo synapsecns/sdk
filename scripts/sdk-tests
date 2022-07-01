@@ -4,7 +4,7 @@ SRC_DIR="src"
 SRC_INCLUDES="${SRC_DIR}/*.ts"
 BRIDGE_INCLUDES="${SRC_DIR}/bridge/*.ts"
 COMMON_INCLUDES="${SRC_DIR}/common/*.ts"
-INTERNAL_INCLUDES="${SRC_DIR}/internal/**/*.ts"
+INTERNAL_INCLUDES="${SRC_DIR}/internal/*.ts"
 
 coverage_test () {
   c8 \

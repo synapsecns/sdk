@@ -1,11 +1,11 @@
 import {expect} from "chai";
 
 import {
-	type Token,
-	ChainId,
-	Tokens,
-	TokenSwap,
-	SwapPools
+    type Token,
+    ChainId,
+    Tokens,
+    TokenSwap,
+    SwapPools
 } from "@sdk";
 
 
@@ -18,341 +18,341 @@ import {step} from "mocha-steps";
 
 
 describe("Liquidity tests", function(this: Mocha.Suite) {
-	function makeAmountsArray(t: Token, amount: BigNumber, swapPool: SwapPools.SwapPoolToken): BigNumber[] {
-		return swapPool.poolTokens.map((poolTok) => poolTok.isEqual(t) ? amount : Zero)
-	}
+    function makeAmountsArray(t: Token, amount: BigNumber, swapPool: SwapPools.SwapPoolToken): BigNumber[] {
+        return swapPool.poolTokens.map((poolTok) => poolTok.isEqual(t) ? amount : Zero)
+    }
 
-	function setTimeout(ctx: Mocha.Context, chainId: number) {
-		ctx.slow(3.5 * 1000);
-		if (chainId === ChainId.CRONOS) {
-			ctx.timeout(12 * 1000);
-		} else {
-			ctx.timeout(8 * 1000);
-		}
-	}
+    function setTimeout(ctx: Mocha.Context, chainId: number) {
+        ctx.slow(3.5 * 1000);
+        if (chainId === ChainId.CRONOS) {
+            ctx.timeout(12 * 1000);
+        } else {
+            ctx.timeout(8 * 1000);
+        }
+    }
 
-	describe("calculateAddLiquidity tests", function(this: Mocha.Suite) {
-		interface TestCase {
-			chainId:         ChainId;
-			lpToken:         SwapPools.SwapPoolToken;
-			liquidityToken:  Token;
-			inputAmount:     BigNumber;
-			wantZero:		 boolean;
-			wantError:		 boolean;
-		}
+    describe("calculateAddLiquidity tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            chainId:         ChainId;
+            lpToken:         SwapPools.SwapPoolToken;
+            liquidityToken:  Token;
+            inputAmount:     BigNumber;
+            wantZero:		 boolean;
+            wantError:		 boolean;
+        }
 
-		function makeTestCase(
-			chainId: 		ChainId,
-			lpToken: 		SwapPools.SwapPoolToken,
-			liquidityToken: Token,
-			wantZero:       boolean,
-			wantError:      boolean = false,
-			inputAmount?:   string
-		): TestCase {
-			const amtIn: BigNumber = getTestAmount(liquidityToken, chainId, inputAmount);
+        function makeTestCase(
+            chainId: 		ChainId,
+            lpToken: 		SwapPools.SwapPoolToken,
+            liquidityToken: Token,
+            wantZero:       boolean,
+            wantError:      boolean = false,
+            inputAmount?:   string
+        ): TestCase {
+            const amtIn: BigNumber = getTestAmount(liquidityToken, chainId, inputAmount);
 
-			return {chainId, lpToken, liquidityToken, inputAmount: amtIn, wantZero, wantError}
-		}
+            return {chainId, lpToken, liquidityToken, inputAmount: amtIn, wantZero, wantError}
+        }
 
-		const testCases: TestCase[] = [
-			makeTestCase(ChainId.BSC,       SwapPools.BSC_POOL_SWAP_TOKEN,       Tokens.BUSD,  false, false, "55"),
-			makeTestCase(ChainId.AVALANCHE, SwapPools.AVALANCHE_POOL_SWAP_TOKEN, Tokens.USDC,  false, false, "55"),
-			makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.USDC,  false, false, "78"),
-			makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.USDC,  true,  false, "0")
-		];
+        const testCases: TestCase[] = [
+            makeTestCase(ChainId.BSC,       SwapPools.BSC_POOL_SWAP_TOKEN,       Tokens.BUSD,  false, false, "55"),
+            makeTestCase(ChainId.AVALANCHE, SwapPools.AVALANCHE_POOL_SWAP_TOKEN, Tokens.USDC,  false, false, "55"),
+            makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.USDC,  false, false, "78"),
+            makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.USDC,  true,  false, "0")
+        ];
 
-		testCases.forEach(tc => {
-			const
-				inputAmt:    string = formatUnits(tc.inputAmount, tc.liquidityToken.decimals(tc.chainId)),
-				titleParams: string = `Chain ID: ${tc.chainId}, amount: ${inputAmt}`,
-				titleSuffix: string = tc.wantError ? "should error out" : `should${tc.wantZero ? "" : " not"} return zero`,
-				wantTitle:   string = `calculateAddLiquidity (${titleParams}) ${titleSuffix}`;
+        testCases.forEach(tc => {
+            const
+                inputAmt:    string = formatUnits(tc.inputAmount, tc.liquidityToken.decimals(tc.chainId)),
+                titleParams: string = `Chain ID: ${tc.chainId}, amount: ${inputAmt}`,
+                titleSuffix: string = tc.wantError ? "should error out" : `should${tc.wantZero ? "" : " not"} return zero`,
+                wantTitle:   string = `calculateAddLiquidity (${titleParams}) ${titleSuffix}`;
 
-			let minToMint: BigNumber;
+            let minToMint: BigNumber;
 
-			const amountsArray = makeAmountsArray(tc.liquidityToken, tc.inputAmount, tc.lpToken);
+            const amountsArray = makeAmountsArray(tc.liquidityToken, tc.inputAmount, tc.lpToken);
 
-			step(wantTitle, async function(this: Mocha.Context) {
-				setTimeout(this, tc.chainId);
+            step(wantTitle, async function(this: Mocha.Context) {
+                setTimeout(this, tc.chainId);
 
-				const gotProm: Promise<BigNumber> = TokenSwap.calculateAddLiquidity({
-					chainId:  tc.chainId,
-					lpToken:  tc.lpToken,
-					amounts:  amountsArray,
-				});
+                const gotProm: Promise<BigNumber> = TokenSwap.calculateAddLiquidity({
+                    chainId:  tc.chainId,
+                    lpToken:  tc.lpToken,
+                    amounts:  amountsArray,
+                });
 
-				let got: BigNumber;
+                let got: BigNumber;
 
-				try {
-					got = await gotProm;
-					minToMint = got;
-				} catch (e) {
-					if (tc.wantError) {
-						return (await expect(gotProm).to.eventually.be.rejected)
-					}
+                try {
+                    got = await gotProm;
+                    minToMint = got;
+                } catch (e) {
+                    if (tc.wantError) {
+                        return (await expect(gotProm).to.eventually.be.rejected)
+                    }
 
-					return (await expect(gotProm).to.eventually.not.be.rejected)
-				}
+                    return (await expect(gotProm).to.eventually.not.be.rejected)
+                }
 
-				if (tc.wantZero) {
-					return expect(got).to.equal(Zero);
-				}
+                if (tc.wantZero) {
+                    return expect(got).to.equal(Zero);
+                }
 
-				return expect(got).to.be.gt(Zero);
-			});
+                return expect(got).to.be.gt(Zero);
+            });
 
-			if (!tc.wantError && !tc.wantZero) {
-				step("buildAddLiquidityTransaction should succeed", async function(this: Mocha.Context) {
-					this.timeout(5 * 1000);
+            if (!tc.wantError && !tc.wantZero) {
+                step("buildAddLiquidityTransaction should succeed", async function(this: Mocha.Context) {
+                    setTimeout(this, tc.chainId);
 
-					let prom = TokenSwap.buildAddLiquidityTransaction({
-						chainId:   tc.chainId,
-						lpToken:   tc.lpToken,
-						amounts:   amountsArray,
-						minToMint: minToMint,
-						deadline:  BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
-					});
+                    let prom = TokenSwap.buildAddLiquidityTransaction({
+                        chainId:   tc.chainId,
+                        lpToken:   tc.lpToken,
+                        amounts:   amountsArray,
+                        minToMint: minToMint,
+                        deadline:  BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
+                    });
 
-					return (await expect(prom).to.eventually.be.fulfilled)
-				});
+                    return (await expect(prom).to.eventually.be.fulfilled)
+                });
 
-				step("addLiquidity should fail", async function(this: Mocha.Context) {
-					setTimeout(this, tc.chainId);
+                step("addLiquidity should fail", async function(this: Mocha.Context) {
+                    setTimeout(this, tc.chainId);
 
-					const fakeWallet = makeFakeWallet(tc.chainId);
+                    const fakeWallet = makeFakeWallet(tc.chainId);
 
-					let prom = TokenSwap.addLiquidity({
-						chainId:   tc.chainId,
-						lpToken:   tc.lpToken,
-						amounts:   amountsArray,
-						minToMint: minToMint,
-						deadline:  BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
-						signer:    fakeWallet,
-					});
+                    let prom = TokenSwap.addLiquidity({
+                        chainId:   tc.chainId,
+                        lpToken:   tc.lpToken,
+                        amounts:   amountsArray,
+                        minToMint: minToMint,
+                        deadline:  BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
+                        signer:    fakeWallet,
+                    });
 
-					return (await expect(prom).to.eventually.be.rejected)
-				});
-			}
-		});
-	});
+                    return (await expect(prom).to.eventually.be.rejected)
+                });
+            }
+        });
+    });
 
-	describe("calculateRemoveLiquidity tests", function(this: Mocha.Suite) {
-		interface TestCase {
-			chainId:         ChainId;
-			lpToken:         SwapPools.SwapPoolToken;
-			withdrawAmount:  BigNumber;
-			wantZero:		 boolean;
-			wantError:		 boolean;
-		}
+    describe("calculateRemoveLiquidity tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            chainId:         ChainId;
+            lpToken:         SwapPools.SwapPoolToken;
+            withdrawAmount:  BigNumber;
+            wantZero:		 boolean;
+            wantError:		 boolean;
+        }
 
-		function makeTestCase(
-			chainId: 		 ChainId,
-			lpToken: 		 SwapPools.SwapPoolToken,
-			wantZero:        boolean,
-			wantError:       boolean = false,
-			withdrawAmount?: string | BigNumber
-		): TestCase {
-			let amt: BigNumber;
-			if (withdrawAmount && withdrawAmount instanceof BigNumber) {
-				amt = withdrawAmount as BigNumber;
-			} else {
-				amt = getTestAmount(lpToken.baseToken, chainId, withdrawAmount);
-			}
+        function makeTestCase(
+            chainId: 		 ChainId,
+            lpToken: 		 SwapPools.SwapPoolToken,
+            wantZero:        boolean,
+            wantError:       boolean = false,
+            withdrawAmount?: string | BigNumber
+        ): TestCase {
+            let amt: BigNumber;
+            if (withdrawAmount && withdrawAmount instanceof BigNumber) {
+                amt = withdrawAmount as BigNumber;
+            } else {
+                amt = getTestAmount(lpToken.baseToken, chainId, withdrawAmount);
+            }
 
-			return {chainId, lpToken, withdrawAmount: amt, wantError, wantZero}
-		}
+            return {chainId, lpToken, withdrawAmount: amt, wantError, wantZero}
+        }
 
-		const testCases: TestCase[] = [
-			makeTestCase(ChainId.BSC,       SwapPools.BSC_POOL_SWAP_TOKEN,       false, false, "55"),
-			makeTestCase(ChainId.AVALANCHE, SwapPools.AVALANCHE_POOL_SWAP_TOKEN, false, false, "550"),
-			makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    false, false, "15"),
-			makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    true,  false, "0"),
-			makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    false, false, BigNumber.from("50000000000000000")),
-			makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    true,  true,  BigNumber.from("50000000000000000000000000"))
-		];
+        const testCases: TestCase[] = [
+            makeTestCase(ChainId.BSC,       SwapPools.BSC_POOL_SWAP_TOKEN,       false, false, "55"),
+            makeTestCase(ChainId.AVALANCHE, SwapPools.AVALANCHE_POOL_SWAP_TOKEN, false, false, "550"),
+            makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    false, false, "15"),
+            makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    true,  false, "0"),
+            makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    false, false, BigNumber.from("50000000000000000")),
+            makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    true,  true,  BigNumber.from("50000000000000000000000000"))
+        ];
 
-		testCases.forEach(tc => {
-			const
-				titleParams: string = `Chain ID: ${tc.chainId}, amount: ${formatEther(tc.withdrawAmount)}`,
-				titleSuffix: string = tc.wantError ? "should error out" : `should${tc.wantZero ? "" : " not"} return zero`,
-				wantTitle:   string = `calculateRemoveLiquidity (${titleParams}) ${titleSuffix}`;
+        testCases.forEach(tc => {
+            const
+                titleParams: string = `Chain ID: ${tc.chainId}, amount: ${formatEther(tc.withdrawAmount)}`,
+                titleSuffix: string = tc.wantError ? "should error out" : `should${tc.wantZero ? "" : " not"} return zero`,
+                wantTitle:   string = `calculateRemoveLiquidity (${titleParams}) ${titleSuffix}`;
 
-			let minAmounts: BigNumber[];
+            let minAmounts: BigNumber[];
 
-			step(wantTitle, async function(this: Mocha.Context) {
-				setTimeout(this, tc.chainId);
+            step(wantTitle, async function(this: Mocha.Context) {
+                setTimeout(this, tc.chainId);
 
-				const gotProm: Promise<BigNumber[]> = TokenSwap.calculateRemoveLiquidity({
-					chainId:  tc.chainId,
-					lpToken:  tc.lpToken,
-					amount:   tc.withdrawAmount
-				});
+                const gotProm: Promise<BigNumber[]> = TokenSwap.calculateRemoveLiquidity({
+                    chainId:  tc.chainId,
+                    lpToken:  tc.lpToken,
+                    amount:   tc.withdrawAmount
+                });
 
-				let got: BigNumber[];
+                let got: BigNumber[];
 
-				try {
-					got = await gotProm;
-					minAmounts = got;
-				} catch (e) {
-					if (tc.wantError) {
-						return (await expect(gotProm).to.eventually.be.rejected)
-					}
+                try {
+                    got = await gotProm;
+                    minAmounts = got;
+                } catch (e) {
+                    if (tc.wantError) {
+                        return (await expect(gotProm).to.eventually.be.rejected)
+                    }
 
-					return (await expect(gotProm).to.eventually.not.be.rejected)
-				}
+                    return (await expect(gotProm).to.eventually.not.be.rejected)
+                }
 
-				if (tc.wantZero) {
-					return Promise.all(got.map(val => expect(val).to.eq(Zero)))
-				}
+                if (tc.wantZero) {
+                    return Promise.all(got.map(val => expect(val).to.eq(Zero)))
+                }
 
-				return Promise.all(got.map(val => expect(val).to.be.gt(Zero)))
-			});
+                return Promise.all(got.map(val => expect(val).to.be.gt(Zero)))
+            });
 
-			if (!tc.wantError && !tc.wantZero) {
-				this.timeout(5 * 1000);
+            if (!tc.wantError && !tc.wantZero) {
+                step("buildRemoveLiquidityTransaction should succeed", async function(this: Mocha.Context) {
+                    setTimeout(this, tc.chainId);
 
-				step("buildRemoveLiquidityTransaction should succeed", async function(this: Mocha.Context) {
-					let prom = TokenSwap.buildRemoveLiquidityTransaction({
-						chainId:    tc.chainId,
-						lpToken:    tc.lpToken,
-						amount:     tc.withdrawAmount,
-						minAmounts: minAmounts,
-						deadline:   BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
-					});
+                    let prom = TokenSwap.buildRemoveLiquidityTransaction({
+                        chainId:    tc.chainId,
+                        lpToken:    tc.lpToken,
+                        amount:     tc.withdrawAmount,
+                        minAmounts: minAmounts,
+                        deadline:   BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
+                    });
 
-					return (await expect(prom).to.eventually.be.fulfilled)
-				});
+                    return (await expect(prom).to.eventually.be.fulfilled)
+                });
 
-				step("removeLiquidity should fail", async function(this: Mocha.Context) {
-					setTimeout(this, tc.chainId);
+                step("removeLiquidity should fail", async function(this: Mocha.Context) {
+                    setTimeout(this, tc.chainId);
 
-					const fakeWallet = makeFakeWallet(tc.chainId);
+                    const fakeWallet = makeFakeWallet(tc.chainId);
 
-					let prom = TokenSwap.removeLiquidity({
-						chainId:    tc.chainId,
-						lpToken:    tc.lpToken,
-						amount:     tc.withdrawAmount,
-						minAmounts: minAmounts,
-						deadline:   BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
-						signer:     fakeWallet,
-					});
+                    let prom = TokenSwap.removeLiquidity({
+                        chainId:    tc.chainId,
+                        lpToken:    tc.lpToken,
+                        amount:     tc.withdrawAmount,
+                        minAmounts: minAmounts,
+                        deadline:   BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
+                        signer:     fakeWallet,
+                    });
 
-					return (await expect(prom).to.eventually.be.rejected)
-				});
-			}
-		});
-	});
+                    return (await expect(prom).to.eventually.be.rejected)
+                });
+            }
+        });
+    });
 
-	describe("calculateRemoveLiquidityOneToken tests", function(this: Mocha.Suite) {
-		interface TestCase {
-			chainId:         ChainId;
-			lpToken:         SwapPools.SwapPoolToken;
-			poolToken:		 Token;
-			withdrawAmount:  BigNumber;
-			wantZero:		 boolean;
-			wantError:		 boolean;
-		}
+    describe("calculateRemoveLiquidityOneToken tests", function(this: Mocha.Suite) {
+        interface TestCase {
+            chainId:         ChainId;
+            lpToken:         SwapPools.SwapPoolToken;
+            poolToken:		 Token;
+            withdrawAmount:  BigNumber;
+            wantZero:		 boolean;
+            wantError:		 boolean;
+        }
 
-		function makeTestCase(
-			chainId: 		 ChainId,
-			lpToken: 		 SwapPools.SwapPoolToken,
-			poolToken:		 Token,
-			wantZero:        boolean,
-			wantError:       boolean = false,
-			withdrawAmount?: string | BigNumber
-		): TestCase {
-			let amt: BigNumber;
-			if (withdrawAmount && withdrawAmount instanceof BigNumber) {
-				amt = withdrawAmount as BigNumber;
-			} else {
-				amt = getTestAmount(lpToken.baseToken, chainId, withdrawAmount);
-			}
+        function makeTestCase(
+            chainId: 		 ChainId,
+            lpToken: 		 SwapPools.SwapPoolToken,
+            poolToken:		 Token,
+            wantZero:        boolean,
+            wantError:       boolean = false,
+            withdrawAmount?: string | BigNumber
+        ): TestCase {
+            let amt: BigNumber;
+            if (withdrawAmount && withdrawAmount instanceof BigNumber) {
+                amt = withdrawAmount as BigNumber;
+            } else {
+                amt = getTestAmount(lpToken.baseToken, chainId, withdrawAmount);
+            }
 
-			return {chainId, lpToken, poolToken, withdrawAmount: amt, wantError, wantZero}
-		}
+            return {chainId, lpToken, poolToken, withdrawAmount: amt, wantError, wantZero}
+        }
 
-		const testCases: TestCase[] = [
-			makeTestCase(ChainId.BSC,       SwapPools.BSC_POOL_SWAP_TOKEN,       Tokens.BUSD,       false, false, "55"),
-			makeTestCase(ChainId.AVALANCHE, SwapPools.AVALANCHE_POOL_SWAP_TOKEN, Tokens.DAI,        false, false, "550"),
-			makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.NUSD,       false, false, "15"),
-			makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.NUSD,       true,  false, "0"),
-			makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.NUSD,       false, false, BigNumber.from("50000000000000000")),
-			makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.NUSD,       true,  true,  BigNumber.from("50000000000000000000000000")),
-			makeTestCase(ChainId.METIS,     SwapPools.METIS_ETH_SWAP_TOKEN,      Tokens.METIS_ETH,  false, false, "550"),
-		];
+        const testCases: TestCase[] = [
+            makeTestCase(ChainId.BSC,       SwapPools.BSC_POOL_SWAP_TOKEN,       Tokens.BUSD,       false, false, "55"),
+            makeTestCase(ChainId.AVALANCHE, SwapPools.AVALANCHE_POOL_SWAP_TOKEN, Tokens.DAI,        false, false, "550"),
+            makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.NUSD,       false, false, "15"),
+            makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.NUSD,       true,  false, "0"),
+            makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.NUSD,       false, false, BigNumber.from("50000000000000000")),
+            makeTestCase(ChainId.CRONOS,    SwapPools.CRONOS_POOL_SWAP_TOKEN,    Tokens.NUSD,       true,  true,  BigNumber.from("50000000000000000000000000")),
+            makeTestCase(ChainId.METIS,     SwapPools.METIS_ETH_SWAP_TOKEN,      Tokens.METIS_ETH,  false, false, "550"),
+        ];
 
-		testCases.forEach(tc => {
-			const
-				titleParams: string = `Chain ID: ${tc.chainId}, amount: ${formatEther(tc.withdrawAmount)}`,
-				titleSuffix: string = tc.wantError ? "should error out" : `should${tc.wantZero ? "" : " not"} return zero`,
-				wantTitle:   string = `calculateRemoveLiquidityOneToken (${titleParams}) ${titleSuffix}`;
+        testCases.forEach(tc => {
+            const
+                titleParams: string = `Chain ID: ${tc.chainId}, amount: ${formatEther(tc.withdrawAmount)}`,
+                titleSuffix: string = tc.wantError ? "should error out" : `should${tc.wantZero ? "" : " not"} return zero`,
+                wantTitle:   string = `calculateRemoveLiquidityOneToken (${titleParams}) ${titleSuffix}`;
 
-			let minAmount: BigNumber;
+            let minAmount: BigNumber;
 
-			step(wantTitle, async function(this: Mocha.Context) {
-				setTimeout(this, tc.chainId);
+            step(wantTitle, async function(this: Mocha.Context) {
+                setTimeout(this, tc.chainId);
 
-				const gotProm: Promise<BigNumber> = TokenSwap.calculateRemoveLiquidityOneToken({
-					chainId:  tc.chainId,
-					lpToken:  tc.lpToken,
-					token:    tc.poolToken,
-					amount:   tc.withdrawAmount
-				});
+                const gotProm: Promise<BigNumber> = TokenSwap.calculateRemoveLiquidityOneToken({
+                    chainId:  tc.chainId,
+                    lpToken:  tc.lpToken,
+                    token:    tc.poolToken,
+                    amount:   tc.withdrawAmount
+                });
 
-				let got: BigNumber;
+                let got: BigNumber;
 
-				try {
-					got = await gotProm;
-					minAmount = got;
-				} catch (e) {
-					if (tc.wantError) {
-						return (await expect(gotProm).to.eventually.be.rejected)
-					}
+                try {
+                    got = await gotProm;
+                    minAmount = got;
+                } catch (err) {
+                    if (tc.wantError) {
+                        return (await expect(gotProm).to.eventually.be.rejected)
+                    }
 
-					return (await expect(gotProm).to.eventually.not.be.rejected)
-				}
+                    return (await expect(gotProm, (err as Error).message).to.eventually.not.be.rejected)
+                }
 
-				if (tc.wantZero) {
-					return expect(got).to.eq(Zero)
-				}
+                if (tc.wantZero) {
+                    return expect(got).to.eq(Zero)
+                }
 
-				return expect(got).to.be.gt(Zero)
-			});
+                return expect(got).to.be.gt(Zero)
+            });
 
-			if (!tc.wantError && !tc.wantZero) {
-				step("buildRemoveLiquidityOneTokenTransaction should succeed", async function(this: Mocha.Context) {
-					this.timeout(5 * 1000);
+            if (!tc.wantError && !tc.wantZero) {
+                step("buildRemoveLiquidityOneTokenTransaction should succeed", async function(this: Mocha.Context) {
+                    setTimeout(this, tc.chainId);
 
-					let prom = TokenSwap.buildRemoveLiquidityOneTokenTransaction({
-						chainId:  tc.chainId,
-						lpToken:  tc.lpToken,
-						token:    tc.poolToken,
-						amount:   tc.withdrawAmount,
-						deadline: BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
-						minAmount,
-					});
+                    let prom = TokenSwap.buildRemoveLiquidityOneTokenTransaction({
+                        chainId:  tc.chainId,
+                        lpToken:  tc.lpToken,
+                        token:    tc.poolToken,
+                        amount:   tc.withdrawAmount,
+                        deadline: BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
+                        minAmount,
+                    });
 
-					return (await expect(prom).to.eventually.be.fulfilled)
-				});
+                    return (await expect(prom).to.eventually.be.fulfilled)
+                });
 
-				step("removeLiquidityOneToken should fail", async function(this: Mocha.Context) {
-					setTimeout(this, tc.chainId);
+                step("removeLiquidityOneToken should fail", async function(this: Mocha.Context) {
+                    setTimeout(this, tc.chainId);
 
-					const fakeWallet = makeFakeWallet(tc.chainId);
+                    const fakeWallet = makeFakeWallet(tc.chainId);
 
-					let prom = TokenSwap.removeLiquidityOneToken({
-						chainId:  tc.chainId,
-						lpToken:  tc.lpToken,
-						token:    tc.poolToken,
-						amount:   tc.withdrawAmount,
-						deadline: BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
-						signer:   fakeWallet,
-						minAmount,
-					});
+                    let prom = TokenSwap.removeLiquidityOneToken({
+                        chainId:  tc.chainId,
+                        lpToken:  tc.lpToken,
+                        token:    tc.poolToken,
+                        amount:   tc.withdrawAmount,
+                        deadline: BigNumber.from(Math.round((new Date().getTime() / 1000) + 60 * 10)),
+                        signer:   fakeWallet,
+                        minAmount,
+                    });
 
-					return (await expect(prom).to.eventually.be.rejected)
-				});
-			}
-		});
-	});
+                    return (await expect(prom).to.eventually.be.rejected)
+                });
+            }
+        });
+    });
 });

@@ -227,59 +227,65 @@ describe("SynapseBridge - Contract Wrapper Functions tests", function(this: Moch
 
     describe("REQUIRED_CONFS tests", function(this: Mocha.Suite) {
         interface TC {
-            chainId: number;
+            chain:   number | Networks.Network | ChainId;
             want:    number | null;
         }
 
         const testCases: TC[] = [
-            {chainId: ChainId.METIS,  want: 6},
-            {chainId: ChainId.AURORA, want: 5},
-            {chainId: 43113,          want: null}
+            { chain: ChainId.METIS,  want: 6    },
+            { chain: ChainId.AURORA, want: 5    },
+            { chain: 43114,          want: 5    },
+            { chain: 43113,          want: null },
+            { chain: Networks.ETH,   want: 7    },
         ];
 
         testCases.forEach(tc => {
-           const testTitle: string = `getRequiredConfirmationsForBridge(${tc.chainId}) should return ${tc.want ? `'${tc.want}'` : 'null'}`;
+            const
+                wantStr:    string = tc.want ? `${tc.want}` : `null`,
+                chainStr:   string = `${tc.chain instanceof Networks.Network ? tc.chain.chainId : tc.chain as number}`,
+                testTitle1: string = `getRequiredConfirmationsForBridge(${chainStr}) should return ${wantStr}`,
+                testTitle2: string = `SynapseBridge.requiredConfirmations should equal ${wantStr}`;
 
-           it(testTitle, function(this: Mocha.Context) {
-               const got = getRequiredConfirmationsForBridge(tc.chainId);
+            it(testTitle1, function(this: Mocha.Context) {
+                const got = getRequiredConfirmationsForBridge(tc.chain);
+                tc.want === null ? expect(got).to.be.null : expect(got).to.equal(tc.want);
 
-               if (tc.want !== null) {
-                   expect(got).to.equal(tc.want);
-               } else {
-                   expect(got).to.be.null;
-               }
-           });
+                return
+            });
+
+            it(testTitle2, function(this: Mocha.Context) {
+                if (tc.want === null) {
+                    return
+                }
+                const got = (new SynapseBridge({ network: tc.chain })).requiredConfirmations;
+                expect(got).to.equal(tc.want);
+            });
         });
     });
 
     describe("checkBridgeTransactionComplete tests", function(this: Mocha.Suite) {
-       interface TestCase {
-           chainIdTo:                number;
-           transactionHashChainFrom: string;
-           want:                     boolean;
-       }
+        interface TestCase {
+            chainIdTo:                number;
+            transactionHashChainFrom: string;
+            want:                     boolean;
+        }
 
-       const testCases: TestCase[] = [
-           {chainIdTo: ChainId.AURORA, transactionHashChainFrom: "0x77a776395f347c313efcb660e50e3ea45846b80d90fa19f33f8b53a42cc46fb4", want: true},
-           {chainIdTo: ChainId.BSC,    transactionHashChainFrom: "0x53da6395da3a7f7efba5581387466de06983be8806978416441ba8202600684e", want: false},
-           {chainIdTo: ChainId.DFK,    transactionHashChainFrom: "0xeb449f8f890b20d42448fbf5b8542d7afc4e0c6a51a25e6b278475c6ad087d96", want: true}
-       ];
+        const testCases: TestCase[] = [
+            {chainIdTo: ChainId.AURORA, transactionHashChainFrom: "0x77a776395f347c313efcb660e50e3ea45846b80d90fa19f33f8b53a42cc46fb4", want: true},
+            {chainIdTo: ChainId.BSC,    transactionHashChainFrom: "0x53da6395da3a7f7efba5581387466de06983be8806978416441ba8202600684e", want: false},
+            {chainIdTo: ChainId.DFK,    transactionHashChainFrom: "0xeb449f8f890b20d42448fbf5b8542d7afc4e0c6a51a25e6b278475c6ad087d96", want: true}
+        ];
 
-       testCases.forEach(tc => {
-          const testTitle: string = `Bridge transaction ${tc.transactionHashChainFrom} ${tc.want ? 'should' : 'should NOT'} be marked completed on Chain ID ${tc.chainIdTo}`;
+        testCases.forEach(tc => {
+            const testTitle: string = `Bridge transaction ${tc.transactionHashChainFrom} ${tc.want ? 'should' : 'should NOT'} be marked completed on Chain ID ${tc.chainIdTo}`;
 
-          it(testTitle, async function(this: Mocha.Context) {
-              this.timeout(5.5 * 1000);
-              this.slow(2 * 1000);
+            it(testTitle, async function(this: Mocha.Context) {
+                this.timeout(5.5 * 1000);
+                this.slow(2 * 1000);
 
-              const got = await checkBridgeTransactionComplete(tc);
-
-              if (tc.want) {
-                  return expect(got).to.be.true
-              } else {
-                  return expect(got).to.be.false
-              }
-          });
-       });
+                const got = await checkBridgeTransactionComplete(tc);
+                return tc.want ? expect(got).to.be.true : expect(got).to.be.false
+            });
+        });
     });
 });

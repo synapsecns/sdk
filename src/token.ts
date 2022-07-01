@@ -76,6 +76,11 @@ export interface Token extends IBaseToken {
      * Unique hash identifier of the Token.
      */
     readonly hash: string;
+
+    /**
+     * CoinGecko ID
+     */
+    readonly coingeckoId?: string;
 }
 
 export function instanceOfToken(object: any): object is Token {
@@ -91,6 +96,7 @@ export interface BaseTokenArgs {
     isETH?:            boolean;
     isGasToken?:       boolean;
     wrapperAddresses?: AddressMap;
+    coingeckoId?:      string;
 }
 
 export interface WrapperTokenArgs extends BaseTokenArgs {
@@ -101,13 +107,14 @@ export interface WrapperTokenArgs extends BaseTokenArgs {
  * Token represents an ERC20 token on Ethereum-based blockchains.
  */
 export class BaseToken implements Token {
-    readonly id:         ID;
-    readonly name:       string;
-    readonly symbol:     string;
-    readonly addresses:  AddressMap = {};
-    readonly swapType:   SwapType;
-    readonly isETH:      boolean;
-    readonly isGasToken: boolean;
+    readonly id:           ID;
+    readonly name:         string;
+    readonly symbol:       string;
+    readonly addresses:    AddressMap = {};
+    readonly swapType:     SwapType;
+    readonly isETH:        boolean;
+    readonly isGasToken:   boolean;
+    readonly coingeckoId?: string;
 
     private readonly wrapperAddresses: AddressMap = {};
 
@@ -129,10 +136,11 @@ export class BaseToken implements Token {
      * @param {SwapType} args.swapType Swap type of this token
      */
     constructor(args: BaseTokenArgs) {
-        this.name      = args.name;
-        this.symbol    = args.symbol;
-        this.addresses = args.addresses;
-        this.swapType  = args.swapType;
+        this.name        = args.name;
+        this.symbol      = args.symbol;
+        this.addresses   = args.addresses;
+        this.swapType    = args.swapType;
+        this.coingeckoId = args.coingeckoId;
 
         this.wrapperAddresses = args.wrapperAddresses ?? {};
 
@@ -190,6 +198,7 @@ export class BaseToken implements Token {
     }
 
     weiToEther(amt: BigNumberish, chainId: number): BigNumber {
+        /* c8 ignore next 3 */
         const
             decimals   = this.decimals(chainId) || 18,
             multiplier = BigNumber.from(10).pow(18 - decimals);
@@ -209,9 +218,11 @@ export class BaseToken implements Token {
         return parseUnits(etherStr, this.decimals(chainId) ?? 18)
     }
 
+    /* c8 ignore start */
     valueToWei(ether: BigNumberish, chainId: number): BigNumber {
         return this.etherToWei(ether, chainId)
     }
+    /* c8 ignore stop */
 
     canSwap(other: Token): boolean {
         return this.swapType === other.swapType

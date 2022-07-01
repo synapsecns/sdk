@@ -19,6 +19,7 @@ export class RpcConnector {
 
 
     constructor(args: RpcConnectorArgs) {
+        /* c8 ignore next */
         const {urls, batchInterval=50} = args;
 
         this._chainEndpoints = urls;

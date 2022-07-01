@@ -103,7 +103,7 @@ export namespace SwapPools {
         new SwapToken({
             name:           `Synapse nUSD LP Token${args.netName != "BSC" ? ` ${args.netName}` : ""}`,
             poolName:       `${args.netName} Stableswap Pool `,
-            symbol:          args.symbol ?? ((args.notLP ?? false) ? "nUSD" : "nUSD-LP"),
+            symbol:          (args.notLP ?? false) ? "nUSD" : "nUSD-LP",
             chainId:         args.chainId,
             decimals:        18,
             poolId:          args.poolId,
@@ -117,7 +117,7 @@ export namespace SwapPools {
         new ETHSwapToken({
             name:            `Synapse ${args.poolName ?? "ETH"} LP Token ${args.netName}`,
             poolName:        `${args.netName} ${args.poolName ?? "ETH"} Pool `,
-            symbol:           args.symbol ?? "nETH-LP",
+            symbol:           "nETH-LP",
             chainId:          args.chainId,
             decimals:         18,
             poolId:           args.poolId,
@@ -211,23 +211,27 @@ export namespace SwapPools {
             const mapKeys = Object.keys(m);
             const wantMapKeys = Object.keys(this.liquidityAmountsMap());
 
+            /* c8 ignore start */
             if (!isEqual(mapKeys, wantMapKeys)) {
                 const err = new Error(`expected passed PoolTokensAmountsMap to have keys ${wantMapKeys}; got ${mapKeys}`);
                 console.error(err);
                 return amounts;
             }
+            /* c8 ignore stop */
 
             mapKeys.forEach((k, idx) => {
                 const amt = m[k];
 
                 let realAmt: BigNumber;
 
+                /* c8 ignore start */
                 if (amt instanceof BigNumber) {
                     realAmt = amt as BigNumber;
                 } else {
                     const token = this.poolTokens[idx];
                     realAmt = token.etherToWei(amt, this.chainId);
                 }
+                /* c8 ignore stop */
 
                 amounts[idx] = realAmt;
             });

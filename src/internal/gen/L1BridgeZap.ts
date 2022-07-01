@@ -21,6 +21,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "./common";
 
 export interface L1BridgeZapInterface extends utils.Interface {
@@ -65,106 +66,125 @@ export interface L1BridgeZapInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "baseTokens",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateRemoveLiquidityOneToken",
-    values: [BigNumberish, BigNumberish]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateTokenAmount",
-    values: [BigNumberish[], boolean]
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
     functionFragment: "deposit",
-    values: [string, BigNumberish, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "depositAndSwap",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "depositETH",
-    values: [string, BigNumberish, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "depositETHAndSwap",
     values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "redeem",
-    values: [string, BigNumberish, string, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "redeemAndRemove",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "redeemAndSwap",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "redeemv2",
-    values: [BytesLike, BigNumberish, string, BigNumberish]
+    values: [
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "zapAndDeposit",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish[],
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "zapAndDepositAndSwap",
     values: [
-      string,
-      BigNumberish,
-      string,
-      BigNumberish[],
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
 
@@ -243,7 +263,7 @@ export interface L1BridgeZap extends BaseContract {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
 
     baseTokens(
-      arg0: BigNumberish,
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -253,8 +273,8 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndex index of which token will be withdrawn
      */
     calculateRemoveLiquidityOneToken(
-      tokenAmount: BigNumberish,
-      tokenIndex: BigNumberish,
+      tokenAmount: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { availableTokenAmount: BigNumber }>;
 
@@ -265,8 +285,8 @@ export interface L1BridgeZap extends BaseContract {
      * @param deposit whether this is a deposit or a withdrawal
      */
     calculateTokenAmount(
-      amounts: BigNumberish[],
-      deposit: boolean,
+      amounts: PromiseOrValue<BigNumberish>[],
+      deposit: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -278,11 +298,11 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to deposit into the bridge
      */
     deposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -297,15 +317,15 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     depositAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -315,10 +335,10 @@ export interface L1BridgeZap extends BaseContract {
      * @param to address on other chain to bridge assets to
      */
     depositETH(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -332,14 +352,14 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     depositETHAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -350,11 +370,11 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to redeem into the bridge
      */
     redeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -368,14 +388,14 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to deposit into the bridge
      */
     redeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      liqTokenIndex: BigNumberish,
-      liqMinAmount: BigNumberish,
-      liqDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      liqTokenIndex: PromiseOrValue<BigNumberish>,
+      liqMinAmount: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -390,15 +410,15 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     redeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -409,11 +429,11 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to redeem into the bridge
      */
     redeemv2(
-      to: BytesLike,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<BytesLike>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -426,13 +446,13 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to deposit into the bridge
      */
     zapAndDeposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      liquidityAmounts: BigNumberish[],
-      minToMint: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      liquidityAmounts: PromiseOrValue<BigNumberish>[],
+      minToMint: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     /**
@@ -449,23 +469,26 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     zapAndDepositAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      liquidityAmounts: BigNumberish[],
-      minToMint: BigNumberish,
-      liqDeadline: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      swapDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      liquidityAmounts: PromiseOrValue<BigNumberish>[],
+      minToMint: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   WETH_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
-  baseTokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  baseTokens(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   /**
    * Calculate the amount of underlying token available to withdraw when withdrawing via only single token
@@ -473,8 +496,8 @@ export interface L1BridgeZap extends BaseContract {
    * @param tokenIndex index of which token will be withdrawn
    */
   calculateRemoveLiquidityOneToken(
-    tokenAmount: BigNumberish,
-    tokenIndex: BigNumberish,
+    tokenAmount: PromiseOrValue<BigNumberish>,
+    tokenIndex: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -485,8 +508,8 @@ export interface L1BridgeZap extends BaseContract {
    * @param deposit whether this is a deposit or a withdrawal
    */
   calculateTokenAmount(
-    amounts: BigNumberish[],
-    deposit: boolean,
+    amounts: PromiseOrValue<BigNumberish>[],
+    deposit: PromiseOrValue<boolean>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -498,11 +521,11 @@ export interface L1BridgeZap extends BaseContract {
    * @param token ERC20 compatible token to deposit into the bridge
    */
   deposit(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -517,15 +540,15 @@ export interface L1BridgeZap extends BaseContract {
    * @param tokenIndexTo the token the user wants to swap to
    */
   depositAndSwap(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    minDy: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -535,10 +558,10 @@ export interface L1BridgeZap extends BaseContract {
    * @param to address on other chain to bridge assets to
    */
   depositETH(
-    to: string,
-    chainId: BigNumberish,
-    amount: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -552,14 +575,14 @@ export interface L1BridgeZap extends BaseContract {
    * @param tokenIndexTo the token the user wants to swap to
    */
   depositETHAndSwap(
-    to: string,
-    chainId: BigNumberish,
-    amount: BigNumberish,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    minDy: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    amount: PromiseOrValue<BigNumberish>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -570,11 +593,11 @@ export interface L1BridgeZap extends BaseContract {
    * @param token ERC20 compatible token to redeem into the bridge
    */
   redeem(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -588,14 +611,14 @@ export interface L1BridgeZap extends BaseContract {
    * @param token ERC20 compatible token to deposit into the bridge
    */
   redeemAndRemove(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    liqTokenIndex: BigNumberish,
-    liqMinAmount: BigNumberish,
-    liqDeadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    liqTokenIndex: PromiseOrValue<BigNumberish>,
+    liqMinAmount: PromiseOrValue<BigNumberish>,
+    liqDeadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -610,15 +633,15 @@ export interface L1BridgeZap extends BaseContract {
    * @param tokenIndexTo the token the user wants to swap to
    */
   redeemAndSwap(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    minDy: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -629,11 +652,11 @@ export interface L1BridgeZap extends BaseContract {
    * @param token ERC20 compatible token to redeem into the bridge
    */
   redeemv2(
-    to: BytesLike,
-    chainId: BigNumberish,
-    token: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<BytesLike>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -646,13 +669,13 @@ export interface L1BridgeZap extends BaseContract {
    * @param token ERC20 compatible token to deposit into the bridge
    */
   zapAndDeposit(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    liquidityAmounts: BigNumberish[],
-    minToMint: BigNumberish,
-    deadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    liquidityAmounts: PromiseOrValue<BigNumberish>[],
+    minToMint: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   /**
@@ -669,23 +692,26 @@ export interface L1BridgeZap extends BaseContract {
    * @param tokenIndexTo the token the user wants to swap to
    */
   zapAndDepositAndSwap(
-    to: string,
-    chainId: BigNumberish,
-    token: string,
-    liquidityAmounts: BigNumberish[],
-    minToMint: BigNumberish,
-    liqDeadline: BigNumberish,
-    tokenIndexFrom: BigNumberish,
-    tokenIndexTo: BigNumberish,
-    minDy: BigNumberish,
-    swapDeadline: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    token: PromiseOrValue<string>,
+    liquidityAmounts: PromiseOrValue<BigNumberish>[],
+    minToMint: PromiseOrValue<BigNumberish>,
+    liqDeadline: PromiseOrValue<BigNumberish>,
+    tokenIndexFrom: PromiseOrValue<BigNumberish>,
+    tokenIndexTo: PromiseOrValue<BigNumberish>,
+    minDy: PromiseOrValue<BigNumberish>,
+    swapDeadline: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
-    baseTokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+    baseTokens(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     /**
      * Calculate the amount of underlying token available to withdraw when withdrawing via only single token
@@ -693,8 +719,8 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndex index of which token will be withdrawn
      */
     calculateRemoveLiquidityOneToken(
-      tokenAmount: BigNumberish,
-      tokenIndex: BigNumberish,
+      tokenAmount: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -705,8 +731,8 @@ export interface L1BridgeZap extends BaseContract {
      * @param deposit whether this is a deposit or a withdrawal
      */
     calculateTokenAmount(
-      amounts: BigNumberish[],
-      deposit: boolean,
+      amounts: PromiseOrValue<BigNumberish>[],
+      deposit: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -718,10 +744,10 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to deposit into the bridge
      */
     deposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -737,14 +763,14 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     depositAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -755,9 +781,9 @@ export interface L1BridgeZap extends BaseContract {
      * @param to address on other chain to bridge assets to
      */
     depositETH(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -772,13 +798,13 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     depositETHAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -790,10 +816,10 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to redeem into the bridge
      */
     redeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -808,13 +834,13 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to deposit into the bridge
      */
     redeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      liqTokenIndex: BigNumberish,
-      liqMinAmount: BigNumberish,
-      liqDeadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      liqTokenIndex: PromiseOrValue<BigNumberish>,
+      liqMinAmount: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -830,14 +856,14 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     redeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -849,10 +875,10 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to redeem into the bridge
      */
     redeemv2(
-      to: BytesLike,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
+      to: PromiseOrValue<BytesLike>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -866,12 +892,12 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to deposit into the bridge
      */
     zapAndDeposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      liquidityAmounts: BigNumberish[],
-      minToMint: BigNumberish,
-      deadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      liquidityAmounts: PromiseOrValue<BigNumberish>[],
+      minToMint: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -889,16 +915,16 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     zapAndDepositAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      liquidityAmounts: BigNumberish[],
-      minToMint: BigNumberish,
-      liqDeadline: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      swapDeadline: BigNumberish,
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      liquidityAmounts: PromiseOrValue<BigNumberish>[],
+      minToMint: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -909,7 +935,7 @@ export interface L1BridgeZap extends BaseContract {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
 
     baseTokens(
-      arg0: BigNumberish,
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -919,8 +945,8 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndex index of which token will be withdrawn
      */
     calculateRemoveLiquidityOneToken(
-      tokenAmount: BigNumberish,
-      tokenIndex: BigNumberish,
+      tokenAmount: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -931,8 +957,8 @@ export interface L1BridgeZap extends BaseContract {
      * @param deposit whether this is a deposit or a withdrawal
      */
     calculateTokenAmount(
-      amounts: BigNumberish[],
-      deposit: boolean,
+      amounts: PromiseOrValue<BigNumberish>[],
+      deposit: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -944,11 +970,11 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to deposit into the bridge
      */
     deposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -963,15 +989,15 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     depositAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -981,10 +1007,10 @@ export interface L1BridgeZap extends BaseContract {
      * @param to address on other chain to bridge assets to
      */
     depositETH(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -998,14 +1024,14 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     depositETHAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1016,11 +1042,11 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to redeem into the bridge
      */
     redeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1034,14 +1060,14 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to deposit into the bridge
      */
     redeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      liqTokenIndex: BigNumberish,
-      liqMinAmount: BigNumberish,
-      liqDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      liqTokenIndex: PromiseOrValue<BigNumberish>,
+      liqMinAmount: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1056,15 +1082,15 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     redeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1075,11 +1101,11 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to redeem into the bridge
      */
     redeemv2(
-      to: BytesLike,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<BytesLike>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1092,13 +1118,13 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to deposit into the bridge
      */
     zapAndDeposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      liquidityAmounts: BigNumberish[],
-      minToMint: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      liquidityAmounts: PromiseOrValue<BigNumberish>[],
+      minToMint: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     /**
@@ -1115,17 +1141,17 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     zapAndDepositAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      liquidityAmounts: BigNumberish[],
-      minToMint: BigNumberish,
-      liqDeadline: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      swapDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      liquidityAmounts: PromiseOrValue<BigNumberish>[],
+      minToMint: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
@@ -1133,7 +1159,7 @@ export interface L1BridgeZap extends BaseContract {
     WETH_ADDRESS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     baseTokens(
-      arg0: BigNumberish,
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1143,8 +1169,8 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndex index of which token will be withdrawn
      */
     calculateRemoveLiquidityOneToken(
-      tokenAmount: BigNumberish,
-      tokenIndex: BigNumberish,
+      tokenAmount: PromiseOrValue<BigNumberish>,
+      tokenIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1155,8 +1181,8 @@ export interface L1BridgeZap extends BaseContract {
      * @param deposit whether this is a deposit or a withdrawal
      */
     calculateTokenAmount(
-      amounts: BigNumberish[],
-      deposit: boolean,
+      amounts: PromiseOrValue<BigNumberish>[],
+      deposit: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1168,11 +1194,11 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to deposit into the bridge
      */
     deposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -1187,15 +1213,15 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     depositAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -1205,10 +1231,10 @@ export interface L1BridgeZap extends BaseContract {
      * @param to address on other chain to bridge assets to
      */
     depositETH(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -1222,14 +1248,14 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     depositETHAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -1240,11 +1266,11 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to redeem into the bridge
      */
     redeem(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -1258,14 +1284,14 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to deposit into the bridge
      */
     redeemAndRemove(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      liqTokenIndex: BigNumberish,
-      liqMinAmount: BigNumberish,
-      liqDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      liqTokenIndex: PromiseOrValue<BigNumberish>,
+      liqMinAmount: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -1280,15 +1306,15 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     redeemAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -1299,11 +1325,11 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to redeem into the bridge
      */
     redeemv2(
-      to: BytesLike,
-      chainId: BigNumberish,
-      token: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<BytesLike>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -1316,13 +1342,13 @@ export interface L1BridgeZap extends BaseContract {
      * @param token ERC20 compatible token to deposit into the bridge
      */
     zapAndDeposit(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      liquidityAmounts: BigNumberish[],
-      minToMint: BigNumberish,
-      deadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      liquidityAmounts: PromiseOrValue<BigNumberish>[],
+      minToMint: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     /**
@@ -1339,17 +1365,17 @@ export interface L1BridgeZap extends BaseContract {
      * @param tokenIndexTo the token the user wants to swap to
      */
     zapAndDepositAndSwap(
-      to: string,
-      chainId: BigNumberish,
-      token: string,
-      liquidityAmounts: BigNumberish[],
-      minToMint: BigNumberish,
-      liqDeadline: BigNumberish,
-      tokenIndexFrom: BigNumberish,
-      tokenIndexTo: BigNumberish,
-      minDy: BigNumberish,
-      swapDeadline: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      token: PromiseOrValue<string>,
+      liquidityAmounts: PromiseOrValue<BigNumberish>[],
+      minToMint: PromiseOrValue<BigNumberish>,
+      liqDeadline: PromiseOrValue<BigNumberish>,
+      tokenIndexFrom: PromiseOrValue<BigNumberish>,
+      tokenIndexTo: PromiseOrValue<BigNumberish>,
+      minDy: PromiseOrValue<BigNumberish>,
+      swapDeadline: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }
