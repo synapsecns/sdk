@@ -518,7 +518,6 @@ export namespace Bridge {
                 fromChainTokens
             } = this.makeBridgeTokenArgs(args);
 
-
             let {intermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom, this.chainId);
 
             const {
@@ -567,7 +566,6 @@ export namespace Bridge {
             }
 
             let amountToReceive_from = await amountToReceive_from_prom;
-
             let bridgeFee: BigNumber;
 
             try { /* c8 ignore start */
