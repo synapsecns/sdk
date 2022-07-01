@@ -1,6 +1,4 @@
-import { BigNumber, BigNumberish, Contract } from "ethers"
-import { isAddress } from "ethers/lib/utils"
-import { useMemo } from "react"
+import { BigNumber } from "ethers"
 
 export function getTimeMinutesFromNow(minutesFromNow) {
     const currentTimeSeconds = new Date().getTime() / 1000

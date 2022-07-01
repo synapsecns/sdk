@@ -20,7 +20,7 @@ import {
  * @param deadline optional: the deadline for the txn to execute
  * @returns amount of tokenTo received from the swap
  */
-async function swap(
+export async function swap(
   poolName: any,
   chainId: number,
   signer: Signer,
@@ -64,7 +64,7 @@ async function swap(
  * @param amountFrom the amount of tokenFrom to swap
  * @returns the amount that would be received from a swap of amountFrom
  */
-async function calculateSwap(
+export async function calculateSwap(
   poolName: any,
   chainId: number,
   signer: Signer,
