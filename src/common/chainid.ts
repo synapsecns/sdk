@@ -16,7 +16,7 @@ export const ChainId = {
     "DFK":          53935,
     "AURORA":       1313161554,
     "HARMONY":      1666600000,
-    "KLAYTN":       8217
+    "KLAYTN":       8217,
 } as const;
 
 export type ChainId = ValueOf<typeof ChainId> | number
