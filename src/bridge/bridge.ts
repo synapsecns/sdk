@@ -770,7 +770,6 @@ export namespace Bridge {
         ): Promise<PopulatedTransaction> {
             let
                 {chainIdTo, amountFrom, amountTo} = args,
-
                 // NOTE: This is a problem - we don't support other L1s. Klaytn still uses L2BridgeZap However
                 zapBridge = SynapseEntities.L2BridgeZapContractInstance({
                     chainId:          this.chainId,
@@ -813,6 +812,9 @@ export namespace Bridge {
                     Tokens.DAI.id,
                     Tokens.WBTC.id
                 ])
+                if (chainIdTo === ChainId.ETH) {
+                    easyRedeems.push(Tokens.WETH.id)
+                }
             }
 
             BridgeUtils.DepositIfChainTokens.forEach((depositIfChainArgs) => {
@@ -1126,19 +1128,9 @@ export namespace Bridge {
                         }
                     }
 
-                    // Bridging ETH from Klaytn
+                    // Bridging ETH from Klaytn to L2s
                     if (this.chainId === ChainId.KLAYTN &&
                         args.tokenFrom.swapType === SwapType.ETH) {
-
-                        // Special case where we use `redeem` for ETH on Ethereum. WETH (nETH underneath) is just burnt
-                        if (chainIdTo === ChainId.ETH) {
-                            return zapBridge
-                                .populateTransaction
-                                .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.WETH))
-                        }
-
-                        // To bridge ETH from other chains where it is not the gas token, use redeemAndSwap
-                        // ETH is already a token on that chain, so it's swapped to nETH and then burnt
                         return easyRedeemAndSwap(args.tokenFrom)
                     }
 
