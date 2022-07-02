@@ -674,7 +674,7 @@ export namespace Bridge {
                 ],
                 easyDepositETH: ID[] = [Tokens.NETH.id];
 
-            // use `L1BridgeZap.deposit()`
+            // use L1BridgeZap deposit() and `depositETH`
             if (chainIdTo === ChainId.KLAYTN) {
                 easyDeposits.push(...[
                     Tokens.USDC.id,
@@ -682,6 +682,7 @@ export namespace Bridge {
                     Tokens.DAI.id,
                     Tokens.WBTC.id
                 ])
+                easyDepositETH.push(Tokens.WETH.id)
             }
 
             let {castArgs, isEasy, txn} = this.checkEasyArgs(args, this.l1BridgeZapEth, easyDeposits, easyRedeems, easyDepositETH);
@@ -1125,31 +1126,30 @@ export namespace Bridge {
                         }
                     }
 
-                    if (ChainId.KLAYTN in [this.chainId, chainIdTo]) {
+                    // Bridging ETH from Klaytn
+                    if (this.chainId === ChainId.KLAYTN &&
+                        args.tokenFrom.swapType === SwapType.ETH) {
 
-                        if (chainIdTo === ChainId.KLAYTN) {
-                            // To bridge ETH from chains where it IS the gas token, use swapETHAndRedeem
-                            // This is because ETH is wrapped into WETH, swapped for nETH and then burnt
-                            if (this.isL2ETHChain && args.tokenFrom.swapType === SwapType.ETH) {
-                                return easySwapAndRedeem(args.tokenFrom, true)
-                            }
+                        // Special case where we use `redeem` for ETH on Ethereum. WETH (nETH underneath) is just burnt
+                        if (chainIdTo === ChainId.ETH) {
+                            return zapBridge
+                                .populateTransaction
+                                .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.WETH))
                         }
 
-                        if (this.chainId === ChainId.KLAYTN && args.tokenFrom.swapType === SwapType.ETH) {
+                        // To bridge ETH from other chains where it is not the gas token, use redeemAndSwap
+                        // ETH is already a token on that chain, so it's swapped to nETH and then burnt
+                        return easyRedeemAndSwap(args.tokenFrom)
+                    }
 
-                            // Special case where we use `redeem` for ETH on Ethereum
-                            // WETH (nETH underneath) is just burnt
-                            if (chainIdTo === ChainId.ETH) {
-                                return zapBridge
-                                    .populateTransaction
-                                    .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.WETH))
-                            }
-
-                            // To bridge ETH from other chains where it is not the gas token, use redeemAndSwap
-                            // ETH is already a token on that chain, so it's swapped to nETH and then burnt
-                            return easyRedeemAndSwap(args.tokenFrom)
-                        }
-
+                    // Bridging ETH From L2s
+                    if (chainIdTo === ChainId.KLAYTN &&
+                        this.isL2ETHChain &&
+                        args.tokenFrom.swapType === SwapType.ETH
+                    ) {
+                        // To bridge ETH from chains where it IS the gas token, use swapETHAndRedeem
+                        // This is because ETH is wrapped into WETH, swapped for nETH and then burnt
+                        return easySwapAndRedeem(args.tokenFrom, true)
                     }
 
                     if (args.tokenFrom.isEqual(Tokens.NUSD) || args.tokenFrom.isEqual(Tokens.DFK_USDC) || args.tokenFrom.isEqual(Tokens.NETH)) {
