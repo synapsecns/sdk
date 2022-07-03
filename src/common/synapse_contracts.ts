@@ -12,7 +12,7 @@ export namespace SynapseContracts {
     export class SynapseContract {
         readonly bridgeAddress:      string;
         readonly bridgeZapAddress?:  string;
-        readonly swapAddress?:              string;
+        readonly swapAddress?:       string;
 
         constructor({
             bridge,

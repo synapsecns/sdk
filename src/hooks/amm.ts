@@ -11,7 +11,6 @@ import {
 
 /**
  * @notice Call the `swap` function of the `Swap` contract
- * @param poolName the name of the pool to use
  * @param chainId the id of the chain to swap on
  * @param signer the signer who is calling the swap
  * @param tokenFrom the token to swap from
@@ -22,7 +21,6 @@ import {
  * @returns amount of tokenTo received from the swap
  */
 export async function swap(
-  poolName: any,
   chainId: number,
   signer: Signer,
   tokenFrom: Token,
@@ -32,7 +30,6 @@ export async function swap(
   deadline?: number
 ) {
   // Get the swap contract
-//   const { swapAddress, swapEthAddress } = usePoolTokenInfo(poolName, chainId);
   const swapAddress = contractsForChainId(chainId).swapAddress;
   const swapContract = new ethers.Contract(swapAddress, SWAP_ABI, signer);
 
@@ -58,7 +55,6 @@ export async function swap(
 
 /**
  * @notice Call the `calculateSwap` function of the `Swap` contract
- * @param poolName the name of the pool to use
  * @param chainId the id of the chain to swap on
  * @param signer the signer who is calling the swap
  * @param tokenFrom the token to swap from
@@ -67,7 +63,6 @@ export async function swap(
  * @returns the amount that would be received from a swap of amountFrom
  */
 export async function calculateSwap(
-  poolName: any,
   chainId: number,
   signer: Signer,
   tokenFrom: Token,
