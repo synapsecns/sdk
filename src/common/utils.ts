@@ -100,10 +100,10 @@ export function getTimeMinutesFromNow(minutesFromNow) {
     )
 }
 
-export function uiToNative(amount: number, decimals: number): BigNumber {
+export function convertToNativeDecimals(amount: number, decimals: number): BigNumber {
     return BigNumber.from(Math.round(amount * Math.pow(10, decimals)));
 }
 
-export function nativeToUi(amount: number, decimals: number): number {
+export function convertToUiDecimals(amount: number, decimals: number): number {
     return amount / Math.pow(10, decimals);
 }

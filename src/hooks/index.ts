@@ -1,9 +1,4 @@
 export {
-	swap,
-	calculateSwap,
-} from "./amm";
-
-export {
 	useApproveBridgeSwap,
 	useExecuteBridgeSwap,
 	useCalculateBridgeSwapOutput,
