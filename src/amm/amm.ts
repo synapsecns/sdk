@@ -16,7 +16,6 @@ import { rpcProviderForChain } from "@internal/rpcproviders";
 /**
  * @notice Builds a `swap` transaction from the `Swap` contract
  * @param chainId the id of the chain to swap on
- * @param signer the signer who is calling the swap
  * @param tokenFrom the token to swap from
  * @param tokenTo the token to swap to
  * @param amountFrom the amount of tokenFrom to swap
@@ -28,7 +27,7 @@ export async function createSwapTxn(
   chainId: number,
   tokenFrom: Token,
   tokenTo: Token,
-  amountFrom: number, // in units if ui
+  amountFrom: number, // in units of ui
   amountTo?: number, // in units of ui
   deadline?: number
 ): Promise<PopulatedTransaction> {
@@ -76,7 +75,7 @@ export async function swap(
   signer: Signer,
   tokenFrom: Token,
   tokenTo: Token,
-  amountFrom: number, // in units if ui
+  amountFrom: number, // in units of ui
   amountTo?: number, // in units of ui
   deadline?: number
 ): Promise<ContractTransaction> {
@@ -97,7 +96,6 @@ export async function swap(
 /**
  * @notice Call the `calculateSwap` function of the `Swap` contract
  * @param chainId the id of the chain to swap on
- * @param signer the signer who is calling the swap
  * @param tokenFrom the token to swap from
  * @param tokenTo the token to swap to
  * @param amountFrom the amount of tokenFrom to swap
