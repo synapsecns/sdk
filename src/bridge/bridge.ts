@@ -531,7 +531,7 @@ export namespace Bridge {
             });
 
             const checkEthBridge = (c1: number, c2: number, t: Token): boolean =>
-                c1 === ChainId.ETH && BridgeUtils.isL2ETHChain(c2) && t.swapType === SwapType.ETH
+                c1 === ChainId.ETH && (BridgeUtils.isL2ETHChain(c2) || c2 === ChainId.KLAYTN) && t.swapType === SwapType.ETH
 
             const
                 isSpecialFrom: boolean = BridgeUtils.isSpecialToken(this.chainId, tokenFrom),
@@ -545,7 +545,7 @@ export namespace Bridge {
 
             if (amountFrom.isZero()) {
                 amountToReceive_from_prom = Promise.resolve(Zero);
-            } else if (ethToEth || Tokens.isMintBurnToken(tokenFrom) || tokenFrom.isWrapperToken || isSpecialFrom) {
+            } else if (ethToEth || Tokens.isMintBurnToken(tokenFrom) || tokenFrom.isWrapperToken || isSpecialFrom || this.chainId === ChainId.KLAYTN) {
                 amountToReceive_from_prom = Promise.resolve(amountFromFixedDecimals);
             } else if (this.chainId === ChainId.ETH) {
                 let liquidityAmounts = fromChainTokens.map((t) =>
