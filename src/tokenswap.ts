@@ -42,6 +42,7 @@ import {
     type ContractTransaction,
     type PopulatedTransaction,
 } from "@ethersproject/contracts";
+import {BridgeUtils} from "@bridge/bridgeutils";
 
 
 export namespace UnsupportedSwapErrors {
@@ -619,7 +620,7 @@ export namespace TokenSwap {
     /* c8 ignore stop */
 
     export function intermediateTokens(chainId: number, token: Token, otherChainId?: number): IntermediateSwapTokens {
-        if (mintBurnSwapTypes.includes(token.swapType) || chainId === ChainId.KLAYTN) {
+        if (mintBurnSwapTypes.includes(token.swapType)) {
             switch (token.swapType) {
                 case SwapType.JEWEL:
                     let bridgeConfigIntermediate: Token = chainId === ChainId.HARMONY
@@ -632,6 +633,17 @@ export namespace TokenSwap {
                 default:
                     return {intermediateToken: token, bridgeConfigIntermediateToken: token}
             }
+        }
+
+        if (chainId === ChainId.KLAYTN) {
+            // For bridging WETH from L2s, it must be swapped to nETH and redeemed
+            // 'bridgeConfigIntermediateToken' is just WETH, whose address is used to calculate swap price
+            if (BridgeUtils.isL2ETHChain(otherChainId) && token.swapType === SwapType.ETH) {
+                return {intermediateToken: Tokens.NETH, bridgeConfigIntermediateToken: token}
+            }
+
+            // Other assets are simply deposited() on ETH or redeemed on Klaytn
+            return {intermediateToken: token, bridgeConfigIntermediateToken: token}
         }
 
         let
