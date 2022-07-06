@@ -644,7 +644,7 @@ export namespace TokenSwap {
             // For bridging WETH from L2s, it must be swapped to nETH and redeemed
             // 'bridgeConfigIntermediateToken' is just WETH, whose address is used to calculate swap price
             if (BridgeUtils.isL2ETHChain(otherChainId) && token.swapType === SwapType.ETH) {
-                return {intermediateToken: Tokens.NETH, bridgeConfigIntermediateToken: token}
+                return {intermediateToken: Tokens.NETH, bridgeConfigIntermediateToken: Tokens.NETH}
             }
 
             // Other assets are simply deposited() on ETH or redeemed on Klaytn

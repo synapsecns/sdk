@@ -20,6 +20,9 @@ export namespace Networks {
     const tokenSupportChecks: supportedTokenEdgeCase[] = [
         {chainId: ChainId.ETH,       token: Tokens.WETH},
         {chainId: ChainId.ETH,       token: Tokens.NETH},
+        {chainId: ChainId.ETH,       token: Tokens.ETH},
+        {chainId: ChainId.KLAYTN,    token: Tokens.NETH},
+        { chainId: ChainId.KLAYTN, token: Tokens.WETH },
         {chainId: ChainId.AVALANCHE, token: Tokens.AVAX},
         {chainId: ChainId.AVALANCHE, token: Tokens.WAVAX},
         {chainId: ChainId.AVALANCHE, token: Tokens.AVWETH},
