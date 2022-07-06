@@ -619,7 +619,7 @@ export namespace TokenSwap {
     /* c8 ignore stop */
 
     export function intermediateTokens(chainId: number, token: Token, otherChainId?: number): IntermediateSwapTokens {
-        if (mintBurnSwapTypes.includes(token.swapType)) {
+        if (mintBurnSwapTypes.includes(token.swapType) || chainId === ChainId.KLAYTN) {
             switch (token.swapType) {
                 case SwapType.JEWEL:
                     let bridgeConfigIntermediate: Token = chainId === ChainId.HARMONY
