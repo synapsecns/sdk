@@ -541,7 +541,9 @@ export namespace SwapPools {
         XJEWEL_Pool     = makeSingleTokenPool(Tokens.XJEWEL),
         DFKTEARS_Pool   = makeSingleTokenPool(Tokens.DFKTEARS),
         VSTA_Pool       = makeSingleTokenPool(Tokens.VSTA),
-        H20_Pool        = makeSingleTokenPool(Tokens.H20);
+        H20_Pool        = makeSingleTokenPool(Tokens.H20),
+        SFI_Pool        = makeSingleTokenPool(Tokens.SFI),
+        WBTC_Pool       = makeSingleTokenPool(Tokens.WBTC);
 
     const
         AVAX_JEWEL_Pool:    LPToken = {poolTokens: [Tokens.JEWEL, Tokens.MULTIJEWEL], swapType: SwapType.JEWEL},
@@ -618,6 +620,8 @@ export namespace SwapPools {
             USDB_Pool,
             VSTA_Pool,
             H20_Pool,
+            SFI_Pool,
+            WBTC_Pool,
         ),
         [ChainId.OPTIMISM]: makeSwapTypeMap(
             {
@@ -706,7 +710,8 @@ export namespace SwapPools {
             NEWO_Pool,
             SDT_Pool,
             USDB_Pool,
-            AVAX_JEWEL_Pool
+            AVAX_JEWEL_Pool,
+            SFI_Pool
         ),
         [ChainId.DFK]: {
             swappableTokens: {
@@ -741,7 +746,19 @@ export namespace SwapPools {
             XJEWEL_Pool,
             DFKTEARS_Pool,
             HARMONY_JEWEL_Pool
-        )
+        ),
+        [ChainId.KLAYTN]: {
+            swappableTokens: {
+                [SwapType.USD]: USDPoolTokens(),
+                [SwapType.ETH]: [Tokens.ETH, Tokens.WETH],
+                [SwapType.WBTC]: [Tokens.WBTC],
+            },
+            swappableSwapGroups: {
+                [SwapType.USD]: {poolTokens: USDPoolTokens(), swapType: SwapType.USD},
+                [SwapType.ETH]: {poolTokens: [Tokens.ETH, Tokens.WETH], swapType: SwapType.ETH},
+                [SwapType.WBTC]: {poolTokens: [Tokens.WBTC], swapType: SwapType.WBTC},
+            }
+        },
     };
 
     export function swapGroupsForChain(chainId: number): string[] {

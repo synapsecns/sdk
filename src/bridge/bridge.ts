@@ -255,7 +255,7 @@ export namespace Bridge {
 
             args = {...args, tokenFrom, tokenTo};
 
-            let newTxn: Promise<PopulatedTransaction> = this.chainId === ChainId.ETH
+            let newTxn: Promise<PopulatedTransaction> = (this.chainId === ChainId.ETH)
                 ? this.buildETHMainnetBridgeTxn(args, tokenArgs)
                 : this.buildL2BridgeTxn(args, tokenArgs);
 
@@ -518,7 +518,6 @@ export namespace Bridge {
                 fromChainTokens
             } = this.makeBridgeTokenArgs(args);
 
-
             let {intermediateToken} = TokenSwap.intermediateTokens(chainIdTo, tokenFrom, this.chainId);
 
             const {
@@ -532,7 +531,7 @@ export namespace Bridge {
             });
 
             const checkEthBridge = (c1: number, c2: number, t: Token): boolean =>
-                c1 === ChainId.ETH && BridgeUtils.isL2ETHChain(c2) && t.swapType === SwapType.ETH
+                c1 === ChainId.ETH && (BridgeUtils.isL2ETHChain(c2) || c2 === ChainId.KLAYTN) && t.swapType === SwapType.ETH
 
             const
                 isSpecialFrom: boolean = BridgeUtils.isSpecialToken(this.chainId, tokenFrom),
@@ -546,7 +545,7 @@ export namespace Bridge {
 
             if (amountFrom.isZero()) {
                 amountToReceive_from_prom = Promise.resolve(Zero);
-            } else if (ethToEth || Tokens.isMintBurnToken(tokenFrom) || tokenFrom.isWrapperToken || isSpecialFrom) {
+            } else if (ethToEth || Tokens.isMintBurnToken(tokenFrom) || tokenFrom.isWrapperToken || isSpecialFrom || this.chainId === ChainId.KLAYTN) {
                 amountToReceive_from_prom = Promise.resolve(amountFromFixedDecimals);
             } else if (this.chainId === ChainId.ETH) {
                 let liquidityAmounts = fromChainTokens.map((t) =>
@@ -567,7 +566,6 @@ export namespace Bridge {
             }
 
             let amountToReceive_from = await amountToReceive_from_prom;
-
             let bridgeFee: BigNumber;
 
             try { /* c8 ignore start */
@@ -595,6 +593,8 @@ export namespace Bridge {
                         amountToReceive_from,
                         tokenIndexTo
                     );
+            } else if (chainIdTo === ChainId.KLAYTN && tokenTo.swapType !== SwapType.ETH) {
+                amountToReceive_to_prom = Promise.resolve(amountToReceive_from);
             } else {
                 if (chainIdTo === ChainId.CRONOS) {
                     const swapContract = await TokenSwap.swapContract(intermediateToken, chainIdTo);
@@ -667,12 +667,25 @@ export namespace Bridge {
                     Tokens.SYN.id,  Tokens.UST.id,  Tokens.USDB.id,
                     Tokens.VSTA.id,
                 ],
+
+                // Deposits are for tokens that can just be deposited on source chains, mostly likely Ethereum
                 easyDeposits:   ID[] = [
                     Tokens.HIGH.id, Tokens.DOG.id,  Tokens.FRAX.id,
                     Tokens.GOHM.id, Tokens.NEWO.id, Tokens.SDT.id,
-                    Tokens.H20.id,
+                    Tokens.H20.id,  Tokens.SFI.id
                 ],
                 easyDepositETH: ID[] = [Tokens.NETH.id];
+
+            // use L1BridgeZap deposit() and `depositETH`
+            if (chainIdTo === ChainId.KLAYTN) {
+                easyDeposits.push(...[
+                    Tokens.USDC.id,
+                    Tokens.USDT.id,
+                    Tokens.DAI.id,
+                    Tokens.WBTC.id
+                ])
+                easyDepositETH.push(Tokens.WETH.id)
+            }
 
             let {castArgs, isEasy, txn} = this.checkEasyArgs(args, this.l1BridgeZapEth, easyDeposits, easyRedeems, easyDepositETH);
             if (isEasy && txn) {
@@ -757,8 +770,9 @@ export namespace Bridge {
             args: BridgeTransactionParams,
             tokenArgs: BridgeTokenArgs
         ): Promise<PopulatedTransaction> {
-            const
+            let
                 {chainIdTo, amountFrom, amountTo} = args,
+                // NOTE: This is a problem - we don't support other L1s. Klaytn still uses L2BridgeZap However
                 zapBridge = SynapseEntities.L2BridgeZapContractInstance({
                     chainId:          this.chainId,
                     signerOrProvider: this.provider
@@ -783,12 +797,27 @@ export namespace Bridge {
             let
                 easyDeposits:   ID[] = [],
                 easyDepositETH: ID[] = [],
+
+                // Redeems are for tokens that can just be burnt on non-source chains
                 easyRedeems:    ID[] = [
                     Tokens.SYN.id,      Tokens.HIGH.id,    Tokens.DOG.id,
                     Tokens.FRAX.id,     Tokens.UST.id,     Tokens.GOHM.id,
                     Tokens.NEWO.id,     Tokens.SDT.id,     Tokens.LUNA.id,
-                    Tokens.USDB.id,     Tokens.H20.id,
+                    Tokens.USDB.id,     Tokens.H20.id,     Tokens.SFI.id
                 ];
+
+            // use `L2BridgeZap.redeem()`
+            if (this.chainId === ChainId.KLAYTN) {
+                easyRedeems.push(...[
+                    Tokens.USDC.id,
+                    Tokens.USDT.id,
+                    Tokens.DAI.id,
+                    Tokens.WBTC.id
+                ])
+                if (chainIdTo === ChainId.ETH) {
+                    easyRedeems.push(Tokens.WETH.id)
+                }
+            }
 
             BridgeUtils.DepositIfChainTokens.forEach((depositIfChainArgs) => {
                 if (this.chainId === ChainId.DFK && args.tokenTo.isEqual(Tokens.SYN_AVAX)) {
@@ -903,6 +932,7 @@ export namespace Bridge {
                     let params = BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.GMX);
                     let [addrTo, chainTo,,amount] = params;
 
+                    // GMX origin chain is Arbitrum, hence deposit there
                     return this.chainId === ChainId.ARBITRUM
                         ? zapBridge.populateTransaction.deposit(...params)
                         : this.bridgeInstance
@@ -1100,6 +1130,21 @@ export namespace Bridge {
                         }
                     }
 
+                    // Bridging ETH from Klaytn to L2s
+                    if (this.chainId === ChainId.KLAYTN &&
+                        args.tokenFrom.swapType === SwapType.ETH) {
+                        return easyRedeemAndSwap(args.tokenFrom)
+                    }
+
+                    // Bridging ETH From L2s
+                    if (chainIdTo === ChainId.KLAYTN &&
+                        this.isL2ETHChain &&
+                        args.tokenFrom.swapType === SwapType.ETH
+                    ) {
+                        // To bridge ETH from chains where it IS the gas token, use swapETHAndRedeem
+                        // This is because ETH is wrapped into WETH, swapped for nETH and then burnt
+                        return easySwapAndRedeem(args.tokenFrom, true)
+                    }
 
                     if (args.tokenFrom.isEqual(Tokens.NUSD) || args.tokenFrom.isEqual(Tokens.DFK_USDC) || args.tokenFrom.isEqual(Tokens.NETH)) {
                         return easyRedeemAndSwap(args.tokenFrom)
