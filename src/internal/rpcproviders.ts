@@ -50,7 +50,7 @@ const CHAIN_RPC_URIS: StringMap = {
     [ChainId.DFK]:       "https://subnets.avax.network/defi-kingdoms/dfk-chain/rpc",
     [ChainId.AURORA]:    "https://mainnet.aurora.dev",
     [ChainId.HARMONY]:   "https://api.harmony.one/",
-    [ChainId.KLAYTN]:    "https://public-node-api.klaytnapi.com/v1/cypress",
+    [ChainId.KLAYTN]:    "https://cypress.chain.thebifrost.io/",
 }
 
 const CHAINID_URI_MAP: StringMap = fromPairs(supportedChainIds().map(cid => [cid, getChainRpcUri(cid)]));
