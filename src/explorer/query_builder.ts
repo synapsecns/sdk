@@ -1,5 +1,4 @@
-import { gql } from 'graphql-request';
-import { QUERY_INFO } from './utils.js';
+import { DEFAULT_QUERY_RESPONSE } from './gqlutils.js';
 
 /**
  * @notice Builds string with txn parameters for a GraphQL query
@@ -48,7 +47,6 @@ export function buildTxnParams(
 
 /**
  * @notice Builds a GraphQL query string for the given query type
- * @param query_type The type of query to build. Types in QUERY_INFO
  * @param chainId The chainId to query for. Optional.
  * @param address The address to query for. Optional.
  * @param txnHash The transaction hash to query for. Optional.
@@ -56,7 +54,6 @@ export function buildTxnParams(
  * @returns A GraphQL query string
  */
 export function buildTxnQuery(
-    query_type: string,
     chainId?: number,
     address?: string,
     txnHash?: string,
@@ -66,10 +63,10 @@ export function buildTxnQuery(
     const query_params = buildTxnParams(chainId, address, txnHash, kappa);
 
     // Construct the query
-    const query = gql`
+    const query = `
         query{
             bridgeTransactions(${query_params}) {
-                ${QUERY_INFO[query_type]}
+                ${DEFAULT_QUERY_RESPONSE}
             }
         }
     `;
