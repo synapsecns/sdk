@@ -63,6 +63,7 @@
     "ethers": "^5.5.1",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
+    "node-fetch": "^3.2.6",
     "object-hash": "^3.0.0"
   },
   "devDependencies": {
