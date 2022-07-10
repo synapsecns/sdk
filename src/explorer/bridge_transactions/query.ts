@@ -97,3 +97,6 @@ function buildTxnQuery(
     body: JSON.stringify({ query }),
   })).json();
 }
+
+// getBridgeTxnInfo(null, null, null, "0x5f102aacb2bb0f900df542e7d736c186de3838c762eb0a953e6f0a834243da5b").then(res => { console.log(JSON.stringify(res)) })
+// getBridgeTxnInfo(null, null, null, null).then(res => { console.log(JSON.stringify(res)) })
