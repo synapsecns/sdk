@@ -135,7 +135,7 @@ export async function createSwapTxn(
 
 /**
  * @notice Builds an `addLiquidity` transaction from the `Swap` contract
- * @param chainId the id of the chain to swap on
+ * @param chainId the id of the chain to addLiquidity on
  * @param amounts the amounts of each token to add
  * @param minToMint the minimum amount of LP token to receive
  * @param deadline optional: the deadline for the txn to execute
@@ -179,8 +179,8 @@ export async function createAddLiquidityTxn(
 
 /**
  * @notice Call the `addLiquidity` function of the `Swap` contract
- * @param signer the signer who is calling the swap
- * @param chainId the id of the chain to swap on
+ * @param signer the signer who is calling addLiquidity
+ * @param chainId the id of the chain to addLiquidity on
  * @param amounts the amounts of each token to add
  * @param minToMint the minimum amount of LP token to receive
  * @param deadline optional: the deadline for the txn to execute
@@ -203,4 +203,78 @@ export async function addLiquidity(
 
   // Execute populated addLiquidity transaction
   return signer.sendTransaction(addLiquidityTxn);
+}
+
+// - [REMOVE LIQUIDITY] - //
+
+/**
+ * @notice Builds a `removeLiquidity` transaction from the `Swap` contract
+ * @param chainId the id of the chain to removeLiquidity on
+ * @param amount the amount of LP token to remove
+ * @param minAmounts the minimum amount of each token to receive
+ * @param deadline optional: the deadline for the txn to execute
+ * @returns a populated `removeLiquidity` transaction
+ */
+export async function createRemoveLiquidityTxn(
+  chainId: number,
+  amount: number,
+  minAmounts: number[],
+  deadline?: number,
+): Promise<PopulatedTransaction> {
+  // Get the swap contract
+  const provider = rpcProviderForChain(chainId);
+  const swapAddress = contractsForChainId(chainId).swapAddress;
+  const swapContract = Swap__factory.connect(swapAddress, provider);
+
+  // Get the length of the token array and tokens associated with each index of `minAmounts`
+  const pooledTokensLength = 5;
+  let tokenList: Token[] = [];
+  for (let i = 0; i < pooledTokensLength; i++) {
+    const tokenAtIndex = await swapContract.getToken(i);
+    tokenList.push(Tokens.tokenFromAddress(tokenAtIndex, chainId));
+  }
+
+  // Get the `removeLiquidity` parameters
+  const defaultDeadline = getTimeMinutesFromNow(10);
+  const minAmountsToNativeDecimals: BigNumber[] = [];
+  for (let i = 0; i < minAmounts.length; i++) {
+    minAmountsToNativeDecimals.push(
+      convertToNativeDecimals(minAmounts[i], tokenList[i].decimals(chainId))
+    );
+  }
+
+  // Build a populated transaction with the contract's `removeLiquidity` function
+  return await swapContract.populateTransaction.removeLiquidity(
+    amount,
+    minAmountsToNativeDecimals,
+    deadline ?? defaultDeadline
+  );
+}
+
+/**
+ * @notice Call the `removeLiquidity` function of the `Swap` contract
+ * @param signer the signer who is calling removeLiquidity
+ * @param chainId the id of the chain to removeLiquidity on
+ * @param amount the amount of LP token to remove
+ * @param minAmounts the minimum amount of each token to receive
+ * @param deadline optional: the deadline for the txn to execute
+ * @returns amount of each token received from the swap
+ */
+export async function removeLiquidity(
+  signer: Signer,
+  chainId: number,
+  amount: number,
+  minAmounts: number[],
+  deadline?: number,
+): Promise<ContractTransaction> {
+  // Create the removeLiquidity transaction
+  const removeLiquidityTxn = await createRemoveLiquidityTxn(
+    chainId,
+    amount,
+    minAmounts,
+    deadline ?? null,
+  );
+
+  // Execute populated removeLiquidity transaction
+  return signer.sendTransaction(removeLiquidityTxn);
 }
