@@ -88,13 +88,13 @@ function buildTxnQuery(
  * @param kappa The kappa to query for. Optional.
  * @returns A promise that resolves to the transaction info as a JSON object
  */
-export async function getBridgeTxnInfo(
+export async function getBridgeTxnInfo(args: {
   chainId?: number,
   address?: string,
   txnHash?: string,
-  kappa?: string
-): Promise<JSON> {
-  const query = buildTxnQuery(chainId, address, txnHash, kappa);
+  kappa?: string,
+}): Promise<JSON> { // ****** NAMED FIELDS / PARAMS
+  const query = buildTxnQuery(args.chainId, args.address, args.txnHash, args.kappa);
   try {
     const response = await fetch(BRIDGE_TXN_API_GRAPHQL_URL, {
       method: "post",
@@ -106,13 +106,3 @@ export async function getBridgeTxnInfo(
     throw new Error(`Error fetching bridge transactions: ${error}`);
   }
 }
-
-getBridgeTxnInfo(
-  null,
-  null,
-  null,
-  "0x5f102aacb2bb0f900df542e7d736c186de3838c762eb0a953e6f0a834243da5b"
-).then((res) => {
-  console.log(JSON.stringify(res));
-});
-// getBridgeTxnInfo(null, null, null, null).then(res => { console.log(JSON.stringify(res)) })
