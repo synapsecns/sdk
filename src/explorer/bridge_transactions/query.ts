@@ -80,6 +80,9 @@ function buildTxnQuery(
   return query;
 }
 
+
+// - [EXTERNAL] - //
+
 /**
  * @notice Gets transaction info with a GraphQL query
  * @param chainId The chainId to query for. Optional.
@@ -93,7 +96,7 @@ export async function getBridgeTxnInfo(args: {
   address?: string,
   txnHash?: string,
   kappa?: string,
-}): Promise<JSON> { // ****** NAMED FIELDS / PARAMS
+}): Promise<JSON> {
   const query = buildTxnQuery(args.chainId, args.address, args.txnHash, args.kappa);
   try {
     const response = await fetch(BRIDGE_TXN_API_GRAPHQL_URL, {
