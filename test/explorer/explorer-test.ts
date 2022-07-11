@@ -1,4 +1,3 @@
-import { QUERY_EXPECTED_OUTPUTS } from "./expected_outputs.js";
 import { expect } from "chai";
 import { getBridgeTxnInfo } from "@sdk/explorer/index.js";
 
