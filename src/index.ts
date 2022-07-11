@@ -102,8 +102,13 @@ import {
     usePoolTokenNeedsApproval,
     usePoolTokenApproval,
     AllowanceError,
-    TransactionError
+    TransactionError,
 } from "./hooks/index";
+
+import {
+    swap,
+    calculateSwap,
+} from "./amm"
 
 export {
     useApproveBridgeSwap,
@@ -133,5 +138,7 @@ export {
     usePoolTokenNeedsApproval,
     usePoolTokenApproval,
     AllowanceError,
-    TransactionError
+    TransactionError,
+    swap,
+    calculateSwap
 };

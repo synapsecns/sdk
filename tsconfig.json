@@ -2,10 +2,13 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
+      "@abis":             ["./src/bridge/constants/abis"],
+      "@abis/*":           ["./src/bridge/constants/abis/*"],
       "@hooks/*":          ["./src/hooks/*"],
       "@bridge":           ["./src/bridge"],
       "@bridge/*":         ["./src/bridge/*"],
       "@common/*":         ["./src/common/*"],
+      "@constants/*":      ["./src/constants/*"],
       "@chainid":          ["./src/common/chainid"],
       "@networks":         ["./src/common/networks"],
       "@utils":            ["./src/common/utils"],

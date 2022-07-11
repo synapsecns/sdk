@@ -891,4 +891,25 @@ export namespace Tokens {
 
         return res
     }
+    /**
+     * Returns a {@link Token} object based on the passed `tokenSymbol`, if such token exists.
+     *
+     * @param tokeAddress Token address
+     * @param chainId Chain ID of the network on which to fetch the token
+     *
+     * @return A {@link Token} if one matches the passed `tokenAddress` given the `chainId`, null otherwise.
+     */
+     export function tokenFromAddress(tokenAddress: string, chainId: number): Token | null {
+        let res: Token = null;
+
+        findTokenLoop:
+        for (const t of AllTokens) {
+            if (t.addresses[chainId] === tokenAddress) {
+                res = t;
+                break findTokenLoop;
+            }
+        }
+
+        return res
+    }
 }

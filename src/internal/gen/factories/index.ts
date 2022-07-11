@@ -7,5 +7,6 @@ export { ERC20__factory } from "./ERC20__factory";
 export { L1BridgeZap__factory } from "./L1BridgeZap__factory";
 export { L2BridgeZap__factory } from "./L2BridgeZap__factory";
 export { SwapFlashLoan__factory } from "./SwapFlashLoan__factory";
+export { Swap__factory } from "./Swap__factory";
 export { SynapseBridge__factory } from "./SynapseBridge__factory";
 export { SynapseERC20__factory } from "./SynapseERC20__factory";
