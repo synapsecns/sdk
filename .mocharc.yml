@@ -30,3 +30,4 @@ spec:
   - 'test/tokenswap/SwapRate-test.ts'
   - 'test/tokenswap/liquidity-test.ts'
   - 'test/erc20/*-test.ts'
+  - 'test/explorer/explorer-test.ts'
