@@ -1,5 +1,5 @@
 import {
-  BRIDGE_TXN_API_GRAPHQL_URL,
+  EXPLORER_GQL_API,
   DEFAULT_QUERY_RESPONSE,
 } from "../gqlutils.js";
 import fetch from "node-fetch";
@@ -99,7 +99,7 @@ export async function getBridgeTxnInfo(args: {
 }): Promise<JSON> {
   const query = buildTxnQuery(args.chainId, args.address, args.txnHash, args.kappa);
   try {
-    const response = await fetch(BRIDGE_TXN_API_GRAPHQL_URL, {
+    const response = await fetch(EXPLORER_GQL_API, {
       method: "post",
       body: JSON.stringify({ query }),
       headers: { "Content-Type": "application/json" },

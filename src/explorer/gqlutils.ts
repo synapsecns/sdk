@@ -1,4 +1,4 @@
-export const BRIDGE_TXN_API_GRAPHQL_URL =
+export const EXPLORER_GQL_API =
   "https://syn-explorer-api.metagabbar.xyz/graphql";
 
 export const DEFAULT_QUERY_RESPONSE = `
