@@ -30,6 +30,7 @@ export namespace BridgeUtils {
         ChainId.ARBITRUM,
         ChainId.AVALANCHE,
         ChainId.HARMONY,
+        ChainId.KLAYTN
     ];
 
     export const GAS_TOKEN_CHAINS: number[] = [

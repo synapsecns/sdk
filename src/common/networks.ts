@@ -20,6 +20,9 @@ export namespace Networks {
     const tokenSupportChecks: supportedTokenEdgeCase[] = [
         {chainId: ChainId.ETH,       token: Tokens.WETH},
         {chainId: ChainId.ETH,       token: Tokens.NETH},
+        {chainId: ChainId.ETH,       token: Tokens.ETH},
+        {chainId: ChainId.KLAYTN,    token: Tokens.NETH},
+        { chainId: ChainId.KLAYTN, token: Tokens.WETH },
         {chainId: ChainId.AVALANCHE, token: Tokens.AVAX},
         {chainId: ChainId.AVALANCHE, token: Tokens.WAVAX},
         {chainId: ChainId.AVALANCHE, token: Tokens.AVWETH},
@@ -224,6 +227,12 @@ export namespace Networks {
         chainCurrencyCoingeckoId: "harmony",
     });
 
+    export const KLAYTN = new Network({
+        name:          "Klaytn",
+        chainId:       ChainId.KLAYTN,
+        chainCurrency: "KLAY",
+    });
+
     const CHAINID_NETWORK_MAP: ChainIdTypeMap<Network> = {
         [ChainId.ETH]:        ETH,
         [ChainId.OPTIMISM]:   OPTIMISM,
@@ -240,6 +249,7 @@ export namespace Networks {
         [ChainId.DFK]:        DFK,
         [ChainId.AURORA]:     AURORA,
         [ChainId.HARMONY]:    HARMONY,
+        [ChainId.KLAYTN]:     KLAYTN,
     }
 
     export function networkName(chainId: number): string {

@@ -31,6 +31,7 @@ const ENV_KEY_MAP: StringMap = {
     [ChainId.DFK]:       makeRpcUriEnvKey(ChainId.DFK),
     [ChainId.AURORA]:    makeRpcUriEnvKey(ChainId.AURORA),
     [ChainId.HARMONY]:   makeRpcUriEnvKey(ChainId.HARMONY),
+    [ChainId.KLAYTN]:    makeRpcUriEnvKey(ChainId.KLAYTN),
 }
 
 const CHAIN_RPC_URIS: StringMap = {
@@ -49,6 +50,7 @@ const CHAIN_RPC_URIS: StringMap = {
     [ChainId.DFK]:       "https://subnets.avax.network/defi-kingdoms/dfk-chain/rpc",
     [ChainId.AURORA]:    "https://mainnet.aurora.dev",
     [ChainId.HARMONY]:   "https://api.harmony.one/",
+    [ChainId.KLAYTN]:    "https://cypress.chain.thebifrost.io/",
 }
 
 const CHAINID_URI_MAP: StringMap = fromPairs(supportedChainIds().map(cid => [cid, getChainRpcUri(cid)]));

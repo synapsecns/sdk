@@ -44,6 +44,7 @@ export namespace Tokens {
             [ChainId.AVALANCHE]: "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70",
             [ChainId.AURORA]:    "0xe3520349F477A5F6EB06107066048508498A291b",
             [ChainId.HARMONY]:   "0xef977d2f931c1978db5f6747666fa1eacb0d0339",
+            [ChainId.KLAYTN]:    "0x078dB7827a5531359f6CB63f62CFA20183c4F10c",
         },
         swapType:    SwapType.USD,
         coingeckoId: "dai",
@@ -76,6 +77,7 @@ export namespace Tokens {
             [ChainId.ARBITRUM]:  6,
             [ChainId.AURORA]:    6,
             [ChainId.HARMONY]:   6,
+            [ChainId.KLAYTN]:    6,
         },
         addresses: {
             [ChainId.ETH]:       "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
@@ -90,6 +92,7 @@ export namespace Tokens {
             [ChainId.AVALANCHE]: "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
             [ChainId.AURORA]:    "0xB12BFcA5A55806AaF64E99521918A4bf0fC40802",
             [ChainId.HARMONY]:   "0x985458e523db3d53125813ed68c274899e9dfab4",
+            [ChainId.KLAYTN]:    "0x6270B58BE569a7c0b8f47594F191631Ae5b2C86C",
         },
         swapType:    SwapType.USD,
         coingeckoId: "usd-coin",
@@ -109,6 +112,7 @@ export namespace Tokens {
             [ChainId.AVALANCHE]: 6,
             [ChainId.AURORA]:    6,
             [ChainId.HARMONY]:   6,
+            [ChainId.KLAYTN]:    6,
         },
         addresses: {
             [ChainId.ETH]:       "0xdac17f958d2ee523a2206206994597c13d831ec7",
@@ -121,6 +125,7 @@ export namespace Tokens {
             [ChainId.AVALANCHE]: "0xc7198437980c041c805a1edcba50c1ce5db95118",
             [ChainId.AURORA]:    "0x4988a896b1227218e4A686fdE5EabdcAbd91571f",
             [ChainId.HARMONY]:   "0x3c2b8be99c50593081eaa2a724f0b8285f5aba8f",
+            [ChainId.KLAYTN]:    "0xd6dAb4CfF47dF175349e6e7eE2BF7c40Bb8C05A3",
         },
         swapType:    SwapType.USD,
         coingeckoId: "tether",
@@ -192,6 +197,7 @@ export namespace Tokens {
             [ChainId.ARBITRUM]:  "0x3ea9B0ab55F34Fb188824Ee288CeaEfC63cf908e",
             [ChainId.AVALANCHE]: "0x19E1ae0eE35c0404f835521146206595d37981ae",
             [ChainId.HARMONY]:   "0x0b5740c6b4a97f90eF2F0220651Cca420B868FfB",
+            [ChainId.KLAYTN]:    "0xCD6f29dC9Ca217d0973d3D21bF58eDd3CA871a86"
         },
         swapType: SwapType.ETH
     });
@@ -204,7 +210,7 @@ export namespace Tokens {
             [ChainId.ETH]:      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
             [ChainId.OPTIMISM]: "0x121ab82b49B2BC4c7901CA46B8277962b4350204",
             [ChainId.BOBA]:     "0xd203De32170130082896b4111eDF825a4774c18E",
-            [ChainId.ARBITRUM]: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+            [ChainId.ARBITRUM]: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1"
         },
         swapType: SwapType.ETH
     });
@@ -707,9 +713,31 @@ export namespace Tokens {
        decimals: 18,
        addresses: {
            [ChainId.ETH]:     "0x0642026e7f0b6ccac5925b4e7fa61384250e1701",
-           [ChainId.POLYGON]: "0xC5248Aa0629C0b2d6A02834a5f172937Ac83CBD3"
+           [ChainId.POLYGON]: "0x32ba7cF7d681357529013de6a2CDF93933C0dF3f"
        },
         swapType: SwapType.H20
+    });
+
+    export const WBTC = new BaseToken({
+        name: "WBTC",
+        symbol: "WBTC",
+        decimals: 8,
+        addresses: {
+            [ChainId.ETH]:       "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+            [ChainId.KLAYTN]:    "0xDCbacF3f7a069922E677912998c8d57423C37dfA"
+        },
+        swapType: SwapType.WBTC
+    });
+
+    export const SFI = new BaseToken({
+        name: "SFI",
+        symbol: "SFI",
+        decimals: 18,
+        addresses: {
+            [ChainId.ETH]:       "0xb753428af26e81097e7fd17f40c88aaa3e04902c",
+            [ChainId.AVALANCHE]: "0xc2Bf0A1f7D8Da50D608bc96CF701110d4A438312"
+        },
+        swapType: SwapType.SFI
     });
 
     export const mintBurnTokens: Token[] = [
@@ -721,7 +749,8 @@ export namespace Tokens {
         LUNA,      USDB,       SYN_AVAX,
         GAS_JEWEL, JEWEL,      SYN_JEWEL,
         XJEWEL,    MULTIJEWEL, DFK_USDC,
-        VSTA,      H20,
+        VSTA,      H20,        WBTC,
+        SFI
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
