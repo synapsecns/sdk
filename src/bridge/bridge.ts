@@ -532,7 +532,7 @@ export namespace Bridge {
             });
 
             const checkEthBridge = (c1: number, c2: number, t: Token): boolean =>
-                c1 === ChainId.ETH && (BridgeUtils.isL2ETHChain(c2)) && t.swapType === SwapType.ETH
+                c1 === ChainId.ETH && (BridgeUtils.isL2ETHChain(c2) || c2 === ChainId.DFK) && t.swapType === SwapType.ETH
 
             const
                 isSpecialFrom: boolean = BridgeUtils.isSpecialToken(this.chainId, tokenFrom),
