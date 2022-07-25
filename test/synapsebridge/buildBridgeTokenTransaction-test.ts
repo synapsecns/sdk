@@ -188,10 +188,18 @@ describe("SynapseBridge - buildBridgeTokenTransaction tests", function(this: Moc
         makeTestCase(Tokens.USDT,       Tokens.USDT,      ChainId.KLAYTN,    ChainId.ETH,         redeem),
         makeTestCase(Tokens.DAI,        Tokens.DAI,       ChainId.ETH,       ChainId.KLAYTN,      deposit),
         makeTestCase(Tokens.DAI,        Tokens.DAI,       ChainId.KLAYTN,    ChainId.ETH,         redeem),
-        makeTestCase(Tokens.WETH,       Tokens.ETH,       ChainId.KLAYTN,    ChainId.ETH,         redeem),
         makeTestCase(Tokens.ETH,        Tokens.WETH,      ChainId.ETH,       ChainId.KLAYTN,      depositETH),
         makeTestCase(Tokens.WETH,       Tokens.WETH,      ChainId.OPTIMISM,  ChainId.KLAYTN,      swapETHAndRedeem),
-        makeTestCase(Tokens.WETH,       Tokens.WETH,      ChainId.KLAYTN,    ChainId.ARBITRUM,    redeemAndSwap),
+        // makeTestCase(Tokens.WETH,       Tokens.ETH,       ChainId.KLAYTN,    ChainId.ETH,         redeem),
+        // makeTestCase(Tokens.WETH,       Tokens.WETH,      ChainId.KLAYTN,    ChainId.ARBITRUM,    redeemAndSwap),
+
+        makeTestCase(Tokens.ETH,        Tokens.DFK_ETH,   ChainId.ETH,       ChainId.DFK,         depositETH),
+        makeTestCase(Tokens.DFK_ETH,    Tokens.ETH,       ChainId.DFK,       ChainId.ETH,         redeem),
+        makeTestCase(Tokens.WETH,       Tokens.DFK_ETH,   ChainId.ARBITRUM,  ChainId.DFK,         swapETHAndRedeem),
+        makeTestCase(Tokens.NETH,       Tokens.DFK_ETH,   ChainId.AVALANCHE, ChainId.DFK,         redeem),
+        makeTestCase(Tokens.DFK_ETH,    Tokens.WETH,      ChainId.DFK,       ChainId.OPTIMISM,    redeemAndSwap),
+        makeTestCase(Tokens.DFK_ETH,    Tokens.NETH,      ChainId.DFK,       ChainId.FANTOM,      redeem),
+
     ].forEach((tc: TestCase) => {
         const testTitle = makeTestName(tc);
         describe(testTitle, function(this: Mocha.Suite) {

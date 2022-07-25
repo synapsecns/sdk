@@ -67,6 +67,7 @@ import type {
  * and most importantly, executing Bridge transactions.
  */
 export namespace Bridge {
+    import DFK_ETH = Tokens.DFK_ETH
     export type CanBridgeResult = {
         canBridge:     boolean;
         reasonUnable?: string;
@@ -1128,6 +1129,31 @@ export namespace Bridge {
                                     minToSwapOriginHighSlippage,
                                     transactionDeadline
                                 )
+                        }
+                    }
+
+                    if ((this.chainId === ChainId.DFK || chainIdTo === ChainId.DFK) && args.tokenFrom.swapType === SwapType.ETH) {
+                        if (this.isL2ETHChain) {
+                            if (args.tokenFrom.isEqual(Tokens.NETH)) {
+                                // Swapping nETH from L2 -> nETH on DFK
+                                return zapBridge.populateTransaction.redeem(
+                                    ...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.NETH)
+                                );
+                            } else {
+                                // Swapping WETH from L2 -> nETH on DFK
+                                return easySwapAndRedeem(Tokens.WETH, true)
+                            }
+                        } else {
+                            // Note: NETH is passed as tokenTo args as DFK_USDC is NETH underneath
+                            if (args.tokenTo.isEqual(Tokens.NETH)) {
+                                // DFK_ETH from DFK -> NETH on L2s
+                                return zapBridge.populateTransaction.redeem(
+                                    ...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.DFK_ETH)
+                                );
+                            } else {
+                                // DFK_ETH from DFK -> WETH on L2s
+                                return easyRedeemAndSwap(Tokens.DFK_ETH)
+                            }
                         }
                     }
 
