@@ -720,6 +720,7 @@ export namespace SwapPools {
                 [SwapType.XJEWEL]:   XJEWEL_Pool.poolTokens,
                 [SwapType.DFKTEARS]: DFKTEARS_Pool.poolTokens,
                 [SwapType.AVAX]:     WAVAX_Pool.poolTokens,
+                [SwapType.ETH]:      [Tokens.DFK_ETH],
             },
             swappableSwapGroups: {
                 [SwapType.USD]:      DFK_USDC_Pool,
@@ -727,6 +728,7 @@ export namespace SwapPools {
                 [SwapType.XJEWEL]:   XJEWEL_Pool,
                 [SwapType.DFKTEARS]: DFKTEARS_Pool,
                 [SwapType.AVAX]:     WAVAX_Pool,
+                [SwapType.ETH]:      {poolTokens: [Tokens.DFK_ETH], swapType: SwapType.ETH},
             }
         },
         [ChainId.AURORA]: makeSwapTypeMap(

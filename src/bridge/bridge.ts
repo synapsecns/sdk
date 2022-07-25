@@ -674,7 +674,7 @@ export namespace Bridge {
                     Tokens.GOHM.id, Tokens.NEWO.id, Tokens.SDT.id,
                     Tokens.H20.id,  Tokens.SFI.id
                 ],
-                easyDepositETH: ID[] = [Tokens.NETH.id];
+                easyDepositETH: ID[] = [Tokens.NETH.id, Tokens.DFK_ETH.id];
 
             // use L1BridgeZap deposit() and `depositETH`
             if (chainIdTo === ChainId.KLAYTN) {
@@ -1071,11 +1071,12 @@ export namespace Bridge {
                     }
                 default:
                     if (chainIdTo === ChainId.ETH) {
-                        if (this.isL2ETHChain && args.tokenFrom.swapType === SwapType.ETH) {
-                            if (args.tokenFrom.isEqual(Tokens.NETH)) {
+                        if ((this.isL2ETHChain || this.chainId === ChainId.DFK) && args.tokenFrom.swapType === SwapType.ETH) {
+                            if (args.tokenFrom.isEqual(Tokens.NETH) || args.tokenFrom.isEqual(Tokens.DFK_ETH)) {
+                                let ethToken = (this.chainId === ChainId.DFK) ? Tokens.DFK_ETH : Tokens.NETH
                                 return zapBridge
                                     .populateTransaction
-                                    .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.NETH))
+                                    .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, ethToken))
                             } else {
                                 let useSwapETH = !BridgeUtils.isETHLikeToken(args.tokenFrom);
                                 return easySwapAndRedeem(Tokens.NETH, useSwapETH)

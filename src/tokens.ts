@@ -336,6 +336,16 @@ export namespace Tokens {
         swapType: SwapType.USD,
     });
 
+    export const DFK_ETH = new BaseToken({
+        name:     "DFK ETH",
+        symbol:   "ETH",
+        decimals: 18,
+        addresses: {
+            [ChainId.DFK]: "0x9596A3C6a4B2597adCC5D6d69b281A7C49e3Fe6A"
+        },
+        swapType: SwapType.ETH,
+    });
+
     // chain native coins and wrapper tokens
 
     /**
@@ -886,7 +896,7 @@ export namespace Tokens {
         SYN_FRAX, SOLAR, GMX, NEWO, SDT,
         LUNA, USDB, SYN_AVAX, GAS_JEWEL, JEWEL,
         SYN_JEWEL, XJEWEL, MULTIJEWEL, DFK_USDC,
-        DFKTEARS, MULTI_AVAX, VSTA,
+        DFKTEARS, MULTI_AVAX, VSTA, SFI, DFK_ETH
     ];
 
     /**
