@@ -248,6 +248,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         makeTestCase(Tokens.ETH,         Tokens.DFK_ETH,   ChainId.ETH,         ChainId.DFK, "4200"),
         makeTestCase(Tokens.DFK_ETH,     Tokens.ETH,       ChainId.DFK,         ChainId.ETH),
         makeTestCase(Tokens.WETH,        Tokens.DFK_ETH,   ChainId.ARBITRUM,    ChainId.DFK),
+        makeTestCase(Tokens.WETH_E,      Tokens.DFK_ETH,   ChainId.AVALANCHE,   ChainId.DFK),
         makeTestCase(Tokens.NETH,        Tokens.DFK_ETH,   ChainId.AVALANCHE,   ChainId.DFK),
         makeTestCase(Tokens.DFK_ETH,     Tokens.WETH,      ChainId.DFK,         ChainId.OPTIMISM),
         makeTestCase(Tokens.DFK_ETH,     Tokens.NETH,      ChainId.DFK,         ChainId.FANTOM),
