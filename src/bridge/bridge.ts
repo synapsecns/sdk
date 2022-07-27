@@ -67,6 +67,7 @@ import type {
  * and most importantly, executing Bridge transactions.
  */
 export namespace Bridge {
+    import DFK_ETH = Tokens.DFK_ETH
     export type CanBridgeResult = {
         canBridge:     boolean;
         reasonUnable?: string;
@@ -531,7 +532,7 @@ export namespace Bridge {
             });
 
             const checkEthBridge = (c1: number, c2: number, t: Token): boolean =>
-                c1 === ChainId.ETH && (BridgeUtils.isL2ETHChain(c2)) && t.swapType === SwapType.ETH
+                c1 === ChainId.ETH && (BridgeUtils.isL2ETHChain(c2) || c2 === ChainId.DFK) && t.swapType === SwapType.ETH
 
             const
                 isSpecialFrom: boolean = BridgeUtils.isSpecialToken(this.chainId, tokenFrom),
@@ -674,7 +675,7 @@ export namespace Bridge {
                     Tokens.GOHM.id, Tokens.NEWO.id, Tokens.SDT.id,
                     Tokens.H20.id,  Tokens.SFI.id
                 ],
-                easyDepositETH: ID[] = [Tokens.NETH.id];
+                easyDepositETH: ID[] = [Tokens.NETH.id, Tokens.DFK_ETH.id];
 
             // use L1BridgeZap deposit() and `depositETH`
             if (chainIdTo === ChainId.KLAYTN) {
@@ -1071,11 +1072,12 @@ export namespace Bridge {
                     }
                 default:
                     if (chainIdTo === ChainId.ETH) {
-                        if (this.isL2ETHChain && args.tokenFrom.swapType === SwapType.ETH) {
-                            if (args.tokenFrom.isEqual(Tokens.NETH)) {
+                        if ((this.isL2ETHChain || this.chainId === ChainId.DFK) && args.tokenFrom.swapType === SwapType.ETH) {
+                            if (args.tokenFrom.isEqual(Tokens.NETH) || args.tokenFrom.isEqual(Tokens.DFK_ETH)) {
+                                let ethToken = (this.chainId === ChainId.DFK) ? Tokens.DFK_ETH : Tokens.NETH
                                 return zapBridge
                                     .populateTransaction
-                                    .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.NETH))
+                                    .redeem(...BridgeUtils.makeEasyParams(castArgs, this.chainId, ethToken))
                             } else {
                                 let useSwapETH = !BridgeUtils.isETHLikeToken(args.tokenFrom);
                                 return easySwapAndRedeem(Tokens.NETH, useSwapETH)
@@ -1127,6 +1129,31 @@ export namespace Bridge {
                                     minToSwapOriginHighSlippage,
                                     transactionDeadline
                                 )
+                        }
+                    }
+
+                    if ((this.chainId === ChainId.DFK || chainIdTo === ChainId.DFK) && args.tokenFrom.swapType === SwapType.ETH) {
+                        if (this.isL2ETHChain) {
+                            if (args.tokenFrom.isEqual(Tokens.NETH)) {
+                                // Swapping nETH from L2 -> nETH on DFK
+                                return zapBridge.populateTransaction.redeem(
+                                    ...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.NETH)
+                                );
+                            } else {
+                                // Swapping WETH from L2 -> nETH on DFK
+                                return easySwapAndRedeem(Tokens.WETH, true)
+                            }
+                        } else {
+                            // Note: NETH is passed as tokenTo args as DFK_USDC is NETH underneath
+                            if (args.tokenTo.isEqual(Tokens.NETH)) {
+                                // DFK_ETH from DFK -> NETH on L2s
+                                return zapBridge.populateTransaction.redeem(
+                                    ...BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.DFK_ETH)
+                                );
+                            } else {
+                                // DFK_ETH from DFK -> WETH on L2s
+                                return easyRedeemAndSwap(Tokens.DFK_ETH)
+                            }
                         }
                     }
 

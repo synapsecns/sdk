@@ -197,7 +197,8 @@ export namespace Tokens {
             [ChainId.ARBITRUM]:  "0x3ea9B0ab55F34Fb188824Ee288CeaEfC63cf908e",
             [ChainId.AVALANCHE]: "0x19E1ae0eE35c0404f835521146206595d37981ae",
             [ChainId.HARMONY]:   "0x0b5740c6b4a97f90eF2F0220651Cca420B868FfB",
-            [ChainId.KLAYTN]:    "0xCD6f29dC9Ca217d0973d3D21bF58eDd3CA871a86"
+            [ChainId.KLAYTN]:    "0xCD6f29dC9Ca217d0973d3D21bF58eDd3CA871a86",
+            [ChainId.DFK]:       "0x9596A3C6a4B2597adCC5D6d69b281A7C49e3Fe6A"
         },
         swapType: SwapType.ETH
     });
@@ -334,6 +335,16 @@ export namespace Tokens {
             [ChainId.DFK]: "0x3AD9DFE640E1A9Cc1D9B0948620820D975c3803a"
         },
         swapType: SwapType.USD,
+    });
+
+    export const DFK_ETH = new BaseToken({
+        name:     "DFK ETH",
+        symbol:   "ETH",
+        decimals: 18,
+        addresses: {
+            [ChainId.DFK]: "0x9596A3C6a4B2597adCC5D6d69b281A7C49e3Fe6A"
+        },
+        swapType: SwapType.ETH,
     });
 
     // chain native coins and wrapper tokens
@@ -750,7 +761,7 @@ export namespace Tokens {
         GAS_JEWEL, JEWEL,      SYN_JEWEL,
         XJEWEL,    MULTIJEWEL, DFK_USDC,
         VSTA,      H20,        WBTC,
-        SFI
+        SFI,       DFK_ETH
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
@@ -886,7 +897,7 @@ export namespace Tokens {
         SYN_FRAX, SOLAR, GMX, NEWO, SDT,
         LUNA, USDB, SYN_AVAX, GAS_JEWEL, JEWEL,
         SYN_JEWEL, XJEWEL, MULTIJEWEL, DFK_USDC,
-        DFKTEARS, MULTI_AVAX, VSTA,
+        DFKTEARS, MULTI_AVAX, VSTA, SFI, DFK_ETH
     ];
 
     /**
