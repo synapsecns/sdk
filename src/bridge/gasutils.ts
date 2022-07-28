@@ -58,7 +58,7 @@ export namespace GasUtils {
             gasPrice: makeGwei('1'),
         },
         [ChainId.HARMONY]: {
-            gasPrice:        makeGwei("45"),
+            gasPrice:        makeGwei("115"),
             bridgeGasLimit:  BigNumber.from(250000),
             approveGasLimit: BigNumber.from(75000)
         }
