@@ -1142,12 +1142,18 @@ export namespace Bridge {
                             } else {
                                 // Swapping WETH from L2 -> nETH on DFK
                                 let ethToken = Tokens.WETH
+                                let swapEth = true
+
+                                // WETH_E and FTM_ETH are ERC20s, not the gas token
                                 if (this.chainId === ChainId.AVALANCHE) {
                                     ethToken = Tokens.WETH_E
+                                    swapEth = false
                                 } else if (this.chainId === ChainId.FANTOM) {
                                     ethToken = Tokens.FTM_ETH
+                                    swapEth = false
                                 }
-                                return easySwapAndRedeem(ethToken, true)
+
+                                return easySwapAndRedeem(ethToken, swapEth)
                             }
                         } else {
                             // Note: NETH is passed as tokenTo args as DFK_USDC is NETH underneath
