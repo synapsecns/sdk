@@ -1141,7 +1141,13 @@ export namespace Bridge {
                                 );
                             } else {
                                 // Swapping WETH from L2 -> nETH on DFK
-                                return easySwapAndRedeem(Tokens.WETH, true)
+                                let ethToken = Tokens.WETH
+                                if (this.chainId === ChainId.AVALANCHE) {
+                                    ethToken = Tokens.WETH_E
+                                } else if (this.chainId === ChainId.FANTOM) {
+                                    ethToken = Tokens.FTM_ETH
+                                }
+                                return easySwapAndRedeem(ethToken, true)
                             }
                         } else {
                             // Note: NETH is passed as tokenTo args as DFK_USDC is NETH underneath
