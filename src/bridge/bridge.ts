@@ -1145,11 +1145,8 @@ export namespace Bridge {
                                 let swapEth = true
 
                                 // WETH_E and FTM_ETH are ERC20s, not the gas token
-                                if (this.chainId === ChainId.AVALANCHE) {
-                                    ethToken = Tokens.WETH_E
-                                    swapEth = false
-                                } else if (this.chainId === ChainId.FANTOM) {
-                                    ethToken = Tokens.FTM_ETH
+                                if (this.chainId === ChainId.AVALANCHE || this.chainId === ChainId.FANTOM) {
+                                    ethToken = Tokens.NETH
                                     swapEth = false
                                 }
 
