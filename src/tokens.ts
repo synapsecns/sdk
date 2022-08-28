@@ -769,6 +769,20 @@ export namespace Tokens {
         coingeckoId: "saffron-finance"
     });
 
+    export const L2DAO = new BaseToken({
+        name: "Layer 2 DAO Token",
+        symbol: "L2DAO",
+        decimals: 18,
+        addresses: {
+            [ChainId.ARBITRUM]:"0x2CaB3abfC1670D1a452dF502e216a66883cDf079",
+            [ChainId.OPTIMISM]:"0xd52f94DF742a6F4B4C8b033369fE13A41782Bf44"
+        },
+        swapType: SwapType.L2DAO,
+        coingeckoId: "layer2dao"
+
+
+    })
+
     export const mintBurnTokens: Token[] = [
         NUSD,      SYN,        NETH,
         HIGH,      DOG,        JUMP,
@@ -780,6 +794,7 @@ export namespace Tokens {
         XJEWEL,    MULTIJEWEL, DFK_USDC,
         VSTA,      H2O,        WBTC,
         SFI,       DFK_ETH,    AGEUR,
+        L2DAO,
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
