@@ -23,9 +23,11 @@ export const SwapType = {
     XJEWEL:   "XJEWEL",
     DFKTEARS: "DFKTEARS",
     VSTA:     "VSTA",
-    H20:      "H20",
+    H2O:      "H2O",
     WBTC:     "WBTC",
     SFI:      "SFI",
+    AGEUR:    "AGEUR",
+    L2DAO:    "L2DAO",
 } as const;
 
 export type SwapType = ValueOf<typeof SwapType>
@@ -38,6 +40,6 @@ export const mintBurnSwapTypes: SwapType[] = [
     SwapType.GMX,    SwapType.UST,     SwapType.NEWO,
     SwapType.SDT,    SwapType.LUNA,    SwapType.USDB,
     SwapType.JEWEL,  SwapType.XJEWEL,  SwapType.VSTA,
-    SwapType.H20,    SwapType.SFI,     SwapType.WBTC,
-    SwapType.SFI
+    SwapType.H2O,    SwapType.SFI,     SwapType.WBTC,
+    SwapType.AGEUR,  SwapType.L2DAO,
 ];

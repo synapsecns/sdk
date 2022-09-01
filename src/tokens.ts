@@ -718,15 +718,19 @@ export namespace Tokens {
         coingeckoId: "vesta-finance",
     });
 
-    export const H20 = new BaseToken({
-       name: "H20",
-       symbol: "H20",
+    export const H2O = new BaseToken({
+       name: "H2O DAO",
+       symbol: "H2O",
        decimals: 18,
        addresses: {
-           [ChainId.ETH]:     "0x0642026e7f0b6ccac5925b4e7fa61384250e1701",
-           [ChainId.POLYGON]: "0x32ba7cF7d681357529013de6a2CDF93933C0dF3f"
+           [ChainId.ETH]:       "0x0642026e7f0b6ccac5925b4e7fa61384250e1701",
+           [ChainId.POLYGON]:   "0x32ba7cF7d681357529013de6a2CDF93933C0dF3f",
+           [ChainId.ARBITRUM]:  "0xD1c6f989e9552DB523aBAE2378227fBb059a3976",
+           [ChainId.OPTIMISM]:  "0xE3c82A836Ec85311a433fBd9486EfAF4b1AFbF48",
+           [ChainId.AVALANCHE]: "0xC6b11a4Fd833d1117E9D312c02865647cd961107",
        },
-        swapType: SwapType.H20
+        swapType: SwapType.H2O,
+        coingeckoId: "h2o-dao",
     });
 
     export const WBTC = new BaseToken({
@@ -741,15 +745,43 @@ export namespace Tokens {
     });
 
     export const SFI = new BaseToken({
-        name: "SFI",
+        name: "Saffron Finance Token",
         symbol: "SFI",
         decimals: 18,
         addresses: {
             [ChainId.ETH]:       "0xb753428af26e81097e7fd17f40c88aaa3e04902c",
-            [ChainId.AVALANCHE]: "0xc2Bf0A1f7D8Da50D608bc96CF701110d4A438312"
+            [ChainId.AVALANCHE]: "0xc2Bf0A1f7D8Da50D608bc96CF701110d4A438312",
         },
-        swapType: SwapType.SFI
+        swapType: SwapType.SFI,
+        coingeckoId: "saffron-finance"
     });
+
+    export const AGEUR = new BaseToken({
+        name: "Angle Euro",
+        symbol: "agEUR",
+        decimals: 18,
+        addresses: {
+            [ChainId.ETH]:      "0x1a7e4e63778B4f12a199C062f3eFdD288afCBce8",
+            [ChainId.ARBITRUM]: "0x16BFc5fe024980124bEf51d1D792dC539d1B5Bf0",
+            [ChainId.OPTIMISM]: "0xa0554607e477cdC9d0EE2A6b087F4b2DC2815C22",
+        },
+        swapType: SwapType.AGEUR,
+        coingeckoId: "saffron-finance"
+    });
+
+    export const L2DAO = new BaseToken({
+        name: "Layer 2 DAO Token",
+        symbol: "L2DAO",
+        decimals: 18,
+        addresses: {
+            [ChainId.ARBITRUM]:"0x2CaB3abfC1670D1a452dF502e216a66883cDf079",
+            [ChainId.OPTIMISM]:"0xd52f94DF742a6F4B4C8b033369fE13A41782Bf44"
+        },
+        swapType: SwapType.L2DAO,
+        coingeckoId: "layer2dao"
+
+
+    })
 
     export const mintBurnTokens: Token[] = [
         NUSD,      SYN,        NETH,
@@ -760,8 +792,9 @@ export namespace Tokens {
         LUNA,      USDB,       SYN_AVAX,
         GAS_JEWEL, JEWEL,      SYN_JEWEL,
         XJEWEL,    MULTIJEWEL, DFK_USDC,
-        VSTA,      H20,        WBTC,
-        SFI,       DFK_ETH
+        VSTA,      H2O,        WBTC,
+        SFI,       DFK_ETH,    AGEUR,
+        L2DAO,
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
@@ -897,7 +930,8 @@ export namespace Tokens {
         SYN_FRAX, SOLAR, GMX, NEWO, SDT,
         LUNA, USDB, SYN_AVAX, GAS_JEWEL, JEWEL,
         SYN_JEWEL, XJEWEL, MULTIJEWEL, DFK_USDC,
-        DFKTEARS, MULTI_AVAX, VSTA, SFI, DFK_ETH
+        DFKTEARS, MULTI_AVAX, VSTA, SFI, DFK_ETH,
+        AGEUR,
     ];
 
     /**
