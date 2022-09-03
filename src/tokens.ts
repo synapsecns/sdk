@@ -852,7 +852,7 @@ export namespace Tokens {
             decimals: 18,
             addresses: {
                 [ChainId.ETH]: "0x514910771af9ca656af840dff83e8264ecf986ca",
-                [ChainId.DFK]: "0x152b9d0FdC40C096757F570A51E494bd4b943E50"
+                [ChainId.DFK]: ""
             },
             swapType: SwapType.LINK
         });
