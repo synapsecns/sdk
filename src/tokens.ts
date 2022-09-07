@@ -883,6 +883,10 @@ export namespace Tokens {
         [ChainId.ARBITRUM]:   ETH,
         [ChainId.AVALANCHE]:  AVAX,
         [ChainId.DFK]:        GAS_JEWEL,
+        [ChainId.KLAYTN]:     KLAY,
+        [ChainId.FANTOM]:     FTM,
+        [ChainId.POLYGON]:    MATIC,
+
     };
 
     /**
@@ -917,6 +921,14 @@ export namespace Tokens {
                 return WETH
             case GAS_JEWEL:
                 return JEWEL
+            case GAS_JEWEL:
+                return JEWEL
+            case KLAY:
+                return WKLAY
+            case FTM:
+                return WFTM
+            case MATIC:
+                return WMATIC
         }
 
         return null
@@ -1006,7 +1018,8 @@ export namespace Tokens {
         SYN_FRAX, SOLAR, GMX, NEWO, SDT,
         LUNA, USDB, SYN_AVAX, GAS_JEWEL, JEWEL,
         SYN_JEWEL, XJEWEL, MULTIJEWEL, DFK_USDC,
-        DFKTEARS, MULTI_AVAX, VSTA, SFI, DFK_ETH
+        DFKTEARS, MULTI_AVAX, VSTA, SFI, DFK_ETH,
+        WKLAY, WFTM, WMATIC, BTCB
     ];
 
     /**
