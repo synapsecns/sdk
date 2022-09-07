@@ -870,7 +870,9 @@ export namespace Tokens {
         GAS_JEWEL, JEWEL,      SYN_JEWEL,
         XJEWEL,    MULTIJEWEL, DFK_USDC,
         VSTA,      H20,        WBTC,
-        SFI,       DFK_ETH
+        SFI,       DFK_ETH,    KLAY,
+        WKLAY,     MATIC,      WMATIC, 
+        FTM,       WFTM,       BTCB
     ];
 
     export const isMintBurnToken = (token: Token): boolean => mintBurnTokens.map((t) => t.id).includes(token.id)
