@@ -720,7 +720,8 @@ export namespace SwapPools {
             SDT_Pool,
             USDB_Pool,
             AVAX_JEWEL_Pool,
-            SFI_Pool
+            SFI_Pool,
+            BTCB_Pool
         ),
         [ChainId.DFK]: {
             swappableTokens: {
