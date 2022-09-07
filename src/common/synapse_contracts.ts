@@ -44,12 +44,12 @@ export namespace SynapseContracts {
 
     export const Polygon = new SynapseContract({
         bridge:    "0x8F5BBB2BB8c2Ee94639E55d5F41de9b4839C1280",
-        bridgeZap: "0x1c6aE197fF4BF7BA96c66C5FD64Cb22450aF9cC8",
+        bridgeZap: "0xb883A9f35650ff82fdBC9Ed867e98FEd0457b584",
     });
 
     export const Fantom = new SynapseContract({
         bridge:    "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
-        bridgeZap: "0xB003e75f7E0B5365e814302192E99b4EE08c0DEd",
+        bridgeZap: "0x1c6aE197fF4BF7BA96c66C5FD64Cb22450aF9cC8",
     });
 
     export const Boba = new SynapseContract({
@@ -99,7 +99,7 @@ export namespace SynapseContracts {
 
     export const Klaytn = new SynapseContract({
         bridge:    "0xAf41a65F786339e7911F4acDAD6BD49426F2Dc6b",
-        bridgeZap: "0x911766fA1a425Cb7cCCB0377BC152f37F276f8d6",
+        bridgeZap: "0x8671A0465844a15eb7230C5dd8d6032c26c655B7",
     });
 
     const chainIdContractsMap: ChainIdTypeMap<SynapseContract> = {
