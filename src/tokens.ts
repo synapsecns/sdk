@@ -1021,7 +1021,7 @@ export namespace Tokens {
         LUNA, USDB, SYN_AVAX, GAS_JEWEL, JEWEL,
         SYN_JEWEL, XJEWEL, MULTIJEWEL, DFK_USDC,
         DFKTEARS, MULTI_AVAX, VSTA, SFI, DFK_ETH,
-        WKLAY, WFTM, WMATIC, BTCB
+        WKLAY, WFTM, WMATIC, KLAY, FTM, MATIC, BTCB
     ];
 
     /**
