@@ -543,9 +543,12 @@ export namespace SwapPools {
         VSTA_Pool       = makeSingleTokenPool(Tokens.VSTA),
         H20_Pool        = makeSingleTokenPool(Tokens.H20),
         SFI_Pool        = makeSingleTokenPool(Tokens.SFI),
+        FTM_Pool       = makeSingleTokenPool(Tokens.FTM),
         WFTM_Pool       = makeSingleTokenPool(Tokens.WFTM),
+        KLAY_Pool      = makeSingleTokenPool(Tokens.KLAY),
         WKLAY_Pool      = makeSingleTokenPool(Tokens.WKLAY),
         WMATIC_Pool     = makeSingleTokenPool(Tokens.WMATIC),
+        MATIC_Pool     = makeSingleTokenPool(Tokens.MATIC),
         BTCB_Pool       = makeSingleTokenPool(Tokens.BTCB),
         WBTC_Pool       = makeSingleTokenPool(Tokens.WBTC);
 
@@ -657,7 +660,7 @@ export namespace SwapPools {
             DOG_Pool,
             USDB_Pool,
             H20_Pool,
-            WMATIC_Pool
+            MATIC_Pool
         ),
         [ChainId.FANTOM]: makeSwapTypeMap(
             {
@@ -668,7 +671,7 @@ export namespace SwapPools {
             FRAX_Pool,
             SDT_Pool,
             USDB_Pool,
-            WFTM_Pool
+            FTM_Pool
         ),
         [ChainId.BOBA]: makeSwapTypeMap(
             {
@@ -721,12 +724,12 @@ export namespace SwapPools {
         ),
         [ChainId.DFK]: {
             swappableTokens: {
-                [SwapType.USD]:      DFK_USDC_Pool.poolTokens,
-                [SwapType.JEWEL]:    DFK_JEWEL_Pool.poolTokens,
-                [SwapType.XJEWEL]:   XJEWEL_Pool.poolTokens,
-                [SwapType.KLAY]:   WKLAY_Pool.poolTokens,
-                [SwapType.BTCB]:   BTCB_Pool.poolTokens,
-                [SwapType.FTM]:   WFTM_Pool.poolTokens,
+                [SwapType.USD]:     DFK_USDC_Pool.poolTokens,
+                [SwapType.JEWEL]:   DFK_JEWEL_Pool.poolTokens,
+                [SwapType.XJEWEL]:  XJEWEL_Pool.poolTokens,
+                [SwapType.KLAY]:    WKLAY_Pool.poolTokens,
+                [SwapType.BTCB]:    BTCB_Pool.poolTokens,
+                [SwapType.FTM]:     WFTM_Pool.poolTokens,
                 [SwapType.MATIC]:   WMATIC_Pool.poolTokens,
                 [SwapType.DFKTEARS]: DFKTEARS_Pool.poolTokens,
                 [SwapType.AVAX]:     WAVAX_Pool.poolTokens,
@@ -768,13 +771,13 @@ export namespace SwapPools {
                 [SwapType.USD]: USDPoolTokens(),
                 [SwapType.ETH]: [Tokens.ETH, Tokens.WETH],
                 [SwapType.WBTC]: [Tokens.WBTC],
-                [SwapType.KLAY]: WKLAY_Pool.poolTokens,
+                [SwapType.KLAY]: KLAY_Pool.poolTokens,
             },
             swappableSwapGroups: {
                 [SwapType.USD]: {poolTokens: USDPoolTokens(), swapType: SwapType.USD},
                 [SwapType.ETH]: {poolTokens: [Tokens.ETH, Tokens.WETH], swapType: SwapType.ETH},
                 [SwapType.WBTC]: {poolTokens: [Tokens.WBTC], swapType: SwapType.WBTC},
-                [SwapType.KLAY]: WKLAY_Pool
+                [SwapType.KLAY]: KLAY_Pool
             },
         },
     };

@@ -28,6 +28,12 @@ export namespace Networks {
         {chainId: ChainId.AVALANCHE, token: Tokens.AVWETH},
         {chainId: ChainId.MOONRIVER, token: Tokens.MOVR},
         {chainId: ChainId.MOONRIVER, token: Tokens.WMOVR},
+        {chainId: ChainId.KLAYTN, token: Tokens.KLAY},
+        {chainId: ChainId.KLAYTN, token: Tokens.WKLAY},
+        {chainId: ChainId.FANTOM, token: Tokens.FTM},
+        {chainId: ChainId.FANTOM, token: Tokens.WFTM},
+        {chainId: ChainId.POLYGON, token: Tokens.MATIC},
+        {chainId: ChainId.POLYGON, token: Tokens.WMATIC},
         {chainId: ChainId.DFK,       token: Tokens.GAS_JEWEL},
         {chainId: ChainId.DFK,       token: Tokens.JEWEL},
     ];
