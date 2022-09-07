@@ -751,6 +751,115 @@ export namespace Tokens {
         swapType: SwapType.SFI
     });
 
+
+    /**
+     * FTM is the native currency of the Fantom chain.
+     * See {@link FTM} for the "wrapped" ERC20 variant of this token.
+     */
+         export const FTM = new BaseToken({
+            name:     "Fantom",
+            symbol:   "FTM",
+            decimals: 18,
+            addresses: {
+                [ChainId.FANTOM]: "",
+            },
+            swapType:   SwapType.FTM,
+            isGasToken: true,
+        });
+    
+        export const WFTM  = new WrapperToken({
+            name:     "Wrapped MOVR",
+            symbol:   "wMOVR",
+            decimals: 18,
+            addresses: {
+                [ChainId.FANTOM]:  "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+                [ChainId.DFK]: "0x2Df041186C844F8a2e2b63F16145Bc6Ff7d23E25",
+            },
+            swapType:        SwapType.FTM,
+            underlyingToken: FTM,
+        });
+    
+    /**
+     * KLAY is the native currency of the Klaytn chain.
+     * See {@link KLAY} for the "wrapped" ERC20 variant of this token.
+     */
+         export const KLAY = new BaseToken({
+            name:     "Klaytn",
+            symbol:   "KLAY",
+            decimals: 18,
+            addresses: {
+                [ChainId.KLAYTN]: "",
+            },
+            swapType:   SwapType.KLAY,
+            isGasToken: true,
+        });
+    
+        export const WKLAY  = new WrapperToken({
+            name:     "Wrapped KLAY",
+            symbol:   "WKLAY",
+            decimals: 18,
+            addresses: {
+                [ChainId.KLAYTN]: "0x5819b6af194a78511c79c85ea68d2377a7e9335f",
+                [ChainId.DFK]: "0x97855Ba65aa7ed2F65Ed832a776537268158B78a",
+            },
+            swapType:        SwapType.KLAY,
+            underlyingToken: KLAY,
+        });
+    
+
+        /**
+     * MATIC is the native currency of the Polygon chain.
+     * See {@link MATIC} for the "wrapped" ERC20 variant of this token.
+     */
+           export const MATIC = new BaseToken({
+            name:     "Matic",
+            symbol:   "MATIC",
+            decimals: 18,
+            addresses: {
+                [ChainId.POLYGON]: "",
+            },
+            swapType:   SwapType.MATIC,
+            isGasToken: true,
+        });
+    
+        export const WMATIC  = new WrapperToken({
+            name:     "Wrapped MATIC",
+            symbol:   "WMATIC",
+            decimals: 18,
+            addresses: {
+                [ChainId.POLYGON]: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+                [ChainId.DFK]: "0xD17a41Cd199edF1093A9Be4404EaDe52Ec19698e",
+            },
+            swapType:        SwapType.MATIC,
+            underlyingToken: MATIC,
+        });
+    
+
+        export const BTCB = new BaseToken({
+            name: "Bitcoin",
+            symbol: "BTC.b",
+            decimals: 8,
+            addresses: {
+                [ChainId.DFK]:       "0x7516EB8B8Edfa420f540a162335eACF3ea05a247",
+                [ChainId.AVALANCHE]: "0x152b9d0FdC40C096757F570A51E494bd4b943E50"
+            },
+            swapType: SwapType.BTCB
+        });
+
+        export const LINK = new BaseToken({
+            name: "ChainLink",
+            symbol: "LINK",
+            decimals: 18,
+            addresses: {
+                [ChainId.ETH]: "0x514910771af9ca656af840dff83e8264ecf986ca",
+                [ChainId.DFK]: ""
+            },
+            swapType: SwapType.LINK
+        });
+
+
+        
+
     export const mintBurnTokens: Token[] = [
         NUSD,      SYN,        NETH,
         HIGH,      DOG,        JUMP,

@@ -685,7 +685,6 @@ export namespace Bridge {
                     Tokens.DAI.id,
                     Tokens.WBTC.id
                 ])
-                easyDepositETH.push(Tokens.WETH.id)
             }
 
             let {castArgs, isEasy, txn} = this.checkEasyArgs(args, this.l1BridgeZapEth, easyDeposits, easyRedeems, easyDepositETH);
@@ -804,7 +803,8 @@ export namespace Bridge {
                     Tokens.SYN.id,      Tokens.HIGH.id,    Tokens.DOG.id,
                     Tokens.FRAX.id,     Tokens.UST.id,     Tokens.GOHM.id,
                     Tokens.NEWO.id,     Tokens.SDT.id,     Tokens.LUNA.id,
-                    Tokens.USDB.id,     Tokens.H20.id,     Tokens.SFI.id
+                    Tokens.USDB.id,     Tokens.H20.id,     Tokens.SFI.id, 
+                    Tokens.BTCB.id
                 ];
 
             // use `L2BridgeZap.redeem()`
@@ -818,6 +818,16 @@ export namespace Bridge {
                 if (chainIdTo === ChainId.ETH) {
                     easyRedeems.push(Tokens.WETH.id)
                 }
+
+                easyDepositETH.push(Tokens.WKLAY.id)
+            }
+
+            if (this.chainId === ChainId.POLYGON) {
+                easyDepositETH.push(Tokens.WMATIC.id)
+            }
+
+            if (this.chainId === ChainId.FANTOM) {
+                easyDepositETH.push(Tokens.WFTM.id)
             }
 
             BridgeUtils.DepositIfChainTokens.forEach((depositIfChainArgs) => {
@@ -1210,6 +1220,15 @@ export namespace Bridge {
                 case SwapType.MOVR:
                     bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.MOVR, Tokens.WMOVR);
                     break;
+                case SwapType.KLAY:
+                    bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.KLAY, Tokens.WKLAY);
+                    break;
+                case SwapType.MATIC:
+                    bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.MATIC, Tokens.WMATIC);
+                    break;
+                case SwapType.FTM:
+                    bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.FTM, Tokens.WFTM);
+                    break;    
                 case SwapType.JEWEL:
                     bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.GAS_JEWEL, Tokens.JEWEL);
                     break;

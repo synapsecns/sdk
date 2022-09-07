@@ -39,7 +39,10 @@ export namespace BridgeUtils {
         ChainId.BOBA,
         ChainId.ARBITRUM,
         ChainId.AVALANCHE,
-        ChainId.DFK
+        ChainId.DFK,       
+        ChainId.KLAYTN,
+        ChainId.POLYGON,
+        ChainId.FANTOM
     ];
 
     export const isL2ETHChain          = (chainId: number): boolean => L2_ETH_CHAINS.includes(chainId);
@@ -92,9 +95,33 @@ export namespace BridgeUtils {
             depositEth:     true
         },
         {
+            chainId:        ChainId.AVALANCHE,
+            tokens:         [Tokens.BTCB],
+            redeemChainIds: [ChainId.DFK],
+            depositEth:     false
+        },
+        {
             chainId:         ChainId.MOONRIVER,
             tokens:         [Tokens.MOVR, Tokens.WMOVR],
             redeemChainIds: [ChainId.MOONBEAM],
+            depositEth:      true,
+        },
+        {
+            chainId:         ChainId.FANTOM,
+            tokens:         [Tokens.FTM, Tokens.WFTM],
+            redeemChainIds: [ChainId.DFK],
+            depositEth:      true,
+        },
+        {
+            chainId:         ChainId.POLYGON,
+            tokens:         [Tokens.MATIC, Tokens.WMATIC],
+            redeemChainIds: [ChainId.DFK],
+            depositEth:      true,
+        },
+        {
+            chainId:         ChainId.KLAYTN,
+            tokens:         [Tokens.KLAY, Tokens.WKLAY],
+            redeemChainIds: [ChainId.DFK],
             depositEth:      true,
         },
         {

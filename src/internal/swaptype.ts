@@ -14,6 +14,11 @@ export const SwapType = {
     SOLAR:    "SOLAR",
     AVAX:     "AVAX",
     MOVR:     "MOVR",
+    FTM:      "FTM",
+    KLAY:     "KLAY",
+    MATIC:    "MATIC",
+    BTCB:     "BTCB",
+    LINK:     "LINK",
     UST:      "UST",
     NEWO:     "NEWO",
     SDT:      "SDT",
@@ -39,5 +44,6 @@ export const mintBurnSwapTypes: SwapType[] = [
     SwapType.SDT,    SwapType.LUNA,    SwapType.USDB,
     SwapType.JEWEL,  SwapType.XJEWEL,  SwapType.VSTA,
     SwapType.H20,    SwapType.SFI,     SwapType.WBTC,
-    SwapType.SFI
+    SwapType.SFI,    SwapType.BTCB,    SwapType.KLAY,
+    SwapType.MATIC,  SwapType.FTM
 ];
