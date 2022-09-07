@@ -11,7 +11,8 @@ import {TokenSwap} from "@tokenswap";
 
 import {
     rejectPromise,
-    executePopulatedTransaction
+    executePopulatedTransaction,
+    fixWeiValue
 } from "@common/utils";
 
 import {
@@ -547,7 +548,11 @@ export namespace Bridge {
             if (amountFrom.isZero()) {
                 amountToReceive_from_prom = Promise.resolve(Zero);
             } else if (ethToEth || Tokens.isMintBurnToken(tokenFrom) || tokenFrom.isWrapperToken || isSpecialFrom || this.chainId === ChainId.KLAYTN) {
-                amountToReceive_from_prom = Promise.resolve(amountFromFixedDecimals);
+                if (tokenTo.decimals(chainIdTo) != 18) {
+                    amountToReceive_from_prom = Promise.resolve(fixWeiValue(amountFromFixedDecimals, tokenTo.decimals(chainIdTo)))
+                } else {
+                    amountToReceive_from_prom = Promise.resolve(amountFromFixedDecimals);
+                }
             } else if (this.chainId === ChainId.ETH) {
                 let liquidityAmounts = fromChainTokens.map((t) =>
                     tokenFrom.isEqual(t) ? amountFrom : Zero
