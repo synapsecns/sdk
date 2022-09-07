@@ -768,8 +768,8 @@ export namespace Tokens {
         });
     
         export const WFTM  = new WrapperToken({
-            name:     "Wrapped MOVR",
-            symbol:   "wMOVR",
+            name:     "Wrapped Fantom",
+            symbol:   "WFTM",
             decimals: 18,
             addresses: {
                 [ChainId.FANTOM]:  "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
