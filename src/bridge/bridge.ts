@@ -614,7 +614,8 @@ export namespace Bridge {
             let amountToReceive: BigNumber;
             try { /* c8 ignore start */
                 amountToReceive = await Promise.resolve(amountToReceive_to_prom)
-                amountToReceive = BigNumber.from(formatUnits(amountToReceive, tokenTo.decimals(chainIdTo)))
+                let decimalAdjustment = BigNumber.from(10).pow(18 - tokenTo.decimals(chainIdTo))
+                amountToReceive = amountToReceive.div(decimalAdjustment)
             } catch (err) {
                 return rejectPromise(err)
             } /* c8 ignore stop */
