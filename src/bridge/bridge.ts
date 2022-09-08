@@ -806,8 +806,7 @@ export namespace Bridge {
                     Tokens.SYN.id,      Tokens.HIGH.id,    Tokens.DOG.id,
                     Tokens.FRAX.id,     Tokens.UST.id,     Tokens.GOHM.id,
                     Tokens.NEWO.id,     Tokens.SDT.id,     Tokens.LUNA.id,
-                    Tokens.USDB.id,     Tokens.H20.id,     Tokens.SFI.id, 
-                    Tokens.BTCB.id
+                    Tokens.USDB.id,     Tokens.H20.id,     Tokens.SFI.id
                 ];
 
             // use `L2BridgeZap.redeem()`
