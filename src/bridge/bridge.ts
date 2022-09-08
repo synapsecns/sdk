@@ -547,12 +547,8 @@ export namespace Bridge {
 
             if (amountFrom.isZero()) {
                 amountToReceive_from_prom = Promise.resolve(Zero);
-            } else if (ethToEth || Tokens.isMintBurnToken(tokenFrom) || tokenFrom.isWrapperToken || isSpecialFrom || this.chainId === ChainId.KLAYTN) {
-                if (tokenTo.decimals(chainIdTo) != 18) {
-                    amountToReceive_from_prom = Promise.resolve(fixWeiValue(amountFromFixedDecimals, tokenTo.decimals(chainIdTo)))
-                } else {
-                    amountToReceive_from_prom = Promise.resolve(amountFromFixedDecimals);
-                }
+            } else if (ethToEth || Tokens.isMintBurnToken(tokenFrom) || tokenFrom.isWrapperToken || isSpecialFrom || this.chainId === ChainId.KLAYTN) { 
+                amountToReceive_from_prom = Promise.resolve(amountFromFixedDecimals);
             } else if (this.chainId === ChainId.ETH) {
                 let liquidityAmounts = fromChainTokens.map((t) =>
                     tokenFrom.isEqual(t) ? amountFrom : Zero
@@ -618,6 +614,7 @@ export namespace Bridge {
             let amountToReceive: BigNumber;
             try { /* c8 ignore start */
                 amountToReceive = await Promise.resolve(amountToReceive_to_prom)
+                amountToReceive = fixWeiValue(amountToReceive, tokenTo.decimals(chainIdTo))
             } catch (err) {
                 return rejectPromise(err)
             } /* c8 ignore stop */
