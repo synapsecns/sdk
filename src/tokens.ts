@@ -461,6 +461,7 @@ export namespace Tokens {
         decimals: 18,
         addresses: {
             [ChainId.AVALANCHE]: "0x997Ddaa07d716995DE90577C123Db411584E5E46",
+            [ChainId.KLAYTN]:    "0x30C103f8f5A3A732DFe2dCE1Cc9446f545527b43",
             [ChainId.DFK]:       "0xCCb93dABD71c8Dad03Fc4CE5559dC3D89F67a260",
             [ChainId.HARMONY]:   "0x72Cb10C6bfA5624dD07Ef608027E366bd690048F"
         },
