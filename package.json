@@ -34,7 +34,7 @@
     "posttest": "yarn run react:remove",
     "  -----------": "",
     "prebuild": "yarn prepare && rm -rf ./dist",
-    "build": "tsc --project tsconfig.build.json && docs",
+    "build": "tsc --project tsconfig.build.json",
     "prepublishOnly": "yarn build",
     "   -----------": "",
     "preabigen": "scripts/generate abigen prepare",
