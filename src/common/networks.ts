@@ -71,7 +71,7 @@ export namespace Networks {
             this.supportsEIP1559 = chainSupportsEIP1559(args.chainId);
 
             this.chainCurrencyCoingeckoId = args.chainCurrencyCoingeckoId;
-
+            
             this.tokens         = SwapPools.getAllSwappableTokensForNetwork(this.chainId);
             this.tokenAddresses = this.tokens.map((t) => t.address(this.chainId));
 

@@ -550,7 +550,8 @@ export namespace SwapPools {
         WMATIC_Pool     = makeSingleTokenPool(Tokens.WMATIC),
         MATIC_Pool     = makeSingleTokenPool(Tokens.MATIC),
         BTCB_Pool       = makeSingleTokenPool(Tokens.BTCB),
-        WBTC_Pool       = makeSingleTokenPool(Tokens.WBTC);
+        WBTC_Pool       = makeSingleTokenPool(Tokens.WBTC),
+        JEWEL_POOL      = makeSingleTokenPool(Tokens.JEWEL);
 
     const
         AVAX_JEWEL_Pool:    LPToken = {poolTokens: [Tokens.JEWEL, Tokens.MULTIJEWEL], swapType: SwapType.JEWEL},
@@ -772,11 +773,13 @@ export namespace SwapPools {
                 [SwapType.ETH]: [Tokens.ETH, Tokens.WETH],
                 [SwapType.WBTC]: [Tokens.WBTC],
                 [SwapType.KLAY]: KLAY_Pool.poolTokens,
+                [SwapType.JEWEL]: [Tokens.JEWEL],
             },
             swappableSwapGroups: {
                 [SwapType.ETH]: {poolTokens: [Tokens.ETH, Tokens.WETH], swapType: SwapType.ETH},
                 [SwapType.WBTC]: {poolTokens: [Tokens.WBTC], swapType: SwapType.WBTC},
-                [SwapType.KLAY]: KLAY_Pool
+                [SwapType.KLAY]: KLAY_Pool,
+                [SwapType.JEWEL]: JEWEL_POOL,
             },
         },
     };
