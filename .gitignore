@@ -14,3 +14,6 @@ yarn-error.log
 keys/
 
 coverage/
+
+# TODO: typegen->github pages
+docs/
