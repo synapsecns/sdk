@@ -1,0 +1,672 @@
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>SynapseBridge | @synapseprotocol/sdk</title><meta name="description" content="Documentation for @synapseprotocol/sdk"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script async src="../assets/search.js" id="search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container">
+<div class="table-cell" id="tsd-search" data-base="..">
+<div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
+<div class="field">
+<div id="tsd-toolbar-links"></div></div>
+<ul class="results">
+<li class="state loading">Preparing search index...</li>
+<li class="state failure">The search index is not available</li></ul><a href="../index.html" class="title">@synapseprotocol/sdk</a></div>
+<div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="7" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="11" width="14" height="2" fill="var(--color-text)"></rect></svg></a></div></div></header>
+<div class="container container-main">
+<div class="col-8 col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb">
+<li><a href="../modules.html">@synapseprotocol/sdk</a></li>
+<li><a href="../modules/Bridge.html">Bridge</a></li>
+<li><a href="Bridge.SynapseBridge.html">SynapseBridge</a></li></ul>
+<h1>Class SynapseBridge</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>SynapseBridge is a wrapper around any Synapse Bridge contract which exists on chains supported by the Synapse Protocol.</p>
+</div></section>
+<section class="tsd-panel tsd-hierarchy">
+<h4>Hierarchy</h4>
+<ul class="tsd-hierarchy">
+<li><span class="target">SynapseBridge</span></li></ul></section><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L142">src/bridge/bridge.ts:142</a></li></ul></aside>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
+<h5 class="tsd-index-heading uppercase" role="button" aria-expanded="false" tabIndex=0><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 5.50969L8 11.6609L14.5 5.50969L12.5466 3.66086L8 7.96494L3.45341 3.66086L1.5 5.50969Z" fill="var(--color-text)"></path></svg> Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Constructors</h3>
+<div class="tsd-index-list"><a href="Bridge.SynapseBridge.html#constructor" class="tsd-index-link tsd-kind-constructor tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#4D7FFF" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-512-path"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)" id="icon-512-text"></path></svg><span>constructor</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Properties</h3>
+<div class="tsd-index-list"><a href="Bridge.SynapseBridge.html#bridgeAddress" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-1024-path"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)" id="icon-1024-text"></path></svg><span>bridge<wbr/>Address</span></a>
+<a href="Bridge.SynapseBridge.html#bridgeConfig" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>bridge<wbr/>Config</span></a>
+<a href="Bridge.SynapseBridge.html#bridgeInstance" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>bridge<wbr/>Instance</span></a>
+<a href="Bridge.SynapseBridge.html#chainId" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>chain<wbr/>Id</span></a>
+<a href="Bridge.SynapseBridge.html#isL2ETHChain" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>is<wbr/>L2ETHChain</span></a>
+<a href="Bridge.SynapseBridge.html#l1BridgeZapEth" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>l1<wbr/>Bridge<wbr/>Zap<wbr/>Eth</span></a>
+<a href="Bridge.SynapseBridge.html#network" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-protected"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>network</span></a>
+<a href="Bridge.SynapseBridge.html#provider" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-protected"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>provider</span></a>
+<a href="Bridge.SynapseBridge.html#zapBridge" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>zap<wbr/>Bridge</span></a>
+<a href="Bridge.SynapseBridge.html#zapBridgeAddress" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>zap<wbr/>Bridge<wbr/>Address</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Accessors</h3>
+<div class="tsd-index-list"><a href="Bridge.SynapseBridge.html#l1BridgeZap" class="tsd-index-link tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#FF4D4D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-262144-path"></rect><path d="M8.85 16L11.13 7.24H12.582L14.85 16H13.758L13.182 13.672H10.53L9.954 16H8.85ZM10.746 12.76H12.954L12.282 10.06C12.154 9.548 12.054 9.12 11.982 8.776C11.91 8.432 11.866 8.208 11.85 8.104C11.834 8.208 11.79 8.432 11.718 8.776C11.646 9.12 11.546 9.544 11.418 10.048L10.746 12.76Z" fill="var(--color-text)" id="icon-262144-text"></path></svg><span>l1<wbr/>Bridge<wbr/>Zap</span></a>
+<a href="Bridge.SynapseBridge.html#l2BridgeZap" class="tsd-index-link tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg><span>l2<wbr/>Bridge<wbr/>Zap</span></a>
+<a href="Bridge.SynapseBridge.html#requiredConfirmations" class="tsd-index-link tsd-kind-accessor tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg><span>required<wbr/>Confirmations</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Methods</h3>
+<div class="tsd-index-list"><a href="Bridge.SynapseBridge.html#WETH_ADDRESS" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-2048-path"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)" id="icon-2048-text"></path></svg><span>WETH_<wbr/>ADDRESS</span></a>
+<a href="Bridge.SynapseBridge.html#bridgeVersion" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>bridge<wbr/>Version</span></a>
+<a href="Bridge.SynapseBridge.html#buildApproveTransaction" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>build<wbr/>Approve<wbr/>Transaction</span></a>
+<a href="Bridge.SynapseBridge.html#buildBridgeTokenTransaction" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>build<wbr/>Bridge<wbr/>Token<wbr/>Transaction</span></a>
+<a href="Bridge.SynapseBridge.html#buildERC20ApproveArgs" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>buildERC20<wbr/>Approve<wbr/>Args</span></a>
+<a href="Bridge.SynapseBridge.html#buildETHMainnetBridgeTxn" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>buildETHMainnet<wbr/>Bridge<wbr/>Txn</span></a>
+<a href="Bridge.SynapseBridge.html#buildL2BridgeTxn" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>build<wbr/>L2<wbr/>Bridge<wbr/>Txn</span></a>
+<a href="Bridge.SynapseBridge.html#calculateBridgeRate" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>calculate<wbr/>Bridge<wbr/>Rate</span></a>
+<a href="Bridge.SynapseBridge.html#checkCanBridge" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>check<wbr/>Can<wbr/>Bridge</span></a>
+<a href="Bridge.SynapseBridge.html#checkERC20Balance" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>checkERC20<wbr/>Balance</span></a>
+<a href="Bridge.SynapseBridge.html#checkEasyArgs" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>check<wbr/>Easy<wbr/>Args</span></a>
+<a href="Bridge.SynapseBridge.html#checkGasTokenBalance" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>check<wbr/>Gas<wbr/>Token<wbr/>Balance</span></a>
+<a href="Bridge.SynapseBridge.html#checkNeedsApprove" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>check<wbr/>Needs<wbr/>Approve</span></a>
+<a href="Bridge.SynapseBridge.html#checkSwapSupported" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>check<wbr/>Swap<wbr/>Supported</span></a>
+<a href="Bridge.SynapseBridge.html#estimateBridgeTokenOutput" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>estimate<wbr/>Bridge<wbr/>Token<wbr/>Output</span></a>
+<a href="Bridge.SynapseBridge.html#executeApproveTransaction" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>execute<wbr/>Approve<wbr/>Transaction</span></a>
+<a href="Bridge.SynapseBridge.html#executeBridgeTokenTransaction" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>execute<wbr/>Bridge<wbr/>Token<wbr/>Transaction</span></a>
+<a href="Bridge.SynapseBridge.html#getAllowanceForAddress" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>get<wbr/>Allowance<wbr/>For<wbr/>Address</span></a>
+<a href="Bridge.SynapseBridge.html#kappaExists" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>kappa<wbr/>Exists</span></a>
+<a href="Bridge.SynapseBridge.html#makeBridgeTokenArgs" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>make<wbr/>Bridge<wbr/>Token<wbr/>Args</span></a>
+<a href="Bridge.SynapseBridge.html#resolveApproveFunc" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>resolve<wbr/>Approve<wbr/>Func</span></a>
+<a href="Bridge.SynapseBridge.html#resolveBalanceFunc" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>resolve<wbr/>Balance<wbr/>Func</span></a>
+<a href="Bridge.SynapseBridge.html#swapSupported" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>swap<wbr/>Supported</span></a>
+</div></section></div></details></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Constructors</h2>
+<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class"><a id="constructor" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="constructor.new_SynapseBridge">new <wbr/>Synapse<wbr/>Bridge<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span><br/><span>    </span>network<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><a href="Networks.Network.html" class="tsd-signature-type" data-tsd-kind="Class">Network</a><span class="tsd-signature-symbol">; </span><br/><span>    </span>provider<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Provider</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="Bridge.SynapseBridge.html" class="tsd-signature-type" data-tsd-kind="Class">SynapseBridge</a><a href="#constructor.new_SynapseBridge" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <span class="tsd-signature-symbol">{ </span><br/><span>    </span>network<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><a href="Networks.Network.html" class="tsd-signature-type" data-tsd-kind="Class">Network</a><span class="tsd-signature-symbol">; </span><br/><span>    </span>provider<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Provider</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></h5>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5>network<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><a href="Networks.Network.html" class="tsd-signature-type" data-tsd-kind="Class">Network</a></h5></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> provider<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Provider</span></h5></li></ul></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="Bridge.SynapseBridge.html" class="tsd-signature-type" data-tsd-kind="Class">SynapseBridge</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L157">src/bridge/bridge.ts:157</a></li></ul></aside></li></ul></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Properties</h2>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="bridgeAddress" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>bridge<wbr/>Address</span><a href="#bridgeAddress" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">bridge<wbr/>Address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L147">src/bridge/bridge.ts:147</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="bridgeConfig" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>bridge<wbr/>Config</span><a href="#bridgeConfig" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">bridge<wbr/>Config<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">BridgeConfig</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L153">src/bridge/bridge.ts:153</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="bridgeInstance" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>bridge<wbr/>Instance</span><a href="#bridgeInstance" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">bridge<wbr/>Instance<span class="tsd-signature-symbol">:</span> <a href="../interfaces/SynapseBridgeContract.html" class="tsd-signature-type" data-tsd-kind="Interface">SynapseBridgeContract</a></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L150">src/bridge/bridge.ts:150</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="chainId" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>chain<wbr/>Id</span><a href="#chainId" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">chain<wbr/>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L143">src/bridge/bridge.ts:143</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="isL2ETHChain" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>is<wbr/>L2ETHChain</span><a href="#isL2ETHChain" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">is<wbr/>L2ETHChain<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L155">src/bridge/bridge.ts:155</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="l1BridgeZapEth" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>l1<wbr/>Bridge<wbr/>Zap<wbr/>Eth</span><a href="#l1BridgeZapEth" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">l1<wbr/>Bridge<wbr/>Zap<wbr/>Eth<span class="tsd-signature-symbol">:</span> <a href="../interfaces/L1BridgeZapContract.html" class="tsd-signature-type" data-tsd-kind="Interface">L1BridgeZapContract</a><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L152">src/bridge/bridge.ts:152</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a id="network" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>network</span><a href="#network" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">network<span class="tsd-signature-symbol">:</span> <a href="Networks.Network.html" class="tsd-signature-type" data-tsd-kind="Class">Network</a></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L144">src/bridge/bridge.ts:144</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a id="provider" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>provider</span><a href="#provider" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">provider<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Provider</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L145">src/bridge/bridge.ts:145</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="zapBridge" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>zap<wbr/>Bridge</span><a href="#zapBridge" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">zap<wbr/>Bridge<span class="tsd-signature-symbol">:</span> <a href="../types/GenericZapBridgeContract.html" class="tsd-signature-type" data-tsd-kind="Type alias">GenericZapBridgeContract</a></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L151">src/bridge/bridge.ts:151</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="zapBridgeAddress" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>zap<wbr/>Bridge<wbr/>Address</span><a href="#zapBridgeAddress" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">zap<wbr/>Bridge<wbr/>Address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L148">src/bridge/bridge.ts:148</a></li></ul></aside></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Accessors</h2>
+<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><a id="l1BridgeZap" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>l1<wbr/>Bridge<wbr/>Zap</span><a href="#l1BridgeZap" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature" id="l1BridgeZap.l1BridgeZap-1"><span class="tsd-signature-symbol">get</span> l1BridgeZap<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/L1BridgeZapContract.html" class="tsd-signature-type" data-tsd-kind="Interface">L1BridgeZapContract</a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/L1BridgeZapContract.html" class="tsd-signature-type" data-tsd-kind="Interface">L1BridgeZapContract</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L181">src/bridge/bridge.ts:181</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><a id="l2BridgeZap" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>l2<wbr/>Bridge<wbr/>Zap</span><a href="#l2BridgeZap" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature" id="l2BridgeZap.l2BridgeZap-1"><span class="tsd-signature-symbol">get</span> l2BridgeZap<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/L2BridgeZapContract.html" class="tsd-signature-type" data-tsd-kind="Interface">L2BridgeZapContract</a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/L2BridgeZapContract.html" class="tsd-signature-type" data-tsd-kind="Interface">L2BridgeZapContract</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L185">src/bridge/bridge.ts:185</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class"><a id="requiredConfirmations" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>required<wbr/>Confirmations</span><a href="#requiredConfirmations" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+<li class="tsd-signature" id="requiredConfirmations.requiredConfirmations-1"><span class="tsd-signature-symbol">get</span> requiredConfirmations<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L201">src/bridge/bridge.ts:201</a></li></ul></aside></li></ul></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Methods</h2>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="WETH_ADDRESS" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>WETH_<wbr/>ADDRESS</span><a href="#WETH_ADDRESS" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="WETH_ADDRESS.WETH_ADDRESS-1">WETH_<wbr/>ADDRESS<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><a href="#WETH_ADDRESS.WETH_ADDRESS-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L193">src/bridge/bridge.ts:193</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="bridgeVersion" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>bridge<wbr/>Version</span><a href="#bridgeVersion" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="bridgeVersion.bridgeVersion-1">bridge<wbr/>Version<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">BigNumber</span><span class="tsd-signature-symbol">&gt;</span><a href="#bridgeVersion.bridgeVersion-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">BigNumber</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L189">src/bridge/bridge.ts:189</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="buildApproveTransaction" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>build<wbr/>Approve<wbr/>Transaction</span><a href="#buildApproveTransaction" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="buildApproveTransaction.buildApproveTransaction-1">build<wbr/>Approve<wbr/>Transaction<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span><br/><span>    </span>amount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BigNumberish</span><span class="tsd-signature-symbol">; </span><br/><span>    </span>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span>, gasOptions<span class="tsd-signature-symbol">?: </span><a href="../interfaces/GasOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">GasOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PopulatedTransaction</span><span class="tsd-signature-symbol">&gt;</span><a href="#buildApproveTransaction.buildApproveTransaction-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Builds an ethers PopulatedTransaction instance for an ERC20 Approve call,
+approving some amount of a given token to be spent by the Synapse Bridge on its chain.
+The returned PopulatedTransaction must then be passed to the user via Web3 or some other
+framework so they can ultimately send the transaction.
+Should ALWAYS be called before performing any bridge transactions to ensure they don&#39;t fail.</p>
+
+<h3>Returns</h3><p>Populated transaction instance which can be sent via ones choice
+of web3/ethers/etc.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <span class="tsd-signature-symbol">{ </span><br/><span>    </span>amount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BigNumberish</span><span class="tsd-signature-symbol">; </span><br/><span>    </span>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></h5>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> amount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BigNumberish</span></h5>
+<div class="tsd-comment tsd-typography"><p>Optional, a specific amount of args.token to approve. By default, this function
+builds an Approve call using an &quot;infinite&quot; approval amount.</p>
+</div></li>
+<li class="tsd-parameter">
+<h5>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a></h5>
+<div class="tsd-comment tsd-typography"><p><a href="../interfaces/Token.html">Token</a> instance or valid on-chain address of the token the user will be sending
+to the bridge on the source chain.</p>
+</div></li></ul></li>
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> gasOptions: <a href="../interfaces/GasOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">GasOptions</a></h5>
+<div class="tsd-comment tsd-typography"><p>Optional gas price/fee options for the populated transaction.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PopulatedTransaction</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L329">src/bridge/bridge.ts:329</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="buildBridgeTokenTransaction" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>build<wbr/>Bridge<wbr/>Token<wbr/>Transaction</span><a href="#buildBridgeTokenTransaction" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="buildBridgeTokenTransaction.buildBridgeTokenTransaction-1">build<wbr/>Bridge<wbr/>Token<wbr/>Transaction<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><a href="../interfaces/Bridge.BridgeTransactionParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeTransactionParams</a>, gasOptions<span class="tsd-signature-symbol">?: </span><a href="../interfaces/GasOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">GasOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PopulatedTransaction</span><span class="tsd-signature-symbol">&gt;</span><a href="#buildBridgeTokenTransaction.buildBridgeTokenTransaction-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns a populated transaction for initiating a token bridge between this Bridge (the source chain) and the bridge contract on the destination chain.
+Note that this function <strong>does not</strong> send a signed transaction.</p>
+
+<h3>Returns</h3><p>Populated transaction instance which can be sent via ones choice
+of web3/ethers/etc.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <a href="../interfaces/Bridge.BridgeTransactionParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeTransactionParams</a></h5>
+<div class="tsd-comment tsd-typography"><p>Parameters for the bridge transaction</p>
+</div></li>
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> gasOptions: <a href="../interfaces/GasOptions.html" class="tsd-signature-type" data-tsd-kind="Interface">GasOptions</a></h5>
+<div class="tsd-comment tsd-typography"><p>Optional gas price/fee options for the populated transaction.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PopulatedTransaction</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L246">src/bridge/bridge.ts:246</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="buildERC20ApproveArgs" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>buildERC20<wbr/>Approve<wbr/>Args</span><a href="#buildERC20ApproveArgs" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="buildERC20ApproveArgs.buildERC20ApproveArgs-1">buildERC20<wbr/>Approve<wbr/>Args<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span><br/><span>    </span>amount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BigNumberish</span><span class="tsd-signature-symbol">; </span><br/><span>    </span>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">ApproveArgs</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span><a href="#buildERC20ApproveArgs.buildERC20ApproveArgs-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <span class="tsd-signature-symbol">{ </span><br/><span>    </span>amount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BigNumberish</span><span class="tsd-signature-symbol">; </span><br/><span>    </span>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></h5>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> amount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BigNumberish</span></h5></li>
+<li class="tsd-parameter">
+<h5>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a></h5></li></ul></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">ApproveArgs</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L477">src/bridge/bridge.ts:477</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="buildETHMainnetBridgeTxn" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>buildETHMainnet<wbr/>Bridge<wbr/>Txn</span><a href="#buildETHMainnetBridgeTxn" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="buildETHMainnetBridgeTxn.buildETHMainnetBridgeTxn-1">buildETHMainnet<wbr/>Bridge<wbr/>Txn<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><a href="../interfaces/Bridge.BridgeTransactionParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeTransactionParams</a>, tokenArgs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BridgeTokenArgs</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PopulatedTransaction</span><span class="tsd-signature-symbol">&gt;</span><a href="#buildETHMainnetBridgeTxn.buildETHMainnetBridgeTxn-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <a href="../interfaces/Bridge.BridgeTransactionParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeTransactionParams</a></h5></li>
+<li>
+<h5>tokenArgs: <span class="tsd-signature-type">BridgeTokenArgs</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PopulatedTransaction</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L663">src/bridge/bridge.ts:663</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="buildL2BridgeTxn" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>build<wbr/>L2<wbr/>Bridge<wbr/>Txn</span><a href="#buildL2BridgeTxn" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="buildL2BridgeTxn.buildL2BridgeTxn-1">build<wbr/>L2<wbr/>Bridge<wbr/>Txn<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><a href="../interfaces/Bridge.BridgeTransactionParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeTransactionParams</a>, tokenArgs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BridgeTokenArgs</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PopulatedTransaction</span><span class="tsd-signature-symbol">&gt;</span><a href="#buildL2BridgeTxn.buildL2BridgeTxn-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <a href="../interfaces/Bridge.BridgeTransactionParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeTransactionParams</a></h5></li>
+<li>
+<h5>tokenArgs: <span class="tsd-signature-type">BridgeTokenArgs</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PopulatedTransaction</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L772">src/bridge/bridge.ts:772</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="calculateBridgeRate" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>calculate<wbr/>Bridge<wbr/>Rate</span><a href="#calculateBridgeRate" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="calculateBridgeRate.calculateBridgeRate-1">calculate<wbr/>Bridge<wbr/>Rate<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><a href="../interfaces/Bridge.BridgeParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.BridgeOutputEstimate.html" class="tsd-signature-type" data-tsd-kind="Type alias">BridgeOutputEstimate</a><span class="tsd-signature-symbol">&gt;</span><a href="#calculateBridgeRate.calculateBridgeRate-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <a href="../interfaces/Bridge.BridgeParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeParams</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.BridgeOutputEstimate.html" class="tsd-signature-type" data-tsd-kind="Type alias">BridgeOutputEstimate</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L512">src/bridge/bridge.ts:512</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="checkCanBridge" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>check<wbr/>Can<wbr/>Bridge</span><a href="#checkCanBridge" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="checkCanBridge.checkCanBridge-1">check<wbr/>Can<wbr/>Bridge<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">CheckCanBridgeParams</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.CanBridgeResult.html" class="tsd-signature-type" data-tsd-kind="Type alias">CanBridgeResult</a><span class="tsd-signature-symbol">&gt;</span><a href="#checkCanBridge.checkCanBridge-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <span class="tsd-signature-type">CheckCanBridgeParams</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.CanBridgeResult.html" class="tsd-signature-type" data-tsd-kind="Type alias">CanBridgeResult</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L437">src/bridge/bridge.ts:437</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="checkERC20Balance" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>checkERC20<wbr/>Balance</span><a href="#checkERC20Balance" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="checkERC20Balance.checkERC20Balance-1">checkERC20<wbr/>Balance<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">CanBridgeParams</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.CanBridgeResult.html" class="tsd-signature-type" data-tsd-kind="Type alias">CanBridgeResult</a><span class="tsd-signature-symbol">&gt;</span><a href="#checkERC20Balance.checkERC20Balance-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <span class="tsd-signature-type">CanBridgeParams</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.CanBridgeResult.html" class="tsd-signature-type" data-tsd-kind="Type alias">CanBridgeResult</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L465">src/bridge/bridge.ts:465</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="checkEasyArgs" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>check<wbr/>Easy<wbr/>Args</span><a href="#checkEasyArgs" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="checkEasyArgs.checkEasyArgs-1">check<wbr/>Easy<wbr/>Args<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><a href="../interfaces/Bridge.BridgeTransactionParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeTransactionParams</a>, zapBridge<span class="tsd-signature-symbol">: </span><a href="../types/GenericZapBridgeContract.html" class="tsd-signature-type" data-tsd-kind="Type alias">GenericZapBridgeContract</a>, easyDeposits<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">symbol</span><span class="tsd-signature-symbol">[]</span>, easyRedeems<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">symbol</span><span class="tsd-signature-symbol">[]</span>, easyDepositETH<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">symbol</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">EasyArgsCheck</span><a href="#checkEasyArgs.checkEasyArgs-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <a href="../interfaces/Bridge.BridgeTransactionParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeTransactionParams</a></h5></li>
+<li>
+<h5>zapBridge: <a href="../types/GenericZapBridgeContract.html" class="tsd-signature-type" data-tsd-kind="Type alias">GenericZapBridgeContract</a></h5></li>
+<li>
+<h5>easyDeposits: <span class="tsd-signature-type">symbol</span><span class="tsd-signature-symbol">[]</span></h5></li>
+<li>
+<h5>easyRedeems: <span class="tsd-signature-type">symbol</span><span class="tsd-signature-symbol">[]</span></h5></li>
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> easyDepositETH: <span class="tsd-signature-type">symbol</span><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">EasyArgsCheck</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L626">src/bridge/bridge.ts:626</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="checkGasTokenBalance" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>check<wbr/>Gas<wbr/>Token<wbr/>Balance</span><a href="#checkGasTokenBalance" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="checkGasTokenBalance.checkGasTokenBalance-1">check<wbr/>Gas<wbr/>Token<wbr/>Balance<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">CanBridgeParams</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.CanBridgeResult.html" class="tsd-signature-type" data-tsd-kind="Type alias">CanBridgeResult</a><span class="tsd-signature-symbol">&gt;</span><a href="#checkGasTokenBalance.checkGasTokenBalance-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <span class="tsd-signature-type">CanBridgeParams</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.CanBridgeResult.html" class="tsd-signature-type" data-tsd-kind="Type alias">CanBridgeResult</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L425">src/bridge/bridge.ts:425</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="checkNeedsApprove" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>check<wbr/>Needs<wbr/>Approve</span><a href="#checkNeedsApprove" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="checkNeedsApprove.checkNeedsApprove-1">check<wbr/>Needs<wbr/>Approve<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">CheckCanBridgeParams</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">NeedsTokenApproveResult</span><span class="tsd-signature-symbol">&gt;</span><a href="#checkNeedsApprove.checkNeedsApprove-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>__namedParameters: <span class="tsd-signature-type">CheckCanBridgeParams</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">NeedsTokenApproveResult</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L394">src/bridge/bridge.ts:394</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="checkSwapSupported" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>check<wbr/>Swap<wbr/>Supported</span><a href="#checkSwapSupported" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="checkSwapSupported.checkSwapSupported-1">check<wbr/>Swap<wbr/>Supported<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><a href="../interfaces/Bridge.BridgeParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#checkSwapSupported.checkSwapSupported-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <a href="../interfaces/Bridge.BridgeParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeParams</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L500">src/bridge/bridge.ts:500</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="estimateBridgeTokenOutput" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>estimate<wbr/>Bridge<wbr/>Token<wbr/>Output</span><a href="#estimateBridgeTokenOutput" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="estimateBridgeTokenOutput.estimateBridgeTokenOutput-1">estimate<wbr/>Bridge<wbr/>Token<wbr/>Output<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><a href="../interfaces/Bridge.BridgeParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.BridgeOutputEstimate.html" class="tsd-signature-type" data-tsd-kind="Type alias">BridgeOutputEstimate</a><span class="tsd-signature-symbol">&gt;</span><a href="#estimateBridgeTokenOutput.estimateBridgeTokenOutput-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the estimated output of a given token on the destination chain were a user to send
+some amount of another given token on the source chain.</p>
+
+<h3>Returns</h3><p>Object containing the estimated output of args.tokenTo, as well
+as the estimated fee to be taken by the bridge. Note that the estimated output already accounts for the
+bridge fee, so the bridge fee is entirely for user-facing purposes. Do not use it for calculations.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <a href="../interfaces/Bridge.BridgeParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeParams</a></h5>
+<div class="tsd-comment tsd-typography"><p>Parameters for the output estimation.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.BridgeOutputEstimate.html" class="tsd-signature-type" data-tsd-kind="Type alias">BridgeOutputEstimate</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L232">src/bridge/bridge.ts:232</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="executeApproveTransaction" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>execute<wbr/>Approve<wbr/>Transaction</span><a href="#executeApproveTransaction" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="executeApproveTransaction.executeApproveTransaction-1">execute<wbr/>Approve<wbr/>Transaction<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span><br/><span>    </span>amount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BigNumberish</span><span class="tsd-signature-symbol">; </span><br/><span>    </span>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span>, signer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Signer</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ContractTransaction</span><span class="tsd-signature-symbol">&gt;</span><a href="#executeApproveTransaction.executeApproveTransaction-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Builds and executes an ERC20 Approve call,
+approving some amount of a given token to be spent by the Synapse Bridge on its chain.
+The returned PopulatedTransaction must then be passed to the user via Web3 or some other
+framework so they can ultimately send the transaction.
+Should ALWAYS be called before performing any bridge transactions to ensure they don&#39;t fail.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <span class="tsd-signature-symbol">{ </span><br/><span>    </span>amount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BigNumberish</span><span class="tsd-signature-symbol">; </span><br/><span>    </span>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></h5>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> amount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BigNumberish</span></h5>
+<div class="tsd-comment tsd-typography"><p>Optional, a specific amount of args.token to approve. By default, this function</p>
+</div></li>
+<li class="tsd-parameter">
+<h5>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a></h5>
+<div class="tsd-comment tsd-typography"><p><a href="../interfaces/Token.html">Token</a> instance or valid on-chain address of the token the user will be sending
+to the bridge on the source chain.</p>
+</div></li></ul></li>
+<li>
+<h5>signer: <span class="tsd-signature-type">Signer</span></h5>
+<div class="tsd-comment tsd-typography"><p>Valid ethers Signer instance for building a fully and properly populated
+transaction.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ContractTransaction</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L352">src/bridge/bridge.ts:352</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="executeBridgeTokenTransaction" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>execute<wbr/>Bridge<wbr/>Token<wbr/>Transaction</span><a href="#executeBridgeTokenTransaction" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="executeBridgeTokenTransaction.executeBridgeTokenTransaction-1">execute<wbr/>Bridge<wbr/>Token<wbr/>Transaction<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><a href="../interfaces/Bridge.BridgeTransactionParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeTransactionParams</a>, signer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Signer</span>, callStatic<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ContractTransaction</span><span class="tsd-signature-symbol">&gt;</span><a href="#executeBridgeTokenTransaction.executeBridgeTokenTransaction-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Starts the Bridge process between this Bridge (the source chain) and the bridge contract on the destination chain.
+Note that this function <strong>does</strong> send a signed transaction.</p>
+
+<h3>Returns</h3></div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <a href="../interfaces/Bridge.BridgeTransactionParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeTransactionParams</a></h5>
+<div class="tsd-comment tsd-typography"><p>Parameters for the bridge transaction.</p>
+</div></li>
+<li>
+<h5>signer: <span class="tsd-signature-type">Signer</span></h5>
+<div class="tsd-comment tsd-typography"><p>Some instance which implements the Ethersjs Signer interface.</p>
+</div></li>
+<li>
+<h5>callStatic: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+<div class="tsd-comment tsd-typography"><p>(Optional, default: false) if true, uses provider.callStatic instead of actually sending the signed transaction.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ContractTransaction</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L279">src/bridge/bridge.ts:279</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getAllowanceForAddress" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>get<wbr/>Allowance<wbr/>For<wbr/>Address</span><a href="#getAllowanceForAddress" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="getAllowanceForAddress.getAllowanceForAddress-1">get<wbr/>Allowance<wbr/>For<wbr/>Address<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span><br/><span>    </span>address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span>token<span class="tsd-signature-symbol">: </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">BigNumber</span><span class="tsd-signature-symbol">&gt;</span><a href="#getAllowanceForAddress.getAllowanceForAddress-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <span class="tsd-signature-symbol">{ </span><br/><span>    </span>address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span>token<span class="tsd-signature-symbol">: </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></h5>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5>address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5></li>
+<li class="tsd-parameter">
+<h5>token<span class="tsd-signature-symbol">: </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a></h5></li></ul></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">BigNumber</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L363">src/bridge/bridge.ts:363</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="kappaExists" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>kappa<wbr/>Exists</span><a href="#kappaExists" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="kappaExists.kappaExists-1">kappa<wbr/>Exists<span class="tsd-signature-symbol">(</span>kappa<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#kappaExists.kappaExists-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>kappa: <span class="tsd-signature-type">string</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L197">src/bridge/bridge.ts:197</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="makeBridgeTokenArgs" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>make<wbr/>Bridge<wbr/>Token<wbr/>Args</span><a href="#makeBridgeTokenArgs" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="makeBridgeTokenArgs.makeBridgeTokenArgs-1">make<wbr/>Bridge<wbr/>Token<wbr/>Args<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><a href="../interfaces/Bridge.BridgeParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BridgeTokenArgs</span><a href="#makeBridgeTokenArgs.makeBridgeTokenArgs-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <a href="../interfaces/Bridge.BridgeParams.html" class="tsd-signature-type" data-tsd-kind="Interface">BridgeParams</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">BridgeTokenArgs</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L1210">src/bridge/bridge.ts:1210</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="resolveApproveFunc" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>resolve<wbr/>Approve<wbr/>Func</span><a href="#resolveApproveFunc" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="resolveApproveFunc.resolveApproveFunc-1">resolve<wbr/>Approve<wbr/>Func<span class="tsd-signature-symbol">(</span>approveRes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NeedsTokenApproveResult</span>, hasBalanceRes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.CanBridgeResult.html" class="tsd-signature-type" data-tsd-kind="Type alias">CanBridgeResult</a><span class="tsd-signature-symbol">&gt;</span>, token<span class="tsd-signature-symbol">: </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.CanBridgeResult.html" class="tsd-signature-type" data-tsd-kind="Type alias">CanBridgeResult</a><span class="tsd-signature-symbol">&gt;</span><a href="#resolveApproveFunc.resolveApproveFunc-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>approveRes: <span class="tsd-signature-type">NeedsTokenApproveResult</span></h5></li>
+<li>
+<h5>hasBalanceRes: <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.CanBridgeResult.html" class="tsd-signature-type" data-tsd-kind="Type alias">CanBridgeResult</a><span class="tsd-signature-symbol">&gt;</span></h5></li>
+<li>
+<h5>token: <a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.CanBridgeResult.html" class="tsd-signature-type" data-tsd-kind="Type alias">CanBridgeResult</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L373">src/bridge/bridge.ts:373</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="resolveBalanceFunc" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>resolve<wbr/>Balance<wbr/>Func</span><a href="#resolveBalanceFunc" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="resolveBalanceFunc.resolveBalanceFunc-1">resolve<wbr/>Balance<wbr/>Func<span class="tsd-signature-symbol">(</span>prom<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">BigNumber</span><span class="tsd-signature-symbol">&gt;</span>, amount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BigNumberish</span>, token<span class="tsd-signature-symbol">: </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.CanBridgeResult.html" class="tsd-signature-type" data-tsd-kind="Type alias">CanBridgeResult</a><span class="tsd-signature-symbol">&gt;</span><a href="#resolveBalanceFunc.resolveBalanceFunc-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>prom: <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">BigNumber</span><span class="tsd-signature-symbol">&gt;</span></h5></li>
+<li>
+<h5>amount: <span class="tsd-signature-type">BigNumberish</span></h5></li>
+<li>
+<h5>token: <a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/Bridge.CanBridgeResult.html" class="tsd-signature-type" data-tsd-kind="Type alias">CanBridgeResult</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L405">src/bridge/bridge.ts:405</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="swapSupported" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>swap<wbr/>Supported</span><a href="#swapSupported" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="swapSupported.swapSupported-1">swap<wbr/>Supported<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span><br/><span>    </span>chainIdTo<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span>tokenFrom<span class="tsd-signature-symbol">: </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">; </span><br/><span>    </span>tokenTo<span class="tsd-signature-symbol">: </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span><a href="#swapSupported.swapSupported-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns whether a swap/bridge from this Bridge&#39;s chain to another chain between two tokens
+is supported.</p>
+
+<h3>Returns</h3><p>boolean value denoting whether the input params constitute a valid swap/bridge, along with a
+string value denoting the reason for an unsupported swap, if applicable.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>args: <span class="tsd-signature-symbol">{ </span><br/><span>    </span>chainIdTo<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span>tokenFrom<span class="tsd-signature-symbol">: </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">; </span><br/><span>    </span>tokenTo<span class="tsd-signature-symbol">: </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></h5>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5>chain<wbr/>Id<wbr/>To<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>Chain ID of the destination chain</p>
+</div></li>
+<li class="tsd-parameter">
+<h5>token<wbr/>From<span class="tsd-signature-symbol">: </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a></h5>
+<div class="tsd-comment tsd-typography"><p><a href="../interfaces/Token.html">Token</a> user will send to the bridge</p>
+</div></li>
+<li class="tsd-parameter">
+<h5>token<wbr/>To<span class="tsd-signature-symbol">: </span><a href="../interfaces/Token.html" class="tsd-signature-type" data-tsd-kind="Interface">Token</a></h5>
+<div class="tsd-comment tsd-typography"><p><a href="../interfaces/Token.html">Token</a> user will receive from the bridge on the destination chain</p>
+</div></li></ul></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/synapsecns/sdk/blob/1842c21/src/bridge/bridge.ts#L214">src/bridge/bridge.ts:214</a></li></ul></aside></li></ul></section></section></div>
+<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+<div class="tsd-navigation settings">
+<details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility">
+<h4 class="uppercase">Member Visibility</h4><form>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></form></div>
+<div class="tsd-theme-toggle">
+<h4 class="uppercase">Theme</h4><select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<nav class="tsd-navigation primary">
+<details class="tsd-index-accordion" open><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Modules</h3></summary>
+<div class="tsd-accordion-details">
+<ul>
+<li class="current"><a href="../modules.html">@synapseprotocol/sdk</a>
+<ul>
+<li class="current tsd-kind-namespace"><a href="../modules/Bridge.html">Bridge</a></li>
+<li class="tsd-kind-namespace"><a href="../modules/BridgeConfigV3Contract.html">Bridge<wbr/>Config<wbr/>V3<wbr/>Contract</a></li>
+<li class="tsd-kind-namespace"><a href="../modules/Networks.html">Networks</a></li>
+<li class="tsd-kind-namespace"><a href="../modules/Slippages.html">Slippages</a></li>
+<li class="tsd-kind-namespace"><a href="../modules/SwapPools.html">Swap<wbr/>Pools</a></li>
+<li class="tsd-kind-namespace"><a href="../modules/TokenSwap.html">Token<wbr/>Swap</a></li>
+<li class="tsd-kind-namespace"><a href="../modules/Tokens.html">Tokens</a></li>
+<li class="tsd-kind-namespace"><a href="../modules/UnsupportedSwapErrors.html">Unsupported<wbr/>Swap<wbr/>Errors</a></li></ul></li></ul></div></details></nav>
+<nav class="tsd-navigation secondary menu-sticky">
+<ul>
+<li class="current tsd-kind-class tsd-parent-kind-namespace"><a href="Bridge.SynapseBridge.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-class)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-128-path"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)" id="icon-128-text"></path></svg><span>Synapse<wbr/>Bridge</span></a>
+<ul>
+<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#constructor" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-512-path"></use><use href="#icon-512-text"></use></svg>constructor</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#bridgeAddress" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>bridge<wbr/>Address</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#bridgeConfig" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>bridge<wbr/>Config</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#bridgeInstance" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>bridge<wbr/>Instance</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#chainId" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>chain<wbr/>Id</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#isL2ETHChain" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>is<wbr/>L2ETHChain</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#l1BridgeZapEth" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>l1<wbr/>Bridge<wbr/>Zap<wbr/>Eth</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="Bridge.SynapseBridge.html#network" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>network</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="Bridge.SynapseBridge.html#provider" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>provider</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#zapBridge" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>zap<wbr/>Bridge</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#zapBridgeAddress" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>zap<wbr/>Bridge<wbr/>Address</a></li>
+<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#l1BridgeZap" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg>l1<wbr/>Bridge<wbr/>Zap</a></li>
+<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#l2BridgeZap" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg>l2<wbr/>Bridge<wbr/>Zap</a></li>
+<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#requiredConfirmations" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg>required<wbr/>Confirmations</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#WETH_ADDRESS" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>WETH_<wbr/>ADDRESS</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#bridgeVersion" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>bridge<wbr/>Version</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#buildApproveTransaction" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>build<wbr/>Approve<wbr/>Transaction</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#buildBridgeTokenTransaction" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>build<wbr/>Bridge<wbr/>Token<wbr/>Transaction</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#buildERC20ApproveArgs" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>buildERC20<wbr/>Approve<wbr/>Args</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#buildETHMainnetBridgeTxn" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>buildETHMainnet<wbr/>Bridge<wbr/>Txn</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#buildL2BridgeTxn" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>build<wbr/>L2<wbr/>Bridge<wbr/>Txn</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#calculateBridgeRate" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>calculate<wbr/>Bridge<wbr/>Rate</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#checkCanBridge" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>check<wbr/>Can<wbr/>Bridge</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#checkERC20Balance" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>checkERC20<wbr/>Balance</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#checkEasyArgs" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>check<wbr/>Easy<wbr/>Args</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#checkGasTokenBalance" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>check<wbr/>Gas<wbr/>Token<wbr/>Balance</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#checkNeedsApprove" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>check<wbr/>Needs<wbr/>Approve</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#checkSwapSupported" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>check<wbr/>Swap<wbr/>Supported</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#estimateBridgeTokenOutput" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>estimate<wbr/>Bridge<wbr/>Token<wbr/>Output</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#executeApproveTransaction" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>execute<wbr/>Approve<wbr/>Transaction</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#executeBridgeTokenTransaction" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>execute<wbr/>Bridge<wbr/>Token<wbr/>Transaction</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#getAllowanceForAddress" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>get<wbr/>Allowance<wbr/>For<wbr/>Address</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#kappaExists" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>kappa<wbr/>Exists</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#makeBridgeTokenArgs" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>make<wbr/>Bridge<wbr/>Token<wbr/>Args</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#resolveApproveFunc" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>resolve<wbr/>Approve<wbr/>Func</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="Bridge.SynapseBridge.html#resolveBalanceFunc" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>resolve<wbr/>Balance<wbr/>Func</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="Bridge.SynapseBridge.html#swapSupported" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>swap<wbr/>Supported</a></li></ul></li></ul></nav></div></div>
+<div class="container tsd-generator">
+<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
+<div class="overlay"></div><script src="../assets/main.js"></script></body></html>
