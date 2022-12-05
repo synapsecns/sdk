@@ -373,7 +373,8 @@ export namespace Tokens {
             [ChainId.MOONBEAM]:  "0xA1f8890E39b4d8E33efe296D698fe42Fb5e59cC3",
             [ChainId.AVALANCHE]: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
             [ChainId.DFK]:       "0xB57B60DeBDB0b8172bb6316a9164bd3C695F133a",
-            [ChainId.HARMONY]:   "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6" // synAVAX, but here for compat.
+            [ChainId.HARMONY]:   "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6", // synAVAX, but here for compat.
+            [ChainId.KLAYTN]:       "0xCd8fE44A29Db9159dB36f96570d7A4d91986f528"
         },
         swapType:        SwapType.AVAX,
         underlyingToken: AVAX,
