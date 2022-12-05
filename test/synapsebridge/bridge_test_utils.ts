@@ -6,6 +6,7 @@ import {
 } from "@sdk";
 
 import {BigNumber} from "@ethersproject/bignumber";
+import {ethers} from "ethers";
 
 dotenv.config();
 
@@ -22,9 +23,12 @@ export interface TestPrivKey {
 function loadTestPrivkey(name: string): TestPrivKey {
     const [privkeyEnv, addrEnv] = makeTestPrivkeyEnvKeys(name);
 
+    // TODO: this breaks tests that require an externally approval locally.
+    const testWallet = ethers.Wallet.createRandom()
+
     return {
-        address: process.env[addrEnv]    || "",
-        privkey: process.env[privkeyEnv] || "",
+        address: process.env[addrEnv]    || testWallet.address,
+        privkey: process.env[privkeyEnv] || testWallet.privateKey,
     }
 }
 
