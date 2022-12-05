@@ -842,7 +842,8 @@ export namespace Tokens {
             decimals: 8,
             addresses: {
                 [ChainId.DFK]:       "0x7516EB8B8Edfa420f540a162335eACF3ea05a247",
-                [ChainId.AVALANCHE]: "0x152b9d0FdC40C096757F570A51E494bd4b943E50"
+                [ChainId.AVALANCHE]: "0x152b9d0FdC40C096757F570A51E494bd4b943E50",
+                [ChainId.KLAYTN]:   "0xe82f87ba4E97b2796aA0Fa4eFB06e8f0d2EB4FE1",
             },
             swapType: SwapType.BTCB
         });
