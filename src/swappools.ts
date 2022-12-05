@@ -747,7 +747,7 @@ export namespace SwapPools {
                 [SwapType.BTCB]:     BTCB_Pool,
                 [SwapType.FTM]:      WFTM_Pool,
                 [SwapType.MATIC]:    WMATIC_Pool,
-                [SwapType.ETH]:      {poolTokens: [Tokens.DFK_ETH], swapType: SwapType.ETH},
+                [SwapType.ETH]:      ETH_Pool,
             }
         },
         [ChainId.AURORA]: makeSwapTypeMap(
