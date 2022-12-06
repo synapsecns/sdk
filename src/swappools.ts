@@ -774,12 +774,14 @@ export namespace SwapPools {
                 [SwapType.WBTC]: [Tokens.WBTC],
                 [SwapType.KLAY]: KLAY_Pool.poolTokens,
                 [SwapType.JEWEL]: [Tokens.JEWEL],
+                [SwapType.AVAX]: [Tokens.WAVAX],
             },
             swappableSwapGroups: {
                 [SwapType.ETH]: {poolTokens: [Tokens.ETH, Tokens.WETH], swapType: SwapType.ETH},
                 [SwapType.WBTC]: {poolTokens: [Tokens.WBTC], swapType: SwapType.WBTC},
                 [SwapType.KLAY]: KLAY_Pool,
                 [SwapType.JEWEL]: JEWEL_POOL,
+                [SwapType.AVAX]: WAVAX_Pool,
             },
         },
     };

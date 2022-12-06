@@ -815,7 +815,8 @@ export namespace Bridge {
                     Tokens.USDC.id,
                     Tokens.USDT.id,
                     Tokens.DAI.id,
-                    Tokens.WBTC.id
+                    Tokens.WBTC.id,
+                    Tokens.WAVAX.id
                 ])
                 if (chainIdTo === ChainId.ETH) {
                     easyRedeems.push(Tokens.WETH.id)
