@@ -772,7 +772,7 @@ export namespace SwapPools {
         ),
         [ChainId.KLAYTN]: {
             swappableTokens: {
-                [SwapType.ETH]:      [Tokens.DFK_ETH],
+                [SwapType.ETH]: [Tokens.WETH],
                 [SwapType.WBTC]: [Tokens.WBTC],
                 [SwapType.KLAY]: KLAY_Pool.poolTokens,
                 [SwapType.JEWEL]: [Tokens.JEWEL],
@@ -780,7 +780,7 @@ export namespace SwapPools {
                 [SwapType.AVAX]: [Tokens.WAVAX],
             },
             swappableSwapGroups: {
-                [SwapType.ETH]:      DFK_ETH_Pool,
+                [SwapType.ETH]: WETH_POOL,
                 [SwapType.WBTC]: {poolTokens: [Tokens.WBTC], swapType: SwapType.WBTC},
                 [SwapType.KLAY]: KLAY_Pool,
                 [SwapType.JEWEL]: JEWEL_POOL,
