@@ -164,7 +164,7 @@ export namespace SwapPools {
         }
 
         get name(): string {
-           return this.baseToken.name
+            return this.baseToken.name
         }
 
         get symbol(): string {
@@ -551,9 +551,7 @@ export namespace SwapPools {
         MATIC_Pool     = makeSingleTokenPool(Tokens.MATIC),
         BTCB_Pool       = makeSingleTokenPool(Tokens.BTCB),
         WBTC_Pool       = makeSingleTokenPool(Tokens.WBTC),
-        JEWEL_POOL      = makeSingleTokenPool(Tokens.JEWEL),
-        DFK_ETH_Pool    = makeSingleTokenPool(Tokens.DFK_ETH),
-        WETH_POOL = makeSingleTokenPool(Tokens.WETH);
+        JEWEL_POOL      = makeSingleTokenPool(Tokens.JEWEL);
 
     const
         AVAX_JEWEL_Pool:    LPToken = {poolTokens: [Tokens.JEWEL, Tokens.MULTIJEWEL], swapType: SwapType.JEWEL},
@@ -749,7 +747,7 @@ export namespace SwapPools {
                 [SwapType.BTCB]:     BTCB_Pool,
                 [SwapType.FTM]:      WFTM_Pool,
                 [SwapType.MATIC]:    WMATIC_Pool,
-                [SwapType.ETH]:      DFK_ETH_Pool,
+                [SwapType.ETH]:      {poolTokens: [Tokens.DFK_ETH], swapType: SwapType.ETH},
             }
         },
         [ChainId.AURORA]: makeSwapTypeMap(
@@ -772,20 +770,16 @@ export namespace SwapPools {
         ),
         [ChainId.KLAYTN]: {
             swappableTokens: {
-                [SwapType.ETH]:      [Tokens.DFK_ETH],
+                [SwapType.ETH]: [Tokens.ETH, Tokens.WETH],
                 [SwapType.WBTC]: [Tokens.WBTC],
                 [SwapType.KLAY]: KLAY_Pool.poolTokens,
                 [SwapType.JEWEL]: [Tokens.JEWEL],
-                [SwapType.BTCB]: [Tokens.BTCB],
-                [SwapType.AVAX]: [Tokens.WAVAX],
             },
             swappableSwapGroups: {
-                [SwapType.ETH]:      DFK_ETH_Pool,
+                [SwapType.ETH]: {poolTokens: [Tokens.ETH, Tokens.WETH], swapType: SwapType.ETH},
                 [SwapType.WBTC]: {poolTokens: [Tokens.WBTC], swapType: SwapType.WBTC},
                 [SwapType.KLAY]: KLAY_Pool,
                 [SwapType.JEWEL]: JEWEL_POOL,
-                [SwapType.BTCB]: BTCB_Pool,
-                [SwapType.AVAX]: WAVAX_Pool,
             },
         },
     };

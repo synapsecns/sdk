@@ -252,11 +252,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         makeTestCase(Tokens.NETH,        Tokens.DFK_ETH,   ChainId.AVALANCHE,   ChainId.DFK),
         makeTestCase(Tokens.DFK_ETH,     Tokens.WETH,      ChainId.DFK,         ChainId.OPTIMISM),
         makeTestCase(Tokens.DFK_ETH,     Tokens.NETH,      ChainId.DFK,         ChainId.FANTOM),
-        makeTestCase(Tokens.GAS_JEWEL, Tokens.JEWEL, ChainId.DFK, ChainId.KLAYTN),
-        makeTestCase(Tokens.BTCB, Tokens.BTCB, ChainId.DFK, ChainId.KLAYTN),
-        makeTestCase(Tokens.BTCB, Tokens.BTCB, ChainId.AVALANCHE, ChainId.DFK),
-        makeTestCase(Tokens.WAVAX, Tokens.WAVAX, ChainId.DFK, ChainId.KLAYTN),
-        makeTestCase(Tokens.DFK_ETH, Tokens.DFK_ETH, ChainId.DFK, ChainId.KLAYTN)
+        makeTestCase(Tokens.GAS_JEWEL, Tokens.JEWEL, ChainId.DFK, ChainId.KLAYTN)
     ].forEach((tc: TestCase) => {
         const [describeTitle, bridgeOutputTestTitle, transactionTestTitle, approveTestTitle] = makeTestName(tc);
 
@@ -318,7 +314,7 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
                     case Tokens.GAS_JEWEL:
                         tokenFrom = Tokens.JEWEL;
                         break;
-                }                
+                }
                 let prom = bridgeInstance.buildApproveTransaction({token:  tokenFrom, amount: amountFrom});
 
                 return (await expect(prom).to.eventually.be.fulfilled)
@@ -359,5 +355,4 @@ describe("SynapseBridge - getEstimatedBridgeOutput tests", function(this: Mocha.
         });
     });
 });
-
 

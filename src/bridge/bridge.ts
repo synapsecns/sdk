@@ -392,10 +392,10 @@ export namespace Bridge {
         }
 
         private async checkNeedsApprove({
-            address,
-            token,
-            amount=MAX_APPROVAL_AMOUNT.sub(1)
-        }: CheckCanBridgeParams): Promise<NeedsTokenApproveResult> {
+                                            address,
+                                            token,
+                                            amount=MAX_APPROVAL_AMOUNT.sub(1)
+                                        }: CheckCanBridgeParams): Promise<NeedsTokenApproveResult> {
             const [{spender}, tokenAddress] = this.buildERC20ApproveArgs({token, amount});
 
             return allowanceOf(address, spender, {tokenAddress, chainId: this.chainId})
@@ -547,7 +547,7 @@ export namespace Bridge {
 
             if (amountFrom.isZero()) {
                 amountToReceive_from_prom = Promise.resolve(Zero);
-            } else if (ethToEth || Tokens.isMintBurnToken(tokenFrom) || tokenFrom.isWrapperToken || isSpecialFrom || this.chainId === ChainId.KLAYTN) { 
+            } else if (ethToEth || Tokens.isMintBurnToken(tokenFrom) || tokenFrom.isWrapperToken || isSpecialFrom || this.chainId === ChainId.KLAYTN) {
                 amountToReceive_from_prom = Promise.resolve(amountFromFixedDecimals);
             } else if (this.chainId === ChainId.ETH) {
                 let liquidityAmounts = fromChainTokens.map((t) =>
@@ -595,7 +595,7 @@ export namespace Bridge {
                         amountToReceive_from,
                         tokenIndexTo
                     );
-            } else if (chainIdTo === ChainId.KLAYTN) {
+            } else if (chainIdTo === ChainId.KLAYTN && tokenTo.swapType !== SwapType.ETH) {
                 amountToReceive_to_prom = Promise.resolve(amountToReceive_from);
             } else {
                 if (chainIdTo === ChainId.CRONOS) {
@@ -696,9 +696,9 @@ export namespace Bridge {
             }
 
             const liquidityAmounts = tokenArgs.fromChainTokens.map(t =>
-                    args.tokenFrom.isEqual(t)
-                        ? amountFrom
-                        : Zero
+                args.tokenFrom.isEqual(t)
+                    ? amountFrom
+                    : Zero
             );
 
             const {
@@ -1144,13 +1144,6 @@ export namespace Bridge {
                         }
                     }
 
-                    if ((this.chainId == ChainId.DFK) && chainIdTo == ChainId.KLAYTN && args.tokenFrom.swapType == SwapType.ETH){
-                        const redeemArgs = BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.DFK_ETH);
-                        return zapBridge
-                            .populateTransaction
-                            .redeem(...redeemArgs)
-                    }
-
                     if ((this.chainId === ChainId.DFK || chainIdTo === ChainId.DFK) && args.tokenFrom.swapType === SwapType.ETH) {
                         if (this.isL2ETHChain) {
                             if (args.tokenFrom.isEqual(Tokens.NETH)) {
@@ -1164,7 +1157,7 @@ export namespace Bridge {
                                 let swapEth = true
 
                                 // WETH_E and FTM_ETH are ERC20s, not the gas token
-                                if (this.chainId === ChainId.AVALANCHE || this.chainId === ChainId.FANTOM || this.chainId == ChainId.KLAYTN) {
+                                if (this.chainId === ChainId.AVALANCHE || this.chainId === ChainId.FANTOM) {
                                     ethToken = Tokens.NETH
                                     swapEth = false
                                 }
@@ -1237,7 +1230,7 @@ export namespace Bridge {
                     break;
                 case SwapType.FTM:
                     bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.FTM, Tokens.WFTM);
-                    break;    
+                    break;
                 case SwapType.JEWEL:
                     bridgeTokens = BridgeUtils.checkReplaceTokens(Tokens.GAS_JEWEL, Tokens.JEWEL);
                     break;

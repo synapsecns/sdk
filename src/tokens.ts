@@ -342,8 +342,7 @@ export namespace Tokens {
         symbol:   "ETH",
         decimals: 18,
         addresses: {
-            [ChainId.DFK]: "0xfBDF0E31808d0aa7b9509AA6aBC9754E48C58852",
-            [ChainId.KLAYTN]:    "0xCD6f29dC9Ca217d0973d3D21bF58eDd3CA871a86",
+            [ChainId.DFK]: "0xfBDF0E31808d0aa7b9509AA6aBC9754E48C58852"
         },
         swapType: SwapType.ETH,
     });
@@ -374,8 +373,7 @@ export namespace Tokens {
             [ChainId.MOONBEAM]:  "0xA1f8890E39b4d8E33efe296D698fe42Fb5e59cC3",
             [ChainId.AVALANCHE]: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
             [ChainId.DFK]:       "0xB57B60DeBDB0b8172bb6316a9164bd3C695F133a",
-            [ChainId.HARMONY]:   "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6", // synAVAX, but here for compat.
-            [ChainId.KLAYTN]:       "0xCd8fE44A29Db9159dB36f96570d7A4d91986f528"
+            [ChainId.HARMONY]:   "0xD9eAA386cCD65F30b77FF175F6b52115FE454fD6" // synAVAX, but here for compat.
         },
         swapType:        SwapType.AVAX,
         underlyingToken: AVAX,
@@ -520,8 +518,8 @@ export namespace Tokens {
         symbol:    "DFKTEARS",
         decimals:  18,
         addresses: {
-           [ChainId.DFK]:     "0x8fdD108FF5CfeCe51F0dd2a4F64D7F278d5EeB6B",
-           [ChainId.HARMONY]: "0x24eA0D436d3c2602fbfEfBe6a16bBc304C963D04",
+            [ChainId.DFK]:     "0x8fdD108FF5CfeCe51F0dd2a4F64D7F278d5EeB6B",
+            [ChainId.HARMONY]: "0x24eA0D436d3c2602fbfEfBe6a16bBc304C963D04",
         },
         swapType: SwapType.DFKTEARS,
     });
@@ -722,13 +720,13 @@ export namespace Tokens {
     });
 
     export const H20 = new BaseToken({
-       name: "H20",
-       symbol: "H20",
-       decimals: 18,
-       addresses: {
-           [ChainId.ETH]:     "0x0642026e7f0b6ccac5925b4e7fa61384250e1701",
-           [ChainId.POLYGON]: "0x32ba7cF7d681357529013de6a2CDF93933C0dF3f"
-       },
+        name: "H20",
+        symbol: "H20",
+        decimals: 18,
+        addresses: {
+            [ChainId.ETH]:     "0x0642026e7f0b6ccac5925b4e7fa61384250e1701",
+            [ChainId.POLYGON]: "0x32ba7cF7d681357529013de6a2CDF93933C0dF3f"
+        },
         swapType: SwapType.H20
     });
 
@@ -759,110 +757,109 @@ export namespace Tokens {
      * FTM is the native currency of the Fantom chain.
      * See {@link FTM} for the "wrapped" ERC20 variant of this token.
      */
-         export const FTM = new BaseToken({
-            name:     "Fantom",
-            symbol:   "FTM",
-            decimals: 18,
-            addresses: {
-                [ChainId.FANTOM]: "",
-            },
-            swapType:   SwapType.FTM,
-            isGasToken: true,
-        });
-    
-        export const WFTM  = new WrapperToken({
-            name:     "Wrapped Fantom",
-            symbol:   "WFTM",
-            decimals: 18,
-            addresses: {
-                [ChainId.FANTOM]:  "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
-                [ChainId.DFK]: "0x2Df041186C844F8a2e2b63F16145Bc6Ff7d23E25",
-            },
-            swapType:        SwapType.FTM,
-            underlyingToken: FTM,
-        });
-    
+    export const FTM = new BaseToken({
+        name:     "Fantom",
+        symbol:   "FTM",
+        decimals: 18,
+        addresses: {
+            [ChainId.FANTOM]: "",
+        },
+        swapType:   SwapType.FTM,
+        isGasToken: true,
+    });
+
+    export const WFTM  = new WrapperToken({
+        name:     "Wrapped Fantom",
+        symbol:   "WFTM",
+        decimals: 18,
+        addresses: {
+            [ChainId.FANTOM]:  "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+            [ChainId.DFK]: "0x2Df041186C844F8a2e2b63F16145Bc6Ff7d23E25",
+        },
+        swapType:        SwapType.FTM,
+        underlyingToken: FTM,
+    });
+
     /**
      * KLAY is the native currency of the Klaytn chain.
      * See {@link KLAY} for the "wrapped" ERC20 variant of this token.
      */
-         export const KLAY = new BaseToken({
-            name:     "Klaytn",
-            symbol:   "KLAY",
-            decimals: 18,
-            addresses: {
-                [ChainId.KLAYTN]: "",
-            },
-            swapType:   SwapType.KLAY,
-            isGasToken: true,
-        });
-    
-        export const WKLAY  = new WrapperToken({
-            name:     "Wrapped KLAY",
-            symbol:   "WKLAY",
-            decimals: 18,
-            addresses: {
-                [ChainId.KLAYTN]: "0x5819b6af194a78511c79c85ea68d2377a7e9335f",
-                [ChainId.DFK]: "0x97855Ba65aa7ed2F65Ed832a776537268158B78a",
-            },
-            swapType:        SwapType.KLAY,
-            underlyingToken: KLAY,
-        });
-    
+    export const KLAY = new BaseToken({
+        name:     "Klaytn",
+        symbol:   "KLAY",
+        decimals: 18,
+        addresses: {
+            [ChainId.KLAYTN]: "",
+        },
+        swapType:   SwapType.KLAY,
+        isGasToken: true,
+    });
 
-        /**
+    export const WKLAY  = new WrapperToken({
+        name:     "Wrapped KLAY",
+        symbol:   "WKLAY",
+        decimals: 18,
+        addresses: {
+            [ChainId.KLAYTN]: "0x5819b6af194a78511c79c85ea68d2377a7e9335f",
+            [ChainId.DFK]: "0x97855Ba65aa7ed2F65Ed832a776537268158B78a",
+        },
+        swapType:        SwapType.KLAY,
+        underlyingToken: KLAY,
+    });
+
+
+    /**
      * MATIC is the native currency of the Polygon chain.
      * See {@link MATIC} for the "wrapped" ERC20 variant of this token.
      */
-           export const MATIC = new BaseToken({
-            name:     "Matic",
-            symbol:   "MATIC",
-            decimals: 18,
-            addresses: {
-                [ChainId.POLYGON]: "",
-            },
-            swapType:   SwapType.MATIC,
-            isGasToken: true,
-        });
-    
-        export const WMATIC  = new WrapperToken({
-            name:     "Wrapped MATIC",
-            symbol:   "WMATIC",
-            decimals: 18,
-            addresses: {
-                [ChainId.POLYGON]: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
-                [ChainId.DFK]: "0xD17a41Cd199edF1093A9Be4404EaDe52Ec19698e",
-            },
-            swapType:        SwapType.MATIC,
-            underlyingToken: MATIC,
-        });
-    
+    export const MATIC = new BaseToken({
+        name:     "Matic",
+        symbol:   "MATIC",
+        decimals: 18,
+        addresses: {
+            [ChainId.POLYGON]: "",
+        },
+        swapType:   SwapType.MATIC,
+        isGasToken: true,
+    });
 
-        export const BTCB = new BaseToken({
-            name: "Bitcoin",
-            symbol: "BTC.b",
-            decimals: 8,
-            addresses: {
-                [ChainId.DFK]:       "0x7516EB8B8Edfa420f540a162335eACF3ea05a247",
-                [ChainId.AVALANCHE]: "0x152b9d0FdC40C096757F570A51E494bd4b943E50",
-                [ChainId.KLAYTN]:   "0xe82f87ba4E97b2796aA0Fa4eFB06e8f0d2EB4FE1",
-            },
-            swapType: SwapType.BTCB
-        });
-
-        export const LINK = new BaseToken({
-            name: "ChainLink",
-            symbol: "LINK",
-            decimals: 18,
-            addresses: {
-                [ChainId.ETH]: "0x514910771af9ca656af840dff83e8264ecf986ca",
-                [ChainId.DFK]: ""
-            },
-            swapType: SwapType.LINK
-        });
+    export const WMATIC  = new WrapperToken({
+        name:     "Wrapped MATIC",
+        symbol:   "WMATIC",
+        decimals: 18,
+        addresses: {
+            [ChainId.POLYGON]: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+            [ChainId.DFK]: "0xD17a41Cd199edF1093A9Be4404EaDe52Ec19698e",
+        },
+        swapType:        SwapType.MATIC,
+        underlyingToken: MATIC,
+    });
 
 
-        
+    export const BTCB = new BaseToken({
+        name: "Bitcoin",
+        symbol: "BTC.b",
+        decimals: 8,
+        addresses: {
+            [ChainId.DFK]:       "0x7516EB8B8Edfa420f540a162335eACF3ea05a247",
+            [ChainId.AVALANCHE]: "0x152b9d0FdC40C096757F570A51E494bd4b943E50"
+        },
+        swapType: SwapType.BTCB
+    });
+
+    export const LINK = new BaseToken({
+        name: "ChainLink",
+        symbol: "LINK",
+        decimals: 18,
+        addresses: {
+            [ChainId.ETH]: "0x514910771af9ca656af840dff83e8264ecf986ca",
+            [ChainId.DFK]: ""
+        },
+        swapType: SwapType.LINK
+    });
+
+
+
 
     export const mintBurnTokens: Token[] = [
         NUSD,      SYN,        NETH,
@@ -875,7 +872,7 @@ export namespace Tokens {
         XJEWEL,    MULTIJEWEL, DFK_USDC,
         VSTA,      H20,        WBTC,
         SFI,       DFK_ETH,    KLAY,
-        WKLAY,     MATIC,      WMATIC, 
+        WKLAY,     MATIC,      WMATIC,
         FTM,       WFTM,       BTCB
     ];
 
@@ -1040,22 +1037,22 @@ export namespace Tokens {
         let res: Token = null;
 
         findTokenLoop:
-        for (const t of AllTokens) {
-            switch (typeof tokenSymbol) {
-                case "string":
-                    if (t.symbol === tokenSymbol) {
-                        res = t;
-                        break findTokenLoop;
-                    }
-                    break;
-                case "symbol":
-                    if (t.id === (tokenSymbol as ID)) {
-                        res = t;
-                        break findTokenLoop;
-                    }
-                    break;
+            for (const t of AllTokens) {
+                switch (typeof tokenSymbol) {
+                    case "string":
+                        if (t.symbol === tokenSymbol) {
+                            res = t;
+                            break findTokenLoop;
+                        }
+                        break;
+                    case "symbol":
+                        if (t.id === (tokenSymbol as ID)) {
+                            res = t;
+                            break findTokenLoop;
+                        }
+                        break;
+                }
             }
-        }
 
         return res
     }
