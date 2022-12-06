@@ -595,7 +595,7 @@ export namespace Bridge {
                         amountToReceive_from,
                         tokenIndexTo
                     );
-            } else if (chainIdTo === ChainId.KLAYTN) {
+            } else if (chainIdTo === ChainId.KLAYTN && tokenTo.swapType !== SwapType.ETH) {
                 amountToReceive_to_prom = Promise.resolve(amountToReceive_from);
             } else {
                 if (chainIdTo === ChainId.CRONOS) {
