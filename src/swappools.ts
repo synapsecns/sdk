@@ -781,7 +781,7 @@ export namespace SwapPools {
                 [SwapType.WBTC]: {poolTokens: [Tokens.WBTC], swapType: SwapType.WBTC},
                 [SwapType.KLAY]: KLAY_Pool,
                 [SwapType.JEWEL]: JEWEL_POOL,
-                [SwapType.BTCB]: BTCB_Pool,
+                [SwapType.BTCB]: [Tokens.BTCB]
             },
         },
     };
