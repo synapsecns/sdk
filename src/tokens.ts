@@ -211,8 +211,7 @@ export namespace Tokens {
             [ChainId.ETH]:      "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
             [ChainId.OPTIMISM]: "0x121ab82b49B2BC4c7901CA46B8277962b4350204",
             [ChainId.BOBA]:     "0xd203De32170130082896b4111eDF825a4774c18E",
-            [ChainId.ARBITRUM]: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-            [ChainId.KLAYTN]:    "0xCD6f29dC9Ca217d0973d3D21bF58eDd3CA871a86",
+            [ChainId.ARBITRUM]: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1"
         },
         swapType: SwapType.ETH
     });
@@ -343,7 +342,8 @@ export namespace Tokens {
         symbol:   "ETH",
         decimals: 18,
         addresses: {
-            [ChainId.DFK]: "0xfBDF0E31808d0aa7b9509AA6aBC9754E48C58852"
+            [ChainId.DFK]: "0xfBDF0E31808d0aa7b9509AA6aBC9754E48C58852",
+            [ChainId.KLAYTN]:    "0xCD6f29dC9Ca217d0973d3D21bF58eDd3CA871a86",
         },
         swapType: SwapType.ETH,
     });
