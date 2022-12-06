@@ -1144,13 +1144,6 @@ export namespace Bridge {
                         }
                     }
 
-                    if ((this.chainId == ChainId.DFK) && chainIdTo == ChainId.KLAYTN && args.tokenFrom.swapType == SwapType.ETH){
-                        const redeemArgs = BridgeUtils.makeEasyParams(castArgs, this.chainId, Tokens.DFK_ETH);
-                        return zapBridge
-                            .populateTransaction
-                            .redeem(...redeemArgs)
-                    }
-
                     if ((this.chainId === ChainId.DFK || chainIdTo === ChainId.DFK) && args.tokenFrom.swapType === SwapType.ETH) {
                         if (this.isL2ETHChain) {
                             if (args.tokenFrom.isEqual(Tokens.NETH)) {
