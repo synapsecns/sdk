@@ -551,8 +551,7 @@ export namespace SwapPools {
         MATIC_Pool     = makeSingleTokenPool(Tokens.MATIC),
         BTCB_Pool       = makeSingleTokenPool(Tokens.BTCB),
         WBTC_Pool       = makeSingleTokenPool(Tokens.WBTC),
-        JEWEL_POOL      = makeSingleTokenPool(Tokens.JEWEL),
-        DFK_ETH_Pool    = makeSingleTokenPool(Tokens.DFK_ETH);
+        JEWEL_POOL      = makeSingleTokenPool(Tokens.JEWEL);
 
     const
         AVAX_JEWEL_Pool:    LPToken = {poolTokens: [Tokens.JEWEL, Tokens.MULTIJEWEL], swapType: SwapType.JEWEL},
@@ -748,7 +747,7 @@ export namespace SwapPools {
                 [SwapType.BTCB]:     BTCB_Pool,
                 [SwapType.FTM]:      WFTM_Pool,
                 [SwapType.MATIC]:    WMATIC_Pool,
-                [SwapType.ETH]:      DFK_ETH_Pool,
+                [SwapType.ETH]:      ETH_Pool,
             }
         },
         [ChainId.AURORA]: makeSwapTypeMap(
