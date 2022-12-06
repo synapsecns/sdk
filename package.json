@@ -1,6 +1,6 @@
 {
   "name": "@synapseprotocol/sdk",
-  "version": "0.95.1-alpha.57",
+  "version": "0.95.1-alpha.56",
   "description": "Synapse Protocol's NodeJS SDK.",
   "repository": "github.com/synapsecns/sdk",
   "author": "synapsecns",
