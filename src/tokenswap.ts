@@ -102,7 +102,6 @@ export namespace UnsupportedSwapErrors {
 }
 
 export namespace TokenSwap {
-    import DFK_ETH = Tokens.DFK_ETH;
     const BRIDGE_CONFIG_INSTANCE: BridgeConfigV3Contract = BridgeConfigV3ContractInstance();
 
     export interface SwapParams {
@@ -641,7 +640,7 @@ export namespace TokenSwap {
             }
         }
 
-        if (chainId === ChainId.KLAYTN && token.name != DFK_ETH.name) {
+        if (chainId === ChainId.KLAYTN) {
             // For bridging WETH from L2s, it must be swapped to nETH and redeemed
             // 'bridgeConfigIntermediateToken' is just WETH, whose address is used to calculate swap price
             if (BridgeUtils.isL2ETHChain(otherChainId) && token.swapType === SwapType.ETH) {
