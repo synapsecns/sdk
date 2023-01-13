@@ -31,6 +31,8 @@ export const SwapType = {
     H20:      "H20",
     WBTC:     "WBTC",
     SFI:      "SFI",
+    CANTO:    "CANTO",
+    NOTE:     "NOTE",
 } as const;
 
 export type SwapType = ValueOf<typeof SwapType>

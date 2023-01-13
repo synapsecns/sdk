@@ -1272,6 +1272,7 @@ export namespace Bridge {
         [ChainId.DFK]:       1,
         [ChainId.HARMONY]:   1,
         [ChainId.AURORA]:    5,
+        [ChainId.CANTO]:     7700,
     };
 
     export function getRequiredConfirmationsForBridge(network: Networks.Network | number): number | null {

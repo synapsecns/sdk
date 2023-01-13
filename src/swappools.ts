@@ -352,6 +352,15 @@ export namespace SwapPools {
         poolTokens:   USDPoolTokens(),
     });
 
+    export const CANTO_POOL_SWAP_TOKEN = makeSwapToken({
+        chainId:      ChainId.CANTO,
+        address:     "0x830c377036a61911aaE49D61c70cb2926823d292",
+        netName:     "Canto",
+        poolId:       1,
+        swapAddress: "0x432036208d2717394d2614d6697c46DF3Ed69540",
+        poolTokens:   USDPoolTokens(),
+    });
+
     export const FANTOM_POOL_SWAP_TOKEN = makeSwapToken({
         chainId:      ChainId.FANTOM,
         address:     "0x2DC777ff99058a12844A33D9B1AE6c8AB4701F66",
@@ -551,7 +560,8 @@ export namespace SwapPools {
         MATIC_Pool     = makeSingleTokenPool(Tokens.MATIC),
         BTCB_Pool       = makeSingleTokenPool(Tokens.BTCB),
         WBTC_Pool       = makeSingleTokenPool(Tokens.WBTC),
-        JEWEL_POOL      = makeSingleTokenPool(Tokens.JEWEL);
+        JEWEL_POOL      = makeSingleTokenPool(Tokens.JEWEL),
+        NOTE_Pool       = makeSingleTokenPool(Tokens.NOTE)       
 
     const
         AVAX_JEWEL_Pool:    LPToken = {poolTokens: [Tokens.JEWEL, Tokens.MULTIJEWEL], swapType: SwapType.JEWEL},
@@ -784,6 +794,12 @@ export namespace SwapPools {
                 [SwapType.AVAX]: WAVAX_Pool,
             },
         },
+        [ChainId.CANTO]: makeSwapTypeMap(
+            {
+                usdPool: [CANTO_POOL_SWAP_TOKEN, CANTO_POOL_SWAP_TOKEN.poolTokensForBridgeSwaps]
+            },
+            NOTE_Pool
+        ),
     };
 
     export function swapGroupsForChain(chainId: number): string[] {
@@ -835,6 +851,8 @@ export namespace SwapPools {
                 return AURORA_POOL_SWAP_TOKEN
             case ChainId.HARMONY:
                 return HARMONY_POOL_SWAP_TOKEN
+            case ChainId.CANTO:
+                return CANTO_POOL_SWAP_TOKEN
         }
 
         return undefined
