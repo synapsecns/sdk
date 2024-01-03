@@ -239,6 +239,13 @@ export namespace Networks {
         chainCurrency: "KLAY",
     });
 
+    export const CANTO = new Network({
+        name:          "Canto",
+        chainId:       ChainId.CANTO,
+        chainCurrency: "CANTO",
+        chainCurrencyCoingeckoId: "canto",
+    });
+
     const CHAINID_NETWORK_MAP: ChainIdTypeMap<Network> = {
         [ChainId.ETH]:        ETH,
         [ChainId.OPTIMISM]:   OPTIMISM,
@@ -256,6 +263,7 @@ export namespace Networks {
         [ChainId.AURORA]:     AURORA,
         [ChainId.HARMONY]:    HARMONY,
         [ChainId.KLAYTN]:     KLAYTN,
+        [ChainId.CANTO]:      CANTO,
     }
 
     export function networkName(chainId: number): string {

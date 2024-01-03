@@ -17,6 +17,7 @@ export const ChainId = {
     "AURORA":       1313161554,
     "HARMONY":      1666600000,
     "KLAYTN":       8217,
+    "CANTO":        7700,
 } as const;
 
 export type ChainId = ValueOf<typeof ChainId> | number
@@ -46,7 +47,8 @@ export const EIP1559Chains: ChainIdTypeMap<boolean> = {
     [ChainId.DFK]: 		 true,
     [ChainId.AURORA]:    false,
     [ChainId.HARMONY]:   false,
-    [ChainId.KLAYTN]:    false
+    [ChainId.KLAYTN]:    false,
+    [ChainId.CANTO]:     true,
 } as const;
 
 export function chainSupportsEIP1559(chainId: number): boolean { return chainId in EIP1559Chains ? EIP1559Chains[chainId] : false }

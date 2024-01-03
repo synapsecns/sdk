@@ -89,6 +89,7 @@ const CHAINID_CONTRACTS_MAP: {[c: number]: SynapseContracts.SynapseContract} = {
     [ChainId.AURORA]:    SynapseContracts.Aurora,
     [ChainId.HARMONY]:   SynapseContracts.Harmony,
     [ChainId.KLAYTN]:    SynapseContracts.Klaytn,
+    [ChainId.CANTO]:     SynapseContracts.Canto,
 }
 
 export const contractsForChainId = (chainId: number): SynapseContracts.SynapseContract => CHAINID_CONTRACTS_MAP[chainId] ?? null

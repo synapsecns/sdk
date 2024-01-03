@@ -78,6 +78,7 @@ export namespace Tokens {
             [ChainId.AURORA]:    6,
             [ChainId.HARMONY]:   6,
             [ChainId.KLAYTN]:    6,
+            [ChainId.CANTO]:     6,
         },
         addresses: {
             [ChainId.ETH]:       "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
@@ -93,6 +94,7 @@ export namespace Tokens {
             [ChainId.AURORA]:    "0xB12BFcA5A55806AaF64E99521918A4bf0fC40802",
             [ChainId.HARMONY]:   "0x985458e523db3d53125813ed68c274899e9dfab4",
             [ChainId.KLAYTN]:    "0x6270B58BE569a7c0b8f47594F191631Ae5b2C86C",
+            [ChainId.CANTO]:     "0x80b5a32e4f032b2a058b4f29ec95eefeeb87adcd",
         },
         swapType:    SwapType.USD,
         coingeckoId: "usd-coin",
@@ -113,6 +115,7 @@ export namespace Tokens {
             [ChainId.AURORA]:    6,
             [ChainId.HARMONY]:   6,
             [ChainId.KLAYTN]:    6,
+            [ChainId.CANTO]:     6,
         },
         addresses: {
             [ChainId.ETH]:       "0xdac17f958d2ee523a2206206994597c13d831ec7",
@@ -126,6 +129,7 @@ export namespace Tokens {
             [ChainId.AURORA]:    "0x4988a896b1227218e4A686fdE5EabdcAbd91571f",
             [ChainId.HARMONY]:   "0x3c2b8be99c50593081eaa2a724f0b8285f5aba8f",
             [ChainId.KLAYTN]:    "0xd6dAb4CfF47dF175349e6e7eE2BF7c40Bb8C05A3",
+            [ChainId.CANTO]:     "0xd567b3d7b8fe3c79a1ad8da978812cfc4fa05e75",
         },
         swapType:    SwapType.USD,
         coingeckoId: "tether",
@@ -297,6 +301,7 @@ export namespace Tokens {
             [ChainId.AVALANCHE]: "0x1f1E7c893855525b303f99bDF5c3c05Be09ca251",
             [ChainId.AURORA]:    "0xd80d8688b02B3FD3afb81cDb124F188BB5aD0445",
             [ChainId.HARMONY]:   "0xE55e19Fb4F2D85af758950957714292DAC1e25B2",
+            [ChainId.CANTO]:     "0x555982d2E211745b96736665e19D9308B615F78e",
         },
         swapType:    SwapType.SYN,
         coingeckoId: "synapse-2",
@@ -323,6 +328,7 @@ export namespace Tokens {
             [ChainId.DFK]:       "0x3AD9DFE640E1A9Cc1D9B0948620820D975c3803a",
             [ChainId.AURORA]:    "0x07379565cD8B0CaE7c60Dc78e7f601b34AF2A21c",
             [ChainId.HARMONY]:   "0xED2a7edd7413021d440b09D654f3b87712abAB66",
+            [ChainId.CANTO]:     "0xD8836aF2e565D3Befce7D906Af63ee45a57E8f80",
         },
         swapType: SwapType.USD,
     });
@@ -859,6 +865,43 @@ export namespace Tokens {
         swapType: SwapType.LINK
     });
 
+    /**
+     * CANTO is the native currency of the Canto chain.
+     * See {@link CANTO} for the "wrapped" ERC20 variant of this token.
+     */
+    export const CANTO = new BaseToken({
+        name:     "Canto",
+        symbol:   "CANTO",
+        decimals: 18,
+        addresses: {
+            [ChainId.CANTO]: "",
+        },
+        swapType:   SwapType.CANTO,
+        isGasToken: true,
+        coingeckoId: "canto"
+    });
+
+    export const WCANTO  = new WrapperToken({
+        name:     "Wrapped CANTO",
+        symbol:   "wCANTO",
+        decimals: 18,
+        addresses: {
+            [ChainId.CANTO]: "0x826551890Dc65655a0Aceca109aB11AbDbD7a07B",
+        },
+        swapType:        SwapType.CANTO,
+        underlyingToken: CANTO,
+    });
+
+    export const NOTE = new BaseToken({
+        name: "Note",
+        symbol: "Note",
+        decimals: 18,
+        addresses: {
+            [ChainId.CANTO]: "0x4e71A2E537B7f9D9413D3991D37958c0b5e1e503",
+        },
+        swapType: SwapType.NOTE,
+        coingeckoId: "note"
+    });
 
 
 
@@ -890,7 +933,7 @@ export namespace Tokens {
         [ChainId.KLAYTN]:     KLAY,
         [ChainId.FANTOM]:     FTM,
         [ChainId.POLYGON]:    MATIC,
-
+        [ChainId.CANTO]:      CANTO,
     };
 
     /**
@@ -1023,7 +1066,8 @@ export namespace Tokens {
         LUNA, USDB, SYN_AVAX, GAS_JEWEL, JEWEL,
         SYN_JEWEL, XJEWEL, MULTIJEWEL, DFK_USDC,
         DFKTEARS, MULTI_AVAX, VSTA, SFI, DFK_ETH,
-        WKLAY, WFTM, WMATIC, KLAY, FTM, MATIC, BTCB
+        WKLAY, WFTM, WMATIC, KLAY, FTM, MATIC, BTCB,
+        CANTO, WCANTO, NOTE
     ];
 
     /**
