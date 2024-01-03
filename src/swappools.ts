@@ -770,14 +770,14 @@ export namespace SwapPools {
         ),
         [ChainId.KLAYTN]: {
             swappableTokens: {
-                [SwapType.ETH]: [Tokens.ETH, Tokens.WETH],
+                // [SwapType.ETH]: [Tokens.ETH, Tokens.WETH],
                 [SwapType.WBTC]: [Tokens.WBTC],
                 [SwapType.KLAY]: KLAY_Pool.poolTokens,
                 [SwapType.JEWEL]: [Tokens.JEWEL],
                 [SwapType.AVAX]: [Tokens.WAVAX],
             },
             swappableSwapGroups: {
-                [SwapType.ETH]: {poolTokens: [Tokens.ETH, Tokens.WETH], swapType: SwapType.ETH},
+                // [SwapType.ETH]: {poolTokens: [Tokens.ETH, Tokens.WETH], swapType: SwapType.ETH},
                 [SwapType.WBTC]: {poolTokens: [Tokens.WBTC], swapType: SwapType.WBTC},
                 [SwapType.KLAY]: KLAY_Pool,
                 [SwapType.JEWEL]: JEWEL_POOL,
