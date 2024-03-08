@@ -1,3 +1,15 @@
+# Repository Deprecated
+
+**Note:** This repository is no longer maintained and has been deprecated in favor of the new sdk. We recommend all users to transition to the new sdk for the latest updates, features, and support.
+
+## New SDK
+
+You can find the npm package [here](https://www.npmjs.com/package/@synapsecns/sdk-router).
+
+## Support
+
+For support with the new repository, please open an issue on the [SDK](https://github.com/synapsecns/sanguine/tree/master/packages/sdk-router).
+
 # synapseprotocol-sdk
 
 [![NPM](https://img.shields.io/npm/v/@synapseprotocol/sdk?color=blue)](https://www.npmjs.com/package/@synapseprotocol/sdk)
